@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "309307936110",
+    "firebase_url": "https://comprarapidita-default-rtdb.firebaseio.com",
+    "project_id": "comprarapidita",
+    "storage_bucket": "comprarapidita.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309307936110:android:b3dde79e277df4a38d057f",
+        "android_client_info": {
+          "package_name": "com.example.ventarapida"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309307936110-g51f8mvnnuop87ln1urc5o44pplj4kg2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCus2aOyfw0Hr5W2uUoqtxOWonkxAUAgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309307936110-g51f8mvnnuop87ln1urc5o44pplj4kg2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
