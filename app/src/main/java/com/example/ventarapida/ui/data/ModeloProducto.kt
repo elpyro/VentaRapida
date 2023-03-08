@@ -1,5 +1,7 @@
 package com.example.ventarapida.ui.data
 
+import java.io.Serializable
+
 data class ModeloProducto(
     val cantidad: String = "",
     val codigo: String = "",
@@ -14,4 +16,4 @@ data class ModeloProducto(
     val descuento: String = "",
     val precio_descuento: String = ""
 
-)
+): Serializable

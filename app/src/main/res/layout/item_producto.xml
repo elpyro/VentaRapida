@@ -31,7 +31,7 @@
                 <ImageView
                     android:id="@+id/imageView_producto"
                     android:layout_width="1800dp"
-                    android:layout_height="160dp"
+                    android:layout_height="150dp"
                     android:scaleType="fitXY"
                     app:srcCompat="@drawable/ic_menu_camera" />
 
@@ -55,7 +55,6 @@
                 android:id="@+id/textView_precio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="1dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center"
                 android:text="TextView"
@@ -67,7 +66,6 @@
                 android:id="@+id/textView_nombre"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_margin="1dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center"
                 android:text="TextView"
@@ -93,7 +91,6 @@
                     android:id="@+id/editTextNumber"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
                     android:ems="10"
                     android:gravity="center"
                     android:inputType="number"

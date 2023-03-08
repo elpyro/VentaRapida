@@ -27,20 +27,6 @@ class ProductAdapter(private val products: List<ModeloProducto>) :
     override fun getItemCount(): Int {
         return products.size
     }
-    private var filteredList: List<ModeloProducto> = products
-    fun filter(query: String) {
-        filteredList = if (query.isEmpty()) {
-            products
-        } else {
-            products.filter { it.nombre.contains(query, ignoreCase = true) }
-        }
-        notifyDataSetChanged()
-    }
-
-    fun updateList(filteredList: List<ModeloProducto>) {
-        this.filteredList = filteredList
-        notifyDataSetChanged()
-    }
 
 
     inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
