@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -37,18 +36,18 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
-        binding!!.recyclerView.layoutManager = gridLayoutManager
+        binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager
 
         productViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         productViewModel.getProductos().observe(viewLifecycleOwner,) { productos ->
-            Toast.makeText(context, "Productos ${productos.size}", Toast.LENGTH_SHORT).show()
+
             adapter = ProductAdapter(productos)
             lista = productos as ArrayList<ModeloProducto>?
-            binding!!.recyclerView.adapter = adapter
+            binding!!.recyclerViewProductosVenta.adapter = adapter
         }
 
-        binding?.recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.recyclerViewProductosVenta?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
@@ -58,28 +57,26 @@ class HomeFragment : Fragment() {
             }
         })
 
-        if (binding!!.searchView != null) {
-            binding!!.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
+        binding!!.searchViewProductosVenta.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText != null) {
-                        filtro(newText)
-                    }
-                    return true
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    filtro(newText)
                 }
-            })
-        }
+                return true
+            }
+        })
     }
 
     private fun filtro(valor: String) {
         val filtro = lista?.filter { objeto ->
-            objeto.nombre.toLowerCase().contains(valor.lowercase(Locale.getDefault()))
+            objeto.nombre.lowercase(Locale.getDefault()).contains(valor.lowercase(Locale.getDefault()))
         }
         val adaptador = filtro?.let { ProductAdapter(it) }
-        binding?.recyclerView?.adapter = adaptador
+        binding?.recyclerViewProductosVenta?.adapter = adaptador
     }
 
     override fun onDestroyView() {

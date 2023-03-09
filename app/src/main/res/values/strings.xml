@@ -10,4 +10,14 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="banner">banner</string>
+    <string name="banner_cuadrado">banner_cuadrado</string>
+    <string name="total">Total</string>
+    <string name="carrito">Carrito</string>
+    <string name="restar_cantidad">Restar cantidad</string>
+    <string name="foto">Foto</string>
+    <string name="disponible">Disponible</string>
+    <string name="precio">Precio</string>
+    <string name="nombre">Nombre</string>
+    <string name="_0">0</string>
 </resources>
