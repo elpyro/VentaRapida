@@ -9,6 +9,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardview_itemProducto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
@@ -16,10 +17,7 @@
         app:cardCornerRadius="1dp"
         app:cardElevation="2dp"
         app:cardUseCompatPadding="true"
-
-        app:layout_constraintWidth_default="wrap"
-        app:layout_constraintHeight_default="wrap"
-
+        app:layout_constrainedHeight="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +32,6 @@
             <RelativeLayout
                 android:layout_width="180dp"
                 android:layout_height="match_parent">
-
 
                 <ImageView
                     android:id="@+id/imageView_producto"

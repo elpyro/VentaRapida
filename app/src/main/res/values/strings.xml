@@ -20,4 +20,9 @@
     <string name="precio">Precio</string>
     <string name="nombre">Nombre</string>
     <string name="_0">0</string>
+    <string name="producto">Producto</string>
+    <string name="compra">Compra</string>
+    <string name="venta">Venta</string>
+    <string name="detalleProducto">Detalle del producto</string>
+    <string name="cantidad">Cantidad</string>
 </resources>
