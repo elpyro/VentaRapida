@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_slideshow" />
     <fragment
         android:id="@+id/detalleProducto"
-        android:name="com.example.ventarapida.ui.detalleProducto.DetalleProducto"
-        android:label="@string/detalleProducto"
-        tools:layout="@layout/fragment_detalle_producto" />
+        android:name="com.example.ve.DetalleProducto"
+        android:label="DetalleProducto" />
+
 </navigation>

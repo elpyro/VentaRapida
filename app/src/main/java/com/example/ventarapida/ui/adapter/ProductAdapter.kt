@@ -53,8 +53,7 @@ class ProductAdapter(private val products: List<ModeloProducto>) :
             nameTextView.text = product.nombre
             priceTextView.text = "$ ${product.p_diamante}"
             descriptionTextView.text = product.cantidad
-            Picasso.get().load( product.url)
-                .into(imagenProducto)
+           if(!product.url.isEmpty()) Picasso.get().load( product.url).into(imagenProducto)
 
         }
     }

@@ -12,11 +12,12 @@ import com.google.firebase.database.ValueEventListener
 
 class HomeViewModel : ViewModel() {
 
-    private val firebaseDatabase = FirebaseDatabase.getInstance()
-    private val productReference = firebaseDatabase.getReference("Productos")
+
+    val productosLiveData = MutableLiveData<List<ModeloProducto>>()
 
     fun getProductos(): LiveData<List<ModeloProducto>> {
-        val productosLiveData = MutableLiveData<List<ModeloProducto>>()
+        val firebaseDatabase = FirebaseDatabase.getInstance()
+        val productReference = firebaseDatabase.getReference("Productos")
 
         productReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

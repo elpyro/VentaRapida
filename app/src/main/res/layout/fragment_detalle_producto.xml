@@ -4,18 +4,132 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo"
     tools:context=".ui.detalleProducto.DetalleProducto">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout_barrainferior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/barrainferior"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView_cambioImagen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/baseline_camera_alt_24" />
+
+            <ImageView
+                android:id="@+id/imageView_guardar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/baseline_save_24" />
+
+
+            <ImageView
+                android:id="@+id/imageView_elimniarProducto"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/baseline_delete_24" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="320dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="vertical"
+
+
+        >
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editText_producto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:background="@drawable/edittext_background"
+                android:gravity="center"
+                android:hint="@string/producto"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editText_pCompra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/edittext_background"
+                    android:gravity="center"
+                    android:hint="@string/compra"
+                    android:inputType="number"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    tools:ignore="TextContrastCheck" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editText_pVenta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/edittext_background"
+                    android:gravity="center"
+                    android:hint="@string/venta"
+                    android:inputType="number"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+    </LinearLayout>
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/barrasuperior2" />
+        android:layout_height="250dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/barrasuperior" />
 
     <LinearLayout
         android:id="@+id/linearLayout_foto"
@@ -51,81 +165,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="320dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginStart="30dp"
-
-
-        >
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editText_producto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:gravity="center"
-                android:background="@drawable/edittext_background"
-                android:hint="@string/producto"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editText_pCompra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:inputType="number"
-                android:layout_margin="4dp"
-                android:background="@drawable/edittext_background"
-                android:hint="@string/compra"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                tools:ignore="TextContrastCheck" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editText_pVenta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:inputType="number"
-                android:layout_margin="4dp"
-                android:background="@drawable/edittext_background"
-                android:hint="@string/venta"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-    </LinearLayout>
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -147,5 +186,6 @@
             android:textSize="16sp"
             tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
+
 
 </FrameLayout>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -45,6 +46,7 @@ class HomeFragment : Fragment() {
 
         productViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
+
         productViewModel.getProductos().observe(viewLifecycleOwner,) { productos ->
 
             adapter = ProductAdapter(productos)
@@ -53,7 +55,6 @@ class HomeFragment : Fragment() {
 
                 abriDetalle(item,vista, position)
             }
-
 
             lista = productos as ArrayList<ModeloProducto>?
             binding!!.recyclerViewProductosVenta.adapter = adapter
@@ -84,8 +85,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun abriDetalle(modeloProducto: ModeloProducto, view:View, position:Int) {
-
-
         val bundle = Bundle()
         bundle.putInt("position", position)
         bundle.putSerializable("modelo", modeloProducto)

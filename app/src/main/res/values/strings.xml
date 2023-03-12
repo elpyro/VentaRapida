@@ -25,4 +25,5 @@
     <string name="venta">Venta</string>
     <string name="detalleProducto">Detalle del producto</string>
     <string name="cantidad">Cantidad</string>
+    <string name="guardar">Guardar</string>
 </resources>
