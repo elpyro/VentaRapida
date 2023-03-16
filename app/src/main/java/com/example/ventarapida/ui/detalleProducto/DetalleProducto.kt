@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.ventarapida.R
@@ -29,6 +30,7 @@ import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 
 import com.example.ventarapida.ui.data.ModeloProducto
 import com.example.ventarapida.ui.process.HideKeyboard
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
@@ -43,7 +45,6 @@ class DetalleProducto : Fragment() {
         private val GALERIA_REQUEST_CODE = 1001
         private val CAMARA_REQUEST_CODE = 1002
         private val REQUEST_IMAGE_CAPTURE=1003
-        private var imagenProducto: Bitmap? = null
     }
 //    private lateinit var toolbar: Toolbar
     private var binding: FragmentDetalleProductoBinding? = null
@@ -116,9 +117,6 @@ class DetalleProducto : Fragment() {
 
     private fun cargarImagen() {
 
-        // Permite que el usuario seleccione una imagen de la galería o tome una foto
-
-
         // Crear un AlertDialog con las opciones de cámara y galería
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Selecciona una opción")
@@ -132,9 +130,9 @@ class DetalleProducto : Fragment() {
 
     }
 
-    private lateinit var imagenProducto: Bitmap
+
     private lateinit var imagenUri: Uri
-    private lateinit var croppedUri: Uri
+
     private fun tomarFoto() {
 
         // Verificar si se tienen los permisos necesarios para utilizar la cámara
@@ -142,15 +140,14 @@ class DetalleProducto : Fragment() {
             // Si no se tienen los permisos, solicitarlos al usuario
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), REQUEST_IMAGE_CAPTURE)
         } else {
-            // Si se tienen los permisos, abrir la cámara
-            val values = ContentValues()
-            values.put(MediaStore.Images.Media.TITLE, "Nueva Imagen")
-            values.put(MediaStore.Images.Media.DESCRIPTION, "Desde la cámara")
-            imagenUri = requireContext().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
+
+            val photoFile = File(requireContext().getExternalFilesDir(null), "CompraRapidita.jpg")
+            imagenUri = FileProvider.getUriForFile(requireContext(), "com.example.ventarapida.fileprovider", photoFile)
 
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imagenUri)
             startActivityForResult(intent, CAMARA_REQUEST_CODE)
+
         }
     }
 
@@ -163,8 +160,6 @@ class DetalleProducto : Fragment() {
         startActivityForResult(intent, GALERIA_REQUEST_CODE)
     }
 
-
-
     // Variable para almacenar la URI de la imagen resultante
     private var uri: Uri? = null
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -172,8 +167,9 @@ class DetalleProducto : Fragment() {
 
         // Si la acción fue tomar una foto con la cámara
         if (requestCode == CAMARA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
             // Recortar la imagen usando la biblioteca CropImage
-            CropImage.activity(uri)
+            CropImage.activity(imagenUri)
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setAspectRatio(1, 1)
                 .start(requireContext(), this)
@@ -188,6 +184,7 @@ class DetalleProducto : Fragment() {
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setAspectRatio(1, 1)
                 .start(requireContext(), this)
+
         }
 
         // Si la acción fue recortar la imagen usando CropImage
@@ -305,6 +302,8 @@ class DetalleProducto : Fragment() {
     }
 
     private fun eliminar() {
+        HideKeyboard(requireContext()).hideKeyboard(vista!!)
+
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar producto")
@@ -317,6 +316,19 @@ class DetalleProducto : Fragment() {
     }
 
     private fun guardar() {
+        HideKeyboard(requireContext()).hideKeyboard(vista!!)
+
+        //verificando campos vacios
+        if (id_producto.isEmpty() || binding!!.editTextProducto.text.toString().isEmpty()
+            || binding!!.editTextCantidad.text.toString().trim().isEmpty()|| binding!!.editTextPCompra.text.toString().trim().isEmpty()
+            ||binding!!.editTextPVenta.text.toString().trim().isEmpty()){
+
+            val snackbar= Snackbar.make(vista!!, "Todos los datos son obligatorios", Snackbar.LENGTH_LONG)
+            snackbar.view.setBackgroundColor(resources.getColor(R.color.rojo))
+            snackbar.setTextColor(resources.getColor(R.color.white))
+            snackbar.show()
+            return
+        }
 
         viewModel.subirImagenFirebase(binding?.imageViewFoto!!)
 

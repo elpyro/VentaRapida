@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
+import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
 import com.google.firebase.database.FirebaseDatabase
 class MainActivity : AppCompatActivity() {
 
@@ -29,20 +30,16 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
-//        binding.appBarMain.fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show()
-//        }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_nuevoProdcuto), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        Toast.makeText(this, "Notificación corta", Toast.LENGTH_SHORT).show()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,6 +55,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is DetalleProducto) {
+            fragment.setHasOptionsMenu(true)
+        }
+        if (fragment is NuevoProducto) {
             fragment.setHasOptionsMenu(true)
         }
     }

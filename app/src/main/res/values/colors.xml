@@ -11,5 +11,6 @@
     <color name="negro2">#0C0C0C</color>
     <color name="azul_oscuro">#010523</color>
     <color name="azul_intermedio">#463F99</color>
+    <color name="rojo">#FF0000</color>
 
 </resources>

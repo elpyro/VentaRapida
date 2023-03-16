@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.example.ventarapida.ui.gallery.GalleryFragment"
+        android:name="com.example.ventarapida.ui.nuevoProducto.NuevoProducto"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
 
@@ -26,5 +26,10 @@
         android:id="@+id/detalleProducto"
         android:name="com.example.ve.DetalleProducto"
         android:label="" />
+    <fragment
+        android:id="@+id/nav_nuevoProdcuto"
+        android:name="com.example.ventarapida.ui.nuevoProducto.NuevoProducto"
+        android:label="Nuevo Producto"
+        tools:layout="@layout/fragment_nuevo_producto" />
 
 </navigation>
