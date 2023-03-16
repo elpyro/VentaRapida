@@ -26,4 +26,5 @@
     <string name="detalleProducto">Detalle del producto</string>
     <string name="cantidad">Cantidad</string>
     <string name="guardar">Guardar</string>
+    <string name="eliminar">Eliminar</string>
 </resources>

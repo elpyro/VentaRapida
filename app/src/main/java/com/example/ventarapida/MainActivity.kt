@@ -12,6 +12,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
 import com.google.firebase.database.FirebaseDatabase
 class MainActivity : AppCompatActivity() {
@@ -52,5 +54,11 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onAttachFragment(fragment: Fragment) {
+        if (fragment is DetalleProducto) {
+            fragment.setHasOptionsMenu(true)
+        }
     }
 }

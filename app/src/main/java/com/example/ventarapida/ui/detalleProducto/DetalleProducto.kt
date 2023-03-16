@@ -1,31 +1,51 @@
 package com.example.ve
 
+import android.Manifest
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import com.example.ventarapida.ui.detalleProducto.DetalleProductoViewModel
 
 
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 
 import com.example.ventarapida.ui.data.ModeloProducto
 import com.example.ventarapida.ui.process.HideKeyboard
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
+import java.io.File
 
 class DetalleProducto : Fragment() {
     companion object {
+
         // Creación de una instancia de DetalleProducto
         fun newInstance() = DetalleProducto()
+        private val GALERIA_REQUEST_CODE = 1001
+        private val CAMARA_REQUEST_CODE = 1002
+        private val REQUEST_IMAGE_CAPTURE=1003
+        private var imagenProducto: Bitmap? = null
     }
-
+//    private lateinit var toolbar: Toolbar
     private var binding: FragmentDetalleProductoBinding? = null
     private val viewModel: DetalleProductoViewModel by viewModels() // Inicialización de viewModel
     private lateinit var productosViewModel: DetalleProductoViewModel
@@ -36,9 +56,10 @@ class DetalleProducto : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         // Inflar el layout del fragmento usando el binding
         binding = FragmentDetalleProductoBinding.inflate(inflater, container, false)
-
+//        toolbar = view.findViewById(R.id.toolbar)
         // Inicialización de Firebase
         FirebaseApp.initializeApp(requireContext())
 
@@ -53,6 +74,7 @@ class DetalleProducto : Fragment() {
 
         // Inicialización de productosViewModel
         productosViewModel = ViewModelProvider(this).get(DetalleProductoViewModel::class.java)
+        viewModel.init(requireActivity()) // Pasar la referencia de la actividad
 
         // Observa los cambios en detalleProducto y actualiza la UI en consecuencia
         productosViewModel.detalleProducto.observe(viewLifecycleOwner, Observer { detalleProducto ->
@@ -67,12 +89,7 @@ class DetalleProducto : Fragment() {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
 
-        binding?.imageViewElimniarProducto?.setOnClickListener {
 
-
-            viewModel.eliminarProducto(id_producto)
-
-        }
 
         // Define el botón "Siguiente" y configura su OnClickListener
         binding?.imageViewBotonDerecha?.setOnClickListener {
@@ -85,18 +102,7 @@ class DetalleProducto : Fragment() {
         }
 
         //Define el botón "Guardar"
-        binding?.imageViewGuardar?.setOnClickListener {
 
-            val updates = hashMapOf<String, Any>(
-                "id" to id_producto.toString().trim(),
-                "nombre" to binding!!.editTextProducto.text.toString().trim(),
-                "cantidad" to binding!!.editTextCantidad.text.toString().trim(),
-                "p_compra" to binding!!.editTextPCompra.text.toString().trim(),
-                "p_diamante" to binding!!.editTextPVenta.text.toString().trim()
-            )
-            viewModel.guardarProducto(updates)
-
-        }
         // Indica la posición del producto para abrir el producto seleccionado
         viewModel.actualizarPosiscion(posicionProducto!!)
         verificarPosiciones()
@@ -105,6 +111,102 @@ class DetalleProducto : Fragment() {
         cargarProducto(modeloProducto)
 
         return binding!!.root // Retorna la vista inflada
+    }
+
+
+    private fun cargarImagen() {
+
+        // Permite que el usuario seleccione una imagen de la galería o tome una foto
+
+
+        // Crear un AlertDialog con las opciones de cámara y galería
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Selecciona una opción")
+        builder.setItems(arrayOf("Tomar foto", "Elegir de galería")) { dialog, which ->
+            when (which) {
+                0 -> tomarFoto()
+                1 -> elegirDeGaleria()
+            }
+        }
+        builder.create().show()
+
+    }
+
+    private lateinit var imagenProducto: Bitmap
+    private lateinit var imagenUri: Uri
+    private lateinit var croppedUri: Uri
+    private fun tomarFoto() {
+
+        // Verificar si se tienen los permisos necesarios para utilizar la cámara
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Si no se tienen los permisos, solicitarlos al usuario
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), REQUEST_IMAGE_CAPTURE)
+        } else {
+            // Si se tienen los permisos, abrir la cámara
+            val values = ContentValues()
+            values.put(MediaStore.Images.Media.TITLE, "Nueva Imagen")
+            values.put(MediaStore.Images.Media.DESCRIPTION, "Desde la cámara")
+            imagenUri = requireContext().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
+
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imagenUri)
+            startActivityForResult(intent, CAMARA_REQUEST_CODE)
+        }
+    }
+
+
+
+    // Función para elegir una imagen de la galería
+    private fun elegirDeGaleria() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        startActivityForResult(intent, GALERIA_REQUEST_CODE)
+    }
+
+
+
+    // Variable para almacenar la URI de la imagen resultante
+    private var uri: Uri? = null
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Si la acción fue tomar una foto con la cámara
+        if (requestCode == CAMARA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Recortar la imagen usando la biblioteca CropImage
+            CropImage.activity(uri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(1, 1)
+                .start(requireContext(), this)
+        }
+
+        // Si la acción fue elegir una imagen de la galería
+        if (requestCode == GALERIA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Obtener la URI de la imagen seleccionada de la galería
+            uri = data?.data
+            // Recortar la imagen usando la biblioteca CropImage
+            CropImage.activity(uri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(1, 1)
+                .start(requireContext(), this)
+        }
+
+        // Si la acción fue recortar la imagen usando CropImage
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            val result = CropImage.getActivityResult(data)
+            if (resultCode == Activity.RESULT_OK) {
+                // Obtener el archivo de la imagen recortada
+                val file = File(result.uri.path!!)
+                if (file.exists()) {
+                    // Cargar la imagen recortada en el ImageView
+                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                    binding?.imageViewFoto?.setImageBitmap(bitmap)
+                }
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                // Mostrar un mensaje de error si la recortada no fue exitosa
+                val error = result.error
+                Toast.makeText(requireContext(), "Error al recortar la imagen: $error", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun actualizarCampos(producto: ModeloProducto) {
@@ -176,5 +278,57 @@ class DetalleProducto : Fragment() {
         viewModel.setIdProducto(modeloProducto!!.id)
     }
 
-
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menuproducto, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+            R.id.action_guardar ->{
+                    guardar()
+                return true
+            }
+
+            R.id.action_camara->{
+                cargarImagen()
+                return true
+            }
+
+            R.id.action_eliminar -> {
+                    eliminar()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun eliminar() {
+        // Crear el diálogo de confirmación
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Eliminar producto")
+        builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
+        builder.setPositiveButton("Eliminar") { dialog, which ->
+            viewModel.eliminarProducto(id_producto)
+        }
+        builder.setNegativeButton("Cancelar", null)
+        builder.show()
+    }
+
+    private fun guardar() {
+
+        viewModel.subirImagenFirebase(binding?.imageViewFoto!!)
+
+        val updates = hashMapOf<String, Any>(
+            "id" to id_producto.toString().trim(),
+            "nombre" to binding!!.editTextProducto.text.toString().trim(),
+            "cantidad" to binding!!.editTextCantidad.text.toString().trim(),
+            "p_compra" to binding!!.editTextPCompra.text.toString().trim(),
+            "p_diamante" to binding!!.editTextPVenta.text.toString().trim()
+
+        )
+        viewModel.guardarProducto(updates)
+    }
+
+}

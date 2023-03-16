@@ -25,6 +25,6 @@
     <fragment
         android:id="@+id/detalleProducto"
         android:name="com.example.ve.DetalleProducto"
-        android:label="DetalleProducto" />
+        android:label="" />
 
 </navigation>

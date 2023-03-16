@@ -34,82 +34,32 @@
         android:layout_height="wrap_content"
         android:paddingTop="30dp"
         android:paddingEnd="60dp"
-        android:paddingStart="60dp"
+        android:paddingStart="40dp"
         android:orientation="horizontal"
         android:baselineAligned="true"  >
-<!--        <ImageButton-->
-<!--            android:id="@+id/imageButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginRight="30dp"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:src="@drawable/setting" />-->
-
-        <SearchView
-            android:id="@+id/searchView_productosVenta"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/searchview_background"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="76dp" />
-
-    </LinearLayout>
-
-
-    <ImageView
-        android:id="@+id/imageView_bannerCuadrado"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/barrainferior"
-        motion:layout_constraintBottom_toBottomOf="parent"
-        motion:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/banner_cuadrado" />
-
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView_bannerCuadrado">
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/total"
-            android:paddingEnd="10dp"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            tools:ignore="RtlSymmetry" />
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/baseline_shopping_cart_24"
                 android:contentDescription="@string/carrito" />
 
             <TextView
                 android:id="@+id/textView5"
-                android:layout_width="35dp"
+                android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="@+id/imageView4"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:textColor="@color/purple_500"
+                android:text="10"
                 android:textSize="12sp"
 
                 android:textStyle="bold"
@@ -119,7 +69,38 @@
 
         </RelativeLayout>
 
+        <SearchView
+            android:id="@+id/searchView_productosVenta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/searchview_background"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="76dp" />
+
+
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/extended_fab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:textAlignment="center"
+        android:backgroundTint="@color/azul_intermedio"
+        android:textColor="@color/white"
+        android:text="Total"
+        app:icon="@drawable/baseline_shopping_cart_24"
+        app:iconGravity="textEnd"
+        app:iconTint="@color/white"
+        app:iconPadding="8dp"
+        android:textStyle="bold"
+        app:iconSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
 
 
