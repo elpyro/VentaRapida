@@ -1,10 +1,10 @@
 package com.example.ventarapida.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -49,6 +49,7 @@ class ProductAdapter(private val products: List<ModeloProducto>) :
         val cardview_itemProducto:CardView=itemView.findViewById(R.id.cardview_itemProducto)
         private val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_producto)
 
+        @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto) {
             nameTextView.text = product.nombre
             priceTextView.text = "$ ${product.p_diamante}"

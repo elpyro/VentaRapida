@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -110,7 +109,6 @@ class HomeFragment : Fragment() {
             Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -19,13 +19,12 @@ import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
 import kotlin.collections.HashMap
 
 
 class DetalleProductoViewModel : ViewModel() {
 
-    private lateinit var context: Context
+
 
     // Lista de productos
     val listaProductos = mutableListOf<ModeloProducto>()
@@ -39,10 +38,6 @@ class DetalleProductoViewModel : ViewModel() {
     }
     fun actualizarPosiscion(posicionRecibida:Int){
         posicionActual=posicionRecibida
-    }
-    // Inicialización del ViewModel
-    fun init(context: Context) {
-        this.context = context
     }
 
     private val database = FirebaseDatabase.getInstance()
@@ -114,8 +109,8 @@ class DetalleProductoViewModel : ViewModel() {
     fun eliminarProducto(id:String ): Task<Void> {
 
         val database2 = FirebaseDatabase.getInstance()
-        val registroRef = database2.getReference("Productos").child(id!!)
-        listaProductos.removeIf { it.id == id!! }
+        val registroRef = database2.getReference("Productos").child(id)
+        listaProductos.removeIf { it.id == id }
         val task = registroRef.removeValue().addOnSuccessListener {
             mensajeToast.value="Producto eliminado"
         }
@@ -124,9 +119,9 @@ class DetalleProductoViewModel : ViewModel() {
 
     }
 
-    fun subirImagenFirebase(imageViewFoto: ImageView?) {
+    fun subirImagenFirebase(context:Context,imageViewFoto: ImageView?) {
 
-        val idProducto=detalleProducto?.value?.get(0)?.id
+        val idProducto= detalleProducto.value?.get(0)?.id
 
         // Obtener la imagen del ImageView como Bitmap
         val bitmap = (imageViewFoto?.drawable as BitmapDrawable).bitmap
@@ -135,7 +130,7 @@ class DetalleProductoViewModel : ViewModel() {
         val storageRef = Firebase.storage.reference.child(idProducto+".jpg")
 
         // Obtener la URI del archivo temporal
-        val fileUri = guardarImagenEnDispositivo(bitmap)
+        val fileUri = guardarImagenEnDispositivo(context ,bitmap)
 
 // Subir la imagen a Firebase Storage
         if (fileUri != null) {
@@ -147,7 +142,7 @@ class DetalleProductoViewModel : ViewModel() {
                     val url = uri.toString()
 
                     val updates = hashMapOf<String, Any>(
-                        "url" to url.toString().trim(),
+                        "url" to url.trim(),
                     )
 
                     val database = FirebaseDatabase.getInstance()
@@ -163,7 +158,7 @@ class DetalleProductoViewModel : ViewModel() {
         }
     }
 
-    private fun guardarImagenEnDispositivo(bitmap: Bitmap): Uri? {
+    private fun guardarImagenEnDispositivo(context: Context,bitmap: Bitmap): Uri? {
         // Crear un archivo temporal en el almacenamiento interno
         val file = File.createTempFile(
             "tempImagen",

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:motion="http://schemas.android.com/apk/res-auto"
-
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -63,7 +61,7 @@
                 android:textSize="12sp"
 
                 android:textStyle="bold"
-                tools:ignore="TextSizeCheck" />
+                tools:ignore="HardcodedText,TextSizeCheck" />
 
 
 
@@ -74,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:background="@drawable/searchview_background"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="76dp" />
@@ -90,7 +88,7 @@
         android:textAlignment="center"
         android:backgroundTint="@color/azul_intermedio"
         android:textColor="@color/white"
-        android:text="Total"
+        android:text="@string/total"
         app:icon="@drawable/baseline_shopping_cart_24"
         app:iconGravity="textEnd"
         app:iconTint="@color/white"

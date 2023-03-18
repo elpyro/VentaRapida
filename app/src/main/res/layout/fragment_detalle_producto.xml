@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondo"
-    tools:context=".ui.detalleProducto.DetalleProducto">
+    android:background="@drawable/fondo">
 
 
 
@@ -31,14 +29,16 @@
                 android:gravity="center"
                 android:hint="@string/producto"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="VisualLintTextFieldSize" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                     android:inputType="number"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    tools:ignore="TextContrastCheck" />
+                    tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -77,7 +77,8 @@
                     android:hint="@string/venta"
                     android:inputType="number"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </LinearLayout>
@@ -86,7 +87,8 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:scaleType="fitXY"
-        android:src="@drawable/barrasuperior" />
+        android:src="@drawable/barrasuperior"
+        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:id="@+id/linearLayout_foto"
@@ -101,7 +103,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:src="@drawable/left_circle" />
+            android:src="@drawable/left_circle"
+            tools:ignore="ContentDescription" />
 
         <ImageView
             android:id="@+id/imageView_foto"
@@ -109,7 +112,8 @@
             android:layout_height="300dp"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_menu_camera" />
+            android:src="@drawable/ic_menu_camera"
+            tools:ignore="ContentDescription" />
 
         <ImageView
             android:id="@+id/imageView_botonDerecha"
@@ -117,7 +121,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:src="@drawable/right_circle" />
+            android:src="@drawable/right_circle"
+            tools:ignore="ContentDescription" />
 
     </LinearLayout>
 
@@ -125,7 +130,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        tools:ignore="ObsoleteLayoutParam">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editText_cantidad"

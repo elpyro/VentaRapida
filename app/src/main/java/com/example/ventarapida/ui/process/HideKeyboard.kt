@@ -3,8 +3,6 @@ package com.example.ventarapida.ui.process
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.fragment.app.Fragment
 
 class HideKeyboard(private val context: Context) {
 

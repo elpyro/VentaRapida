@@ -2,8 +2,6 @@ package com.example.ventarapida
 
 import android.os.Bundle
 import android.view.Menu
-import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,7 +14,7 @@ import androidx.fragment.app.Fragment
 import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
 import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
-import com.google.firebase.database.FirebaseDatabase
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -36,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_nuevoProdcuto), drawerLayout)
+                R.id.nav_home), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -53,12 +51,14 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onAttachFragment(fragment: Fragment) {
-        if (fragment is DetalleProducto) {
+        if (fragment is DetalleProducto || fragment is NuevoProducto ) {
             fragment.setHasOptionsMenu(true)
-        }
-        if (fragment is NuevoProducto) {
-            fragment.setHasOptionsMenu(true)
+        }else{
+            fragment.setHasOptionsMenu(false)
         }
     }
+
+
 }
