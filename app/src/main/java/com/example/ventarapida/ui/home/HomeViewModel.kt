@@ -1,6 +1,7 @@
 package com.example.ventarapida.ui.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +16,18 @@ class HomeViewModel : ViewModel() {
 
     val productosLiveData = MutableLiveData<List<ModeloProducto>>()
 
+    val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+
+    val totalSeleccionLiveData=MutableLiveData<String>()
+
+    fun agregarProductoSeleccionado(producto: ModeloProducto) {
+        if (productosSeleccionados.containsKey(producto)) {
+            productosSeleccionados[producto] = productosSeleccionados[producto]!! + 1
+        } else {
+            productosSeleccionados[producto] = 1
+        }
+        totalSeleccionLiveData.value=productosSeleccionados.size.toString()
+    }
     fun getProductos(): LiveData<List<ModeloProducto>> {
         val firebaseDatabase = FirebaseDatabase.getInstance()
         val productReference = firebaseDatabase.getReference("Productos")

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -46,18 +47,22 @@ class HomeFragment : Fragment() {
         productViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
 
+
+        productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { total ->
+            binding?.textViewListaSeleccion?.text=total.toString()
+        }
         productViewModel.getProductos().observe(viewLifecycleOwner,) { productos ->
 
-            adapter = ProductAdapter(productos)
+            adapter = ProductAdapter(productos, productViewModel)
 
             adapter!!.setOnClickItem { item, position ->
-
                 abriDetalle(item,vista, position)
             }
 
             lista = productos as ArrayList<ModeloProducto>?
             binding!!.recyclerViewProductosVenta.adapter = adapter
         }
+
 
         binding?.recyclerViewProductosVenta?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -97,7 +102,7 @@ class HomeFragment : Fragment() {
         val filtro = lista?.filter { objeto: ModeloProducto ->
             objeto.nombre.lowercase(Locale.getDefault()).contains(valor.lowercase(Locale.getDefault()))
         }
-        val adaptador = filtro?.let { ProductAdapter(it) }
+        val adaptador = filtro?.let { ProductAdapter(it,productViewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
         adaptador!!.setOnClickItem { item, position ->

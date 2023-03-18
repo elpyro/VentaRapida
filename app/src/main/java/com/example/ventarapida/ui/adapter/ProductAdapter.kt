@@ -6,16 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.data.ModeloProducto
+import com.example.ventarapida.ui.home.HomeViewModel
 import com.squareup.picasso.Picasso
 
 
-class ProductAdapter(private val products: List<ModeloProducto>) :
+class ProductAdapter(private val products: List<ModeloProducto>, private val viewModel: HomeViewModel) :
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
+    private val selectedProducts = mutableMapOf<ModeloProducto, Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -26,10 +29,19 @@ class ProductAdapter(private val products: List<ModeloProducto>) :
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.bind(products[position])
 
-        holder.cardview_itemProducto.setOnClickListener { view ->
+        holder.cardview_itemProducto.setOnLongClickListener { motionEvent ->
             onClickItem?.invoke(products[position], position)
+            true // Devuelve true para indicar que el evento ha sido consumido
         }
 
+
+        holder.cardview_itemProducto.setOnClickListener { view ->
+            val product = products[position]
+
+            viewModel.agregarProductoSeleccionado(product)
+
+
+        }
     }
 
     override fun getItemCount(): Int {
@@ -55,7 +67,7 @@ class ProductAdapter(private val products: List<ModeloProducto>) :
             priceTextView.text = "$ ${product.p_diamante}"
             descriptionTextView.text = product.cantidad
            if(!product.url.isEmpty()) Picasso.get().load( product.url).into(imagenProducto)
-
         }
     }
+
 }

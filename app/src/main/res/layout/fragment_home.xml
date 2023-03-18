@@ -51,7 +51,7 @@
                 android:contentDescription="@string/carrito" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/textView_listaSeleccion"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="@+id/imageView4"
