@@ -20,14 +20,36 @@ class HomeViewModel : ViewModel() {
 
     val totalSeleccionLiveData=MutableLiveData<String>()
 
+    var totalCarritoLiveData=MutableLiveData<String>()
+
+
     fun agregarProductoSeleccionado(producto: ModeloProducto) {
         if (productosSeleccionados.containsKey(producto)) {
             productosSeleccionados[producto] = productosSeleccionados[producto]!! + 1
+
         } else {
             productosSeleccionados[producto] = 1
         }
+
+        var total = 0.0
+        for ((producto, cantidad) in productosSeleccionados) {
+            total += producto.p_diamante.toDouble() * cantidad.toDouble()
+        }
+        totalCarritoLiveData.value = "$$total"
+
         totalSeleccionLiveData.value=productosSeleccionados.size.toString()
     }
+
+
+        fun eliminarCarrito(){
+             productosSeleccionados.clear()
+
+             totalSeleccionLiveData.value= "0"
+
+             totalCarritoLiveData.value="0"
+        }
+
+
     fun getProductos(): LiveData<List<ModeloProducto>> {
         val firebaseDatabase = FirebaseDatabase.getInstance()
         val productReference = firebaseDatabase.getReference("Productos")

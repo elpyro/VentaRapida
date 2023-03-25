@@ -52,6 +52,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.firebase:firebase-common-ktx:20.3.1'
     implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
+    implementation 'com.google.ar:core:1.30.0'
 
 //    implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.13.2'
@@ -72,5 +73,7 @@ dependencies {
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 
     implementation 'androidx.core:core:1.6.0'
+
+    implementation 'tyrantgit:explosionfield:1.0.1'
 
 }

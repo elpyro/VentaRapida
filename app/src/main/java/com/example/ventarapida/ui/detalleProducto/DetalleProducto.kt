@@ -19,10 +19,12 @@ import com.example.ventarapida.ui.data.ModeloProducto
 import com.example.ventarapida.ui.process.HideKeyboard
 import com.example.ventarapida.ui.process.TomarFotoYGaleria
 import com.google.android.material.snackbar.Snackbar
+import com.google.ar.core.Config
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import tyrantgit.explosionfield.ExplosionField
 import java.io.File
 
 @Suppress("DEPRECATION")
@@ -213,6 +215,7 @@ class DetalleProducto : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    private lateinit var explosionField: ExplosionField
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -228,12 +231,13 @@ class DetalleProducto : Fragment() {
             }
 
             R.id.action_eliminar -> {
-                    eliminar()
+                 eliminar()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
     }
+
 
     private fun eliminar() {
         HideKeyboard(requireContext()).hideKeyboard(vista!!)
