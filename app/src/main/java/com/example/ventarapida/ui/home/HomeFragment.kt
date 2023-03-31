@@ -1,16 +1,20 @@
 package com.example.ventarapida.ui.home
 
-import android.animation.ValueAnimator
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
-import android.graphics.Bitmap
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.view.*
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.SearchView
-import androidx.core.animation.doOnEnd
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -18,7 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentHomeBinding
-import com.example.ventarapida.ui.adapter.ProductAdapter
+import com.example.ventarapida.ui.adapter.VentaProductosAdapter
 import com.example.ventarapida.ui.data.ModeloProducto
 import com.example.ventarapida.ui.process.HideKeyboard
 import java.util.*
@@ -29,9 +33,11 @@ class HomeFragment : Fragment() {
     private var binding: FragmentHomeBinding? = null
     private lateinit var productViewModel: HomeViewModel
     private var lista: ArrayList<ModeloProducto>? = null
-    private var adapter: ProductAdapter? = null
+    private var adapter: VentaProductosAdapter? = null
     private lateinit var vista:View
     private lateinit var menuItem: MenuItem
+    val REQUEST_CODE_VOICE_SEARCH = 1001
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,6 +50,7 @@ class HomeFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_venta, menu)
         menuItem  = menu.findItem(R.id.action_total)
+
         productViewModel.totalCarritoLiveData.observe(viewLifecycleOwner){it->
             val title = SpannableString("Total: $it")
             title.setSpan(
@@ -66,68 +73,21 @@ class HomeFragment : Fragment() {
         binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager
 
         productViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        productViewModel.context = requireContext()
 
         productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
 
 
+
         productViewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
-            adapter = ProductAdapter(productos, productViewModel)
+            adapter = VentaProductosAdapter(productos, productViewModel)
 
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista, position)
             }
-
-            //Todo moviemiento pendiente
-//            adapter?.setOnClickItem {  posicion , itemView->
-//
-//                val cartLocation = IntArray(2)
-//                binding?.imageViewEliminarCarrito?.getLocationOnScreen(cartLocation)
-//                // create bitmap screen capture
-//
-//                // create bitmap screen capture
-//                val viewCopy = itemView
-//
-//
-//                // Obtener la posición inicial de la vista original
-//                val originalLocation = IntArray(2)
-//                itemView.getLocationOnScreen(originalLocation)
-//
-//                // Establecer la posición inicial de la vista de copia
-//                viewCopy.translationX = originalLocation[0].toFloat()
-//                viewCopy.translationY = originalLocation[1].toFloat()
-//
-//                val itemLocation = IntArray(2)
-//                viewCopy.getLocationOnScreen(itemLocation)
-//
-//                val animator = ValueAnimator.ofFloat(0f, 1f)
-//
-//                animator.duration = 600
-//                animator.interpolator = AccelerateDecelerateInterpolator()
-//
-//                animator.addUpdateListener { animation ->
-//                    val value = animation.animatedValue as Float
-//
-//                    val x = itemLocation[0] + (cartLocation[0] - itemLocation[0]) * value
-//                    val y = itemLocation[1] + (cartLocation[1] - itemLocation[1]) * value
-//                    viewCopy.translationX = x - itemLocation[0]
-//                    viewCopy.translationY = y - itemLocation[1]
-//
-//                    // Añadir propiedad de escala para reducir el tamaño del elemento a medida que se mueve
-//                    val scale = 1 - (1 - value) * 0.5f // Ajusta 0.5f para cambiar la cantidad de reducción
-//                    viewCopy.scaleX = scale
-//                    viewCopy.scaleY = scale
-//                }
-//                animator.doOnEnd {
-//                    viewCopy.visibility=View.GONE
-//                }
-//
-//                animator.start()
-//
-//            }
-
 
 
             lista = productos as ArrayList<ModeloProducto>?
@@ -140,6 +100,20 @@ class HomeFragment : Fragment() {
 
             mensajeEliminar()
         }
+
+        binding?.imageViewMicrofono?.setOnClickListener {
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                startActivityForResult(intent, REQUEST_CODE_VOICE_SEARCH)
+            } else {
+                // Si el permiso no ha sido concedido, solicitarlo al usuario
+                requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 1)
+            }
+
+        }
+
 
         binding?.recyclerViewProductosVenta?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -158,7 +132,7 @@ class HomeFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    filtro(newText)
+                    filtro(newText, null)
                 }
                 return true
             }
@@ -166,6 +140,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun mensajeEliminar() {
+
         HideKeyboard(requireContext()).hideKeyboard(vista)
 
         // Crear el diálogo de confirmación
@@ -188,16 +163,40 @@ class HomeFragment : Fragment() {
         Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-    private fun filtro(valor: String) {
+        if (requestCode == REQUEST_CODE_VOICE_SEARCH && resultCode == Activity.RESULT_OK) {
+            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val query = results?.get(0)
+            if (query != null) {
+                val numerosSeparados= productViewModel.separarNumerosDelString(query.trim())
+
+                if (numerosSeparados.second!=null){
+
+                    cantidadPorVoz= numerosSeparados.second!!.toInt()
+                }
+                binding?.searchViewProductosVenta?.setQuery(numerosSeparados.first.trim(), true)
+            }
+
+        }
+    }
+
+    var cantidadPorVoz=0
+    private fun filtro(textoParaFiltrar: String, agregarAlCarrito: Int?) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
-            objeto.nombre.lowercase(Locale.getDefault()).contains(valor.lowercase(Locale.getDefault()))
+            objeto.nombre.lowercase(Locale.getDefault()).contains(textoParaFiltrar.lowercase(Locale.getDefault()))
         }
-        val adaptador = filtro?.let { ProductAdapter(it,productViewModel) }
+        val adaptador = filtro?.let { VentaProductosAdapter(it,productViewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
-        adaptador!!.setOnLongClickItem { item, position ->
+        if (filtro?.size==1 && cantidadPorVoz!=0){
+            productViewModel.actualizarCantidadProducto(filtro[0], cantidadPorVoz)
+            cantidadPorVoz=0
+        }
+
+             adaptador!!.setOnLongClickItem { item, position ->
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)
@@ -206,6 +205,8 @@ class HomeFragment : Fragment() {
             Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
         }
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

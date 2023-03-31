@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
         app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="6dp"
-        app:cardElevation="4dp"
+        app:cardCornerRadius="8dp"
         app:cardUseCompatPadding="true"
         app:layout_constrainedHeight="true"
         app:layout_constraintTop_toTopOf="parent"
@@ -37,8 +36,10 @@
                     android:id="@+id/imageView_producto"
                     android:layout_width="1800dp"
                     android:layout_height="150dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
                     android:contentDescription="@string/foto"
-                    android:layout_margin="10dp"
                     android:scaleType="fitXY"
                     app:srcCompat="@drawable/ic_menu_camera" />
 
@@ -47,20 +48,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/imageButton_restarCantidad"
-                        android:layout_width="45dp"
-                        android:layout_height="35dp"
-                        android:background="@drawable/barrainferior"
-                        android:contentDescription="@string/restar_cantidad"
-                        app:srcCompat="@drawable/baseline_skip_previous_24"
-                        tools:ignore="TouchTargetSizeCheck"
-                        android:layout_weight="0"/>
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"/>
 
                     <EditText
                         android:id="@+id/editText_seleccionProducto"
@@ -70,13 +57,26 @@
                         android:ems="10"
                         android:gravity="center"
                         android:hint="@string/_0"
-
-                        android:importantForAutofill="no"
                         android:inputType="number"
                         android:textColor="@color/white"
                         android:textSize="25sp"
                         android:textStyle="bold"
                         android:layout_gravity="right"
+                        android:autoSizeTextType="uniform"
+                        android:layout_weight="0"/>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"/>
+                    <ImageButton
+                        android:id="@+id/imageButton_restarCantidad"
+                        android:layout_width="45dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/barrainferior"
+                        android:contentDescription="@string/restar_cantidad"
+                        app:srcCompat="@drawable/baseline_skip_previous_24"
+                        tools:ignore="TouchTargetSizeCheck"
                         android:layout_weight="0"/>
 
                 </LinearLayout>
@@ -96,8 +96,8 @@
                     android:autoSizeTextType="uniform"
                     android:text="@string/precio"
                     android:textAppearance="@style/ColorFuentes"
-                    android:textSize="25sp"
-                    android:layout_marginLeft="7dp"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
                     android:textStyle="bold"
                     android:layout_weight="1" />
 
@@ -120,12 +120,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:autoSizeTextType="uniform"
-
-                android:layout_marginLeft="7dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="3dp"
                 android:text="@string/nombre"
                 android:textAppearance="@style/ColorFuentes"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
