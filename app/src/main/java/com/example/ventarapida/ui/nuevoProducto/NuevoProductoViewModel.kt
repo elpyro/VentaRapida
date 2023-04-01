@@ -1,11 +1,15 @@
 package com.example.ventarapida.ui.nuevoProducto
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.widget.ImageView
+import androidx.core.app.JobIntentService.enqueueWork
 import androidx.lifecycle.ViewModel
+import com.example.ventarapida.MainActivity
+import com.example.ventarapida.ui.process.UploadService
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.FirebaseDatabase
@@ -17,9 +21,6 @@ import java.io.FileOutputStream
 
 class NuevoProductoViewModel : ViewModel() {
 
-
-
-
     fun guardarProducto(updates: HashMap<String, Any>):  Task<Void>  {
         val id = updates["id"] as String?
         val database2 = FirebaseDatabase.getInstance()
@@ -27,42 +28,36 @@ class NuevoProductoViewModel : ViewModel() {
         return registroRef.updateChildren(updates)
     }
 
+    // Crear una función para guardar los datos del servicio pendiente en una preferencia
 
-    fun subirImagenFirebase(context: Context,imageViewFoto: ImageView?, idProducto: String): Task<Void> {
+    companion object {
 
-        // Obtener la imagen del ImageView como Bitmap
-        val bitmap = (imageViewFoto?.drawable as BitmapDrawable).bitmap
 
-        // Crear una referencia a la ubicación donde se subirá la imagen en Firebase Storage
-        val storageRef = Firebase.storage.reference.child(idProducto + ".jpg")
+        fun subirImagenFirebase(context: Context, imageViewFoto: ImageView?, idProducto: String): Task<Void> {
 
-        // Obtener la URI del archivo temporal
-        val fileUri = guardarImagenEnDispositivo(context, bitmap)
+            // Obtener la imagen del ImageView como Bitmap
+            val bitmap = (imageViewFoto?.drawable as BitmapDrawable).bitmap
 
-        // Subir la imagen a Firebase Storage
-        if (fileUri != null) {
-            val uploadTask = storageRef.putFile(fileUri)
-            var task = TaskCompletionSource<Void>().task
-            uploadTask.addOnSuccessListener {
-                // Obtener la URL de descarga de la imagen subida
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    // Aquí puedes usar la URL para mostrar la imagen en tu app, o para guardarla en tu base de datos
-                    val url = uri.toString()
+            // Crear una referencia a la ubicación donde se subirá la imagen en Firebase Storage
+            val storageRef = Firebase.storage.reference.child(idProducto + ".jpg")
 
-                    val updates = hashMapOf<String, Any>(
-                        "url" to url.trim(),
-                    )
+            // Obtener la URI del archivo temporal
+            val fileUri = guardarImagenEnDispositivo(context, bitmap)
 
-                    val database = FirebaseDatabase.getInstance()
-                    val registroRef = database.getReference("Productos").child(idProducto)
+            // Crear el Intent para iniciar el servicio
+            val intent = Intent(context, UploadService::class.java)
+            intent.putExtra("fileUri", fileUri)
+            intent.putExtra("storageRef", storageRef.toString())
+            intent.putExtra("idProducto", idProducto)
 
-                    task = registroRef.updateChildren(updates)
-                }
-            }
-            return task
+
+           // Iniciar el servicio en segundo plano utilizando JobIntentService
+            enqueueWork(context, UploadService::class.java, MainActivity.JOB_ID, intent)
+
+            return TaskCompletionSource<Void>().task // Devuelve una tarea vacía
         }
-        return TaskCompletionSource<Void>().task // Devuelve una tarea vacía si no se pudo subir la imagen
     }
+}
         private fun guardarImagenEnDispositivo(context: Context, bitmap: Bitmap): Uri? {
             // Crear un archivo temporal en el almacenamiento interno
             val file = File.createTempFile(
@@ -87,4 +82,3 @@ class NuevoProductoViewModel : ViewModel() {
         }
 
 
-}

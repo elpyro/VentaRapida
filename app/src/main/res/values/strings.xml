@@ -30,4 +30,5 @@
     <string name="NuevoProducto">Nuevo Producto</string>
     <string name="total_0">Total: 0</string>
     <string name="microfono">Microfono</string>
+    <string name="disponbleEnlaNuebe">Los datos estaran en la nube cuando te conectes a internet</string>
 </resources>

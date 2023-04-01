@@ -17,6 +17,7 @@ import com.example.ventarapida.ui.process.TomarFotoYGaleria
 import com.example.ventarapida.ui.process.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE
 import com.example.ventarapida.ui.process.TomarFotoYGaleria.Companion.GALERIA_REQUEST_CODE
 import com.example.ventarapida.ui.process.TomarFotoYGaleria.Companion.imagenUri
+import com.example.ventarapida.ui.process.isInternetAvailable
 import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -137,9 +138,16 @@ class NuevoProducto : Fragment() {
                 return
             }
 
-            val idProducto = UUID.randomUUID().toString()
+        val idProducto = UUID.randomUUID().toString()
+
+        val verificarConexion= isInternetAvailable()
+
+        if (!verificarConexion.verificarConexion(requireContext())){
+            Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
+        }
+
         if (binding?.imageViewFoto!!.drawable is BitmapDrawable) {
-            viewModel.subirImagenFirebase(requireContext(), binding?.imageViewFoto!!, idProducto)
+            NuevoProductoViewModel.subirImagenFirebase(requireContext(), binding?.imageViewFoto!!, idProducto)
                 .addOnFailureListener {
                     Toast.makeText(requireContext(),"Error al obtener la URL de descarga de la imagen subida.",Toast.LENGTH_LONG).show()
                 }

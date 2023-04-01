@@ -18,13 +18,12 @@ import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.example.ventarapida.ui.data.ModeloProducto
 import com.example.ventarapida.ui.process.HideKeyboard
 import com.example.ventarapida.ui.process.TomarFotoYGaleria
+import com.example.ventarapida.ui.process.isInternetAvailable
 import com.google.android.material.snackbar.Snackbar
-import com.google.ar.core.Config
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import tyrantgit.explosionfield.ExplosionField
 import java.io.File
 
 @Suppress("DEPRECATION")
@@ -215,7 +214,6 @@ class DetalleProducto : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private lateinit var explosionField: ExplosionField
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -280,8 +278,14 @@ class DetalleProducto : Fragment() {
             "p_diamante" to this.binding!!.editTextPVenta.text.toString().trim()
 
         )
-        viewModel.guardarProducto(updates)
+         val verificarConexion= isInternetAvailable()
+
+         if (!verificarConexion.verificarConexion(requireContext())){
+             Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
+         }
+          viewModel.guardarProducto(updates)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

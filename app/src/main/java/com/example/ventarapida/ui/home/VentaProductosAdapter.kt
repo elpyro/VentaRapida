@@ -1,21 +1,18 @@
-package com.example.ventarapida.ui.adapter
+package com.example.ventarapida.ui.home
 
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.data.ModeloProducto
-import com.example.ventarapida.ui.home.HomeViewModel
 import com.squareup.picasso.Picasso
 import java.text.NumberFormat
 import java.util.*
@@ -80,7 +77,7 @@ class VentaProductosAdapter(
     }
 
     // ViewHolder para la vista de cada elemento de la lista de productos
-    inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val producto: TextView = itemView.findViewById(R.id.textView_nombre)
         private val precio: TextView = itemView.findViewById(R.id.textView_precio)
          val seleccion: EditText = itemView.findViewById(R.id.editText_seleccionProducto)
@@ -96,7 +93,7 @@ class VentaProductosAdapter(
             val formatoMoneda = NumberFormat.getCurrencyInstance(Locale("es", "CO"))
             val valorFormateado = formatoMoneda.format(product.p_diamante.toDouble())
             precio.text = valorFormateado
-            existencia.text = "X${product.cantidad}"
+
 
             // Limpiar la imagen anterior
             Picasso.get().cancelRequest(imagenProducto)
@@ -137,22 +134,52 @@ class VentaProductosAdapter(
                 cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
             }
 
-            seleccion.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (!s.isNullOrBlank()) {
-                        val cantidadSeleccionada = s.toString().toIntOrNull() ?: 0
-                        if (cantidadSeleccionada > 0 && isUserEditing) {
-                            viewModel.actualizarCantidadProducto(products[position], cantidadSeleccionada)
+            seleccion.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) {
+                    // EditText tiene el foco
+                    seleccion.addTextChangedListener(object : TextWatcher {
+                        // Este método se llama antes de que el texto cambie
+                        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
                         }
-                    } else if (isUserEditing) {
-                        viewModel.actualizarCantidadProducto(products[position], 0)
-                    }
-                }
 
-                override fun afterTextChanged(s: Editable?) {}
-            })
+                        // Este método se llama cuando el texto cambia
+                        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                            // Si el texto no está vacío
+                            if (!s.isNullOrBlank()) {
+                                // Obtener la cantidad seleccionada como un número entero, o 0 si no se puede analizar como número
+                                val cantidadSeleccionada = s.toString().toIntOrNull() ?: 0
+                                // Si la cantidad seleccionada es mayor que cero y el usuario está editando
+                                if (cantidadSeleccionada > 0 && isUserEditing) {
+                                    // Hacer visible el botón restar
+                                    botonRestar.visibility = View.VISIBLE
+                                    // Actualizar la cantidad del producto en el ViewModel
+                                    viewModel.actualizarCantidadProducto(products[position], cantidadSeleccionada)
+                                } else {
+                                    // De lo contrario, hacer invisible el botón restar
+                                    botonRestar.visibility = View.GONE
+                                }
+                                // Si el usuario está editando
+                            } else if (isUserEditing) {
+                                // Actualizar la cantidad del producto en el ViewModel a cero
+                                viewModel.actualizarCantidadProducto(products[position], 0)
+                                botonRestar.visibility = View.GONE
+                            }
+                        }
+
+                        // Este método se llama después de que el texto cambia
+                        override fun afterTextChanged(s: Editable?) {
+
+                        }
+                    })
+                } else {
+                    // EditText ha perdido el foco
+                    // Agregar el código que deseas ejecutar cuando el EditText pierde el foco
+                }
+            }
+
+
 
         }
 

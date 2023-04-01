@@ -53,12 +53,10 @@ class HomeViewModel : ViewModel() {
         }
         val formatoMoneda = NumberFormat.getCurrencyInstance(Locale("es", "CO"))
         val valorFormateado = formatoMoneda.format(total)
-        totalCarritoLiveData.value = "$valorFormateado"
+        totalCarritoLiveData.value = valorFormateado
 
         totalSeleccionLiveData.value=productosSeleccionados.size.toString()
     }
-
-
 
     fun crearTono(context: Context) {
         val mediaPlayer = MediaPlayer.create(context, R.raw.coin)
@@ -75,7 +73,7 @@ class HomeViewModel : ViewModel() {
     }
 
         fun eliminarCarrito(){
-             productosSeleccionados.clear()
+            productosSeleccionados.clear()
             calcularTotal()
         }
 

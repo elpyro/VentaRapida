@@ -3,10 +3,8 @@ package com.example.ventarapida.ui.home
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.text.Spannable
@@ -22,7 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentHomeBinding
-import com.example.ventarapida.ui.adapter.VentaProductosAdapter
 import com.example.ventarapida.ui.data.ModeloProducto
 import com.example.ventarapida.ui.process.HideKeyboard
 import java.util.*
@@ -94,7 +91,9 @@ class HomeFragment : Fragment() {
             binding!!.recyclerViewProductosVenta.adapter = adapter
         }
 
-
+        binding?.searchViewProductosVenta?.setOnClickListener {
+            binding?.searchViewProductosVenta?.isIconified=false
+        }
 
         binding?.imageViewEliminarCarrito?.setOnClickListener {
 
@@ -132,7 +131,7 @@ class HomeFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    filtro(newText, null)
+                    filtro(newText)
                 }
                 return true
             }
@@ -149,7 +148,7 @@ class HomeFragment : Fragment() {
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
         builder.setPositiveButton("Eliminar") { dialog, which ->
             productViewModel.eliminarCarrito()
-            adapter?.notifyDataSetChanged()
+            binding?.recyclerViewProductosVenta?.adapter=adapter
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
@@ -183,7 +182,7 @@ class HomeFragment : Fragment() {
     }
 
     var cantidadPorVoz=0
-    private fun filtro(textoParaFiltrar: String, agregarAlCarrito: Int?) {
+    private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
             objeto.nombre.lowercase(Locale.getDefault()).contains(textoParaFiltrar.lowercase(Locale.getDefault()))

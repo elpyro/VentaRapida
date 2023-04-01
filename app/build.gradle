@@ -74,6 +74,6 @@ dependencies {
 
     implementation 'androidx.core:core:1.6.0'
 
-    implementation 'tyrantgit:explosionfield:1.0.1'
+
 
 }

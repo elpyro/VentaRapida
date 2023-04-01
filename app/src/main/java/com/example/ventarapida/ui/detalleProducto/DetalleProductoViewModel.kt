@@ -104,6 +104,7 @@ class DetalleProductoViewModel : ViewModel() {
             .addOnFailureListener {
                 mensajeToast.value="Error en actualizar datos"
             }
+
     }
 
     fun eliminarProducto(id:String ): Task<Void> {
@@ -132,7 +133,13 @@ class DetalleProductoViewModel : ViewModel() {
         // Obtener la URI del archivo temporal
         val fileUri = guardarImagenEnDispositivo(context ,bitmap)
 
-// Subir la imagen a Firebase Storage
+        // Guardar la fileUri en Firebase Realtime Database aunque no haya internet
+        val database = FirebaseDatabase.getInstance()
+        val fileUriRef = database.getReference("fileUri").child(idProducto!!)
+        fileUriRef.keepSynced(true) // asegurarse de que la referencia se mantenga sincronizada en la persistencia
+        fileUriRef.setValue(fileUri?.toString())
+
+        // Subir la imagen a Firebase Storage si hay internet
         if (fileUri != null) {
             val uploadTask = storageRef.putFile(fileUri)
             uploadTask.addOnSuccessListener {
@@ -145,7 +152,6 @@ class DetalleProductoViewModel : ViewModel() {
                         "url" to url.trim(),
                     )
 
-                    val database = FirebaseDatabase.getInstance()
                     val registroRef = database.getReference("Productos").child(idProducto!!)
                     registroRef.updateChildren(updates)
 

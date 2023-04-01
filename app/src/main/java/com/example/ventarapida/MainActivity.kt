@@ -1,5 +1,8 @@
 package com.example.ventarapida
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import com.google.android.material.navigation.NavigationView
@@ -10,11 +13,15 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.JobIntentService
+
 import androidx.fragment.app.Fragment
 import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
 import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
-
+import com.example.ventarapida.ui.nuevoProducto.NuevoProductoViewModel
+import com.example.ventarapida.ui.process.UploadService
+import androidx.core.app.JobIntentService.enqueueWork
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -28,6 +35,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        obtenerServicioPendiente(this)
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -37,6 +46,33 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+    }
+
+    companion object {
+        const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
+    }
+    // Crear una función para obtener los datos del servicio pendiente de la preferencia
+    fun obtenerServicioPendiente(context: Context) {
+        val prefs = context.getSharedPreferences("servicio_pendiente", Context.MODE_PRIVATE)
+
+        val fileUriString = prefs.getString("fileUri", null)
+        val storageRefString = prefs.getString("storageRef", null)
+        val idProducto = prefs.getString("idProducto", null)
+        val fileUri = if (fileUriString != null) Uri.parse(fileUriString) else null
+        if (fileUri!=null){
+
+            val intent = Intent(context, UploadService::class.java)
+            intent.putExtra("fileUri", fileUri)
+            intent.putExtra("storageRef", storageRefString.toString())
+            intent.putExtra("idProducto", idProducto)
+
+
+            // Iniciar el servicio en segundo plano utilizando JobIntentService
+            enqueueWork(context, UploadService::class.java, MainActivity.JOB_ID, intent)
+
+
+        }
 
     }
 
