@@ -22,6 +22,9 @@ import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
 import com.example.ventarapida.ui.nuevoProducto.NuevoProductoViewModel
 import com.example.ventarapida.ui.process.UploadService
 import androidx.core.app.JobIntentService.enqueueWork
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -54,32 +57,64 @@ class MainActivity : AppCompatActivity() {
     }
     // Crear una función para obtener los datos del servicio pendiente de la preferencia
     fun obtenerServicioPendiente(context: Context) {
-        val prefs = context.getSharedPreferences("servicio_pendiente", Context.MODE_PRIVATE)
+        val serviciosPendientes = getServiciosPendientes(applicationContext)
 
-        val fileUriString = prefs.getString("fileUri", null)
-        val storageRefString = prefs.getString("storageRef", null)
-        val idProducto = prefs.getString("idProducto", null)
-        val fileUri = if (fileUriString != null) Uri.parse(fileUriString) else null
-        if (fileUri!=null){
+        serviciosPendientes.forEach { servicio ->
+            val fileUri = servicio.first
+            val storageRefString = servicio.second
+            val idProducto = servicio.third
 
-            val intent = Intent(context, UploadService::class.java)
-            intent.putExtra("fileUri", fileUri)
-            intent.putExtra("storageRef", storageRefString.toString())
-            intent.putExtra("idProducto", idProducto)
+//            borrarServicioPendiente(applicationContext,idProducto.toString())
+//
+//
+            var servicio=UploadService()
+            servicio.guardarServicioPendiente(applicationContext,fileUri,storageRefString,idProducto)
 
+//                val intent = Intent(context, UploadService::class.java)
+//                intent.putExtra("fileUri", fileUri)
+//                intent.putExtra("storageRef", storageRefString.toString())
+//                intent.putExtra("idProducto", idProducto)
 
-            // Iniciar el servicio en segundo plano utilizando JobIntentService
-            enqueueWork(context, UploadService::class.java, MainActivity.JOB_ID, intent)
+//
+//                // Iniciar el servicio en segundo plano utilizando JobIntentService
+//                enqueueWork(context, UploadService::class.java, MainActivity.JOB_ID, intent)
+
 
 
         }
 
+
+
+    }
+
+    fun borrarServicioPendiente(context: Context, id: String) {
+        val serviciosPendientes = getServiciosPendientes(context).toMutableList()
+        val servicioAEliminar = serviciosPendientes.firstOrNull { it.third == id }
+        if (servicioAEliminar != null) {
+            serviciosPendientes.remove(servicioAEliminar)
+            val jsonString = Gson().toJson(serviciosPendientes)
+            val prefs = context.getSharedPreferences("servicio_pendiente", Context.MODE_PRIVATE)
+            val editor = prefs.edit()
+            editor.putString("imagenes_pendientes", jsonString)
+            editor.commit()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
+    }
+
+    fun getServiciosPendientes(context: Context): List<Triple<String?, String?, String?>> {
+        val prefs = context.getSharedPreferences("servicio_pendiente", Context.MODE_PRIVATE)
+        val jsonString = prefs.getString("imagenes_pendientes", null)
+        return if (jsonString != null) {
+            val typeToken = object : TypeToken<List<Triple<String?, String?, String?>>>() {}.type
+            Gson().fromJson(jsonString, typeToken)
+        } else {
+            emptyList()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
