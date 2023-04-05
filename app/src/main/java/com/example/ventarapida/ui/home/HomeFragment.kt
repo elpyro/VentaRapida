@@ -12,12 +12,14 @@ import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.view.*
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentHomeBinding
 import com.example.ventarapida.ui.data.ModeloProducto
@@ -48,6 +50,7 @@ class HomeFragment : Fragment() {
         inflater.inflate(R.menu.menu_venta, menu)
         menuItem  = menu.findItem(R.id.action_total)
 
+
         productViewModel.totalCarritoLiveData.observe(viewLifecycleOwner){it->
             val title = SpannableString("Total: $it")
             title.setSpan(
@@ -64,6 +67,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         vista= view
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
@@ -71,6 +75,8 @@ class HomeFragment : Fragment() {
 
         productViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         productViewModel.context = requireContext()
+
+        productViewModel.calcularTotal()
 
         productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()

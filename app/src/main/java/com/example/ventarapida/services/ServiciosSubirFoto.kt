@@ -14,7 +14,7 @@ import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class UploadService : JobIntentService() {
+class ServiciosSubirFoto : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
         // Obtener los datos del Intent
@@ -23,7 +23,6 @@ class UploadService : JobIntentService() {
         val storageRefString = intent.getStringExtra("storageRef")
         val idProducto = intent.getStringExtra("idProducto")
 
-//        borrarServicioPendiente(applicationContext, idProducto.toString())
         agregarServicioPendiente(applicationContext,fileUriString,storageRefString,idProducto)
 
         val serviciosPendientes = getServiciosPendientes(applicationContext)
@@ -70,7 +69,7 @@ class UploadService : JobIntentService() {
 
     // Obtener la lista de imágenes pendientes de las preferencias compartidas
     fun getServiciosPendientes(context: Context): List<Triple<String?, String?, String?>> {
-        val prefs = context.getSharedPreferences("servicio_pendiente", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences("PreferenciaSubirFotos", Context.MODE_PRIVATE)
         val jsonString = prefs.getString("imagenes_pendientes", null)
         return if (jsonString != null) {
             val typeToken = object : TypeToken<List<Triple<String?, String?, String?>>>() {}.type
@@ -86,7 +85,7 @@ class UploadService : JobIntentService() {
         val serviciosPendientes = getServiciosPendientes(context).toMutableList()
         serviciosPendientes.add(Triple(fileUri, storageRefString, idProducto))
         val jsonString = Gson().toJson(serviciosPendientes)
-        val prefs = context.getSharedPreferences("servicio_pendiente", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences("PreferenciaSubirFotos", Context.MODE_PRIVATE)
         val editor = prefs.edit()
         editor.putString("imagenes_pendientes", jsonString)
         editor.commit()
@@ -101,7 +100,7 @@ class UploadService : JobIntentService() {
         if (servicioAEliminar != null) {
             serviciosPendientes.remove(servicioAEliminar)
             val jsonString = Gson().toJson(serviciosPendientes)
-            val prefs = context.getSharedPreferences("servicio_pendiente", Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences("PreferenciaSubirFotos", Context.MODE_PRIVATE)
             val editor = prefs.edit()
             editor.putString("imagenes_pendientes", jsonString)
             editor.commit()

@@ -54,6 +54,9 @@ class NuevoProducto : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(NuevoProductoViewModel::class.java)
 
+        viewModel.mensajeToast.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -140,20 +143,15 @@ class NuevoProducto : Fragment() {
 
         val idProducto = UUID.randomUUID().toString()
 
-        val verificarConexion= isInternetAvailable()
-
-        if (!verificarConexion.verificarConexion(requireContext())){
-            Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
-        }
-
+        //subir imagen
         if (binding?.imageViewFoto!!.drawable is BitmapDrawable) {
             NuevoProductoViewModel.subirImagenFirebase(requireContext(), binding?.imageViewFoto!!, idProducto)
                 .addOnFailureListener {
                     Toast.makeText(requireContext(),"Error al obtener la URL de descarga de la imagen subida.",Toast.LENGTH_LONG).show()
                 }
             }
+        //subir datos
             val updates = hashMapOf<String, Any>(
-
                 "id" to idProducto,
                 "nombre" to binding!!.editTextProducto.text.toString().trim(),
                 "cantidad" to binding!!.editTextCantidad.text.toString().trim(),
@@ -162,24 +160,21 @@ class NuevoProducto : Fragment() {
 
             )
             viewModel.guardarProducto(updates)
-                .addOnSuccessListener {
-                   Toast.makeText(context,"Producto Guardado", Toast.LENGTH_LONG).show()
 
-                    binding?.editTextProducto?.setText("")
-                    binding?.editTextCantidad?.setText("0")
-                    binding?.editTextPCompra?.setText("")
-                    binding?.editTextPCompra?.setText("")
-                    binding?.imageViewFoto?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_menu_camera))
-
+        //limpiando campos
+        binding?.editTextProducto?.setText("")
+        binding?.editTextCantidad?.setText("0")
+        binding?.editTextPCompra?.setText("")
+        binding?.editTextPVenta?.setText("")
+        binding?.imageViewFoto?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_menu_camera))
 
 
-                }
-                .addOnFailureListener {
-                    val snackbar= Snackbar.make(vista, "Error guadando el produto", Snackbar.LENGTH_LONG)
-                    snackbar.view.setBackgroundColor(resources.getColor(R.color.rojo))
-                    snackbar.setTextColor(resources.getColor(R.color.white))
-                    snackbar.show()
-                }
+
+        val verificarConexion= isInternetAvailable()
+
+        if (!verificarConexion.verificarConexion(requireContext())){
+            Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
+        }
         }
     override fun onDestroyView() {
         super.onDestroyView()

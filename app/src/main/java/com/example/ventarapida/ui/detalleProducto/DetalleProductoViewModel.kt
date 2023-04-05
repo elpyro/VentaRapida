@@ -1,14 +1,20 @@
 package com.example.ventarapida.ui.detalleProducto
 
 import android.content.Context
-import android.graphics.Bitmap
+import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.widget.ImageView
+import androidx.core.app.JobIntentService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.ventarapida.MainActivity
+
+
 import com.example.ventarapida.ui.data.ModeloProducto
+import com.example.ventarapida.ui.process.GuardarImagenEnDispositivo
+import com.example.ventarapida.ui.process.ServiciosSubirFoto
+
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -16,9 +22,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import kotlin.collections.HashMap
 
 
@@ -128,64 +131,30 @@ class DetalleProductoViewModel : ViewModel() {
         val bitmap = (imageViewFoto?.drawable as BitmapDrawable).bitmap
 
         // Crear una referencia a la ubicación donde se subirá la imagen en Firebase Storage
-        val storageRef = Firebase.storage.reference.child(idProducto+".jpg")
+        val storageRef = Firebase.storage.reference.child(idProducto + ".jpg")
 
-        // Obtener la URI del archivo temporal
-        val fileUri = guardarImagenEnDispositivo(context ,bitmap)
 
-        // Guardar la fileUri en Firebase Realtime Database aunque no haya internet
-        val database = FirebaseDatabase.getInstance()
-        val fileUriRef = database.getReference("fileUri").child(idProducto!!)
-        fileUriRef.keepSynced(true) // asegurarse de que la referencia se mantenga sincronizada en la persistencia
-        fileUriRef.setValue(fileUri?.toString())
+        val guardarImagenEnDispositivo= GuardarImagenEnDispositivo()
+        val fileUri = guardarImagenEnDispositivo.guardarImagenEnDispositivo(context ,bitmap)
 
-        // Subir la imagen a Firebase Storage si hay internet
-        if (fileUri != null) {
-            val uploadTask = storageRef.putFile(fileUri)
-            uploadTask.addOnSuccessListener {
-                // Obtener la URL de descarga de la imagen subida
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    // Aquí puedes usar la URL para mostrar la imagen en tu app, o para guardarla en tu base de datos
-                    val url = uri.toString()
+        // Crear el Intent para iniciar el servicio
+        val intent = Intent(context, ServiciosSubirFoto::class.java)
+        intent.putExtra("fileUri", fileUri)
+        intent.putExtra("storageRef", storageRef.toString())
+        intent.putExtra("idProducto", idProducto)
 
-                    val updates = hashMapOf<String, Any>(
-                        "url" to url.trim(),
-                    )
 
-                    val registroRef = database.getReference("Productos").child(idProducto!!)
-                    registroRef.updateChildren(updates)
-
-                }.addOnFailureListener {
-                    mensajeToast.value = "Error al obtener la URL de descarga de la imagen subida."
-                }
-            }.addOnFailureListener {
-                mensajeToast.value="Error al subir la imagen."
-            }
-        }
-    }
-
-    private fun guardarImagenEnDispositivo(context: Context,bitmap: Bitmap): Uri? {
-        // Crear un archivo temporal en el almacenamiento interno
-        val file = File.createTempFile(
-            "tempImagen",
-            ".jpg",
-            context.cacheDir
+        // Iniciar el servicio en segundo plano utilizando JobIntentService
+        JobIntentService.enqueueWork(
+            context,
+            ServiciosSubirFoto::class.java,
+            MainActivity.JOB_ID,
+            intent
         )
 
-        // Convertir el bitmap a un archivo jpeg
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, stream)
-        val byteArray = stream.toByteArray()
-
-        // Escribir el archivo jpeg en el archivo temporal
-        val fileOutputStream = FileOutputStream(file)
-        fileOutputStream.write(byteArray)
-        fileOutputStream.flush()
-        fileOutputStream.close()
-
-        // Obtener la URI del archivo temporal
-        return Uri.fromFile(file)
     }
+
+
 
 
 }

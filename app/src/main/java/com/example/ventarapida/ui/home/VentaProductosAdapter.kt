@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.data.ModeloProducto
 import com.squareup.picasso.Picasso
@@ -108,8 +109,8 @@ class VentaProductosAdapter(
                 imagenProducto.setImageResource(R.drawable.ic_menu_camera)
             }
 
-            if (viewModel.productosSeleccionados.isNotEmpty() && viewModel.productosSeleccionados.containsKey(products[position])) {
-                val cantidad = viewModel.productosSeleccionados.getOrDefault(products[position], 0)
+            if (MainActivity.productosSeleccionados.isNotEmpty() && MainActivity.productosSeleccionados.containsKey(products[position])) {
+                val cantidad = MainActivity.productosSeleccionados.getOrDefault(products[position], 0)
 
                 if (cantidad > 0) {
                     isUserEditing = false
@@ -173,9 +174,6 @@ class VentaProductosAdapter(
 
                         }
                     })
-                } else {
-                    // EditText ha perdido el foco
-                    // Agregar el código que deseas ejecutar cuando el EditText pierde el foco
                 }
             }
 

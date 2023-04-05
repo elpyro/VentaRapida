@@ -2,18 +2,21 @@ package com.example.ventarapida.ui.home
 
 import android.content.Context
 import android.media.MediaPlayer
-import android.media.RingtoneManager
+import android.preference.PreferenceManager
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.ventarapida.MainActivity
+import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.data.ModeloProducto
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
+import org.json.JSONObject
 import java.text.NumberFormat
 import java.util.*
 
@@ -22,7 +25,7 @@ class HomeViewModel : ViewModel() {
     lateinit var context: Context // propiedad para almacenar el contexto
     val productosLiveData = MutableLiveData<List<ModeloProducto>>()
 
-    val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+   
 
     val totalSeleccionLiveData=MutableLiveData<String>()
 

@@ -1,5 +1,6 @@
 package com.example.ve
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -251,6 +252,7 @@ class DetalleProducto : Fragment() {
         builder.show()
     }
 
+     @SuppressLint("SuspiciousIndentation")
      fun guardar() {
 
         HideKeyboard(requireContext()).hideKeyboard(vista!!)
@@ -278,12 +280,14 @@ class DetalleProducto : Fragment() {
             "p_diamante" to this.binding!!.editTextPVenta.text.toString().trim()
 
         )
+
+          viewModel.guardarProducto(updates)
+
          val verificarConexion= isInternetAvailable()
 
          if (!verificarConexion.verificarConexion(requireContext())){
              Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
          }
-          viewModel.guardarProducto(updates)
     }
 
 
