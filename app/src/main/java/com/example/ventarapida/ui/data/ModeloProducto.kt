@@ -4,19 +4,19 @@ import java.io.Serializable
 
 data class ModeloProducto(
     val cantidad: String = "",
-    val codigo: String = "",
+    var codigo: String = "",
     val descripcion: String = "",
     val fecha_ultima_modificacion: String = "",
     val id: String = "",
-    val nombre: String = "",
+    var nombre: String = "",
     val p_compra: String = "",
     val p_diamante: String = "",
     val url: String = "",
     val descuento: String = "",
     val precio_descuento: String = "",
-    var lista_seleccion: Int=0
 
-): Serializable
+
+    ): Serializable
 
 //{
 //

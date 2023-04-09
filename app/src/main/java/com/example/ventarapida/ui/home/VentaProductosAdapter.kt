@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,7 +110,9 @@ class VentaProductosAdapter(
                 imagenProducto.setImageResource(R.drawable.ic_menu_camera)
             }
 
-            if (MainActivity.productosSeleccionados.isNotEmpty() && MainActivity.productosSeleccionados.containsKey(products[position])) {
+            Log.d("MiActividad", "$product registro")
+
+            if (MainActivity.productosSeleccionados.isNotEmpty() &&   MainActivity.productosSeleccionados.any { it.key.id == products[position].id }) {
                 val cantidad = MainActivity.productosSeleccionados.getOrDefault(products[position], 0)
 
                 if (cantidad > 0) {

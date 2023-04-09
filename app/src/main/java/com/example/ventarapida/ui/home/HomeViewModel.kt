@@ -2,12 +2,10 @@ package com.example.ventarapida.ui.home
 
 import android.content.Context
 import android.media.MediaPlayer
-import android.preference.PreferenceManager
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.data.ModeloProducto
@@ -16,7 +14,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
-import org.json.JSONObject
 import java.text.NumberFormat
 import java.util.*
 
@@ -47,6 +44,7 @@ class HomeViewModel : ViewModel() {
         }
         crearTono(context)
         calcularTotal()
+
     }
 
     fun calcularTotal(){
@@ -59,6 +57,31 @@ class HomeViewModel : ViewModel() {
         totalCarritoLiveData.value = valorFormateado
 
         totalSeleccionLiveData.value=productosSeleccionados.size.toString()
+
+        guardarPreferenciaListaSeleccionada(context, productosSeleccionados)
+    }
+
+
+
+    fun guardarPreferenciaListaSeleccionada(context: Context, map: MutableMap<ModeloProducto, Int>) {
+
+        limpiarPreferenciaListaSeleccionada(context)
+
+        val sharedPreferences = context.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(map)
+        editor.putString("seleccion_venta", json)
+        editor.apply()
+    }
+
+    fun limpiarPreferenciaListaSeleccionada(context: Context) {
+
+        val sharedPreferences = context.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove("seleccion_venta")
+        editor.apply()
+
     }
 
     fun crearTono(context: Context) {
@@ -81,6 +104,7 @@ class HomeViewModel : ViewModel() {
         }
 
     fun getProductos(): LiveData<List<ModeloProducto>> {
+
         val firebaseDatabase = FirebaseDatabase.getInstance()
         val productReference = firebaseDatabase.getReference("Productos")
 

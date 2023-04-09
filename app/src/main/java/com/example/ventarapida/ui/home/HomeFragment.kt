@@ -67,7 +67,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         vista= view
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
@@ -175,10 +174,11 @@ class HomeFragment : Fragment() {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val query = results?.get(0)
             if (query != null) {
+                //Separamos los ultimos numeros de el string obtenido por voz
+                // para saber si hay un numero y agregar el numero a la seleccion del producto
                 val numerosSeparados= productViewModel.separarNumerosDelString(query.trim())
 
                 if (numerosSeparados.second!=null){
-
                     cantidadPorVoz= numerosSeparados.second!!.toInt()
                 }
                 binding?.searchViewProductosVenta?.setQuery(numerosSeparados.first.trim(), true)
@@ -201,7 +201,7 @@ class HomeFragment : Fragment() {
             cantidadPorVoz=0
         }
 
-             adaptador!!.setOnLongClickItem { item, position ->
+            adaptador!!.setOnLongClickItem { item, position ->
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)
@@ -210,8 +210,6 @@ class HomeFragment : Fragment() {
             Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
         }
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
