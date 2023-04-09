@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.home
+package com.example.ventarapida.ui.ventaPaginaPrincipal
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
-import com.example.ventarapida.ui.data.ModeloProducto
+import com.example.ventarapida.ui.datos.ModeloProducto
 import com.squareup.picasso.Picasso
 import java.text.NumberFormat
 import java.util.*
@@ -22,7 +22,7 @@ import java.util.*
 
 class VentaProductosAdapter(
     private val products: List<ModeloProducto>,
-    private val viewModel: HomeViewModel
+    private val viewModel: VentaViewModel
 ) : RecyclerView.Adapter<VentaProductosAdapter.ProductViewHolder>() {
     private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
 
@@ -113,7 +113,7 @@ class VentaProductosAdapter(
             Log.d("MiActividad", "$product registro")
 
             if (MainActivity.productosSeleccionados.isNotEmpty() &&   MainActivity.productosSeleccionados.any { it.key.id == products[position].id }) {
-                val cantidad = MainActivity.productosSeleccionados.getOrDefault(products[position], 0)
+                val cantidad = MainActivity.productosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
 
                 if (cantidad > 0) {
                     isUserEditing = false

@@ -7,13 +7,10 @@ import android.widget.ImageView
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.example.ventarapida.MainActivity
 
-import com.example.ventarapida.ui.process.GuardarImagenEnDispositivo
-import com.example.ventarapida.ui.process.ServiciosSubirFoto
+import com.example.ventarapida.ui.procesos.GuardarImagenEnDispositivo
+import com.example.ventarapida.ui.procesos.ServiciosSubirFoto
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.FirebaseDatabase

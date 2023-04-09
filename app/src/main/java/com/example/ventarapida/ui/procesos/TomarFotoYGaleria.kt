@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.example.ventarapida.ui.process
+package com.example.ventarapida.ui.procesos
 
 import android.Manifest
 import android.app.AlertDialog

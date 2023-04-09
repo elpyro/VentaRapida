@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.data
+package com.example.ventarapida.ui.datos
 
 import java.io.Serializable
 

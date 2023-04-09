@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.ventarapida.ui.home.HomeFragment"
+        android:name="com.example.ventarapida.ui.ventaPaginaPrincipal.Venta"
         android:label="@string/venta"
         tools:layout="@layout/fragment_home" />
 

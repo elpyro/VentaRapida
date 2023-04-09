@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.process
+package com.example.ventarapida.ui.procesos
 
 import android.content.Context
 import android.graphics.Bitmap

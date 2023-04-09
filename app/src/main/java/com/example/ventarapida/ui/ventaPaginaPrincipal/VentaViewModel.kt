@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.home
+package com.example.ventarapida.ui.ventaPaginaPrincipal
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -8,16 +8,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.R
-import com.example.ventarapida.ui.data.ModeloProducto
+import com.example.ventarapida.ui.datos.ModeloProducto
+import com.example.ventarapida.ui.procesos.Preferencias
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
 import java.text.NumberFormat
 import java.util.*
 
-class HomeViewModel : ViewModel() {
+class VentaViewModel : ViewModel() {
 
     lateinit var context: Context // propiedad para almacenar el contexto
     val productosLiveData = MutableLiveData<List<ModeloProducto>>()
@@ -28,26 +28,42 @@ class HomeViewModel : ViewModel() {
 
     var totalCarritoLiveData=MutableLiveData<String>()
     fun restarProductoSeleccionado( producto: ModeloProducto){
-        if (productosSeleccionados.containsKey(producto)) {
-            productosSeleccionados[producto] = productosSeleccionados[producto]!! - 1
-            if (productosSeleccionados[producto]!! <= 0) {
-                productosSeleccionados.remove(producto)
+        val id_producto = producto.id
+        val productoEncontrado = productosSeleccionados.keys.find { it.id == id_producto }
+        if (productoEncontrado != null) {
+            val nuevaCantidad = productosSeleccionados[productoEncontrado]!! - 1
+            productosSeleccionados.remove(productoEncontrado)
+            if (nuevaCantidad > 0) {
+                productosSeleccionados[producto] = nuevaCantidad
             }
         }
         calcularTotal()
     }
     fun agregarProductoSeleccionado(producto: ModeloProducto) {
-        if (productosSeleccionados.containsKey(producto)) {
-            productosSeleccionados[producto] = productosSeleccionados[producto]!! + 1
-        } else {
+
+
+        val id_producto=producto.id
+        val productoEncontrado = productosSeleccionados.keys.find { it.id == id_producto }
+        if (productoEncontrado != null) {
+
+            val nuevaCantidad = productosSeleccionados[productoEncontrado]!! + 1
+            productosSeleccionados.remove(productoEncontrado)
+            if (nuevaCantidad > 0) {
+                productosSeleccionados[producto] = nuevaCantidad
+            }
+
+        }else{
             productosSeleccionados[producto] = 1
         }
+
+
         crearTono(context)
         calcularTotal()
 
     }
 
     fun calcularTotal(){
+
         var total = 0.0
         for ((producto, cantidad) in productosSeleccionados) {
             total += producto.p_diamante.toDouble() * cantidad.toDouble()
@@ -58,29 +74,8 @@ class HomeViewModel : ViewModel() {
 
         totalSeleccionLiveData.value=productosSeleccionados.size.toString()
 
-        guardarPreferenciaListaSeleccionada(context, productosSeleccionados)
-    }
-
-
-
-    fun guardarPreferenciaListaSeleccionada(context: Context, map: MutableMap<ModeloProducto, Int>) {
-
-        limpiarPreferenciaListaSeleccionada(context)
-
-        val sharedPreferences = context.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val json = gson.toJson(map)
-        editor.putString("seleccion_venta", json)
-        editor.apply()
-    }
-
-    fun limpiarPreferenciaListaSeleccionada(context: Context) {
-
-        val sharedPreferences = context.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.remove("seleccion_venta")
-        editor.apply()
+        val preferencias= Preferencias()
+        preferencias.guardarPreferenciaListaSeleccionada(context, productosSeleccionados)
 
     }
 
@@ -89,10 +84,17 @@ class HomeViewModel : ViewModel() {
         mediaPlayer.start()
     }
     fun actualizarCantidadProducto(producto: ModeloProducto, nuevaCantidad: Int) {
-        if (nuevaCantidad > 0) {
+        val id_producto=producto.id
+        val productoEncontrado = productosSeleccionados.keys.find { it.id == id_producto }
+        if (productoEncontrado != null) {
+            if (nuevaCantidad > 0) {
+                productosSeleccionados[productoEncontrado] = nuevaCantidad
+            } else {
+                productosSeleccionados.remove(productoEncontrado)
+            }
+
+        }else{
             productosSeleccionados[producto] = nuevaCantidad
-        } else {
-            productosSeleccionados.remove(producto)
         }
         crearTono(context)
         calcularTotal()

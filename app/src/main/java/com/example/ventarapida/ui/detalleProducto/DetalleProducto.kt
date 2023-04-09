@@ -10,16 +10,17 @@ import com.example.ventarapida.ui.detalleProducto.DetalleProductoViewModel
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
-import com.example.ventarapida.ui.data.ModeloProducto
-import com.example.ventarapida.ui.process.HideKeyboard
-import com.example.ventarapida.ui.process.TomarFotoYGaleria
-import com.example.ventarapida.ui.process.isInternetAvailable
+import com.example.ventarapida.ui.datos.ModeloProducto
+import com.example.ventarapida.ui.procesos.OcultarTeclado
+import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
+import com.example.ventarapida.ui.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
@@ -92,6 +93,7 @@ class DetalleProducto : Fragment() {
         // Carga el producto en la UI
         cargarProducto(modeloProducto)
 
+
         return binding!!.root // Retorna la vista inflada
     }
 
@@ -140,14 +142,18 @@ class DetalleProducto : Fragment() {
         }
     }
 
+//    var  verificarImagenCambiada:ImageView?=null
     private fun actualizarCampos(producto: ModeloProducto) {
         id_producto=producto.id
         binding?.editTextProducto?.setText(producto.nombre)
         binding?.editTextPCompra?.setText(producto.p_compra)
         binding?.editTextPVenta?.setText(producto.p_diamante)
         binding?.editTextCantidad?.setText(producto.cantidad)
-       if (!producto.url.isEmpty()) Picasso.get().load(producto.url)
-            .into(binding?.imageViewFoto)
+       if (!producto.url.isEmpty()){
+           Picasso.get().load(producto.url).into(binding?.imageViewFoto)
+//           Picasso.get().load(producto.url).into(verificarImagenCambiada)
+       }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -183,7 +189,7 @@ class DetalleProducto : Fragment() {
         // Actualizamos el fragmento con los detalles del siguiente producto
         cargarProducto(siguienteModeloProducto)
         verificarPosiciones()
-        HideKeyboard(requireContext()).hideKeyboard(vista!!)
+        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
     }
 
     private fun cargarSiguienteProducto() {
@@ -201,12 +207,13 @@ class DetalleProducto : Fragment() {
         // Actualizamos el fragmento con los detalles del siguiente producto
         cargarProducto(siguienteModeloProducto)
         verificarPosiciones()
-        HideKeyboard(requireContext()).hideKeyboard(vista!!)
+        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
     }
 
 
     private fun cargarProducto(modeloProducto: ModeloProducto?) {
         binding?.imageViewFoto?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_menu_camera))
+
         viewModel.setIdProducto(modeloProducto!!.id)
     }
 
@@ -239,7 +246,7 @@ class DetalleProducto : Fragment() {
 
 
     private fun eliminar() {
-        HideKeyboard(requireContext()).hideKeyboard(vista!!)
+        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
@@ -255,7 +262,7 @@ class DetalleProducto : Fragment() {
      @SuppressLint("SuspiciousIndentation")
      fun guardar() {
 
-        HideKeyboard(requireContext()).hideKeyboard(vista!!)
+        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
 
         //verificando campos vacios
         if (id_producto.isEmpty() || this.binding!!.editTextProducto.text.toString().isEmpty()
@@ -283,7 +290,7 @@ class DetalleProducto : Fragment() {
 
           viewModel.guardarProducto(updates)
 
-         val verificarConexion= isInternetAvailable()
+         val verificarConexion= VerificarInternet()
 
          if (!verificarConexion.verificarConexion(requireContext())){
              Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()

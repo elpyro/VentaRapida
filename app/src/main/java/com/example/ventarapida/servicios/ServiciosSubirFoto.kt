@@ -1,13 +1,9 @@
-package com.example.ventarapida.ui.process
+package com.example.ventarapida.ui.procesos
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.app.JobIntentService
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage

@@ -12,12 +12,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentNuevoProductoBinding
-import com.example.ventarapida.ui.process.HideKeyboard
-import com.example.ventarapida.ui.process.TomarFotoYGaleria
-import com.example.ventarapida.ui.process.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE
-import com.example.ventarapida.ui.process.TomarFotoYGaleria.Companion.GALERIA_REQUEST_CODE
-import com.example.ventarapida.ui.process.TomarFotoYGaleria.Companion.imagenUri
-import com.example.ventarapida.ui.process.isInternetAvailable
+import com.example.ventarapida.ui.procesos.OcultarTeclado
+import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
+import com.example.ventarapida.ui.procesos.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE
+import com.example.ventarapida.ui.procesos.TomarFotoYGaleria.Companion.GALERIA_REQUEST_CODE
+import com.example.ventarapida.ui.procesos.TomarFotoYGaleria.Companion.imagenUri
+import com.example.ventarapida.ui.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -127,7 +127,7 @@ class NuevoProducto : Fragment() {
 
     private fun guardar() {
 
-            HideKeyboard(requireContext()).hideKeyboard(vista)
+            OcultarTeclado(requireContext()).hideKeyboard(vista)
 
             //verificando campos vacios
             if ( binding!!.editTextProducto.text.toString().isEmpty()
@@ -170,7 +170,7 @@ class NuevoProducto : Fragment() {
 
 
 
-        val verificarConexion= isInternetAvailable()
+        val verificarConexion= VerificarInternet()
 
         if (!verificarConexion.verificarConexion(requireContext())){
             Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()

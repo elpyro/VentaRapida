@@ -1,7 +1,5 @@
 package com.example.ventarapida
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
@@ -14,12 +12,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
-import com.example.ventarapida.ui.data.ModeloProducto
+import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
-import com.example.ventarapida.ui.process.ServiciosSubirFoto
+import com.example.ventarapida.ui.procesos.Preferencias
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,13 +31,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        cargarPreferencias()
+        cargarDatos()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setSupportActionBar(binding.appBarMain.toolbar)
-
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -55,67 +50,14 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun obtenerVentaPendiente() {
-        val sharedPreferences = this.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreferences.getString("seleccion_venta", "")
 
-        if (json!!.isNotEmpty()) {
-            val mapType = object : TypeToken<MutableMap<String, Int>>() {}.type
-            val mapString: MutableMap<String, Int> = gson.fromJson(json, mapType)
 
-               mapString.forEach { (productoJson, cantidad) ->
-
-                val modeloProducto = parsearModeloProducto(productoJson)
-
-                productosSeleccionados[modeloProducto] = cantidad
-            }
-
-        }
-
-        return
+    private fun cargarDatos() {
+        val preferenciasServicios=Preferencias()
+        preferenciasServicios.obtenerVentaPendiente(this)
+        preferenciasServicios.obtenerServicioPendiente(this)
     }
 
-    fun parsearModeloProducto(productoJson: String): ModeloProducto {
-        val fields = productoJson.split(", ")
-        val cantidad = fields[0].substringAfter("=")
-        val codigo = fields[1].substringAfter("=")
-        val descripcion = fields[2].substringAfter("=")
-        val fecha_ultima_modificacion = fields[3].substringAfter("=")
-        val id = fields[4].substringAfter("=")
-        val nombre = fields[5].substringAfter("=")
-        val p_compra = fields[6].substringAfter("=")
-        val p_diamante = fields[7].substringAfter("=")
-        val url = fields[8].substringAfter("=")
-        val descuento = fields[9].substringAfter("=")
-        val precio_descuento = ""
-        return ModeloProducto(cantidad, codigo, descripcion, fecha_ultima_modificacion, id, nombre, p_compra, p_diamante, url, descuento, precio_descuento)
-    }
-
-
-    private fun cargarPreferencias() {
-        obtenerVentaPendiente()
-        obtenerServicioPendiente()
-    }
-
-    // Crear una función para obtener los datos del servicio pendiente de la preferencia
-    fun obtenerServicioPendiente() {
-
-            val fotosParaSubir= ServiciosSubirFoto()
-            val serviciosPendientes = fotosParaSubir.getServiciosPendientes(applicationContext)
-
-            serviciosPendientes.forEach { servicio ->
-            val fileUri = servicio.first
-            val storageRefString = servicio.second
-            val idProducto = servicio.third
-
-            fotosParaSubir.guardarServicioPendiente(applicationContext,fileUri,storageRefString,idProducto)
-
-        }
-
-
-
-    }
 
 
 

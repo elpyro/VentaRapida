@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.home
+package com.example.ventarapida.ui.ventaPaginaPrincipal
 
 import android.Manifest
 import android.app.Activity
@@ -12,25 +12,23 @@ import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.view.*
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentHomeBinding
-import com.example.ventarapida.ui.data.ModeloProducto
-import com.example.ventarapida.ui.process.HideKeyboard
+import com.example.ventarapida.ui.datos.ModeloProducto
+import com.example.ventarapida.ui.procesos.OcultarTeclado
 import java.util.*
 
 
-class HomeFragment : Fragment() {
+class Venta : Fragment() {
 
     private var binding: FragmentHomeBinding? = null
-    private lateinit var productViewModel: HomeViewModel
+    private lateinit var productViewModel: VentaViewModel
     private var lista: ArrayList<ModeloProducto>? = null
     private var adapter: VentaProductosAdapter? = null
     private lateinit var vista:View
@@ -72,7 +70,7 @@ class HomeFragment : Fragment() {
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager
 
-        productViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        productViewModel = ViewModelProvider(this).get(VentaViewModel::class.java)
         productViewModel.context = requireContext()
 
         productViewModel.calcularTotal()
@@ -124,7 +122,7 @@ class HomeFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    HideKeyboard(requireContext()).hideKeyboard(view)
+                    OcultarTeclado(requireContext()).hideKeyboard(view)
                 }
             }
         })
@@ -145,7 +143,7 @@ class HomeFragment : Fragment() {
 
     private fun mensajeEliminar() {
 
-        HideKeyboard(requireContext()).hideKeyboard(vista)
+        OcultarTeclado(requireContext()).hideKeyboard(vista)
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
