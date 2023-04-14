@@ -15,16 +15,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.datos.ModeloProducto
+
+import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
 import com.squareup.picasso.Picasso
-import java.text.NumberFormat
 import java.util.*
 
 
-class VentaProductosAdapter(
+class VentaProductosAdaptador(
     private val products: List<ModeloProducto>,
     private val viewModel: VentaViewModel
-) : RecyclerView.Adapter<VentaProductosAdapter.ProductViewHolder>() {
+) : RecyclerView.Adapter<VentaProductosAdaptador.ProductViewHolder>() {
     private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
+
 
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -92,9 +94,8 @@ class VentaProductosAdapter(
         fun bind(product: ModeloProducto) {
 
             producto.text = product.nombre
-            val formatoMoneda = NumberFormat.getCurrencyInstance(Locale("es", "CO"))
-            val valorFormateado = formatoMoneda.format(product.p_diamante.toDouble())
-            precio.text = valorFormateado
+
+            precio.text = product.p_diamante.formatoMonenda()
 
 
             // Limpiar la imagen anterior
@@ -110,8 +111,6 @@ class VentaProductosAdapter(
                 imagenProducto.setImageResource(R.drawable.ic_menu_camera)
             }
 
-            Log.d("MiActividad", "$product registro")
-
             if (MainActivity.productosSeleccionados.isNotEmpty() &&   MainActivity.productosSeleccionados.any { it.key.id == products[position].id }) {
                 val cantidad = MainActivity.productosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
 
@@ -126,8 +125,13 @@ class VentaProductosAdapter(
                     } else {
                         botonRestar.setImageResource(R.drawable.baseline_skip_previous_24)
                     }
+
                     val color = ContextCompat.getColor(itemView.context, R.color.azul_trasparente)
                     cardview.setCardBackgroundColor(color)
+                    producto.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+                    precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+                    existencia.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+
                     existencia.text = "X${(product.cantidad.toInt() - cantidad)}"
                 }
             } else {
@@ -135,14 +139,19 @@ class VentaProductosAdapter(
                 seleccion.setText("")
                 isUserEditing = true
                 botonRestar.visibility = View.GONE
+
                 cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
+                producto.setTextAppearance(R.style.ColorFuentes)
+                precio.setTextAppearance(R.style.ColorFuentes)
+                existencia.setTextAppearance(R.style.ColorFuentes)
+
             }
 
 
-            seleccion.setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) {
+
                     // EditText tiene el foco
                     seleccion.addTextChangedListener(object : TextWatcher {
+
                         // Este método se llama antes de que el texto cambie
                         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -151,24 +160,29 @@ class VentaProductosAdapter(
                         // Este método se llama cuando el texto cambia
                         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                             // Si el texto no está vacío
-                            if (!s.isNullOrBlank()) {
-                                // Obtener la cantidad seleccionada como un número entero, o 0 si no se puede analizar como número
-                                val cantidadSeleccionada = s.toString().toIntOrNull() ?: 0
-                                // Si la cantidad seleccionada es mayor que cero y el usuario está editando
-                                if (cantidadSeleccionada > 0 && isUserEditing) {
-                                    // Hacer visible el botón restar
-                                    botonRestar.visibility = View.VISIBLE
-                                    // Actualizar la cantidad del producto en el ViewModel
-                                    viewModel.actualizarCantidadProducto(products[position], cantidadSeleccionada)
-                                } else {
-                                    // De lo contrario, hacer invisible el botón restar
+                            if(seleccion.hasFocus()) {
+                                if (!s.isNullOrBlank()) {
+                                    // Obtener la cantidad seleccionada como un número entero, o 0 si no se puede analizar como número
+                                    val cantidadSeleccionada = s.toString().toIntOrNull() ?: 0
+                                    // Si la cantidad seleccionada es mayor que cero y el usuario está editando
+                                    if (cantidadSeleccionada > 0 && isUserEditing) {
+                                        // Hacer visible el botón restar
+                                        botonRestar.visibility = View.VISIBLE
+                                        // Actualizar la cantidad del producto en el ViewModel
+                                        viewModel.actualizarCantidadProducto(
+                                            products[position],
+                                            cantidadSeleccionada
+                                        )
+                                    } else {
+                                        // De lo contrario, hacer invisible el botón restar
+                                        botonRestar.visibility = View.GONE
+                                    }
+                                    // Si el usuario está editando
+                                } else if (isUserEditing) {
+                                    // Actualizar la cantidad del producto en el ViewModel a cero
+                                    viewModel.actualizarCantidadProducto(products[position], 0)
                                     botonRestar.visibility = View.GONE
                                 }
-                                // Si el usuario está editando
-                            } else if (isUserEditing) {
-                                // Actualizar la cantidad del producto en el ViewModel a cero
-                                viewModel.actualizarCantidadProducto(products[position], 0)
-                                botonRestar.visibility = View.GONE
                             }
                         }
 
@@ -178,7 +192,7 @@ class VentaProductosAdapter(
                         }
                     })
                 }
-            }
+
 
 
 
@@ -186,4 +200,4 @@ class VentaProductosAdapter(
 
     }
 
-}
+

@@ -19,18 +19,19 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
-import com.example.ventarapida.databinding.FragmentHomeBinding
+import com.example.ventarapida.databinding.VentaBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
+import com.example.ventarapida.ui.procesos.Utilidades.eliminarAcentosTildes
 import java.util.*
 
 
 class Venta : Fragment() {
 
-    private var binding: FragmentHomeBinding? = null
+    private var binding: VentaBinding? = null
     private lateinit var productViewModel: VentaViewModel
     private var lista: ArrayList<ModeloProducto>? = null
-    private var adapter: VentaProductosAdapter? = null
+    private var adapter: VentaProductosAdaptador? = null
     private lateinit var vista:View
     private lateinit var menuItem: MenuItem
     val REQUEST_CODE_VOICE_SEARCH = 1001
@@ -41,7 +42,7 @@ class Venta : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding = VentaBinding.inflate(inflater, container, false)
         return binding!!.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -62,6 +63,23 @@ class Venta : Fragment() {
             super.onCreateOptionsMenu(menu, inflater)
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+            R.id.action_total ->{
+                abrirFactura()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun abrirFactura() {
+
+        Navigation.findNavController(vista).navigate(R.id.factura)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,33 +91,20 @@ class Venta : Fragment() {
         productViewModel = ViewModelProvider(this).get(VentaViewModel::class.java)
         productViewModel.context = requireContext()
 
+        observadores()
+
+        listeners()
         productViewModel.calcularTotal()
 
-        productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
-            binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
-        }
 
 
+    }
 
-        productViewModel.getProductos().observe(viewLifecycleOwner) { productos ->
-
-            adapter = VentaProductosAdapter(productos, productViewModel)
-
-            adapter!!.setOnLongClickItem { item, position ->
-                abriDetalle(item,vista, position)
-            }
+    private fun listeners() {
 
 
-            lista = productos as ArrayList<ModeloProducto>?
-            binding!!.recyclerViewProductosVenta.adapter = adapter
-        }
-
-        binding?.searchViewProductosVenta?.setOnClickListener {
-            binding?.searchViewProductosVenta?.isIconified=false
-        }
 
         binding?.imageViewEliminarCarrito?.setOnClickListener {
-
             mensajeEliminar()
         }
 
@@ -122,7 +127,7 @@ class Venta : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    OcultarTeclado(requireContext()).hideKeyboard(view)
+                    OcultarTeclado(requireContext()).hideKeyboard(vista)
                 }
             }
         })
@@ -139,6 +144,30 @@ class Venta : Fragment() {
                 return true
             }
         })
+        //desbloquea searchview al seleccionarlo
+        binding?.searchViewProductosVenta?.setOnClickListener {
+            binding?.searchViewProductosVenta?.isIconified=false
+        }
+
+    }
+
+    private fun observadores() {
+        productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
+            binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
+        }
+
+        productViewModel.getProductos().observe(viewLifecycleOwner) { productos ->
+
+            adapter = VentaProductosAdaptador(productos, productViewModel)
+
+            adapter!!.setOnLongClickItem { item, position ->
+                abriDetalle(item,vista, position)
+            }
+
+
+            lista = productos as ArrayList<ModeloProducto>?
+            binding!!.recyclerViewProductosVenta.adapter = adapter
+        }
     }
 
     private fun mensajeEliminar() {
@@ -189,9 +218,9 @@ class Venta : Fragment() {
     private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
-            objeto.nombre.lowercase(Locale.getDefault()).contains(textoParaFiltrar.lowercase(Locale.getDefault()))
+            objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
         }
-        val adaptador = filtro?.let { VentaProductosAdapter(it,productViewModel) }
+        val adaptador = filtro?.let { VentaProductosAdaptador(it,productViewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
         if (filtro?.size==1 && cantidadPorVoz!=0){

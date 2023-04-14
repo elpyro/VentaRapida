@@ -31,4 +31,21 @@
     <string name="total_0">Total: 0</string>
     <string name="microfono">Microfono</string>
     <string name="disponbleEnlaNuebe">Los datos estaran en la nube cuando te conectes a internet</string>
+    <string name="telefono">Telefono</string>
+    <string name="documento">Documento</string>
+    <string name="direccion">Dirección</string>
+    <string name="inf_pedido">Información del pedido</string>
+    <string name="item">Items</string>
+    <string name="referencias">Referencias</string>
+    <string name="variante">Variante</string>
+    <string name="envio">Envio</string>
+    <string name="sub_total">Sub-Total: </string>
+    <string name="informacion">Informacion:</string>
+    <string name="descuento">Descuento</string>
+    <string name="impuesto">Impuesto</string>
+    <string name="buscarUsuario">Buscar Usuario</string>
+    <string name="detalleFactura">Detalle Factura</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="seleccion">Selección</string>
+    <string name="total_producto">Total Producto</string>
 </resources>

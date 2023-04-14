@@ -45,19 +45,15 @@ class NuevoProducto : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         vista = view // Guarda la vista en la variable vista
 
-        setHasOptionsMenu(true)
-    }
-
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(NuevoProductoViewModel::class.java)
 
         viewModel.mensajeToast.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
+
+        setHasOptionsMenu(true)
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_nuevo_producto, menu)

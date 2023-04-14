@@ -9,7 +9,7 @@
         android:id="@+id/nav_home"
         android:name="com.example.ventarapida.ui.ventaPaginaPrincipal.Venta"
         android:label="@string/venta"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/venta" />
 
 
     <fragment
@@ -21,5 +21,10 @@
         android:name="com.example.ventarapida.ui.nuevoProducto.NuevoProducto"
         android:label="Nuevo Producto"
         tools:layout="@layout/fragment_nuevo_producto" />
+    <fragment
+        android:id="@+id/factura"
+        android:name="com.example.ventarapida.ui.factura.Factura"
+        android:label="@string/detalleFactura"
+        tools:layout="@layout/fragment_factura" />
 
 </navigation>

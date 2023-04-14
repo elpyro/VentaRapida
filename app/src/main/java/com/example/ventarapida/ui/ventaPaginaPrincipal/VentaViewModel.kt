@@ -9,12 +9,15 @@ import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.datos.ModeloProducto
+import com.example.ventarapida.ui.procesos.CrearTono
+
 import com.example.ventarapida.ui.procesos.Preferencias
+import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.text.NumberFormat
+
 import java.util.*
 
 class VentaViewModel : ViewModel() {
@@ -56,8 +59,8 @@ class VentaViewModel : ViewModel() {
             productosSeleccionados[producto] = 1
         }
 
-
-        crearTono(context)
+        val crearTono=CrearTono()
+        crearTono.crearTono(context)
         calcularTotal()
 
     }
@@ -65,12 +68,12 @@ class VentaViewModel : ViewModel() {
     fun calcularTotal(){
 
         var total = 0.0
+
         for ((producto, cantidad) in productosSeleccionados) {
             total += producto.p_diamante.toDouble() * cantidad.toDouble()
         }
-        val formatoMoneda = NumberFormat.getCurrencyInstance(Locale("es", "CO"))
-        val valorFormateado = formatoMoneda.format(total)
-        totalCarritoLiveData.value = valorFormateado
+
+        totalCarritoLiveData.value =  total.toString().formatoMonenda()
 
         totalSeleccionLiveData.value=productosSeleccionados.size.toString()
 
@@ -79,10 +82,7 @@ class VentaViewModel : ViewModel() {
 
     }
 
-    fun crearTono(context: Context) {
-        val mediaPlayer = MediaPlayer.create(context, R.raw.coin)
-        mediaPlayer.start()
-    }
+
     fun actualizarCantidadProducto(producto: ModeloProducto, nuevaCantidad: Int) {
         val id_producto=producto.id
         val productoEncontrado = productosSeleccionados.keys.find { it.id == id_producto }
@@ -96,7 +96,9 @@ class VentaViewModel : ViewModel() {
         }else{
             productosSeleccionados[producto] = nuevaCantidad
         }
-        crearTono(context)
+
+        val crearTono=CrearTono()
+        crearTono.crearTono(context)
         calcularTotal()
     }
 
