@@ -1,5 +1,8 @@
 package com.example.ventarapida.ui.procesos
 
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.Normalizer
@@ -16,6 +19,30 @@ object Utilidades {
 
     fun String.eliminarPuntosComas(): String {
         return this.replace(".", "").replace(",", "")
+    }
+
+    fun EditText.escribirFormatoMoneda() {
+        val textWatcher = object : TextWatcher {
+            var isProgrammaticChange = false
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (!isProgrammaticChange && s != null) {
+                    removeTextChangedListener(this)
+                    val precio = s.toString().eliminarPuntosComas()
+                    setText(precio.formatoMonenda())
+                    setSelection(text.length)
+                    addTextChangedListener(this)
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        }
+
+        addTextChangedListener(textWatcher)
     }
 
     fun String.formatoMonenda(): String? {

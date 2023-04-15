@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,10 +20,10 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 
-class VentaProductosAdaptador(
+class VentaAdaptador(
     private val products: List<ModeloProducto>,
     private val viewModel: VentaViewModel
-) : RecyclerView.Adapter<VentaProductosAdaptador.ProductViewHolder>() {
+) : RecyclerView.Adapter<VentaAdaptador.ProductViewHolder>() {
     private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
 
 

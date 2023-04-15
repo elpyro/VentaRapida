@@ -20,6 +20,8 @@ import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
+import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
+import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.ui.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseApp
@@ -93,6 +95,8 @@ class DetalleProducto : Fragment() {
         // Carga el producto en la UI
         cargarProducto(modeloProducto)
 
+        binding!!.editTextPCompra.escribirFormatoMoneda()
+        binding!!.editTextPVenta.escribirFormatoMoneda()
 
         return binding!!.root // Retorna la vista inflada
     }
@@ -283,8 +287,8 @@ class DetalleProducto : Fragment() {
             "id" to id_producto.trim(),
             "nombre" to this.binding!!.editTextProducto.text.toString().trim(),
             "cantidad" to this.binding!!.editTextCantidad.text.toString().trim(),
-            "p_compra" to this.binding!!.editTextPCompra.text.toString().trim(),
-            "p_diamante" to this.binding!!.editTextPVenta.text.toString().trim()
+            "p_compra" to this.binding!!.editTextPCompra.text.toString().eliminarPuntosComas().trim(),
+            "p_diamante" to this.binding!!.editTextPVenta.text.toString().eliminarPuntosComas().trim()
 
         )
 

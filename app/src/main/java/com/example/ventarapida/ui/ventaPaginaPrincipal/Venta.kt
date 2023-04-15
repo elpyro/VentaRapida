@@ -31,7 +31,7 @@ class Venta : Fragment() {
     private var binding: VentaBinding? = null
     private lateinit var productViewModel: VentaViewModel
     private var lista: ArrayList<ModeloProducto>? = null
-    private var adapter: VentaProductosAdaptador? = null
+    private var adapter: VentaAdaptador? = null
     private lateinit var vista:View
     private lateinit var menuItem: MenuItem
     val REQUEST_CODE_VOICE_SEARCH = 1001
@@ -158,7 +158,7 @@ class Venta : Fragment() {
 
         productViewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
-            adapter = VentaProductosAdaptador(productos, productViewModel)
+            adapter = VentaAdaptador(productos, productViewModel)
 
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista, position)
@@ -220,7 +220,7 @@ class Venta : Fragment() {
         val filtro = lista?.filter { objeto: ModeloProducto ->
             objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
         }
-        val adaptador = filtro?.let { VentaProductosAdaptador(it,productViewModel) }
+        val adaptador = filtro?.let { VentaAdaptador(it,productViewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
         if (filtro?.size==1 && cantidadPorVoz!=0){

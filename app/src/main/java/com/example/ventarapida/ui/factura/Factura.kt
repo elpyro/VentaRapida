@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils.replace
 import android.text.TextWatcher
 import android.view.*
 import android.widget.EditText
@@ -13,13 +12,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarAcentosTildes
+import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
+import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
 
 class Factura : Fragment() {
@@ -29,7 +29,7 @@ class Factura : Fragment() {
     private lateinit var viewModel: FacturaViewModel
     var binding: FragmentFacturaBinding? = null
     private lateinit var vista:View
-    private lateinit var adapter:FacturaAdaptador
+    private lateinit var adaptador:FacturaAdaptador
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,17 +48,17 @@ class Factura : Fragment() {
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
-        adapter = FacturaAdaptador(MainActivity.productosSeleccionados,viewModel )
+        adaptador = FacturaAdaptador(productosSeleccionados,viewModel )
 
 
-        adapter!!.setOnClickItem() { item, cantidad, position ->
+        adaptador!!.setOnClickItem() { item, cantidad, position ->
             editarItem(item, cantidad, position)
         }
 
-        binding?.recyclerViewProductosSeleccionados?.adapter = adapter
+        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
 
         viewModel.context = requireContext()
-        viewModel.calcular_SubTotal()
+        viewModel.totalFactura()
 
 
         observadores()
@@ -84,31 +84,18 @@ class Factura : Fragment() {
          editTextCantidad.setText(cantidad.toString())
          editTextPrecio.setText(item.p_diamante.formatoMonenda())
 
-         editTextPrecio.addTextChangedListener(object : TextWatcher {
-                // Este método se llama antes de que el texto cambie
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+         editTextPrecio.escribirFormatoMoneda()
+         editTextCantidad.escribirFormatoMoneda()
 
-                }
 
-                // Este método se llama cuando el texto cambia
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    // Si el texto no está vacío
-
-                }
-
-                // Este método se llama después de que el texto cambia
-                override fun afterTextChanged(s: Editable?) {
-
-                }
-            })
 // Configurar el botón "Aceptar"
          dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
              val nuevoNombre=editTextProducto.text.toString()
              val nuevaCantidad = editTextCantidad.text.toString()
              val nuevoPrecio = editTextPrecio.text.toString().replace(".", "")
 
-             viewModel.actualizarPrecio(item, nuevoPrecio.toInt(),nuevaCantidad.toInt(), nuevoNombre)
-             adapter.notifyDataSetChanged()
+             viewModel.actualizarProducto(item, nuevoPrecio.toInt(),nuevaCantidad.toInt(), nuevoNombre)
+             adaptador.notifyDataSetChanged()
          }
 
 // Configurar el botón "Cancelar"
@@ -120,23 +107,50 @@ class Factura : Fragment() {
          val alertDialog = dialogBuilder.create()
          alertDialog.show()
      }
+
     private fun listeners() {
 
-        binding!!.editTextEnvio.addTextChangedListener(object :TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                TODO("Not yet implemented")
+        binding!!.editTextEnvio.escribirFormatoMoneda()
+        binding!!.editDescuento.escribirFormatoMoneda()
+
+        binding!!.editTextEnvio.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                // Actualiza el valor de envio con el valor del EditText
+                if (binding!!.editTextEnvio.text.toString().isNotEmpty()) {
+                    viewModel.envio.value = binding!!.editTextEnvio.text.toString().eliminarPuntosComas()
+                } else {
+                    viewModel.envio.value = "0"
+                }
+                viewModel.totalFactura()
+
             }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                TODO("Not yet implemented")
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No se necesita implementar este método en este caso
             }
-
-            override fun afterTextChanged(p0: Editable?) {
-                val envio=binding!!.editTextEnvio.text.toString()
-
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // No se necesita implementar este método en este caso
             }
-
         })
+
+        binding!!.editDescuento.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                // Actualiza el valor de envio con el valor del EditText
+                if (binding!!.editDescuento.text.toString().isNotEmpty()) {
+                    viewModel.descuento.value = binding!!.editDescuento.text.toString().eliminarPuntosComas()
+                } else {
+                    viewModel.descuento.value = "0"
+                }
+                viewModel.totalFactura()
+
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No se necesita implementar este método en este caso
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // No se necesita implementar este método en este caso
+            }
+        })
+
 
         binding!!.searchViewBuscarSeleccionados.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -170,6 +184,8 @@ class Factura : Fragment() {
         viewModel.subTotal.observe(viewLifecycleOwner) {
             binding?.textViewSubTotal?.text=it.toString()
         }
+
+
 
         viewModel.totalFactura.observe(viewLifecycleOwner) {
             binding?.textViewTotal?.text=it.toString()
@@ -208,9 +224,14 @@ class Factura : Fragment() {
     fun filtrarProductos(nombreFiltrado: String) {
 
         val productosFiltrados = productosSeleccionados.filter { it.key.nombre.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }.toMutableMap()
-        val adapter = FacturaAdaptador(MainActivity.productosSeleccionados,viewModel)
-        binding?.recyclerViewProductosSeleccionados?.adapter = adapter
-//        binding?.recyclerViewProductosSeleccionados?.adapter?.setHasStableIds(true)
+        adaptador = FacturaAdaptador(productosFiltrados,viewModel)
+        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
+        adaptador.notifyDataSetChanged()
+
+        adaptador!!.setOnClickItem() { item, cantidad, position ->
+            editarItem(item, cantidad, position)
+        }
+
     }
 
 

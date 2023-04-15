@@ -17,6 +17,8 @@ import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria.Companion.GALERIA_REQUEST_CODE
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria.Companion.imagenUri
+import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
+import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.ui.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
@@ -52,6 +54,9 @@ class NuevoProducto : Fragment() {
         }
 
         setHasOptionsMenu(true)
+
+        binding!!.editTextPCompra.escribirFormatoMoneda()
+        binding!!.editTextPVenta.escribirFormatoMoneda()
     }
 
 
@@ -151,8 +156,8 @@ class NuevoProducto : Fragment() {
                 "id" to idProducto,
                 "nombre" to binding!!.editTextProducto.text.toString().trim(),
                 "cantidad" to binding!!.editTextCantidad.text.toString().trim(),
-                "p_compra" to binding!!.editTextPCompra.text.toString().trim(),
-                "p_diamante" to binding!!.editTextPVenta.text.toString().trim()
+                "p_compra" to binding!!.editTextPCompra.text.toString().eliminarPuntosComas().trim(),
+                "p_diamante" to binding!!.editTextPVenta.text.toString().eliminarPuntosComas().trim()
 
             )
             viewModel.guardarProducto(updates)
