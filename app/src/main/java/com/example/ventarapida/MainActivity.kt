@@ -14,8 +14,10 @@ import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
+import com.example.ventarapida.ui.procesos.PreferenciaModificarCantidad
 import com.example.ventarapida.ui.procesos.Preferencias
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.database.FirebaseDatabase
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
        cargarDatos()
 
@@ -56,6 +60,9 @@ class MainActivity : AppCompatActivity() {
         val preferenciasServicios=Preferencias()
         preferenciasServicios.obtenerVentaPendiente(this)
         preferenciasServicios.obtenerServicioPendiente(this)
+
+        val preferenciaModificarCantidad=PreferenciaModificarCantidad()
+        preferenciaModificarCantidad.crearColaSubida(this)
     }
 
 

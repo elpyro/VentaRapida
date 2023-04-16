@@ -21,16 +21,6 @@ class NuevoProductoViewModel : ViewModel() {
 
     val mensajeToast = MutableLiveData<String>()
 
-    fun guardarProducto(updates: HashMap<String, Any>)   {
-        val id = updates["id"] as String?
-        val database2 = FirebaseDatabase.getInstance()
-        val registroRef = database2.getReference("Productos").child(id!!)
-        registroRef.updateChildren(updates)
-            .addOnSuccessListener { mensajeToast.value="Producto Guardado" }
-            .addOnFailureListener {mensajeToast.value="Error Guarando Producto"}
-
-
-    }
 
     // Crear una función para guardar los datos del servicio pendiente en una preferencia
 

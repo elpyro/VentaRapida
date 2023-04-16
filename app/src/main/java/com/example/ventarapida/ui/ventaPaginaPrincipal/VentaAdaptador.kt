@@ -96,6 +96,7 @@ class VentaAdaptador(
 
             precio.text = product.p_diamante.formatoMonenda()
 
+            existencia.text =product.cantidad
 
             // Limpiar la imagen anterior
             Picasso.get().cancelRequest(imagenProducto)

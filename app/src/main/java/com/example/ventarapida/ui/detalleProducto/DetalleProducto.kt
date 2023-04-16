@@ -10,7 +10,6 @@ import com.example.ventarapida.ui.detalleProducto.DetalleProductoViewModel
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -18,6 +17,7 @@ import androidx.fragment.app.viewModels
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
+import com.example.ventarapida.ui.procesos.UtilidadesFirebase.guardarProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
@@ -292,7 +292,13 @@ class DetalleProducto : Fragment() {
 
         )
 
-          viewModel.guardarProducto(updates)
+         guardarProducto(updates)
+             .addOnSuccessListener {
+            Toast.makeText(requireContext(),"Producto Actualizado",Toast.LENGTH_LONG).show()
+             }
+             .addOnFailureListener {
+                 Toast.makeText(requireContext(),"Error al guardar",Toast.LENGTH_LONG).show()
+             }
 
          val verificarConexion= VerificarInternet()
 

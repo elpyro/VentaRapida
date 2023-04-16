@@ -93,22 +93,6 @@ class DetalleProductoViewModel : ViewModel() {
 
     val mensajeToast =MutableLiveData<String>()
 
-    fun guardarProducto(updates: HashMap<String, Any>) {
-
-        val id = updates["id"] as String?
-        val database2 = FirebaseDatabase.getInstance()
-        val registroRef = database2.getReference("Productos").child(id!!)
-        registroRef.updateChildren(updates)
-
-        registroRef.updateChildren(updates)
-            .addOnSuccessListener {
-                mensajeToast.value="Producto actualizado"
-            }
-            .addOnFailureListener {
-                mensajeToast.value="Error en actualizar datos"
-            }
-
-    }
 
     fun eliminarProducto(id:String ): Task<Void> {
 
@@ -153,8 +137,4 @@ class DetalleProductoViewModel : ViewModel() {
         )
 
     }
-
-
-
-
 }

@@ -17,6 +17,7 @@ import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
+import com.example.ventarapida.ui.procesos.Preferencias
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
 import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
@@ -51,7 +52,7 @@ class Factura : Fragment() {
         adaptador = FacturaAdaptador(productosSeleccionados,viewModel )
 
 
-        adaptador!!.setOnClickItem() { item, cantidad, position ->
+        adaptador.setOnClickItem() { item, cantidad, position ->
             editarItem(item, cantidad, position)
         }
 
@@ -214,6 +215,10 @@ class Factura : Fragment() {
 
             R.id.action_confirmar_venta ->{
 
+                viewModel.subirColaModificarCantidad()
+
+                //limpiamos los productos seleccionados
+                viewModel.limpiarProductosSelecionados(requireContext())
                 return true
             }
 

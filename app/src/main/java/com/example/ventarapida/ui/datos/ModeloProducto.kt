@@ -3,7 +3,7 @@ package com.example.ventarapida.ui.datos
 import java.io.Serializable
 
 data class ModeloProducto(
-    val cantidad: String = "",
+    var cantidad: String = "",
     var codigo: String = "",
     val descripcion: String = "",
     val fecha_ultima_modificacion: String = "",

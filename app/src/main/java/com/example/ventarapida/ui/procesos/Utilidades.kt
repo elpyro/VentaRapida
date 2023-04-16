@@ -49,8 +49,8 @@ object Utilidades {
         val formatoMoneda = DecimalFormat("###,###.###")
         formatoMoneda.decimalFormatSymbols = DecimalFormatSymbols(Locale("es", "CO"))
         formatoMoneda.maximumFractionDigits = 2
-        val valorDouble = this.toDoubleOrNull() ?: return this // Retorna el string original si no se puede convertir a double
-        val textoFormateado = formatoMoneda.format(valorDouble)
-        return textoFormateado
+        val valorDouble = this.toDoubleOrNull()
+            ?: return this // Retorna el string original si no se puede convertir a double
+        return formatoMoneda.format(valorDouble)
     }
 }

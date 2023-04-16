@@ -1,15 +1,20 @@
 package com.example.ventarapida.ui.factura
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.ui.datos.ModeloProducto
+import com.example.ventarapida.ui.datos.ModificarCantidadProducto
 import com.example.ventarapida.ui.procesos.CrearTono
 import com.example.ventarapida.ui.procesos.Preferencias
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.ui.procesos.UtilidadesFirebase.CambiarCantidad
+import com.google.firebase.database.*
+import com.google.gson.Gson
+import java.util.*
 
 
 class FacturaViewModel : ViewModel() {
@@ -52,10 +57,35 @@ class FacturaViewModel : ViewModel() {
                 productosSeleccionados)
     }
         fun mensaje(producto: ModeloProducto){
-            mensajeToast.value=producto.nombre.toString()
+            mensajeToast.value=producto.nombre
             val crearTono= CrearTono()
             crearTono.crearTono(context)
         }
+
+    fun subirColaModificarCantidad() {
+        val prefs = context.getSharedPreferences("actualizar_cantidades", Context.MODE_PRIVATE)
+        val listaString = prefs.getString("productos", "") ?: ""
+        var miLista = mutableListOf<ModificarCantidadProducto>()
+
+        if (!listaString.isEmpty()) {
+            miLista.addAll(Gson().fromJson(listaString, Array<ModificarCantidadProducto>::class.java).toList())
+        }
+
+        productosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
+            val idTransaccion = UUID.randomUUID().toString()
+            val miObjeto = ModificarCantidadProducto(idTransaccion,producto.id!!, cantidadSeleccionada.toString())
+
+            miLista.add(miObjeto)
+
+            val guardarLista = Gson().toJson(miLista)
+            prefs.edit().putString("productos", guardarLista).apply()
+
+            CambiarCantidad(context,idTransaccion, producto.id!!, cantidadSeleccionada.toString())
+        }
+    }
+
+
+
 
 
 
@@ -63,7 +93,7 @@ class FacturaViewModel : ViewModel() {
         val productoEncontrado = productosSeleccionados.keys.find { it.id == producto.id }
         if (productoEncontrado != null) {
             val index = productosSeleccionados.keys.indexOf(productoEncontrado)
-            MainActivity.productosSeleccionados.remove(productoEncontrado)
+            productosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_diamante = nuevoDiamante.toString().eliminarPuntosComas()
             productoEncontrado.nombre = nombre
             productosSeleccionados[productoEncontrado] = 0
@@ -85,5 +115,12 @@ class FacturaViewModel : ViewModel() {
             productosSeleccionados.clear()
             listaMutable.forEach { p -> productosSeleccionados.put(p, productosSeleccionados[p] ?: 1) }
         }
+    }
+
+    fun limpiarProductosSelecionados(context: Context) {
+        productosSeleccionados.clear()
+        val preferencias=Preferencias()
+        preferencias.guardarPreferenciaListaSeleccionada(context, productosSeleccionados)
+
     }
 }
