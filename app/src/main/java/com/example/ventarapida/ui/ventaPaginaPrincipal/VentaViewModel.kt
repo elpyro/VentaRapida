@@ -1,13 +1,11 @@
 package com.example.ventarapida.ui.ventaPaginaPrincipal
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
-import com.example.ventarapida.R
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.CrearTono
 
@@ -17,8 +15,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
-import java.util.*
 
 class VentaViewModel : ViewModel() {
 

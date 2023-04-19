@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentNuevoProductoBinding
-import com.example.ventarapida.ui.procesos.UtilidadesFirebase.guardarProducto
+import com.example.ventarapida.ui.procesos.FirebaseProductos.guardarProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE

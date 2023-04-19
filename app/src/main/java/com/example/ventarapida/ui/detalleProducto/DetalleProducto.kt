@@ -17,7 +17,7 @@ import androidx.fragment.app.viewModels
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.UtilidadesFirebase.guardarProducto
+import com.example.ventarapida.ui.procesos.FirebaseProductos.guardarProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
@@ -289,7 +289,6 @@ class DetalleProducto : Fragment() {
             "cantidad" to this.binding!!.editTextCantidad.text.toString().trim(),
             "p_compra" to this.binding!!.editTextPCompra.text.toString().eliminarPuntosComas().trim(),
             "p_diamante" to this.binding!!.editTextPVenta.text.toString().eliminarPuntosComas().trim()
-
         )
 
          guardarProducto(updates)

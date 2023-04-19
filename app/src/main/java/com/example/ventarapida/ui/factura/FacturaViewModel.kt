@@ -5,16 +5,19 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
+import com.example.ventarapida.ui.datos.ModeloProductoFacturado
 import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.datos.ModificarCantidadProducto
 import com.example.ventarapida.ui.procesos.CrearTono
+import com.example.ventarapida.ui.procesos.FirebaseFactura
 import com.example.ventarapida.ui.procesos.Preferencias
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
-import com.example.ventarapida.ui.procesos.UtilidadesFirebase.CambiarCantidad
-import com.google.firebase.database.*
-import com.google.gson.Gson
+import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.guardarTransaccionesBd
+import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
+import com.example.ventarapida.ui.procesos.FirebaseProductoFacturados.guardarProductoFacturado
+import com.example.ventarapida.ui.procesos.FirebaseProductos.transaccionesCambiarCantidad
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class FacturaViewModel : ViewModel() {
@@ -62,32 +65,61 @@ class FacturaViewModel : ViewModel() {
             crearTono.crearTono(context)
         }
 
-    fun subirColaModificarCantidad() {
-        val prefs = context.getSharedPreferences("actualizar_cantidades", Context.MODE_PRIVATE)
-        val listaString = prefs.getString("productos", "") ?: ""
-        var miLista = mutableListOf<ModificarCantidadProducto>()
+    fun subirDatos(
+        datosPedido: HashMap<String, Any>,
+        productosSeleccionados: MutableMap<ModeloProducto, Int>
+    ) {
 
-        if (!listaString.isEmpty()) {
-            miLista.addAll(Gson().fromJson(listaString, Array<ModificarCantidadProducto>::class.java).toList())
+        guardarTransaccionesBd(context , productosSeleccionados)
+
+        val transaccionesPendientes=  obtenerTransaccionesSumaRestaProductos(context)
+        transaccionesCambiarCantidad(context,transaccionesPendientes)
+
+        FirebaseFactura.guardarFactura(datosPedido)
+
+        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
+
+        val idPedido = datosPedido["id_pedido"].toString()
+        val horaActual = datosPedido["hora"].toString()
+        val fechaActual = datosPedido["fecha"].toString()
+
+        val descuento = datosPedido["descuento"].toString().toInt()
+        val envio=datosPedido["envio"].toString().toInt()
+
+        productosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
+            //calculamos el precio descuento para tener la referencia para los reportes
+            val porcentajeDescuento = descuento.toDouble() / 100
+            var precioDescuento:Double=producto.p_diamante.toDouble()
+            precioDescuento *= (1 - porcentajeDescuento)
+
+            precioDescuento += envio.toDouble()
+
+        val productoFacturado = ModeloProductoFacturado(
+            id_producto_pedido = UUID.randomUUID().toString(),
+            id_producto = producto.id,
+            id_pedido = idPedido,
+            id_vendedor = "idVendedor",
+            vendedor = "Nombre vendedor",
+            producto = producto.nombre,
+            cantidad = cantidadSeleccionada.toString(),
+            costo = producto.p_compra,
+            venta = producto.p_diamante,
+            precioDescuentos = precioDescuento.toString().formatoMonenda()!!,
+            fecha = fechaActual,
+            hora=horaActual,
+            imagenUrl=producto.url
+        )
+        listaProductosFacturados.add(productoFacturado)
         }
 
-        productosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
-            val idTransaccion = UUID.randomUUID().toString()
-            val miObjeto = ModificarCantidadProducto(idTransaccion,producto.id!!, cantidadSeleccionada.toString())
-
-            miLista.add(miObjeto)
-
-            val guardarLista = Gson().toJson(miLista)
-            prefs.edit().putString("productos", guardarLista).apply()
-
-            CambiarCantidad(context,idTransaccion, producto.id!!, cantidadSeleccionada.toString())
-        }
+        guardarProductoFacturado(listaProductosFacturados)
+            .addOnSuccessListener {
+                Toast.makeText(context,"Producto Facturado", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context,"Error al guardar", Toast.LENGTH_LONG).show()
+            }
     }
-
-
-
-
-
 
     fun actualizarProducto(producto: ModeloProducto, nuevoDiamante: Int, cantidad:Int, nombre:String) {
         val productoEncontrado = productosSeleccionados.keys.find { it.id == producto.id }
@@ -96,9 +128,12 @@ class FacturaViewModel : ViewModel() {
             productosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_diamante = nuevoDiamante.toString().eliminarPuntosComas()
             productoEncontrado.nombre = nombre
-            productosSeleccionados[productoEncontrado] = 0
-            moverProducto(productoEncontrado, index)
-            productosSeleccionados[productoEncontrado] = cantidad
+            if (cantidad>0){
+                productosSeleccionados[productoEncontrado] = 0
+                moverProducto(productoEncontrado, index)
+                productosSeleccionados[productoEncontrado] = cantidad
+            }
+
         }
 
         val crearTono= CrearTono()

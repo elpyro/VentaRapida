@@ -14,10 +14,11 @@ import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
-import com.example.ventarapida.ui.procesos.PreferenciaModificarCantidad
 import com.example.ventarapida.ui.procesos.Preferencias
+import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
+import com.example.ventarapida.ui.procesos.FirebaseProductos.transaccionesCambiarCantidad
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.database.FirebaseDatabase
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -61,8 +62,8 @@ class MainActivity : AppCompatActivity() {
         preferenciasServicios.obtenerVentaPendiente(this)
         preferenciasServicios.obtenerServicioPendiente(this)
 
-        val preferenciaModificarCantidad=PreferenciaModificarCantidad()
-        preferenciaModificarCantidad.crearColaSubida(this)
+        val transaccionesPendientes= obtenerTransaccionesSumaRestaProductos(this)
+        transaccionesCambiarCantidad(this, transaccionesPendientes)
     }
 
 

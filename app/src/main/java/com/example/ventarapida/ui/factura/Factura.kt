@@ -10,18 +10,21 @@ import android.widget.EditText
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
-import com.example.ventarapida.ui.procesos.Preferencias
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
 import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Factura : Fragment() {
 
@@ -49,7 +52,7 @@ class Factura : Fragment() {
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
-        adaptador = FacturaAdaptador(productosSeleccionados,viewModel )
+        adaptador = FacturaAdaptador(productosSeleccionados )
 
 
         adaptador.setOnClickItem() { item, cantidad, position ->
@@ -81,12 +84,17 @@ class Factura : Fragment() {
          val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
          val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
 
+         // Seleccionar tode el contenido del EditText al recibir foco
+         editTextProducto.setSelectAllOnFocus(true)
+         editTextCantidad.setSelectAllOnFocus(true)
+         editTextPrecio.setSelectAllOnFocus(true)
+
          editTextProducto.setText( item.nombre)
          editTextCantidad.setText(cantidad.toString())
          editTextPrecio.setText(item.p_diamante.formatoMonenda())
 
          editTextPrecio.escribirFormatoMoneda()
-         editTextCantidad.escribirFormatoMoneda()
+
 
 
 // Configurar el botón "Aceptar"
@@ -113,6 +121,17 @@ class Factura : Fragment() {
 
         binding!!.editTextEnvio.escribirFormatoMoneda()
         binding!!.editDescuento.escribirFormatoMoneda()
+
+
+        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    // se está desplazando hacia abajo
+                    OcultarTeclado(requireContext()).hideKeyboard(vista)
+                }
+            }
+        })
 
         binding!!.editTextEnvio.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -186,17 +205,15 @@ class Factura : Fragment() {
             binding?.textViewSubTotal?.text=it.toString()
         }
 
-
-
         viewModel.totalFactura.observe(viewLifecycleOwner) {
             binding?.textViewTotal?.text=it.toString()
         }
 
         viewModel.referencias.observe(viewLifecycleOwner) {
-            binding?.textViewReferencias?.text="Referencias: "+it
+            binding?.textViewReferencias?.text="Referencias: "+it.formatoMonenda()
         }
         viewModel.itemsSeleccionados.observe(viewLifecycleOwner) {
-            binding?.textViewItems?.text="Items: "+ it
+            binding?.textViewItems?.text="Items: "+ it.formatoMonenda()
         }
 
         viewModel.mensajeToast.observe(viewLifecycleOwner){
@@ -214,11 +231,46 @@ class Factura : Fragment() {
         when (item.itemId) {
 
             R.id.action_confirmar_venta ->{
+                if(MainActivity.productosSeleccionados.size<1){
+                    Toast.makeText(context,"No hay productos seleccionados",Toast.LENGTH_LONG).show()
+                    return true
+                }
 
-                viewModel.subirColaModificarCantidad()
+                val idPedido = UUID.randomUUID().toString()
+
+                val currentTime = Calendar.getInstance().time
+
+                val pattern = "HH:mm:ss"
+                val formatoHora = SimpleDateFormat(pattern)
+                val horaActual = formatoHora.format(currentTime)
+
+                val formatoFecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val fechaActual = formatoFecha.format(Date())
+
+                val envio= binding?.editTextEnvio?.text.toString().ifBlank { "0" }
+                val descuento= binding?.editDescuento?.text.toString().ifBlank { "0" }
+
+                val datosPedido = hashMapOf<String, Any>(
+                    "id_pedido" to idPedido,
+                    "nombre" to binding?.editTextCliente?.text.toString(),
+                    "telefono" to binding?.editTextTelefono?.text.toString(),
+                    "documento" to binding?.editTextDocumento?.text.toString(),
+                    "direccion" to binding?.editTextDireccion?.text.toString(),
+                    "descuento" to descuento.eliminarPuntosComas(),
+                    "envio" to envio.eliminarPuntosComas(),
+                    "fecha" to fechaActual,
+                    "hora" to horaActual,
+                    "id_vendedor" to "id_vendedor",
+                    "nombre_vendedor" to "nombre_vendedor"
+                )
+
+
+                viewModel.subirDatos(datosPedido, productosSeleccionados)
 
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
+
+                findNavController().popBackStack()
                 return true
             }
 
@@ -229,7 +281,7 @@ class Factura : Fragment() {
     fun filtrarProductos(nombreFiltrado: String) {
 
         val productosFiltrados = productosSeleccionados.filter { it.key.nombre.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }.toMutableMap()
-        adaptador = FacturaAdaptador(productosFiltrados,viewModel)
+        adaptador = FacturaAdaptador(productosFiltrados)
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
         adaptador.notifyDataSetChanged()
 

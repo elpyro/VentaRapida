@@ -19,16 +19,17 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="4dp"
                 app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@color/azul_trasparente">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="8dp"
+                    android:layout_margin="4dp"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -46,7 +47,8 @@
                                 android:id="@+id/editText_cliente"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:layout_marginRight="4dp"
                                 android:background="@drawable/edittext_background"
                                 android:gravity="center"
                                 android:hint="@string/nombre"
@@ -60,7 +62,8 @@
                             android:id="@+id/imageButton_buscarCliente"
                             android:layout_width="12dp"
                             android:layout_height="match_parent"
-                            android:layout_margin="8dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
                             android:layout_weight="1"
                             android:background="@drawable/bordesredondos"
                             android:contentDescription="@string/buscarUsuario"
@@ -85,7 +88,8 @@
                                 android:id="@+id/editText_telefono"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:layout_marginRight="4dp"
                                 android:background="@drawable/edittext_background"
                                 android:gravity="center"
                                 android:hint="@string/telefono"
@@ -106,7 +110,8 @@
                                 android:id="@+id/editText_documento"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:layout_marginRight="4dp"
                                 android:background="@drawable/edittext_background"
                                 android:gravity="center"
                                 android:hint="@string/documento"
@@ -128,7 +133,8 @@
                             android:id="@+id/editText_direccion"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
                             android:background="@drawable/edittext_background"
                             android:gravity="center"
                             android:hint="@string/direccion"
@@ -150,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/total"
-                android:textSize="26sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:theme="@style/ColorFuenteEnFondoGris" />
 
@@ -164,7 +170,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:cardCornerRadius="10dp"
+                    app:cardCornerRadius="4dp"
                     app:cardElevation="4dp"
                     app:cardUseCompatPadding="true"
                     android:layout_weight="1"
@@ -173,7 +179,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="8dp"
+                        android:layout_margin="4dp"
                         android:orientation="vertical">
 
                         <TextView
@@ -181,7 +187,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:text="@string/informacion"
-                            android:layout_marginTop="3dp"
+                            android:layout_marginTop="1dp"
                             android:textSize="16sp"
                             android:layout_weight="1"
                             android:textStyle="bold"
@@ -221,7 +227,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="10dp"
+                    app:cardCornerRadius="4dp"
                     app:cardElevation="4dp"
                     app:cardUseCompatPadding="true"
                     android:layout_weight="1"
@@ -230,7 +236,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="8dp"
+                        android:layout_margin="4dp"
                         android:orientation="vertical"
                         android:gravity="end">
 

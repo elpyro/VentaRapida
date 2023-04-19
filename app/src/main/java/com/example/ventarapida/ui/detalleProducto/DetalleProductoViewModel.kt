@@ -22,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlin.collections.HashMap
 
 
 class DetalleProductoViewModel : ViewModel() {

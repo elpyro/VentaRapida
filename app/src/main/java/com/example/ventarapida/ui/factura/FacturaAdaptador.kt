@@ -1,17 +1,11 @@
 package com.example.ventarapida.ui.factura
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
@@ -22,7 +16,6 @@ import java.util.*
 
 class FacturaAdaptador(
     val products: MutableMap<ModeloProducto, Int>,
-    val viewModel: FacturaViewModel
 ) : RecyclerView.Adapter<FacturaAdaptador.ProductViewHolder>() {
 
     private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
@@ -46,7 +39,7 @@ class FacturaAdaptador(
         val cantidad = products[productKey]
 
         // Vincular los datos del producto con la vista del ViewHolder
-        holder.bind(productKey, cantidad, position)
+        holder.bind(productKey, cantidad)
 
         holder.itemView.setOnClickListener {
             onClickItem?.invoke(productKey, cantidad!!, position)
@@ -78,14 +71,13 @@ class FacturaAdaptador(
 
 
         @SuppressLint("SetTextI18n")
-        fun bind(product: ModeloProducto, cantidadSeleccion: Int?, position: Int) {
+        fun bind(product: ModeloProducto, cantidadSeleccion: Int?) {
 
             producto.text = product.nombre
 
             // Verificar si la cantidad es nula y si no lo es, establecer el texto de la vista de cantidad
-            isUserEditing = false
-            cantidadSeleccion?.let { seleccion.setText(it.toString()) }
-            isUserEditing = true
+
+            cantidadSeleccion?.let { seleccion.setText(it.toString().formatoMonenda()) }
 
             existencia.text ="X"+ (product.cantidad.toInt() - cantidadSeleccion!!.toInt())
 
