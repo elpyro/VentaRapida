@@ -17,8 +17,10 @@ object Utilidades {
         return pattern.replace(normalized, "").lowercase(Locale.getDefault())
     }
 
-    fun String.eliminarPuntosComas(): String {
-        return this.replace(".", "").replace(",", "")
+    fun String.eliminarPuntosComasLetras(): String {
+        return this.replace(Regex("[^\\d.]"), "")
+            .replace(".", "")
+            .replace(",", "")
     }
 
     fun EditText.escribirFormatoMoneda() {
@@ -31,7 +33,7 @@ object Utilidades {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (!isProgrammaticChange && s != null) {
                     removeTextChangedListener(this)
-                    val precio = s.toString().eliminarPuntosComas()
+                    val precio = s.toString().eliminarPuntosComasLetras()
                     setText(precio.formatoMonenda())
                     setSelection(text.length)
                     addTextChangedListener(this)

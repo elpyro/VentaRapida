@@ -26,5 +26,15 @@
         android:name="com.example.ventarapida.ui.factura.Factura"
         android:label="@string/detalleFactura"
         tools:layout="@layout/fragment_factura" />
+    <fragment
+        android:id="@+id/nav_registros"
+        android:name="com.example.ventarapida.registros.Registros"
+        android:label="fragment_registros"
+        tools:layout="@layout/fragment_registros" />
+    <fragment
+        android:id="@+id/ventas"
+        android:name="com.example.ventarapida.registros.pestanas.FacturaVentas"
+        android:label="fragment_ventas"
+        tools:layout="@layout/fragment_factura_ventas" />
 
 </navigation>

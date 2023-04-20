@@ -20,7 +20,7 @@ import com.example.ventarapida.databinding.FragmentFacturaBinding
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
 import com.example.ventarapida.ui.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
+import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
 import java.text.SimpleDateFormat
@@ -137,7 +137,7 @@ class Factura : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 // Actualiza el valor de envio con el valor del EditText
                 if (binding!!.editTextEnvio.text.toString().isNotEmpty()) {
-                    viewModel.envio.value = binding!!.editTextEnvio.text.toString().eliminarPuntosComas()
+                    viewModel.envio.value = binding!!.editTextEnvio.text.toString().eliminarPuntosComasLetras()
                 } else {
                     viewModel.envio.value = "0"
                 }
@@ -156,7 +156,7 @@ class Factura : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 // Actualiza el valor de envio con el valor del EditText
                 if (binding!!.editDescuento.text.toString().isNotEmpty()) {
-                    viewModel.descuento.value = binding!!.editDescuento.text.toString().eliminarPuntosComas()
+                    viewModel.descuento.value = binding!!.editDescuento.text.toString().eliminarPuntosComasLetras()
                 } else {
                     viewModel.descuento.value = "0"
                 }
@@ -247,21 +247,24 @@ class Factura : Fragment() {
                 val formatoFecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                 val fechaActual = formatoFecha.format(Date())
 
+                val nombre= binding?.editTextCliente?.text.toString().ifBlank { "Anonimo" }
                 val envio= binding?.editTextEnvio?.text.toString().ifBlank { "0" }
                 val descuento= binding?.editDescuento?.text.toString().ifBlank { "0" }
+                val total=binding?.textViewTotal?.text.toString().eliminarPuntosComasLetras()
 
                 val datosPedido = hashMapOf<String, Any>(
                     "id_pedido" to idPedido,
-                    "nombre" to binding?.editTextCliente?.text.toString(),
+                    "nombre" to nombre,
                     "telefono" to binding?.editTextTelefono?.text.toString(),
                     "documento" to binding?.editTextDocumento?.text.toString(),
                     "direccion" to binding?.editTextDireccion?.text.toString(),
-                    "descuento" to descuento.eliminarPuntosComas(),
-                    "envio" to envio.eliminarPuntosComas(),
+                    "descuento" to descuento.eliminarPuntosComasLetras(),
+                    "envio" to envio.eliminarPuntosComasLetras(),
                     "fecha" to fechaActual,
                     "hora" to horaActual,
                     "id_vendedor" to "id_vendedor",
-                    "nombre_vendedor" to "nombre_vendedor"
+                    "nombre_vendedor" to "nombre_vendedor",
+                    "total" to total
                 )
 
 
@@ -283,7 +286,7 @@ class Factura : Fragment() {
         val productosFiltrados = productosSeleccionados.filter { it.key.nombre.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }.toMutableMap()
         adaptador = FacturaAdaptador(productosFiltrados)
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
-        adaptador.notifyDataSetChanged()
+
 
         adaptador!!.setOnClickItem() { item, cantidad, position ->
             editarItem(item, cantidad, position)

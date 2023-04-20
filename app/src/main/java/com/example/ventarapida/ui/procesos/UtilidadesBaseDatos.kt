@@ -28,14 +28,15 @@ object UtilidadesBaseDatos {
         val db = dbHelper.readableDatabase
 
        productosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
-            val idTransaccion = UUID.randomUUID().toString()
-            val values = ContentValues().apply {
-                put("idTransaccion", idTransaccion)
-                put("idProducto", producto.id)
-                put("cantidad", cantidadSeleccionada.toString())
-            }
-            db.insert("transaccionesSumaRestaProductos", null, values)
-
+           if(cantidadSeleccionada!=0){
+               val idTransaccion = UUID.randomUUID().toString()
+               val values = ContentValues().apply {
+                   put("idTransaccion", idTransaccion)
+                   put("idProducto", producto.id)
+                   put("cantidad", cantidadSeleccionada.toString())
+               }
+               db.insert("transaccionesSumaRestaProductos", null, values)
+           }
         }
 
         db.close()

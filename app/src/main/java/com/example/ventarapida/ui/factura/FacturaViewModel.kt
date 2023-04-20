@@ -10,7 +10,7 @@ import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.CrearTono
 import com.example.ventarapida.ui.procesos.FirebaseFactura
 import com.example.ventarapida.ui.procesos.Preferencias
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
+import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.guardarTransaccionesBd
 import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
@@ -39,7 +39,7 @@ class FacturaViewModel : ViewModel() {
             var items=0
             for ((producto, cantidad) in productosSeleccionados) {
                 items += cantidad
-                total += producto.p_diamante.eliminarPuntosComas().toDouble() * cantidad.toDouble()
+                total += producto.p_diamante.eliminarPuntosComasLetras().toDouble() * cantidad.toDouble()
             }
             // Obtiene el porcentaje de descuento y lo resta de total
             val porcentajeDescuento = descuento.value!!.toDouble() / 100
@@ -51,7 +51,7 @@ class FacturaViewModel : ViewModel() {
 
             totalFactura.value =  "Total: "+ total.toString().formatoMonenda()
 
-            referencias.value= productosSeleccionados.size.toString()
+            referencias.value=  productosSeleccionados.count { it.value != 0  }.toString()
 
             itemsSeleccionados.value = items.toString()
 
@@ -61,8 +61,6 @@ class FacturaViewModel : ViewModel() {
     }
         fun mensaje(producto: ModeloProducto){
             mensajeToast.value=producto.nombre
-            val crearTono= CrearTono()
-            crearTono.crearTono(context)
         }
 
     fun subirDatos(
@@ -88,10 +86,11 @@ class FacturaViewModel : ViewModel() {
 
         productosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
             //calculamos el precio descuento para tener la referencia para los reportes
+            if (cantidadSeleccionada!=0){
+
             val porcentajeDescuento = descuento.toDouble() / 100
             var precioDescuento:Double=producto.p_diamante.toDouble()
             precioDescuento *= (1 - porcentajeDescuento)
-
             precioDescuento += envio.toDouble()
 
         val productoFacturado = ModeloProductoFacturado(
@@ -110,46 +109,28 @@ class FacturaViewModel : ViewModel() {
             imagenUrl=producto.url
         )
         listaProductosFacturados.add(productoFacturado)
+            }
         }
 
         guardarProductoFacturado(listaProductosFacturados)
-            .addOnSuccessListener {
-                Toast.makeText(context,"Producto Facturado", Toast.LENGTH_LONG).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(context,"Error al guardar", Toast.LENGTH_LONG).show()
-            }
+
     }
 
-    fun actualizarProducto(producto: ModeloProducto, nuevoDiamante: Int, cantidad:Int, nombre:String) {
+    fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Int, cantidad:Int, nombre:String) {
         val productoEncontrado = productosSeleccionados.keys.find { it.id == producto.id }
         if (productoEncontrado != null) {
-            val index = productosSeleccionados.keys.indexOf(productoEncontrado)
+//            val index = productosSeleccionados.keys.indexOf(productoEncontrado)
+
             productosSeleccionados.remove(productoEncontrado)
-            productoEncontrado.p_diamante = nuevoDiamante.toString().eliminarPuntosComas()
+            productoEncontrado.p_diamante = nuevoPrecio.toString().eliminarPuntosComasLetras()
             productoEncontrado.nombre = nombre
-            if (cantidad>0){
-                productosSeleccionados[productoEncontrado] = 0
-                moverProducto(productoEncontrado, index)
-                productosSeleccionados[productoEncontrado] = cantidad
-            }
+            productosSeleccionados[productoEncontrado] = cantidad
 
         }
 
         val crearTono= CrearTono()
         crearTono.crearTono(context)
         totalFactura()
-    }
-
-    fun moverProducto(producto: ModeloProducto, nuevaPosicion: Int) {
-        val indexActual = productosSeleccionados.keys.indexOf(producto)
-        if (indexActual != -1 && indexActual != nuevaPosicion) {
-            productosSeleccionados.remove(producto)
-            val listaMutable = productosSeleccionados.keys.toMutableList()
-            listaMutable.add(nuevaPosicion, producto)
-            productosSeleccionados.clear()
-            listaMutable.forEach { p -> productosSeleccionados.put(p, productosSeleccionados[p] ?: 1) }
-        }
     }
 
     fun limpiarProductosSelecionados(context: Context) {

@@ -20,7 +20,7 @@ import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.FirebaseProductos.guardarProducto
 import com.example.ventarapida.ui.procesos.OcultarTeclado
 import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComas
+import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.ui.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
@@ -287,8 +287,8 @@ class DetalleProducto : Fragment() {
             "id" to id_producto.trim(),
             "nombre" to this.binding!!.editTextProducto.text.toString().trim(),
             "cantidad" to this.binding!!.editTextCantidad.text.toString().trim(),
-            "p_compra" to this.binding!!.editTextPCompra.text.toString().eliminarPuntosComas().trim(),
-            "p_diamante" to this.binding!!.editTextPVenta.text.toString().eliminarPuntosComas().trim()
+            "p_compra" to this.binding!!.editTextPCompra.text.toString().eliminarPuntosComasLetras().trim(),
+            "p_diamante" to this.binding!!.editTextPVenta.text.toString().eliminarPuntosComasLetras().trim()
         )
 
          guardarProducto(updates)

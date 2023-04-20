@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.ui.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
@@ -18,7 +20,7 @@ class FacturaAdaptador(
     val products: MutableMap<ModeloProducto, Int>,
 ) : RecyclerView.Adapter<FacturaAdaptador.ProductViewHolder>() {
 
-    private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
+    private val sortedProducts = MainActivity.productosSeleccionados.keys.sortedBy { it.nombre }
 
 
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
@@ -34,15 +36,15 @@ class FacturaAdaptador(
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
 
         // Obtener la clave del elemento que corresponde a la posición
-        val productKey = products.keys.toList()[position]
+        val producto =sortedProducts[position]
         // Obtener la cantidad del elemento
-        val cantidad = products[productKey]
+        val cantidad = products[producto]
 
         // Vincular los datos del producto con la vista del ViewHolder
-        holder.bind(productKey, cantidad)
+        holder.bind(producto, cantidad)
 
-        holder.itemView.setOnClickListener {
-            onClickItem?.invoke(productKey, cantidad!!, position)
+        holder.cardView.setOnClickListener {
+            onClickItem?.invoke(producto, cantidad!!, position)
         }
         }
 
@@ -68,7 +70,7 @@ class FacturaAdaptador(
         val seleccion: TextView = itemView.findViewById(R.id.Textview_seleccion)
         val precio: TextView = itemView.findViewById(R.id.Textview_precio)
         val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_foto_producto)
-
+        val cardView:CardView=itemView.findViewById(R.id.cardview_itemProducto)
 
         @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto, cantidadSeleccion: Int?) {

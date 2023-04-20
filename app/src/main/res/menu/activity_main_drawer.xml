@@ -16,5 +16,10 @@
             android:id="@+id/nav_nuevoProdcuto"
             android:icon="@drawable/baseline_bookmark_add_24"
             android:title="@string/NuevoProducto" />
+
+        <item
+            android:id="@+id/ventas"
+            android:icon="@drawable/baseline_menu_book_24"
+            android:title="@string/Registros" />
     </group>
 </menu>

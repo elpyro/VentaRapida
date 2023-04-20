@@ -48,4 +48,9 @@
     <string name="confirmar">Confirmar</string>
     <string name="seleccion">Selección</string>
     <string name="total_producto">Total Producto</string>
+    <string name="Registros">Registros</string>
+    <string name="cliente">Cliente</string>
+    <string name="vendedor">Vendedor</string>
+    <string name="fecha">Fecha</string>
+    <string name="id">ID</string>
 </resources>
