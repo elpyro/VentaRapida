@@ -16,13 +16,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
-import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.FirebaseProductos.guardarProducto
-import com.example.ventarapida.ui.procesos.OcultarTeclado
-import com.example.ventarapida.ui.procesos.TomarFotoYGaleria
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComasLetras
-import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
-import com.example.ventarapida.ui.procesos.VerificarInternet
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.FirebaseProductos.guardarProducto
+import com.example.ventarapida.procesos.OcultarTeclado
+import com.example.ventarapida.procesos.TomarFotoYGaleria
+import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
+import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
+import com.example.ventarapida.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
@@ -48,8 +48,7 @@ class DetalleProducto : Fragment() {
         // Inflar el layout del fragmento usando el binding
         binding = FragmentDetalleProductoBinding.inflate(inflater, container, false)
 
-        // Inicialización de Firebase
-        FirebaseApp.initializeApp(requireContext())
+
 
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments

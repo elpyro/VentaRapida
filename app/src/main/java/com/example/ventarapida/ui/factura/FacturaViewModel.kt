@@ -1,21 +1,20 @@
 package com.example.ventarapida.ui.factura
 
 import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
-import com.example.ventarapida.ui.datos.ModeloProductoFacturado
-import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.CrearTono
-import com.example.ventarapida.ui.procesos.FirebaseFactura
-import com.example.ventarapida.ui.procesos.Preferencias
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComasLetras
-import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
-import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.guardarTransaccionesBd
-import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
-import com.example.ventarapida.ui.procesos.FirebaseProductoFacturados.guardarProductoFacturado
-import com.example.ventarapida.ui.procesos.FirebaseProductos.transaccionesCambiarCantidad
+import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.CrearTono
+import com.example.ventarapida.procesos.FirebaseFactura
+import com.example.ventarapida.procesos.Preferencias
+import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
+import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.procesos.UtilidadesBaseDatos.guardarTransaccionesBd
+import com.example.ventarapida.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
+import com.example.ventarapida.procesos.FirebaseProductoFacturados.guardarProductoFacturado
+import com.example.ventarapida.procesos.FirebaseProductos.transaccionesCambiarCantidad
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -68,10 +67,10 @@ class FacturaViewModel : ViewModel() {
         productosSeleccionados: MutableMap<ModeloProducto, Int>
     ) {
 
-        guardarTransaccionesBd(context , productosSeleccionados)
 
-        val transaccionesPendientes=  obtenerTransaccionesSumaRestaProductos(context)
-        transaccionesCambiarCantidad(context,transaccionesPendientes)
+        guardarTransaccionesBd(context, productosSeleccionados)
+        val transaccionesPendientes = obtenerTransaccionesSumaRestaProductos(context)
+        transaccionesCambiarCantidad(context, transaccionesPendientes)
 
         FirebaseFactura.guardarFactura(datosPedido)
 
@@ -119,7 +118,6 @@ class FacturaViewModel : ViewModel() {
     fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Int, cantidad:Int, nombre:String) {
         val productoEncontrado = productosSeleccionados.keys.find { it.id == producto.id }
         if (productoEncontrado != null) {
-//            val index = productosSeleccionados.keys.indexOf(productoEncontrado)
 
             productosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_diamante = nuevoPrecio.toString().eliminarPuntosComasLetras()
@@ -135,7 +133,7 @@ class FacturaViewModel : ViewModel() {
 
     fun limpiarProductosSelecionados(context: Context) {
         productosSeleccionados.clear()
-        val preferencias=Preferencias()
+        val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context, productosSeleccionados)
 
     }

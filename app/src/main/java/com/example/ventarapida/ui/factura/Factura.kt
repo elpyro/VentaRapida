@@ -17,12 +17,12 @@ import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaBinding
-import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.OcultarTeclado
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarPuntosComasLetras
-import com.example.ventarapida.ui.procesos.Utilidades.escribirFormatoMoneda
-import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.OcultarTeclado
+import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
+import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
+import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -56,7 +56,7 @@ class Factura : Fragment() {
 
 
         adaptador.setOnClickItem() { item, cantidad, position ->
-            editarItem(item, cantidad, position)
+            editarItem(item, cantidad)
         }
 
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
@@ -72,7 +72,7 @@ class Factura : Fragment() {
 
     }
 
-     fun editarItem(item: ModeloProducto, cantidad: Int,position:Int) {
+     fun editarItem(item: ModeloProducto, cantidad: Int) {
          val dialogBuilder = AlertDialog.Builder(context)
 
 // Inflar el layout para el diálogo
@@ -289,7 +289,7 @@ class Factura : Fragment() {
 
 
         adaptador!!.setOnClickItem() { item, cantidad, position ->
-            editarItem(item, cantidad, position)
+            editarItem(item, cantidad)
         }
 
     }

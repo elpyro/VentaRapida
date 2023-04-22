@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.VentaBinding
-import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.OcultarTeclado
-import com.example.ventarapida.ui.procesos.Utilidades.eliminarAcentosTildes
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.OcultarTeclado
+import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import java.util.*
 
 

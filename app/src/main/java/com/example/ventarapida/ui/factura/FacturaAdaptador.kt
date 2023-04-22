@@ -9,8 +9,8 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
-import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 
 import com.squareup.picasso.Picasso
 import java.util.*

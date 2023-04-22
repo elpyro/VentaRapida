@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity
 
 
-import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.GuardarImagenEnDispositivo
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.GuardarImagenEnDispositivo
 import com.example.ventarapida.ui.procesos.ServiciosSubirFoto
 
 import com.google.android.gms.tasks.Task

@@ -6,11 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
-import com.example.ventarapida.ui.datos.ModeloProducto
-import com.example.ventarapida.ui.procesos.CrearTono
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.CrearTono
 
-import com.example.ventarapida.ui.procesos.Preferencias
-import com.example.ventarapida.ui.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.procesos.Preferencias
+import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -55,7 +55,7 @@ class VentaViewModel : ViewModel() {
             productosSeleccionados[producto] = 1
         }
 
-        val crearTono=CrearTono()
+        val crearTono= CrearTono()
         crearTono.crearTono(context)
         calcularTotal()
 
@@ -93,7 +93,7 @@ class VentaViewModel : ViewModel() {
             productosSeleccionados[producto] = nuevaCantidad
         }
 
-        val crearTono=CrearTono()
+        val crearTono= CrearTono()
         crearTono.crearTono(context)
         calcularTotal()
     }

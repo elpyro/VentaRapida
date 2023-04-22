@@ -12,11 +12,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
-import com.example.ventarapida.ui.datos.ModeloProducto
+import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
-import com.example.ventarapida.ui.procesos.Preferencias
-import com.example.ventarapida.ui.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
-import com.example.ventarapida.ui.procesos.FirebaseProductos.transaccionesCambiarCantidad
+import com.example.ventarapida.procesos.Preferencias
+import com.example.ventarapida.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
+import com.example.ventarapida.procesos.FirebaseProductos.transaccionesCambiarCantidad
 import com.google.android.material.navigation.NavigationView
 
 
@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
 
 
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun cargarDatos() {
-        val preferenciasServicios=Preferencias()
+        val preferenciasServicios= Preferencias()
         preferenciasServicios.obtenerVentaPendiente(this)
         preferenciasServicios.obtenerServicioPendiente(this)
 
