@@ -21,6 +21,8 @@ object FirebaseFactura {
         return registroRef.updateChildren(updates)
     }
 
+
+
     fun buscarFacturas(): Task<MutableList<ModeloFactura>> {
         val database = FirebaseDatabase.getInstance()
         val tablaRef = database.getReference(TABLA_REFERENCIA)

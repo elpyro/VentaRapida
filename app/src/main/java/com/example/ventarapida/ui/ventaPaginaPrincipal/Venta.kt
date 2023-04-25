@@ -23,6 +23,7 @@ import com.example.ventarapida.databinding.VentaBinding
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.OcultarTeclado
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import java.util.*
 
 
@@ -127,7 +128,8 @@ class Venta : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    OcultarTeclado(requireContext()).hideKeyboard(vista)
+                    ocultarTeclado(requireContext(),vista)
+                    
                 }
             }
         })
@@ -172,7 +174,7 @@ class Venta : Fragment() {
 
     private fun mensajeEliminar() {
 
-        OcultarTeclado(requireContext()).hideKeyboard(vista)
+        ocultarTeclado(requireContext(),vista)
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())

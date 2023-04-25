@@ -2,10 +2,10 @@ package com.example.ventarapida.datos
 
 data class ModeloFactura(
     val id_pedido: String = "",
-    val nombre: String = "",
-    val telefono: String = "",
-    val documento: String = "",
-    val direccion: String = "",
+    var nombre: String = "",
+    var telefono: String = "",
+    var documento: String = "",
+    var direccion: String = "",
     val descuento: String = "",
     val envio: String = "",
     val fecha: String = "",

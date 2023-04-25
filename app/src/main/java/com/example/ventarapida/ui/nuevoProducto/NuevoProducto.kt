@@ -20,6 +20,7 @@ import com.example.ventarapida.procesos.TomarFotoYGaleria.Companion.GALERIA_REQU
 import com.example.ventarapida.procesos.TomarFotoYGaleria.Companion.imagenUri
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
+import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
@@ -129,7 +130,7 @@ class NuevoProducto : Fragment() {
 
     private fun guardar() {
 
-            OcultarTeclado(requireContext()).hideKeyboard(vista)
+            ocultarTeclado(requireContext(),vista)
 
             //verificando campos vacios
             if ( binding!!.editTextProducto.text.toString().isEmpty()

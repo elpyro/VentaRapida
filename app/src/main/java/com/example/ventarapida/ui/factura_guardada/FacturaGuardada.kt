@@ -1,30 +1,23 @@
 package com.example.ventarapida.ui.factura_guardada
 
-import android.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.FirebaseProductoFacturados.eliminarProductoFacturado
-import com.example.ventarapida.procesos.FirebaseProductoFacturados.guardarProductoFacturado
-import com.example.ventarapida.procesos.FirebaseProductos
+import com.example.ventarapida.procesos.FirebaseFactura
 import com.example.ventarapida.procesos.OcultarTeclado
+import com.example.ventarapida.procesos.TomarFotoYGaleria
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
-import com.example.ventarapida.procesos.UtilidadesBaseDatos
+import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.example.ventarapida.ui.promts.PromtFacturaGuardada
 
 class FacturaGuardada : Fragment() {
 
@@ -33,15 +26,19 @@ class FacturaGuardada : Fragment() {
     private var binding: FragmentFacturaGuardadaBinding? = null
     private lateinit var vista:View
     private lateinit var adaptador: FacturaGuardadaAdaptador
+    private lateinit var  modeloFactura: ModeloFactura
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding= FragmentFacturaGuardadaBinding.inflate(inflater, container, false)
 
+        //activar  menu para este fragment
+        setHasOptionsMenu(true)
+        
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
-        val modeloFactura = bundle?.getSerializable("modelo") as? ModeloFactura
+        modeloFactura= (bundle?.getSerializable("modelo") as? ModeloFactura)!!
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding?.recyclerViewProductosFacturados?.layoutManager = gridLayoutManager
@@ -63,6 +60,9 @@ class FacturaGuardada : Fragment() {
 
     private fun observadores() {
         viewModel.datosFactura.observe(viewLifecycleOwner) { detalleFactura ->
+            //actualiza el contenido del modelo actual
+            modeloFactura=detalleFactura
+            //actualizamos los datos del fragmento
             binding?.textViewCliente?.text = "Cliente: " + detalleFactura.nombre
             binding?.textViewTelefono?.text = "Tel: "+ detalleFactura.telefono
             binding?.textViewDocumento?.text = "C.I: "+detalleFactura.documento
@@ -77,6 +77,11 @@ class FacturaGuardada : Fragment() {
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
             binding?.textViewTotal?.text="Total: $it"
+            val updates = hashMapOf<String, Any>(
+                "id_pedido" to modeloFactura.id_pedido,
+                "total" to it.eliminarAcentosTildes(),
+            )
+            FirebaseFactura.guardarFactura(updates)
         }
         viewModel.subTotal.observe(viewLifecycleOwner){
             binding?.textViewSubtotal?.text="Sub-Total: $it"
@@ -85,7 +90,10 @@ class FacturaGuardada : Fragment() {
             adaptador = FacturaGuardadaAdaptador(productosFacturados as MutableList<ModeloProductoFacturado>)
             binding?.recyclerViewProductosFacturados?.adapter = adaptador
             adaptador!!.setOnClickItem() { item ->
-                editarItem(item)
+
+                val promtEditarItem=PromtFacturaGuardada()
+                promtEditarItem.editarProducto(item,requireActivity())
+
             }
         }
         viewModel.referencias.observe(viewLifecycleOwner){
@@ -104,7 +112,12 @@ class FacturaGuardada : Fragment() {
     private fun listeners() {
 
         binding?.cardViewCliente?.setOnClickListener {
-
+            val promtEditarDatos=PromtFacturaGuardada()
+            promtEditarDatos.promtEditarDatosCliente(modeloFactura,requireActivity())
+        }
+        binding?.cardViewTotales?.setOnClickListener {
+            val promtEditarDatos=PromtFacturaGuardada()
+            promtEditarDatos.promtEditarModificadoresFactura(modeloFactura,requireActivity())
         }
 
         binding?.recyclerViewProductosFacturados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -112,7 +125,7 @@ class FacturaGuardada : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    OcultarTeclado(requireContext()).hideKeyboard(vista)
+                    ocultarTeclado(requireContext(),vista)
                 }
             }
         })
@@ -135,6 +148,8 @@ class FacturaGuardada : Fragment() {
         }
     }
 
+
+
     fun filtrarProductos(nombreFiltrado: String) {
 
         val productosFiltrados = viewModel.datosProductosFacturados.value?.filter { it.producto.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }
@@ -143,84 +158,38 @@ class FacturaGuardada : Fragment() {
 
 
         adaptador!!.setOnClickItem() { item ->
-            editarItem(item)
+            val promtEditarItem=PromtFacturaGuardada()
+            promtEditarItem.editarProducto(item,requireActivity())
         }
 
     }
 
-    fun editarItem(item: ModeloProductoFacturado) {
-
-        val dialogBuilder = AlertDialog.Builder(context)
-
-// Inflar el layout para el diálogo
-        val inflater = requireActivity().layoutInflater
-        val dialogView = inflater.inflate(R.layout.promt_factura, null)
-        dialogBuilder.setView(dialogView)
-
-        val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
-        val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
-        val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
-
-        // Seleccionar tode el contenido del EditText al recibir foco
-        editTextProducto.setSelectAllOnFocus(true)
-        editTextCantidad.setSelectAllOnFocus(true)
-        editTextPrecio.setSelectAllOnFocus(true)
-
-        editTextProducto.setText( item.producto)
-        editTextCantidad.setText(item.cantidad)
-        editTextPrecio.setText(item.venta.formatoMonenda())
-
-        editTextPrecio.escribirFormatoMoneda()
-
-
-
-// Configurar el botón "Aceptar"
-        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
-
-            val nuevoNombre=editTextProducto.text.toString()
-            val nuevaCantidad = editTextCantidad.text.toString()
-            val nuevoPrecio = editTextPrecio.text.toString().replace(".", "")
-
-            val cantidadAnterior = item.cantidad
-
-            item.producto=nuevoNombre
-            item.cantidad=nuevaCantidad
-            item.venta=nuevoPrecio
-
-
-            val diferenciaCantidad = nuevaCantidad.toInt() - cantidadAnterior.toInt()
-
-            if(diferenciaCantidad!=0){
-                //hacer una cola para restar o sumar las cantidades del inventario
-                val productosSeleccionados: MutableMap<ModeloProducto, Int> = mutableMapOf()
-                val nuevoProducto = ModeloProducto(id = item.id_producto)
-                productosSeleccionados[nuevoProducto] = diferenciaCantidad
-
-                UtilidadesBaseDatos.guardarTransaccionesBd(context, productosSeleccionados)
-                val transaccionesPendientes =
-                    UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-
-            }
-            val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
-            listaProductosFacturados.add(item)
-            if(nuevaCantidad.toInt()!=0){
-                guardarProductoFacturado(listaProductosFacturados)
-            }else{
-                eliminarProductoFacturado(listaProductosFacturados)
-                Toast.makeText(context, cantidadAnterior.toString()+"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
-            }
-
-
-        }
-
-// Configurar el botón "Cancelar"
-        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
-            // No hacer nada
-        }
-
-// Mostrar el diálogo
-        val alertDialog = dialogBuilder.create()
-        alertDialog.show()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_factura_guardada, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+            R.id.action_agregar_producto->{
+
+                return true
+            }
+
+            R.id.action_eliminar -> {
+
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+        // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
+        requireActivity().invalidateOptionsMenu()
+    }
+
 }

@@ -1,7 +1,10 @@
 package com.example.ventarapida.procesos
 
+import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -21,6 +24,11 @@ object Utilidades {
         return this.replace(Regex("[^\\d.]"), "")
             .replace(".", "")
             .replace(",", "")
+    }
+
+    fun ocultarTeclado(context: Context,view: View) {
+        val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     fun EditText.escribirFormatoMoneda() {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:contentInsetStart="10dp">
+    <item
+        android:id="@+id/action_agregar_producto"
+        android:title="@string/Agregar_producto"
+        android:orderInCategory="200"
+        android:icon="@drawable/car_ui_icon_delete"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_eliminar"
+        android:title="@string/eliminar"
+        android:orderInCategory="200"
+        android:icon="@drawable/car_ui_icon_delete"
+        app:showAsAction="never" />
+
+
+</menu>

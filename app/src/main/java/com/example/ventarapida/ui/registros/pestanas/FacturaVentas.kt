@@ -16,6 +16,7 @@ import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.procesos.FirebaseFactura.buscarFacturas
 import com.example.ventarapida.procesos.OcultarTeclado
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 
 class FacturaVentas : Fragment() {
 
@@ -66,7 +67,7 @@ class FacturaVentas : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    OcultarTeclado(requireContext()).hideKeyboard(vista)
+                    ocultarTeclado(requireContext(),vista)
                 }
             }
         })

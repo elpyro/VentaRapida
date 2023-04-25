@@ -58,9 +58,7 @@ class FacturaViewModel : ViewModel() {
             preferencias.guardarPreferenciaListaSeleccionada(context,
                 productosSeleccionados)
     }
-        fun mensaje(producto: ModeloProducto){
-            mensajeToast.value=producto.nombre
-        }
+
 
     fun subirDatos(
         datosPedido: HashMap<String, Any>,

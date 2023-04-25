@@ -1,8 +1,12 @@
 package com.example.ventarapida.procesos
 
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.google.android.gms.tasks.Task
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 object FirebaseProductoFacturados {
 
@@ -30,7 +34,35 @@ object FirebaseProductoFacturados {
             val id_producto = producto.id_producto_pedido
             referencia.child(id_producto).removeValue()
         }
-
         return
+    }
+
+    fun actualizarPrecioDescuento(idPedido:String, descuento:Double){
+        val database = FirebaseDatabase.getInstance()
+        val refProductosFacturados = database.getReference("ProductosFacturados")
+
+        val porcentajeDescuento = descuento / 100
+
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (registro in dataSnapshot.children) {
+                    val productoFacturado = registro.getValue(ModeloProductoFacturado::class.java)
+                    if (productoFacturado != null && productoFacturado.id_pedido == idPedido) {
+                        // Actualiza el valor del campo "precio_descuento" en el registro
+                        val nuevoValor = productoFacturado.venta.toInt()
+                        val productoConDescuento=nuevoValor * (1 - porcentajeDescuento)
+                        refProductosFacturados.child(registro.key!!).child("precioDescuentos").setValue(productoConDescuento.toString())
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Maneja el error aquí si es necesario
+            }
+        }
+
+        refProductosFacturados.orderByChild("id_pedido").equalTo(idPedido).addListenerForSingleValueEvent(listener)
+
     }
 }

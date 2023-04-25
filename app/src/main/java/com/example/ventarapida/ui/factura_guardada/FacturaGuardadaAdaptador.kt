@@ -82,7 +82,7 @@ class FacturaGuardadaAdaptador(
             seleccion.text=factura.cantidad.formatoMonenda()
             precio.text=factura.venta.formatoMonenda()
             existencia.visibility=View.GONE
-            val total= factura.cantidad.toInt() * factura.venta.toInt()
+            val total= factura.cantidad.toFloat() * factura.venta.toFloat()
             total_producto.text= total.toString().formatoMonenda()
 
             Picasso.get().cancelRequest(imagenProducto)

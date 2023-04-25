@@ -23,6 +23,7 @@ import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -128,7 +129,7 @@ class Factura : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    OcultarTeclado(requireContext()).hideKeyboard(vista)
+                    ocultarTeclado(requireContext(),vista)
                 }
             }
         })
@@ -194,7 +195,7 @@ class Factura : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    OcultarTeclado(requireContext()).hideKeyboard(vista)
+                    ocultarTeclado(requireContext(),vista)
                 }
             }
         })
@@ -231,7 +232,9 @@ class Factura : Fragment() {
         when (item.itemId) {
 
             R.id.action_confirmar_venta ->{
-                if(MainActivity.productosSeleccionados.size<1){
+                ocultarTeclado(requireContext(),vista)
+
+                if(productosSeleccionados.size<1){
                     Toast.makeText(context,"No hay productos seleccionados",Toast.LENGTH_LONG).show()
                     return true
                 }
@@ -272,6 +275,7 @@ class Factura : Fragment() {
 
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
+                
 
                 findNavController().popBackStack()
                 return true
