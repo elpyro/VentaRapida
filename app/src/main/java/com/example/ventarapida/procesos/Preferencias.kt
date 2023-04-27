@@ -9,45 +9,59 @@ import com.google.gson.reflect.TypeToken
 
 class Preferencias {
 
-    fun guardarPreferenciaListaSeleccionada(context: Context, map: MutableMap<ModeloProducto, Int>) {
+    fun guardarPreferenciaListaSeleccionada(context: Context, map: MutableMap<ModeloProducto, Int>, referencia:String) {
 
-        limpiarPreferenciaListaSeleccionada(context)
+        limpiarPreferenciaListaSeleccionada(context,referencia)
 
-        val sharedPreferences = context.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences(referencia, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val gson = Gson()
         val json = gson.toJson(map)
-        editor.putString("seleccion_venta", json)
+        editor.putString("seleccion", json)
         editor.apply()
     }
 
-    fun limpiarPreferenciaListaSeleccionada(context: Context) {
+    fun limpiarPreferenciaListaSeleccionada(context: Context, referencia:String) {
 
-        val sharedPreferences = context.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences(referencia, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.remove("seleccion_venta")
+        editor.remove("seleccion")
         editor.apply()
 
     }
 
-    fun obtenerVentaPendiente(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("productos_seleccionados", Context.MODE_PRIVATE)
+    fun obtenerSeleccionPendiente(context: Context, referencia:String) {
+        val sharedPreferences = context.getSharedPreferences(referencia, Context.MODE_PRIVATE)
         val gson = Gson()
-        val json = sharedPreferences.getString("seleccion_venta", "")
+        val json = sharedPreferences.getString("seleccion", "")
 
-        if (json!!.isNotEmpty()) {
-            val mapType = object : TypeToken<MutableMap<String, Int>>() {}.type
-            val mapString: MutableMap<String, Int> = gson.fromJson(json, mapType)
+        if(referencia.equals("compra_seleccionada")) {
+            if (json!!.isNotEmpty()) {
+                val mapType = object : TypeToken<MutableMap<String, Int>>() {}.type
+                val mapString: MutableMap<String, Int> = gson.fromJson(json, mapType)
 
-            mapString.forEach { (productoJson, cantidad) ->
+                mapString.forEach { (productoJson, cantidad) ->
 
-                val modeloProducto = parsearModeloProducto(productoJson)
+                    val modeloProducto = parsearModeloProducto(productoJson)
 
-                MainActivity.productosSeleccionados[modeloProducto] = cantidad
+                    MainActivity.compraProductosSeleccionados[modeloProducto] = cantidad
+                }
             }
+        }
+        if(referencia.equals("venta_seleccionada")){
+            if (json!!.isNotEmpty()) {
+                val mapType = object : TypeToken<MutableMap<String, Int>>() {}.type
+                val mapString: MutableMap<String, Int> = gson.fromJson(json, mapType)
 
+                mapString.forEach { (productoJson, cantidad) ->
+
+                    val modeloProducto = parsearModeloProducto(productoJson)
+
+                    MainActivity.ventaProductosSeleccionados[modeloProducto] = cantidad
+                }
         }
 
+        }
         return
     }
 

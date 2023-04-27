@@ -55,4 +55,8 @@
     <string name="id">ID</string>
     <string name="Agregar_producto">Agregar Productos</string>
     <string name="RegistroVentas">Registro de Ventas</string>
+    <string name="tienda">Tienda</string>
+    <string name="detalleCompra">Detalle Compra</string>
+    <string name="RegistroCompras">Registro de Compras</string>
+    <string name="RegistrosVentas">Registro de Ventas</string>
 </resources>

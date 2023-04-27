@@ -10,8 +10,6 @@
         android:name="com.example.ventarapida.ui.ventaPaginaPrincipal.Venta"
         android:label="@string/venta"
         tools:layout="@layout/venta" />
-
-
     <fragment
         android:id="@+id/detalleProducto"
         android:name="com.example.ve.DetalleProducto"
@@ -23,9 +21,9 @@
         tools:layout="@layout/fragment_nuevo_producto" />
     <fragment
         android:id="@+id/factura"
-        android:name="com.example.ventarapida.ui.factura.Factura"
+        android:name="com.example.ventarapida.ui.detalleVenta.DetalleVenta"
         android:label="@string/detalleFactura"
-        tools:layout="@layout/fragment_factura" />
+        tools:layout="@layout/fragment_detalle_venta" />
     <fragment
         android:id="@+id/nav_registros"
         android:name="com.example.ventarapida.ui.registros.Registros"
@@ -45,5 +43,23 @@
         android:id="@+id/agregarProductoFactura"
         android:name="com.example.ventarapida.ui.agregarProductoFactura.AgregarProductoFactura"
         android:label="@string/Agregar_producto" />
+
+    <fragment
+        android:id="@+id/compra"
+        android:name="com.example.ventarapida.compras.Compra"
+        android:label="Compra" />
+    <fragment
+        android:id="@+id/detalleCompra"
+        android:name="com.example.ventarapida.ui.detalleCompra.DetalleCompra"
+        android:label="@string/detalleCompra"
+        tools:layout="@layout/fragment_detalle_compra" />
+    <fragment
+        android:id="@+id/listaCompras"
+        android:name="com.example.ventarapida.ui.registros.pestanas.ListaCompras"
+        android:label="@string/RegistroCompras" />
+    <fragment
+        android:id="@+id/compraGuardada"
+        android:name="com.example.ventarapida.ui.compra_guardada.CompraGuardada"
+        android:label="CompraGuardada" />
 
 </navigation>

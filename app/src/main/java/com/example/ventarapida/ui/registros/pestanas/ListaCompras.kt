@@ -11,17 +11,15 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
+import com.example.ventarapida.databinding.FragmentCompraBinding
 import com.example.ventarapida.databinding.FragmentFacturaVentasBinding
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.procesos.FirebaseFactura.buscarFacturas
-import com.example.ventarapida.procesos.OcultarTeclado
+import com.example.ventarapida.procesos.FirebaseFactura
+import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 
-class FacturaVentas : Fragment() {
-
-
-    private lateinit var viewModel: FacturaVentasViewModel
+class ListaCompras : Fragment() {
+    private lateinit var viewModel: ListaComprasViewModel
     private var binding: FragmentFacturaVentasBinding? = null
     private lateinit var vista:View
 
@@ -33,12 +31,12 @@ class FacturaVentas : Fragment() {
     ): View {
 
         binding= FragmentFacturaVentasBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(FacturaVentasViewModel::class.java)
+
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
 
-        val tareaFacturas = buscarFacturas("Factura")
+        val tareaFacturas = FirebaseFactura.buscarFacturas("Compra")
 
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas
@@ -47,7 +45,7 @@ class FacturaVentas : Fragment() {
             binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
             adaptador!!.setOnClickItem() { item ->
-            abriDetalle(item)
+                abriDetalle(item)
             }
         }
 
@@ -67,7 +65,7 @@ class FacturaVentas : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    ocultarTeclado(requireContext(),vista)
+                    Utilidades.ocultarTeclado(requireContext(), vista)
                 }
             }
         })
@@ -79,7 +77,7 @@ class FacturaVentas : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                     filtrarProductos(newText)
+                    filtrarProductos(newText)
                 }
                 return true
             }
@@ -103,7 +101,7 @@ class FacturaVentas : Fragment() {
 
 
         adaptador!!.setOnClickItem() { item ->
-          abriDetalle(item)
+            abriDetalle(item)
         }
 
     }
@@ -112,7 +110,6 @@ class FacturaVentas : Fragment() {
 
         bundle.putSerializable("modelo", item)
 
-        Navigation.findNavController(vista).navigate(R.id.facturaGuardada,bundle)
+        Navigation.findNavController(vista).navigate(R.id.compraGuardada,bundle)
     }
-
 }

@@ -3,7 +3,7 @@ package com.example.ventarapida.ui.registros
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.example.ventarapida.ui.registros.pestanas.Compras
+import com.example.ventarapida.ui.registros.pestanas.ListaCompras
 import com.example.ventarapida.ui.registros.pestanas.FacturaVentas
 
 class MyPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
@@ -13,7 +13,7 @@ class MyPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fr
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> FacturaVentas()
-            1 -> Compras()
+            1 -> ListaCompras()
             2 -> FacturaVentas()
             else -> FacturaVentas()
         }

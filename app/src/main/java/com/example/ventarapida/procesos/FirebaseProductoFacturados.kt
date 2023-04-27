@@ -10,11 +10,11 @@ import com.google.firebase.database.ValueEventListener
 
 object FirebaseProductoFacturados {
 
-    private const val TABLA_REFERENCIA = "ProductosFacturados"
+    //las tablas referencias son ProductosComprados y ProductosFacturados
 
-    fun guardarProductoFacturado(listaProductosFacturados: ArrayList<ModeloProductoFacturado>): Task<Void> {
+    fun guardarProductoFacturado(tablaReferencia: String,listaProductosFacturados: ArrayList<ModeloProductoFacturado>): Task<Void> {
         val database = FirebaseDatabase.getInstance()
-        val referencia = database.getReference(TABLA_REFERENCIA)
+        val referencia = database.getReference(tablaReferencia)
 
         val updates = HashMap<String, Any>()
         for (producto in listaProductosFacturados) {
@@ -26,9 +26,9 @@ object FirebaseProductoFacturados {
         return referencia.updateChildren(updates)
     }
 
-    fun eliminarProductoFacturado(listaProductosFacturados: ArrayList<ModeloProductoFacturado>) {
+    fun eliminarProductoFacturado(tablaReferencia: String, listaProductosFacturados: ArrayList<ModeloProductoFacturado>) {
         val database = FirebaseDatabase.getInstance()
-        val referencia = database.getReference(TABLA_REFERENCIA)
+        val referencia = database.getReference(tablaReferencia)
 
         for (producto in listaProductosFacturados) {
             val id_producto = producto.id_producto_pedido

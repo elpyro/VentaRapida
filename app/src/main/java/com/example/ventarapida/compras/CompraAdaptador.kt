@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.ventaPaginaPrincipal
+package com.example.ventarapida.compras
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -20,10 +20,10 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 
-class VentaAdaptador(
+class CompraAdaptador(
     private val products: List<ModeloProducto>,
-    private val viewModel: VentaViewModel
-) : RecyclerView.Adapter<VentaAdaptador.ProductViewHolder>() {
+    private val viewModel: CompraViewModel
+) : RecyclerView.Adapter<CompraAdaptador.ProductViewHolder>() {
     private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
 
 
@@ -31,7 +31,7 @@ class VentaAdaptador(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         // Inflar el diseño del item_producto para crear la vista del ViewHolder
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_producto, parent, false)
+            .inflate(R.layout.item_agregar_producto, parent, false)
         return ProductViewHolder(view)
     }
 
@@ -138,7 +138,7 @@ class VentaAdaptador(
 
             producto.text = product.nombre
 
-            precio.text = product.p_diamante.formatoMonenda()
+            precio.text = product.p_compra.formatoMonenda()
 
             existencia.text ="X${product.cantidad}"
 
@@ -155,8 +155,8 @@ class VentaAdaptador(
                 imagenProducto.setImageResource(R.drawable.ic_menu_camera)
             }
 
-            if (MainActivity.ventaProductosSeleccionados.isNotEmpty() &&   MainActivity.ventaProductosSeleccionados.any { it.key.id == products[position].id }) {
-                val cantidad = MainActivity.ventaProductosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
+            if (MainActivity.compraProductosSeleccionados.isNotEmpty() &&   MainActivity.compraProductosSeleccionados.any { it.key.id == products[position].id }) {
+                val cantidad = MainActivity.compraProductosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
 
                 if (cantidad > 0) {
                     isUserEditing = false
@@ -167,7 +167,7 @@ class VentaAdaptador(
                     if (cantidad == 1) {
                         botonRestar.setImageResource(R.drawable.baseline_delete_24)
                     } else {
-                        botonRestar.setImageResource(R.drawable.baseline_skip_previous_24)
+                        botonRestar.setImageResource(R.drawable.baseline_arrow_drop_down_24)
                     }
 
                     val color = ContextCompat.getColor(itemView.context, R.color.azul_trasparente)
@@ -176,7 +176,9 @@ class VentaAdaptador(
                     precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
                     existencia.setTextAppearance(R.style.ColorFuenteEnFondoGris)
 
-                    existencia.text = "X${(product.cantidad.toInt() - cantidad)}"
+
+                    //Sumar las existencias
+                    existencia.text = "X${(product.cantidad.toInt() + cantidad)}"
                 }
             } else {
                 isUserEditing = false

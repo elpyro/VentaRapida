@@ -126,7 +126,7 @@ class AgregarProductoFacturaViewModel : ViewModel() {
 
     fun subirDatos(context: Context, modeloFactura:ModeloFactura){
 
-        UtilidadesBaseDatos.guardarTransaccionesBd(context, AgregarProductoFactura.productosSeleccionadosAgregar)
+        UtilidadesBaseDatos.guardarTransaccionesBd("venta",context, AgregarProductoFactura.productosSeleccionadosAgregar)
         val transaccionesPendientes =
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
         FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
@@ -160,6 +160,6 @@ class AgregarProductoFacturaViewModel : ViewModel() {
             }
         }
 
-        FirebaseProductoFacturados.guardarProductoFacturado(listaProductosFacturados)
+        FirebaseProductoFacturados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados)
     }
 }

@@ -17,9 +17,23 @@
             android:icon="@drawable/baseline_bookmark_add_24"
             android:title="@string/NuevoProducto" />
 
+
+        <item
+            android:id="@+id/compra"
+            android:icon="@drawable/baseline_add_business_24"
+            android:title="@string/compra" />
+        <item
+            android:title="__________________________________"
+            android:enabled="false"/>
         <item
             android:id="@+id/ventas"
             android:icon="@drawable/baseline_menu_book_24"
-            android:title="@string/Registros" />
+            android:title="@string/RegistrosVentas" />
+
+        <item
+            android:id="@+id/listaCompras"
+            android:icon="@drawable/baseline_storefront_24"
+            android:title="@string/RegistroCompras" />
     </group>
+
 </menu>

@@ -23,8 +23,12 @@ import com.example.ventarapida.procesos.FirebaseProductoFacturados.actualizarPre
 
 class PromtFacturaGuardada() {
 
-    fun editarProducto(item: ModeloProductoFacturado, context: Context){
+    fun editarProducto( tipo:String, item: ModeloProductoFacturado, context: Context){
         val dialogBuilder = AlertDialog.Builder(context)
+
+        var tablaReferencia=""
+        if (tipo.equals("compra")) tablaReferencia="ProductosComprados"
+        if (tipo.equals("venta"))  tablaReferencia="ProductosFacturados"
 
 // Inflar el layout para el diálogo
         // Inflar el layout para el diálogo
@@ -69,9 +73,10 @@ class PromtFacturaGuardada() {
                 //hacer una cola para restar o sumar las cantidades del inventario
                 val productosSeleccionados: MutableMap<ModeloProducto, Int> = mutableMapOf()
                 val nuevoProducto = ModeloProducto(id = item.id_producto)
+                //multiplicamos *-1  para que en vez de restar sume en la base de datos
                 productosSeleccionados[nuevoProducto] = diferenciaCantidad
 
-                UtilidadesBaseDatos.guardarTransaccionesBd(context, productosSeleccionados)
+                UtilidadesBaseDatos.guardarTransaccionesBd(tipo,context, productosSeleccionados)
                 val transaccionesPendientes =
                     UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
                 FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
@@ -80,9 +85,10 @@ class PromtFacturaGuardada() {
             val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
             listaProductosFacturados.add(item)
             if(nuevaCantidad.toInt()!=0){
-                FirebaseProductoFacturados.guardarProductoFacturado(listaProductosFacturados)
+
+                FirebaseProductoFacturados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados)
             }else{
-                FirebaseProductoFacturados.eliminarProductoFacturado(listaProductosFacturados)
+                FirebaseProductoFacturados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados)
                 Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
             }
         }
@@ -106,7 +112,7 @@ class PromtFacturaGuardada() {
         val dialogView = inflater.inflate(R.layout.promt_datos_cliente, null)
         dialogBuilder.setView(dialogView)
 
-        val editTextCliente = dialogView.findViewById<EditText>(R.id.editText_cliente)
+        val editTextCliente = dialogView.findViewById<EditText>(R.id.edit_text_tienda)
         val editTextTelefono = dialogView.findViewById<EditText>(R.id.editText_telefono)
         val editTextDocumento= dialogView.findViewById<EditText>(R.id.editText_documento)
         val editTextDireccion = dialogView.findViewById<EditText>(R.id.editText_direccion)
@@ -138,7 +144,7 @@ class PromtFacturaGuardada() {
                 "documento" to nuevoDocumento,
                 "direccion" to nuevaDireccion
             )
-            guardarFactura(updates)
+            guardarFactura("Factura",updates)
           }
 
 // Configurar el botón "Cancelar"
@@ -183,7 +189,7 @@ class PromtFacturaGuardada() {
             )
 
             if (datosFactura.descuento != editTextDescuento.text.toString()) actualizarPrecioDescuento(datosFactura.id_pedido,nuevoDescuento.toDouble())
-            guardarFactura(updates)
+            guardarFactura("Factura",updates)
 
 
         }

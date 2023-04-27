@@ -12,26 +12,26 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 object FirebaseFactura {
-
+    // las tablas de referencia pueden ser Factura o Compra
     private const val TABLA_REFERENCIA = "Factura"
 
-    fun guardarFactura(updates: HashMap<String, Any>): Task<Void> {
+    fun guardarFactura(tablaReferencia:String ,updates: HashMap<String, Any>): Task<Void> {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(TABLA_REFERENCIA).child(updates["id_pedido"] as String)
+        val registroRef = database.getReference(tablaReferencia).child(updates["id_pedido"] as String)
         return registroRef.updateChildren(updates)
     }
 
-    fun eliminarFactura(id_pedido: String): Task<Void> {
+    fun eliminarFactura(tablaReferencia: String, id_pedido: String): Task<Void> {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(TABLA_REFERENCIA).child(id_pedido)
+        val registroRef = database.getReference(tablaReferencia).child(id_pedido)
         return registroRef.removeValue()
     }
 
 
 
-    fun buscarFacturas(): Task<MutableList<ModeloFactura>> {
+    fun buscarFacturas(tablaReferencia: String): Task<MutableList<ModeloFactura>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(TABLA_REFERENCIA)
+        val tablaRef = database.getReference(tablaReferencia)
 
         val facturas = mutableListOf<ModeloFactura>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloFactura>>()

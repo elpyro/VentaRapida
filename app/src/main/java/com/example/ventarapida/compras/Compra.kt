@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.ventaPaginaPrincipal
+package com.example.ventarapida.compras
 
 import android.Manifest
 import android.app.Activity
@@ -19,22 +19,23 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
-import com.example.ventarapida.databinding.VentaBinding
+import com.example.ventarapida.databinding.FragmentCompraBinding
 import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
-import com.example.ventarapida.procesos.Utilidades.separarNumerosDelString
+
+
 import java.util.*
 
+class Compra : Fragment() {
 
-class Venta : Fragment() {
 
-    private var binding: VentaBinding? = null
-    private lateinit var productViewModel: VentaViewModel
+    private var binding: FragmentCompraBinding? = null
+    private lateinit var viewModel: CompraViewModel
     private lateinit var vista:View
     private lateinit var menuItem: MenuItem
     private var lista: ArrayList<ModeloProducto>? = null
-    private var adapter: VentaAdaptador? = null
+    private var adapter: CompraAdaptador? = null
     val REQUEST_CODE_VOICE_SEARCH = 1001
 
     override fun onCreateView(
@@ -43,7 +44,7 @@ class Venta : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
-        binding = VentaBinding.inflate(inflater, container, false)
+        binding = FragmentCompraBinding.inflate(inflater, container, false)
         return binding!!.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -51,7 +52,7 @@ class Venta : Fragment() {
         menuItem  = menu.findItem(R.id.action_total)
 
 
-        productViewModel.totalCarritoLiveData.observe(viewLifecycleOwner){it->
+        viewModel.totalCarritoLiveData.observe(viewLifecycleOwner){ it->
             val title = SpannableString("Total: $it")
             title.setSpan(
                 AbsoluteSizeSpan(20, true), // Tamaño de texto en sp
@@ -65,6 +66,12 @@ class Venta : Fragment() {
         }
     }
 
+    private fun abrirFactura() {
+
+        Navigation.findNavController(vista).navigate(R.id.detalleCompra)
+    }
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -76,10 +83,6 @@ class Venta : Fragment() {
         }
     }
 
-    private fun abrirFactura() {
-
-        Navigation.findNavController(vista).navigate(R.id.factura)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -89,13 +92,13 @@ class Venta : Fragment() {
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager
 
-        productViewModel = ViewModelProvider(this).get(VentaViewModel::class.java)
-        productViewModel.context = requireContext()
+        viewModel = ViewModelProvider(this).get(CompraViewModel::class.java)
+        viewModel.context = requireContext()
 
         observadores()
 
         listeners()
-        productViewModel.calcularTotal()
+        viewModel.calcularTotal()
 
 
 
@@ -128,8 +131,8 @@ class Venta : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    ocultarTeclado(requireContext(),vista)
-                    
+                    Utilidades.ocultarTeclado(requireContext(), vista)
+
                 }
             }
         })
@@ -154,13 +157,13 @@ class Venta : Fragment() {
     }
 
     private fun observadores() {
-        productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
+        viewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
 
-        productViewModel.getProductos().observe(viewLifecycleOwner) { productos ->
+        viewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
-            adapter = VentaAdaptador(productos, productViewModel)
+            adapter = CompraAdaptador(productos, viewModel)
 
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista, position)
@@ -174,14 +177,14 @@ class Venta : Fragment() {
 
     private fun mensajeEliminar() {
 
-        ocultarTeclado(requireContext(),vista)
+        Utilidades.ocultarTeclado(requireContext(), vista)
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
         builder.setPositiveButton("Eliminar") { dialog, which ->
-            productViewModel.eliminarCarrito()
+            viewModel.eliminarCarrito()
             binding?.recyclerViewProductosVenta?.adapter=adapter
         }
         builder.setNegativeButton("Cancelar", null)
@@ -205,7 +208,7 @@ class Venta : Fragment() {
             if (query != null) {
                 //Separamos los ultimos numeros de el string obtenido por voz
                 // para saber si hay un numero y agregar el numero a la seleccion del producto
-                val numerosSeparados= separarNumerosDelString(query.trim())
+                val numerosSeparados= Utilidades.separarNumerosDelString(query.trim())
 
                 if (numerosSeparados.second!=null){
                     cantidadPorVoz= numerosSeparados.second!!.toInt()
@@ -220,17 +223,18 @@ class Venta : Fragment() {
     private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
-            objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
+            objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(
+                Locale.getDefault()))
         }
-        val adaptador = filtro?.let { VentaAdaptador(it,productViewModel) }
+        val adaptador = filtro?.let { CompraAdaptador(it,viewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
         if (filtro?.size==1 && cantidadPorVoz!=0){
-            productViewModel.actualizarCantidadProducto(filtro[0], cantidadPorVoz)
+            viewModel.actualizarCantidadProducto(filtro[0], cantidadPorVoz)
             cantidadPorVoz=0
         }
 
-            adaptador!!.setOnLongClickItem { item, position ->
+        adaptador!!.setOnLongClickItem { item, position ->
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)
@@ -244,4 +248,5 @@ class Venta : Fragment() {
         super.onDestroyView()
         binding = null
     }
+
 }

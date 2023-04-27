@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.factura
+package com.example.ventarapida.ui.detalleCompra
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -16,11 +16,11 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 
-class FacturaAdaptador(
+class DetalleCompraAdaptador(
     val products: MutableMap<ModeloProducto, Int>,
-) : RecyclerView.Adapter<FacturaAdaptador.ProductViewHolder>() {
+) : RecyclerView.Adapter<DetalleCompraAdaptador.ProductViewHolder>() {
 
-    private val sortedProducts = MainActivity.productosSeleccionados.keys.sortedBy { it.nombre }
+    private val sortedProducts = MainActivity.compraProductosSeleccionados.keys.sortedBy { it.nombre }
 
 
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
@@ -81,10 +81,13 @@ class FacturaAdaptador(
 
             cantidadSeleccion?.let { seleccion.setText(it.toString().formatoMonenda()) }
 
-            existencia.text ="X"+ (product.cantidad.toInt() - cantidadSeleccion!!.toInt())
 
-            precio?.let { precio.setText(product.p_diamante.formatoMonenda()) }
-            val total= cantidadSeleccion?.times(product.p_diamante.toInt())
+            //sumamos la existencia los prodocutos seleccionados
+            existencia.text ="X"+ (product.cantidad.toInt() + cantidadSeleccion!!.toInt())
+
+            //se edita que el campo sea el de compra
+            precio.let { precio.setText(product.p_compra.formatoMonenda()) }
+            val total= cantidadSeleccion.times(product.p_compra.toInt())
 
             total_producto.text=total.toString().formatoMonenda()
 

@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.factura_guardada
+package com.example.ventarapida.ui.compra_guardada
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -15,9 +15,9 @@ import com.squareup.picasso.Picasso
 
 import java.text.SimpleDateFormat
 
-class FacturaGuardadaAdaptador(
+class CompraGuardadaAdaptador(
     val listaFacturas: MutableList<ModeloProductoFacturado>,
-) : RecyclerView.Adapter<FacturaGuardadaAdaptador.FacturaViewHolder>() {
+) : RecyclerView.Adapter<CompraGuardadaAdaptador.FacturaViewHolder>() {
 
     val formatoFecha = SimpleDateFormat("dd-MM-yyyy")
     val sortedFacturas = listaFacturas.sortedWith(
@@ -79,9 +79,9 @@ class FacturaGuardadaAdaptador(
 
             producto.text = factura.producto
             seleccion.text=factura.cantidad.formatoMonenda()
-            precio.text=factura.venta.formatoMonenda()
+            precio.text=factura.costo.formatoMonenda()
             existencia.visibility=View.GONE
-            val total= factura.cantidad.toFloat() * factura.venta.toFloat()
+            val total= factura.cantidad.toFloat() * factura.costo.toFloat()
             total_producto.text= total.toString().formatoMonenda()
 
             Picasso.get().cancelRequest(imagenProducto)

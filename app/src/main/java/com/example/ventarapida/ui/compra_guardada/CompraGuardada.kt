@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.factura_guardada
+package com.example.ventarapida.ui.compra_guardada
 
 import android.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
@@ -7,12 +7,12 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
+import com.example.ventarapida.databinding.FragmentCompraGuardadaBinding
 import com.example.ventarapida.databinding.FragmentFacturaGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProducto
@@ -22,25 +22,24 @@ import com.example.ventarapida.procesos.FirebaseFactura.eliminarFactura
 import com.example.ventarapida.procesos.FirebaseProductoFacturados.eliminarProductoFacturado
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.example.ventarapida.ui.promts.PromtFacturaGuardada
 
-class FacturaGuardada : Fragment() {
+class CompraGuardada : Fragment() {
 
-    private lateinit var viewModel: FacturaGuardadaViewModel
+    private lateinit var viewModel: CompraGuardadaViewModel
 
-    private var binding: FragmentFacturaGuardadaBinding? = null
+    private var binding: FragmentCompraGuardadaBinding? = null
     private lateinit var vista:View
-    private lateinit var adaptador: FacturaGuardadaAdaptador
+    private lateinit var adaptador: CompraGuardadaAdaptador
     private lateinit var  modeloFactura: ModeloFactura
     private  var banderaElimandoFactura :Boolean=false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= FragmentFacturaGuardadaBinding.inflate(inflater, container, false)
+        binding= FragmentCompraGuardadaBinding.inflate(inflater, container, false)
 
         //activar  menu para este fragment
         setHasOptionsMenu(true)
@@ -50,9 +49,9 @@ class FacturaGuardada : Fragment() {
         modeloFactura= (bundle?.getSerializable("modelo") as? ModeloFactura)!!
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
-        binding?.recyclerViewProductosFacturados?.layoutManager = gridLayoutManager
+        binding?.recyclerViewProductosSeleccionados?.layoutManager = gridLayoutManager
 
-        viewModel = ViewModelProvider(this).get(FacturaGuardadaViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CompraGuardadaViewModel::class.java)
 
         viewModel.cargarDatosFactura(modeloFactura)
 
@@ -61,11 +60,7 @@ class FacturaGuardada : Fragment() {
         return binding!!.root
     }
 
-    override fun onResume() {
-        super.onResume()
 
-
-    }
 
     private fun observadores() {
         viewModel.datosFactura.observe(viewLifecycleOwner) { detalleFactura ->
@@ -73,12 +68,8 @@ class FacturaGuardada : Fragment() {
             if(detalleFactura!=null){
                 modeloFactura=detalleFactura
                 //actualizamos los datos del fragmento
-                binding?.textViewCliente?.text = "Cliente: " + detalleFactura.nombre
-                binding?.textViewTelefono?.text = "Tel: "+ detalleFactura.telefono
-                binding?.textViewDocumento?.text = "C.I: "+detalleFactura.documento
-                binding?.textViewDireccion?.text = "Dirección: " + detalleFactura.direccion
-                binding?.textViewDescuento?.text = "Descuento: %"+detalleFactura.descuento.formatoMonenda()
-                binding?.textViewEnvio?.text = "Envio: "+detalleFactura.envio.formatoMonenda()
+                binding?.textViewCliente?.text = "Tienda: " + detalleFactura.nombre
+
                 binding?.textViewVendedor?.text= detalleFactura.nombre_vendedor
                 binding?.textViewFecha?.text=detalleFactura.fecha
                 binding?.textViewHora?.text=detalleFactura.hora
@@ -96,18 +87,16 @@ class FacturaGuardada : Fragment() {
                 "id_pedido" to modeloFactura.id_pedido,
                 "total" to it.eliminarAcentosTildes(),
             )
-            FirebaseFactura.guardarFactura("Factura",updates)
+            FirebaseFactura.guardarFactura("Compra",updates)
         }
-        viewModel.subTotal.observe(viewLifecycleOwner){
-            binding?.textViewSubtotal?.text="Sub-Total: $it"
-        }
-        viewModel.datosProductosFacturados.observe(viewLifecycleOwner) { productosFacturados ->
-            adaptador = FacturaGuardadaAdaptador(productosFacturados as MutableList<ModeloProductoFacturado>)
-            binding?.recyclerViewProductosFacturados?.adapter = adaptador
+
+        viewModel.datosProductosComprados.observe(viewLifecycleOwner) { productosComprados ->
+            adaptador = CompraGuardadaAdaptador(productosComprados as MutableList<ModeloProductoFacturado>)
+            binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
             adaptador!!.setOnClickItem() { item ->
 
                 val promtEditarItem=PromtFacturaGuardada()
-                promtEditarItem.editarProducto("venta",item,requireActivity())
+                promtEditarItem.editarProducto("compra",item,requireActivity())
 
             }
         }
@@ -126,16 +115,12 @@ class FacturaGuardada : Fragment() {
 
     private fun listeners() {
 
-        binding?.cardViewCliente?.setOnClickListener {
+        binding?.tienda?.setOnClickListener {
             val promtEditarDatos=PromtFacturaGuardada()
             promtEditarDatos.promtEditarDatosCliente(modeloFactura,requireActivity())
         }
-        binding?.cardViewTotales?.setOnClickListener {
-            val promtEditarDatos=PromtFacturaGuardada()
-            promtEditarDatos.promtEditarModificadoresFactura(modeloFactura,requireActivity())
-        }
 
-        binding?.recyclerViewProductosFacturados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
@@ -167,14 +152,14 @@ class FacturaGuardada : Fragment() {
 
     fun filtrarProductos(nombreFiltrado: String) {
 
-        val productosFiltrados = viewModel.datosProductosFacturados.value?.filter { it.producto.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }
-        adaptador = FacturaGuardadaAdaptador(productosFiltrados as MutableList<ModeloProductoFacturado>)
-        binding?.recyclerViewProductosFacturados?.adapter = adaptador
+        val productosFiltrados = viewModel.datosProductosComprados.value?.filter { it.producto.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }
+        adaptador = CompraGuardadaAdaptador(productosFiltrados as MutableList<ModeloProductoFacturado>)
+        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
 
 
         adaptador!!.setOnClickItem() { item ->
             val promtEditarItem=PromtFacturaGuardada()
-            promtEditarItem.editarProducto("venta",item,requireActivity())
+            promtEditarItem.editarProducto("compra",item,requireActivity())
         }
 
     }
@@ -199,18 +184,18 @@ class FacturaGuardada : Fragment() {
                 // Crear el diálogo de confirmación
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Eliminar selección")
-                builder.setMessage("¿Estás seguro de que deseas eliminar esta factura y DEVOLVER los productos?")
+                builder.setMessage("¿Estás seguro de que deseas eliminar esta compra y DESCONTAR los productos?")
                 builder.setPositiveButton("Eliminar") { dialog, which ->
 
                     banderaElimandoFactura=true
 
-                    val arrayListProductosFacturados = ArrayList(viewModel.datosProductosFacturados.value ?: emptyList())
-                    eliminarProductoFacturado("ProductosFacturados",arrayListProductosFacturados)
+                    val arrayListProductosFacturados = ArrayList(viewModel.datosProductosComprados.value ?: emptyList())
+                    eliminarProductoFacturado("ProductosComprados", arrayListProductosFacturados)
 
                     //Restar cantidades de la factura
                     val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
 
-                    viewModel.datosProductosFacturados.value?.forEach { productoFacturado ->
+                    viewModel.datosProductosComprados.value?.forEach { productoFacturado ->
                         val producto = ModeloProducto(
                             id = productoFacturado.id_producto
                         )
@@ -219,12 +204,12 @@ class FacturaGuardada : Fragment() {
                     }
 
                     //crear cola de transacciones para restar
-                    UtilidadesBaseDatos.guardarTransaccionesBd("venta",context, productosSeleccionados)
+                    UtilidadesBaseDatos.guardarTransaccionesBd("compra",context, productosSeleccionados)
                     val transaccionesPendientes =
                         UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
                     FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
 
-                    eliminarFactura("Factura",modeloFactura.id_pedido)
+                    eliminarFactura("Compra",modeloFactura.id_pedido)
 
                     Toast.makeText(requireContext(),modeloFactura.nombre+"\nFactura Eliminada",Toast.LENGTH_LONG).show()
                     findNavController().popBackStack()

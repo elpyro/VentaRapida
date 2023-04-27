@@ -25,7 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
-        var productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+        var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+        var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
     }
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -60,7 +61,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun cargarDatos() {
         val preferenciasServicios= Preferencias()
-        preferenciasServicios.obtenerVentaPendiente(this)
+        preferenciasServicios.obtenerSeleccionPendiente(this,"venta_seleccionada")
+        preferenciasServicios.obtenerSeleccionPendiente(this,"compra_seleccionada")
         preferenciasServicios.obtenerServicioPendiente(this)
 
         val transaccionesPendientes= obtenerTransaccionesSumaRestaProductos(this)

@@ -1,9 +1,9 @@
-package com.example.ventarapida.ui.factura
+package com.example.ventarapida.ui.detalleVenta
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.ventarapida.MainActivity.Companion.productosSeleccionados
+import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.CrearTono
@@ -19,7 +19,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 
-class FacturaViewModel : ViewModel() {
+class DetalleVentaViewModel : ViewModel() {
 
     lateinit var context: Context // propiedad para almacenar el contexto
 
@@ -36,7 +36,7 @@ class FacturaViewModel : ViewModel() {
 
             var total = 0.0
             var items=0
-            for ((producto, cantidad) in productosSeleccionados) {
+            for ((producto, cantidad) in ventaProductosSeleccionados) {
                 items += cantidad
                 total += producto.p_diamante.eliminarPuntosComasLetras().toDouble() * cantidad.toDouble()
             }
@@ -50,13 +50,13 @@ class FacturaViewModel : ViewModel() {
 
             totalFactura.value =  "Total: "+ total.toString().formatoMonenda()
 
-            referencias.value=  productosSeleccionados.count { it.value != 0  }.toString()
+            referencias.value=  ventaProductosSeleccionados.count { it.value != 0  }.toString()
 
             itemsSeleccionados.value = items.toString()
 
             val preferencias= Preferencias()
             preferencias.guardarPreferenciaListaSeleccionada(context,
-                productosSeleccionados)
+                ventaProductosSeleccionados,"venta_seleccionada")
     }
 
 
@@ -66,11 +66,11 @@ class FacturaViewModel : ViewModel() {
     ) {
 
 
-        guardarTransaccionesBd(context, productosSeleccionados)
+        guardarTransaccionesBd("venta",context, productosSeleccionados)
         val transaccionesPendientes = obtenerTransaccionesSumaRestaProductos(context)
         transaccionesCambiarCantidad(context, transaccionesPendientes)
 
-        FirebaseFactura.guardarFactura(datosPedido)
+        FirebaseFactura.guardarFactura("Factura",datosPedido)
 
         val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
 
@@ -109,18 +109,18 @@ class FacturaViewModel : ViewModel() {
             }
         }
 
-        guardarProductoFacturado(listaProductosFacturados)
+        guardarProductoFacturado("ProductosFacturados",listaProductosFacturados)
 
     }
 
     fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Int, cantidad:Int, nombre:String) {
-        val productoEncontrado = productosSeleccionados.keys.find { it.id == producto.id }
+        val productoEncontrado = ventaProductosSeleccionados.keys.find { it.id == producto.id }
         if (productoEncontrado != null) {
 
-            productosSeleccionados.remove(productoEncontrado)
+            ventaProductosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_diamante = nuevoPrecio.toString().eliminarPuntosComasLetras()
             productoEncontrado.nombre = nombre
-            productosSeleccionados[productoEncontrado] = cantidad
+            ventaProductosSeleccionados[productoEncontrado] = cantidad
 
         }
 
@@ -130,9 +130,9 @@ class FacturaViewModel : ViewModel() {
     }
 
     fun limpiarProductosSelecionados(context: Context) {
-        productosSeleccionados.clear()
+        ventaProductosSeleccionados.clear()
         val preferencias= Preferencias()
-        preferencias.guardarPreferenciaListaSeleccionada(context, productosSeleccionados)
+        preferencias.guardarPreferenciaListaSeleccionada(context, ventaProductosSeleccionados,"venta_seleccionada")
 
     }
 }

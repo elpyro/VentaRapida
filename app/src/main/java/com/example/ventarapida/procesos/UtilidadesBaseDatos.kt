@@ -18,6 +18,7 @@ object UtilidadesBaseDatos {
     }
 
     fun guardarTransaccionesBd(
+        tipo:String,
         context: Context?,
         productosSeleccionados: MutableMap<ModeloProducto, Int>
     ){
@@ -27,12 +28,18 @@ object UtilidadesBaseDatos {
         val db = dbHelper.readableDatabase
 
        productosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
+           var multiplicador=1
+            // en las compras se multipica por -1 para que en vez de restar en la base de datos sume
+           if(tipo.equals("compra")) multiplicador=-1
+
+           val sumarORestar= cantidadSeleccionada * multiplicador
+
            if(cantidadSeleccionada!=0){
                val idTransaccion = UUID.randomUUID().toString()
                val values = ContentValues().apply {
                    put("idTransaccion", idTransaccion)
                    put("idProducto", producto.id)
-                   put("cantidad", cantidadSeleccionada.toString())
+                   put("cantidad", sumarORestar.toString())
                }
                db.insert("transaccionesSumaRestaProductos", null, values)
            }

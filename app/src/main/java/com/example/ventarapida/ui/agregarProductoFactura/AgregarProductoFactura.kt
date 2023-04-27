@@ -24,11 +24,8 @@ import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentAgregarProductoFacturaBinding
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProducto
-import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.FirebaseProductoFacturados.guardarProductoFacturado
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.separarNumerosDelString
 
 import java.util.*
@@ -63,7 +60,7 @@ class AgregarProductoFactura : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_venta, menu)
+        inflater.inflate(R.menu.menu_total, menu)
         menuItem = menu.findItem(R.id.action_total)
 
 

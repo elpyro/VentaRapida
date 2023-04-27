@@ -9,7 +9,7 @@ data class ModeloProducto(
     val fecha_ultima_modificacion: String = "",
     val id: String = "",
     var nombre: String = "",
-    val p_compra: String = "",
+    var p_compra: String = "",
     var p_diamante: String = "",
     val url: String = "",
     val descuento: String = "",
