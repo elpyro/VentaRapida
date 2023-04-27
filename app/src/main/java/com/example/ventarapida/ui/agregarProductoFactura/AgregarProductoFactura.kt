@@ -1,10 +1,11 @@
-package com.example.ventarapida.ui.ventaPaginaPrincipal
+package com.example.ventarapida.ui.agregarProductoFactura
 
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.text.Spannable
@@ -12,47 +13,61 @@ import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.view.*
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
-import com.example.ventarapida.databinding.VentaBinding
+import com.example.ventarapida.databinding.FragmentAgregarProductoFacturaBinding
+import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProducto
-import com.example.ventarapida.procesos.OcultarTeclado
+import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.FirebaseProductoFacturados.guardarProductoFacturado
+import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.separarNumerosDelString
+
 import java.util.*
 
+class AgregarProductoFactura : Fragment() {
 
-class Venta : Fragment() {
 
-    private var binding: VentaBinding? = null
-    private lateinit var productViewModel: VentaViewModel
-    private lateinit var vista:View
+
+    private var binding: FragmentAgregarProductoFacturaBinding? = null
+    private lateinit var viewModel: AgregarProductoFacturaViewModel
     private lateinit var menuItem: MenuItem
     private var lista: ArrayList<ModeloProducto>? = null
-    private var adapter: VentaAdaptador? = null
+    private var adapter: AgregarProductoFacturaAdaptador? = null
+    var modeloFactura: ModeloFactura? = null
     val REQUEST_CODE_VOICE_SEARCH = 1001
+    companion object {
+        var productosSeleccionadosAgregar = mutableMapOf<ModeloProducto, Int>()
+    }
 
+    private var vista: View? = null
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         setHasOptionsMenu(true)
-        binding = VentaBinding.inflate(inflater, container, false)
+        binding = FragmentAgregarProductoFacturaBinding.inflate(inflater, container, false)
+
+        val bundle = arguments
+        modeloFactura = bundle?.getSerializable("modelo") as? ModeloFactura
+
         return binding!!.root
     }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_venta, menu)
-        menuItem  = menu.findItem(R.id.action_total)
+        menuItem = menu.findItem(R.id.action_total)
 
 
-        productViewModel.totalCarritoLiveData.observe(viewLifecycleOwner){it->
+        viewModel.totalCarritoLiveData.observe(viewLifecycleOwner) { it ->
             val title = SpannableString("Total: $it")
             title.setSpan(
                 AbsoluteSizeSpan(20, true), // Tamaño de texto en sp
@@ -70,41 +85,52 @@ class Venta : Fragment() {
         when (item.itemId) {
 
             R.id.action_total ->{
-                abrirFactura()
+                agregarFactura()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
     }
 
-    private fun abrirFactura() {
+    private fun agregarFactura() {
 
-        Navigation.findNavController(vista).navigate(R.id.factura)
+        Utilidades.ocultarTeclado(requireContext(), vista!!)
+
+        // Crear el diálogo de confirmación
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(modeloFactura!!.nombre)
+        builder.setMessage("¿Estás seguro de agregar ${productosSeleccionadosAgregar.size} productos a la factura?")
+        builder.setPositiveButton("Agregar") { dialog, which ->
+
+            viewModel.subirDatos(requireContext(), modeloFactura!!)
+
+            Toast.makeText(requireContext(), "${productosSeleccionadosAgregar.size} Productos Agregados", Toast.LENGTH_LONG).show()
+            findNavController().popBackStack()
+        }
+        builder.setNegativeButton("Cancelar", null)
+        builder.show()
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        vista= view
+        vista=view
+        viewModel = ViewModelProvider(this).get(AgregarProductoFacturaViewModel::class.java)
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager
 
-        productViewModel = ViewModelProvider(this).get(VentaViewModel::class.java)
-        productViewModel.context = requireContext()
+        viewModel = ViewModelProvider(this).get(AgregarProductoFacturaViewModel::class.java)
+        viewModel.context = requireContext()
 
         observadores()
 
         listeners()
-        productViewModel.calcularTotal()
-
-
-
+        viewModel.calcularTotal()
     }
 
     private fun listeners() {
-
-
 
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
@@ -129,8 +155,8 @@ class Venta : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    ocultarTeclado(requireContext(),vista)
-                    
+                    Utilidades.ocultarTeclado(requireContext(), vista!!)
+
                 }
             }
         })
@@ -151,50 +177,49 @@ class Venta : Fragment() {
         binding?.searchViewProductosVenta?.setOnClickListener {
             binding?.searchViewProductosVenta?.isIconified=false
         }
-
     }
 
     private fun observadores() {
-        productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
+        viewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
 
-        productViewModel.getProductos().observe(viewLifecycleOwner) { productos ->
+        viewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
-            adapter = VentaAdaptador(productos, productViewModel)
+            adapter = AgregarProductoFacturaAdaptador(productos, viewModel)
 
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista, position)
             }
 
-
             lista = productos as ArrayList<ModeloProducto>?
             binding!!.recyclerViewProductosVenta.adapter = adapter
+        }
+    }
+    private fun abriDetalle(modeloProducto: ModeloProducto, view: View?, position:Int) {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        bundle.putSerializable("modelo", modeloProducto)
+        bundle.putSerializable("listaProductos", lista)
+        if (view != null) {
+            Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
         }
     }
 
     private fun mensajeEliminar() {
 
-        ocultarTeclado(requireContext(),vista)
+        Utilidades.ocultarTeclado(requireContext(), vista!!)
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
         builder.setPositiveButton("Eliminar") { dialog, which ->
-            productViewModel.eliminarCarrito()
+            viewModel.eliminarCarrito()
             binding?.recyclerViewProductosVenta?.adapter=adapter
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
-    }
-
-    private fun abriDetalle(modeloProducto: ModeloProducto, view:View, position:Int) {
-        val bundle = Bundle()
-        bundle.putInt("position", position)
-        bundle.putSerializable("modelo", modeloProducto)
-        bundle.putSerializable("listaProductos", lista)
-        Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -221,28 +246,32 @@ class Venta : Fragment() {
     private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
-            objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
+            objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(
+                Locale.getDefault()))
         }
-        val adaptador = filtro?.let { VentaAdaptador(it,productViewModel) }
+        val adaptador = filtro?.let { AgregarProductoFacturaAdaptador(it,viewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
         if (filtro?.size==1 && cantidadPorVoz!=0){
-            productViewModel.actualizarCantidadProducto(filtro[0], cantidadPorVoz)
+            viewModel.actualizarCantidadProducto(filtro[0], cantidadPorVoz)
             cantidadPorVoz=0
         }
 
-            adaptador!!.setOnLongClickItem { item, position ->
+        adaptador!!.setOnLongClickItem { item, position ->
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)
             val arrayList: ArrayList<ModeloProducto> = filtro.toCollection(ArrayList())
             bundle.putSerializable("listaProductos", arrayList)
-            Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
+            Navigation.findNavController(vista!!).navigate(R.id.detalleProducto,bundle)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        productosSeleccionadosAgregar.clear()
+        // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
+        requireActivity().invalidateOptionsMenu()
     }
 }

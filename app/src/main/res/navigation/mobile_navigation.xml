@@ -34,12 +34,16 @@
     <fragment
         android:id="@+id/ventas"
         android:name="com.example.ventarapida.ui.registros.pestanas.FacturaVentas"
-        android:label="fragment_ventas"
+        android:label="@string/RegistroVentas"
         tools:layout="@layout/fragment_factura_ventas" />
     <fragment
         android:id="@+id/facturaGuardada"
         android:name="com.example.ventarapida.ui.factura_guardada.FacturaGuardada"
         android:label="@string/detalleFactura"
         tools:layout="@layout/fragment_factura_guardada" />
+    <fragment
+        android:id="@+id/agregarProductoFactura"
+        android:name="com.example.ventarapida.ui.agregarProductoFactura.AgregarProductoFactura"
+        android:label="@string/Agregar_producto" />
 
 </navigation>

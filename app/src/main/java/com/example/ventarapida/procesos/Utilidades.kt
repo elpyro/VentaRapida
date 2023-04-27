@@ -31,6 +31,21 @@ object Utilidades {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    fun separarNumerosDelString(string: String): Pair<String, String?> {
+        // Expresión regular para detectar números al final del string
+        val regex = "(\\d+)$"
+        val matchResult = Regex(regex).find(string)
+        if (matchResult != null) {
+            // Si hay números al final del string, separarlos del resto del string
+            val numeros = matchResult.value
+            val resto = string.removeSuffix(numeros)
+            return Pair(resto, numeros)
+        } else {
+            // Si no hay números al final del string, devolver el string completo y null
+            return Pair(string.trim(), null)
+        }
+    }
+
     fun EditText.escribirFormatoMoneda() {
         val textWatcher = object : TextWatcher {
             var isProgrammaticChange = false

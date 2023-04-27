@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentActivity
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.procesos.FirebaseFactura.guardarFactura
 import com.example.ventarapida.procesos.FirebaseProductoFacturados.actualizarPrecioDescuento
-import com.example.ventarapida.procesos.Utilidades
+
 
 
 class PromtFacturaGuardada() {
@@ -29,7 +29,7 @@ class PromtFacturaGuardada() {
 // Inflar el layout para el diálogo
         // Inflar el layout para el diálogo
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val dialogView = inflater?.inflate(R.layout.promt_factura, null)
+        val dialogView = inflater.inflate(R.layout.promt_factura, null)
         dialogBuilder.setView(dialogView)
 
         val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
@@ -75,15 +75,15 @@ class PromtFacturaGuardada() {
                 val transaccionesPendientes =
                     UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
                 FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-
             }
+
             val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
             listaProductosFacturados.add(item)
             if(nuevaCantidad.toInt()!=0){
                 FirebaseProductoFacturados.guardarProductoFacturado(listaProductosFacturados)
             }else{
                 FirebaseProductoFacturados.eliminarProductoFacturado(listaProductosFacturados)
-                Toast.makeText(context, cantidadAnterior.toString()+"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -103,7 +103,7 @@ class PromtFacturaGuardada() {
 // Inflar el layout para el diálogo
         // Inflar el layout para el diálogo
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val dialogView = inflater?.inflate(R.layout.promt_datos_cliente, null)
+        val dialogView = inflater.inflate(R.layout.promt_datos_cliente, null)
         dialogBuilder.setView(dialogView)
 
         val editTextCliente = dialogView.findViewById<EditText>(R.id.editText_cliente)
@@ -156,7 +156,7 @@ class PromtFacturaGuardada() {
 
         // Inflar el layout para el diálogo
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val dialogView = inflater?.inflate(R.layout.promt_modificadores_factura, null)
+        val dialogView = inflater.inflate(R.layout.promt_modificadores_factura, null)
         dialogBuilder.setView(dialogView)
 
         val editTextDescuento = dialogView.findViewById<EditText>(R.id.edit_descuento)
@@ -173,8 +173,8 @@ class PromtFacturaGuardada() {
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
 
 
-            val nuevoDescuento=editTextDescuento.text.toString()
-            val nuevoEnvio = editTextEnvio.text.toString()
+            val nuevoDescuento=editTextDescuento.text.toString().ifBlank { "0" }
+            val nuevoEnvio = editTextEnvio.text.toString().ifBlank { "0" }
 
             val updates = hashMapOf<String, Any>(
                 "id_pedido" to datosFactura.id_pedido,

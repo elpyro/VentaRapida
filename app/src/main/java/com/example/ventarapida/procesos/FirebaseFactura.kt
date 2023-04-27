@@ -21,6 +21,12 @@ object FirebaseFactura {
         return registroRef.updateChildren(updates)
     }
 
+    fun eliminarFactura(id_pedido: String): Task<Void> {
+        val database = FirebaseDatabase.getInstance()
+        val registroRef = database.getReference(TABLA_REFERENCIA).child(id_pedido)
+        return registroRef.removeValue()
+    }
+
 
 
     fun buscarFacturas(): Task<MutableList<ModeloFactura>> {

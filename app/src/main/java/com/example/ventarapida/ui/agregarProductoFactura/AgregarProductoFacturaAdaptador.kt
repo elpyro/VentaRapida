@@ -1,4 +1,4 @@
-package com.example.ventarapida.ui.ventaPaginaPrincipal
+package com.example.ventarapida.ui.agregarProductoFactura
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -11,7 +11,6 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloProducto
 
@@ -20,10 +19,10 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 
-class VentaAdaptador(
+class AgregarProductoFacturaAdaptador(
     private val products: List<ModeloProducto>,
-    private val viewModel: VentaViewModel
-) : RecyclerView.Adapter<VentaAdaptador.ProductViewHolder>() {
+    private val viewModel: AgregarProductoFacturaViewModel
+) : RecyclerView.Adapter<AgregarProductoFacturaAdaptador.ProductViewHolder>() {
     private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
 
 
@@ -31,7 +30,7 @@ class VentaAdaptador(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         // Inflar el diseño del item_producto para crear la vista del ViewHolder
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_producto, parent, false)
+            .inflate(R.layout.item_agregar_producto, parent, false)
         return ProductViewHolder(view)
     }
 
@@ -155,8 +154,8 @@ class VentaAdaptador(
                 imagenProducto.setImageResource(R.drawable.ic_menu_camera)
             }
 
-            if (MainActivity.productosSeleccionados.isNotEmpty() &&   MainActivity.productosSeleccionados.any { it.key.id == products[position].id }) {
-                val cantidad = MainActivity.productosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
+            if (AgregarProductoFactura.productosSeleccionadosAgregar.isNotEmpty() &&   AgregarProductoFactura.productosSeleccionadosAgregar.any { it.key.id == products[position].id }) {
+                val cantidad = AgregarProductoFactura.productosSeleccionadosAgregar.filterKeys { it.id == products[position].id }.values.sum()
 
                 if (cantidad > 0) {
                     isUserEditing = false
@@ -167,7 +166,7 @@ class VentaAdaptador(
                     if (cantidad == 1) {
                         botonRestar.setImageResource(R.drawable.baseline_delete_24)
                     } else {
-                        botonRestar.setImageResource(R.drawable.baseline_skip_previous_24)
+                        botonRestar.setImageResource(R.drawable.baseline_arrow_drop_down_24)
                     }
 
                     val color = ContextCompat.getColor(itemView.context, R.color.azul_trasparente)

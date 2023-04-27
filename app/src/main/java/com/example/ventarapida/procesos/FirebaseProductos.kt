@@ -12,6 +12,7 @@ object FirebaseProductos {
 
     private const val TABLA_REFERENCIA = "Productos"
 
+
     fun guardarProducto(updates: HashMap<String, Any>): Task<Void> {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(TABLA_REFERENCIA).child(updates["id"] as String)

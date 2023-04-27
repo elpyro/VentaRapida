@@ -1,22 +1,30 @@
 package com.example.ventarapida.ui.factura_guardada
 
+import android.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
+import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
+import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.FirebaseFactura
-import com.example.ventarapida.procesos.OcultarTeclado
-import com.example.ventarapida.procesos.TomarFotoYGaleria
+import com.example.ventarapida.procesos.FirebaseFactura.eliminarFactura
+import com.example.ventarapida.procesos.FirebaseProductoFacturados.eliminarProductoFacturado
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.example.ventarapida.ui.promts.PromtFacturaGuardada
 
 class FacturaGuardada : Fragment() {
@@ -27,6 +35,7 @@ class FacturaGuardada : Fragment() {
     private lateinit var vista:View
     private lateinit var adaptador: FacturaGuardadaAdaptador
     private lateinit var  modeloFactura: ModeloFactura
+    private  var banderaElimandoFactura :Boolean=false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,21 +70,27 @@ class FacturaGuardada : Fragment() {
     private fun observadores() {
         viewModel.datosFactura.observe(viewLifecycleOwner) { detalleFactura ->
             //actualiza el contenido del modelo actual
-            modeloFactura=detalleFactura
-            //actualizamos los datos del fragmento
-            binding?.textViewCliente?.text = "Cliente: " + detalleFactura.nombre
-            binding?.textViewTelefono?.text = "Tel: "+ detalleFactura.telefono
-            binding?.textViewDocumento?.text = "C.I: "+detalleFactura.documento
-            binding?.textViewDireccion?.text = "Dirección: " + detalleFactura.direccion
-            binding?.textViewDescuento?.text = "Descuento: %"+detalleFactura.descuento.formatoMonenda()
-            binding?.textViewEnvio?.text = "Envio: "+detalleFactura.envio.formatoMonenda()
-            binding?.textViewVendedor?.text= detalleFactura.nombre_vendedor
-            binding?.textViewFecha?.text=detalleFactura.fecha
-            binding?.textViewHora?.text=detalleFactura.hora
-            binding?.textViewId?.text=detalleFactura.id_pedido.substring(0, 5)
+            if(detalleFactura!=null){
+                modeloFactura=detalleFactura
+                //actualizamos los datos del fragmento
+                binding?.textViewCliente?.text = "Cliente: " + detalleFactura.nombre
+                binding?.textViewTelefono?.text = "Tel: "+ detalleFactura.telefono
+                binding?.textViewDocumento?.text = "C.I: "+detalleFactura.documento
+                binding?.textViewDireccion?.text = "Dirección: " + detalleFactura.direccion
+                binding?.textViewDescuento?.text = "Descuento: %"+detalleFactura.descuento.formatoMonenda()
+                binding?.textViewEnvio?.text = "Envio: "+detalleFactura.envio.formatoMonenda()
+                binding?.textViewVendedor?.text= detalleFactura.nombre_vendedor
+                binding?.textViewFecha?.text=detalleFactura.fecha
+                binding?.textViewHora?.text=detalleFactura.hora
+                binding?.textViewId?.text=detalleFactura.id_pedido.substring(0, 5)
+            }
+
         }
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
+
+            if (banderaElimandoFactura==true) return@observe
+
             binding?.textViewTotal?.text="Total: $it"
             val updates = hashMapOf<String, Any>(
                 "id_pedido" to modeloFactura.id_pedido,
@@ -173,16 +188,63 @@ class FacturaGuardada : Fragment() {
         when (item.itemId) {
 
             R.id.action_agregar_producto->{
-
+                abrirAgregarProducto()
                 return true
             }
 
             R.id.action_eliminar -> {
 
+                ocultarTeclado(requireContext(),vista)
+
+                // Crear el diálogo de confirmación
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("Eliminar selección")
+                builder.setMessage("¿Estás seguro de que deseas eliminar esta factura y devolver los productos?")
+                builder.setPositiveButton("Eliminar") { dialog, which ->
+
+                    banderaElimandoFactura=true
+
+                    val arrayListProductosFacturados = ArrayList(viewModel.datosProductosFacturados.value ?: emptyList())
+                    eliminarProductoFacturado(arrayListProductosFacturados)
+
+                    //Restar cantidades de la factura
+                    val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+
+                    viewModel.datosProductosFacturados.value?.forEach { productoFacturado ->
+                        val producto = ModeloProducto(
+                            id = productoFacturado.id_producto
+                        )
+                        val cantidad = -1 * ( productoFacturado.cantidad.toInt())
+                        productosSeleccionados[producto] = cantidad
+                    }
+
+                    //crear cola de transacciones para restar
+                    UtilidadesBaseDatos.guardarTransaccionesBd(context, productosSeleccionados)
+                    val transaccionesPendientes =
+                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+
+                    eliminarFactura(modeloFactura.id_pedido)
+
+                    Toast.makeText(requireContext(),modeloFactura.nombre+"\nFactura Eliminada",Toast.LENGTH_LONG).show()
+                    findNavController().popBackStack()
+
+
+                }
+                builder.setNegativeButton("Cancelar", null)
+                builder.show()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun abrirAgregarProducto() {
+        val bundle = Bundle()
+
+        bundle.putSerializable("modelo", modeloFactura)
+
+        Navigation.findNavController(vista).navigate(R.id.agregarProductoFactura,bundle)
     }
 
     override fun onDestroyView() {
