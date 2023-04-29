@@ -1,6 +1,12 @@
 package com.example.ventarapida.ui.detalleVenta
 
 import android.content.Context
+import android.os.Environment
+import com.itextpdf.text.pdf.PdfWriter
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
@@ -15,6 +21,8 @@ import com.example.ventarapida.procesos.UtilidadesBaseDatos.guardarTransacciones
 import com.example.ventarapida.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
 import com.example.ventarapida.procesos.FirebaseProductoFacturados.guardarProductoFacturado
 import com.example.ventarapida.procesos.FirebaseProductos.transaccionesCambiarCantidad
+import com.itextpdf.text.*
+import com.itextpdf.text.pdf.PdfPTable
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -134,5 +142,67 @@ class DetalleVentaViewModel : ViewModel() {
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context, ventaProductosSeleccionados,"venta_seleccionada")
 
+    }
+
+    fun crearPdf(){
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "factura2.pdf")
+        val outputStream = FileOutputStream(file)
+
+// Crea el documento PDF
+        val document = Document()
+
+// Agrega metadatos al PDF
+        document.addAuthor("John Doe")
+        document.addCreator("Mi aplicación de facturación")
+        document.addTitle("Factura Número 12345")
+
+// Configura los márgenes del documento
+        document.setMargins(50f, 50f, 50f, 50f)
+
+        PdfWriter.getInstance(document, outputStream)
+
+        document.open()
+
+// Agrega el logotipo de la empresa a la factura
+//        val logo = Image.getInstance("ruta/de/la/imagen/logo.png")
+//        logo.scaleAbsolute(100f, 100f)
+//        document.add(logo)
+
+// Agrega el encabezado de la factura
+        val header = Paragraph("Factura Número 12345", Font(Font.FontFamily.HELVETICA, 18f, Font.BOLD))
+        header.alignment = Element.ALIGN_CENTER
+        document.add(header)
+
+        document.add(Paragraph(""))
+
+// Agrega el contenido de la factura
+        document.add(Paragraph("Nombre del cliente: Eloyc"))
+        document.add(Paragraph("Fecha de emisión: 28 de Abril, 2023"))
+        document.add(Paragraph("Total a pagar: $100.00"))
+
+        document.add(Paragraph(""))
+
+// Agrega una tabla con los detalles de la factura
+        val table = PdfPTable(3)
+        table.addCell("Descripción")
+        table.addCell("Cantidad")
+        table.addCell("Precio unitario")
+        table.addCell("Producto A")
+        table.addCell("1")
+        table.addCell("$50.00")
+        table.addCell("Producto B")
+        table.addCell("2")
+        table.addCell("$25.00")
+        table.addCell("Producto C")
+        table.addCell("1")
+        table.addCell("$20.00")
+        document.add(table)
+
+// Agrega el pie de página de la factura
+        document.add(Paragraph("Gracias por su compra", Font(Font.FontFamily.HELVETICA, 12f, Font.ITALIC)))
+
+// Cierra el documento
+        document.close()
+        outputStream.close()
     }
 }

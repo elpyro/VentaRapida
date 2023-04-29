@@ -203,4 +203,42 @@ class PromtFacturaGuardada() {
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
     }
+
+    fun promtEditarDatosCompra(datosFactura: ModeloFactura, context: FragmentActivity) {
+        val dialogBuilder = AlertDialog.Builder(context)
+
+// Inflar el layout para el diálogo
+        // Inflar el layout para el diálogo
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val dialogView = inflater.inflate(R.layout.promt_datos_compra, null)
+        dialogBuilder.setView(dialogView)
+
+        val editTextCliente = dialogView.findViewById<EditText>(R.id.edit_text_tienda)
+
+        // Seleccionar tode el contenido del EditText al recibir foco
+        editTextCliente.setSelectAllOnFocus(true)
+
+        editTextCliente.setText( datosFactura.nombre)
+
+// Configurar el botón "Aceptar"
+        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
+
+            val nuevoNombre=editTextCliente.text.toString()
+
+            val updates = hashMapOf<String, Any>(
+                "id_pedido" to datosFactura.id_pedido,
+                "nombre" to nuevoNombre,
+            )
+            guardarFactura("Compra",updates)
+        }
+
+// Configurar el botón "Cancelar"
+        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
+            // No hacer nada
+        }
+
+// Mostrar el diálogo
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+    }
 }

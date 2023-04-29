@@ -60,6 +60,6 @@
     <fragment
         android:id="@+id/compraGuardada"
         android:name="com.example.ventarapida.ui.compra_guardada.CompraGuardada"
-        android:label="CompraGuardada" />
+        android:label="Compra" />
 
 </navigation>

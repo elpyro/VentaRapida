@@ -117,7 +117,7 @@ class CompraGuardada : Fragment() {
 
         binding?.tienda?.setOnClickListener {
             val promtEditarDatos=PromtFacturaGuardada()
-            promtEditarDatos.promtEditarDatosCliente(modeloFactura,requireActivity())
+            promtEditarDatos.promtEditarDatosCompra(modeloFactura,requireActivity())
         }
 
         binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -166,6 +166,8 @@ class CompraGuardada : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_factura_guardada, menu)
+        //Todo pendiente agregar el boton ation_agregar_producto
+        var menuItem: MenuItem  = menu.findItem(R.id.action_agregar_producto).setVisible(false)
         super.onCreateOptionsMenu(menu, inflater)
     }
 

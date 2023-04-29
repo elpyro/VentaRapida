@@ -83,4 +83,5 @@ class FacturaGuardadaViewModel : ViewModel() {
         referencias.value = listaProductos.size.toString().formatoMonenda()
         items.value = listaProductos.sumByDouble { it.cantidad.toDouble() }.toString().formatoMonenda()
     }
+
 }
