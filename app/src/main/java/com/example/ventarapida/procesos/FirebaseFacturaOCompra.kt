@@ -1,9 +1,7 @@
 package com.example.ventarapida.procesos
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.DataSnapshot
@@ -11,23 +9,23 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-object FirebaseFactura {
+object FirebaseFacturaOCompra {
 
     // las tablas de referencia pueden ser Factura o Compra
 
-    fun guardarFactura(tablaReferencia:String ,updates: HashMap<String, Any>): Task<Void> {
+    fun guardarFacturaOCompra(tablaReferencia:String, updates: HashMap<String, Any>): Task<Void> {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(tablaReferencia).child(updates["id_pedido"] as String)
         return registroRef.updateChildren(updates)
     }
 
-    fun eliminarFactura(tablaReferencia: String, id_pedido: String): Task<Void> {
+    fun eliminarFacturaOCompra(tablaReferencia: String, id_pedido: String): Task<Void> {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(tablaReferencia).child(id_pedido)
         return registroRef.removeValue()
     }
 
-    fun buscarFacturas(tablaReferencia: String): Task<MutableList<ModeloFactura>> {
+    fun buscarFacturasOCompra(tablaReferencia: String): Task<MutableList<ModeloFactura>> {
         val database = FirebaseDatabase.getInstance()
         val tablaRef = database.getReference(tablaReferencia)
 
@@ -56,5 +54,25 @@ object FirebaseFactura {
         return taskCompletionSource.task
     }
 
+    fun buscarFacturaOCompraPorId(tablaReferencia: String, facturaId: String): Task<ModeloFactura?> {
+        val database = FirebaseDatabase.getInstance()
+        val tablaRef = database.getReference(tablaReferencia)
+
+        val taskCompletionSource = TaskCompletionSource<ModeloFactura?>()
+
+        tablaRef.child(facturaId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val factura = snapshot.getValue(ModeloFactura::class.java)
+                taskCompletionSource.setResult(factura)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("MiApp", "Error al buscar factura: ${error.message}")
+                taskCompletionSource.setException(error.toException())
+            }
+        })
+
+        return taskCompletionSource.task
+    }
 
 }

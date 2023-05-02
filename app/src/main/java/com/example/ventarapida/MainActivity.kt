@@ -1,7 +1,12 @@
 package com.example.ventarapida
 
+import android.content.Context
+import android.media.Image
 import android.os.Bundle
 import android.view.Menu
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -12,21 +17,32 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.ve.DetalleProducto
 import com.example.ventarapida.databinding.ActivityMainBinding
+import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.ui.nuevoProducto.NuevoProducto
 import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
 import com.example.ventarapida.procesos.FirebaseProductos.transaccionesCambiarCantidad
+import com.example.ventarapida.procesos.PermissionManager
 import com.google.android.material.navigation.NavigationView
 
 
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var permissionManager: PermissionManager
     companion object {
         const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
         var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
         var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+        var tono = true
+        lateinit var datosEmpresa: ModeloDatosEmpresa
+        lateinit var logotipo: ImageView
+        lateinit var editText_nombreEmpresa: TextView
+
+        fun init(context: Context) {
+            logotipo = ImageView(context)
+            editText_nombreEmpresa= TextView(context)
+        }
     }
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -35,10 +51,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        init(this)
 
 
-
-       cargarDatos()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -48,19 +63,30 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        val navHeader = navView.getHeaderView(0)
+        logotipo = navHeader.findViewById<ImageView>(R.id.imageView)
+        editText_nombreEmpresa=navHeader.findViewById<TextView>(R.id.textView_nombreEmpresa)
+
         appBarConfiguration = AppBarConfiguration(setOf(
                 R.id.nav_home), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+
+        // Verifica y solicita el permiso de almacenamiento externo
+        permissionManager = PermissionManager(this as AppCompatActivity)
+        permissionManager.checkAndRequestStoragePermission()
+
+       cargarDatos()
     }
 
 
 
     private fun cargarDatos() {
         val preferenciasServicios= Preferencias()
+        preferenciasServicios.preferenciasConfiguracion(this)
+
         preferenciasServicios.obtenerSeleccionPendiente(this,"venta_seleccionada")
         preferenciasServicios.obtenerSeleccionPendiente(this,"compra_seleccionada")
         preferenciasServicios.obtenerServicioPendiente(this)
@@ -85,13 +111,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onAttachFragment(fragment: Fragment) {
-        if (fragment is DetalleProducto || fragment is NuevoProducto ) {
-            fragment.setHasOptionsMenu(true)
-        }else{
-            fragment.setHasOptionsMenu(false)
-        }
-    }
+
 
 }

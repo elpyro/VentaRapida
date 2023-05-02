@@ -26,6 +26,13 @@ object Utilidades {
             .replace(",", "")
     }
 
+    fun esperarUnSegundo(){
+        try {
+            Thread.sleep(1000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
     fun ocultarTeclado(context: Context,view: View) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)

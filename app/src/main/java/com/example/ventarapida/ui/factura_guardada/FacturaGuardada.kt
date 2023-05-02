@@ -1,30 +1,27 @@
 package com.example.ventarapida.ui.factura_guardada
 
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
+import com.example.ventarapida.VistaPDF
 import com.example.ventarapida.databinding.FragmentFacturaGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.FirebaseFactura
-import com.example.ventarapida.procesos.FirebaseFactura.eliminarFactura
-import com.example.ventarapida.procesos.FirebaseProductoFacturados.eliminarProductoFacturado
-import com.example.ventarapida.procesos.FirebaseProductos
+import com.example.ventarapida.procesos.FirebaseFacturaOCompra
+import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
-import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.example.ventarapida.ui.promts.PromtFacturaGuardada
 
 class FacturaGuardada : Fragment() {
@@ -61,12 +58,6 @@ class FacturaGuardada : Fragment() {
         return binding!!.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-
-    }
-
     private fun observadores() {
         viewModel.datosFactura.observe(viewLifecycleOwner) { detalleFactura ->
             //actualiza el contenido del modelo actual
@@ -96,7 +87,7 @@ class FacturaGuardada : Fragment() {
                 "id_pedido" to modeloFactura.id_pedido,
                 "total" to it.eliminarAcentosTildes(),
             )
-            FirebaseFactura.guardarFactura("Factura",updates)
+            FirebaseFacturaOCompra.guardarFacturaOCompra("Factura",updates)
         }
         viewModel.subTotal.observe(viewLifecycleOwner){
             binding?.textViewSubtotal?.text="Sub-Total: $it"
@@ -193,50 +184,43 @@ class FacturaGuardada : Fragment() {
             }
 
             R.id.action_eliminar -> {
-
                 ocultarTeclado(requireContext(),vista)
+                dialogoEliminar()
 
-                // Crear el diálogo de confirmación
-                val builder = AlertDialog.Builder(requireContext())
-                builder.setTitle("Eliminar selección")
-                builder.setMessage("¿Estás seguro de que deseas eliminar esta factura y DEVOLVER los productos?")
-                builder.setPositiveButton("Eliminar") { dialog, which ->
-
-                    banderaElimandoFactura=true
-
-                    val arrayListProductosFacturados = ArrayList(viewModel.datosProductosFacturados.value ?: emptyList())
-                    eliminarProductoFacturado("ProductosFacturados",arrayListProductosFacturados)
-
-                    //Restar cantidades de la factura
-                    val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
-
-                    viewModel.datosProductosFacturados.value?.forEach { productoFacturado ->
-                        val producto = ModeloProducto(
-                            id = productoFacturado.id_producto
-                        )
-                        val cantidad = -1 * ( productoFacturado.cantidad.toInt())
-                        productosSeleccionados[producto] = cantidad
-                    }
-
-                    //crear cola de transacciones para restar
-                    UtilidadesBaseDatos.guardarTransaccionesBd("venta",context, productosSeleccionados)
-                    val transaccionesPendientes =
-                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-
-                    eliminarFactura("Factura",modeloFactura.id_pedido)
-
-                    Toast.makeText(requireContext(),modeloFactura.nombre+"\nFactura Eliminada",Toast.LENGTH_LONG).show()
-                    findNavController().popBackStack()
-
-
-                }
-                builder.setNegativeButton("Cancelar", null)
-                builder.show()
+                return true
+            }
+            R.id.action_crear_pdf -> {
+                val intent = Intent(activity, VistaPDF::class.java)
+                intent.putExtra("id", modeloFactura.id_pedido)
+                intent.putExtra("tablaReferencia", "Factura")
+                startActivity(intent)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun dialogoEliminar() {
+        // Crear el diálogo de confirmación
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Eliminar selección")
+        builder.setMessage("¿Estás seguro de que deseas eliminar esta factura y DEVOLVER los productos?")
+        builder.setPositiveButton("Eliminar") { dialog, which ->
+
+            banderaElimandoFactura=true
+
+            viewModel.eliminarFactura(requireContext(),modeloFactura)
+
+            Utilidades.esperarUnSegundo()
+
+            Toast.makeText(context,modeloFactura.nombre+"\nFactura Eliminada", Toast.LENGTH_LONG).show()
+
+            findNavController().popBackStack()
+
+
+        }
+        builder.setNegativeButton("Cancelar", null)
+        builder.show()
     }
 
     private fun abrirAgregarProducto() {

@@ -1,14 +1,13 @@
 package com.example.ventarapida.procesos
 
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-object FirebaseProductoFacturados {
+object FirebaseProductoFacturadosOComprados {
 
     //las tablas referencias son ProductosComprados y ProductosFacturados
 

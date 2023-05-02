@@ -61,5 +61,14 @@
         android:id="@+id/compraGuardada"
         android:name="com.example.ventarapida.ui.compra_guardada.CompraGuardada"
         android:label="Compra" />
+    <fragment
+        android:id="@+id/configuracion"
+        android:name="com.example.ventarapida.ui.configuracion.Configuracion"
+        android:label="Configuracion" />
+    <fragment
+        android:id="@+id/datosEmpresa"
+        android:name="com.example.ventarapida.ui.configuracion.datosEmpresa.DatosEmpresa"
+        android:label="@string/datosempresa"
+        tools:layout="@layout/fragment_datos_empresa" />
 
 </navigation>

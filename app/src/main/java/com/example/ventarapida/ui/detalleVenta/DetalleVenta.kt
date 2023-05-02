@@ -1,6 +1,7 @@
 package com.example.ventarapida.ui.detalleVenta
 
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
@@ -11,10 +12,12 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.R
+import com.example.ventarapida.VistaPDF
 import com.example.ventarapida.databinding.FragmentDetalleVentaBinding
 
 import com.example.ventarapida.datos.ModeloProducto
@@ -22,6 +25,7 @@ import com.example.ventarapida.procesos.PermissionManager
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
+import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 
@@ -30,7 +34,7 @@ import java.util.*
 
 class DetalleVenta : Fragment() {
 
-private lateinit var permissionManager: PermissionManager
+
 
 
     private lateinit var viewModel: DetalleVentaViewModel
@@ -52,11 +56,6 @@ private lateinit var permissionManager: PermissionManager
         viewModel = ViewModelProvider(this).get(DetalleVentaViewModel::class.java)
 
         setHasOptionsMenu(true)
-        permissionManager = PermissionManager(requireActivity() as AppCompatActivity)
-
-
-        // Verifica y solicita el permiso de almacenamiento externo
-        permissionManager.checkAndRequestStoragePermission()
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
@@ -283,14 +282,9 @@ private lateinit var permissionManager: PermissionManager
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
 
-//
-//                val intent = Intent(requireContext(), VisorPDF::class.java)
-//                startActivity(intent)
+                esperarUnSegundo()
 
-//                viewModel.crearPdf()
-
-
-//                findNavController().popBackStack()
+                findNavController().popBackStack()
                 return true
             }
 

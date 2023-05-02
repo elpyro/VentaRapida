@@ -52,14 +52,7 @@ object FirebaseProductos {
                     }
                 }
             })
-
-
-
         }
-
-
-
-
     }
 
 }

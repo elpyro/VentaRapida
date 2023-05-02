@@ -1,6 +1,5 @@
 package com.example.ventarapida.ui.registros.pestanas
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,10 +10,9 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
-import com.example.ventarapida.databinding.FragmentCompraBinding
 import com.example.ventarapida.databinding.FragmentFacturaVentasBinding
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.procesos.FirebaseFactura
+import com.example.ventarapida.procesos.FirebaseFacturaOCompra
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 
@@ -36,7 +34,7 @@ class ListaCompras : Fragment() {
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
 
-        val tareaFacturas = FirebaseFactura.buscarFacturas("Compra")
+        val tareaFacturas = FirebaseFacturaOCompra.buscarFacturasOCompra("Compra")
 
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas

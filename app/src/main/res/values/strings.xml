@@ -59,4 +59,34 @@
     <string name="detalleCompra">Detalle Compra</string>
     <string name="RegistroCompras">Registro de Compras</string>
     <string name="RegistrosVentas">Registro de Ventas</string>
+    <string name="compartir">Compartir</string>
+    <string name="PDF">Pdf</string>
+    <string name="pdf">PDF</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="configuracion">Configuración</string>
+    <string name="datosempresa">Datos de Empresa</string>
+    <string name="sonido">Sonido</string>
+    <string name="inf_superior">Información Superior</string>
+    <string name="inf_inferior">Información Inferior</string>
+    <string name="otras_configuraciones">Otras Configuraciones</string>
+    <string name="cambiar">Cambiar</string>
+    <string name="empresa">Empresa</string>
+    <string name="telefono1">Telefono 1</string>
+    <string name="telefono2">Telefono 2</string>
+    <string name="pagina">Página</string>
+    <string name="correo">Correo</string>
+    <string name="garantia">Terminos de garantia</string>
 </resources>

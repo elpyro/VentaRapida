@@ -1,0 +1,33 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/fondo">
+
+    <PreferenceCategory app:title="@string/detalleFactura">
+
+        <EditTextPreference
+            app:key="inf_superior"
+            app:title="@string/inf_superior"
+            app:useSimpleSummaryProvider="false" />
+
+        <EditTextPreference
+            app:key="inf_inferior"
+            app:title="@string/inf_inferior"
+            app:useSimpleSummaryProvider="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/otras_configuraciones">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="sonido"
+            android:title="@string/sonido" />
+
+        <Preference
+            android:title="@string/datosempresa"
+            android:key="datos_empresa"/>
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

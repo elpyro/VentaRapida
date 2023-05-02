@@ -13,8 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaVentasBinding
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.procesos.FirebaseFactura.buscarFacturas
-import com.example.ventarapida.procesos.OcultarTeclado
+import com.example.ventarapida.procesos.FirebaseFacturaOCompra.buscarFacturasOCompra
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 
@@ -38,7 +37,7 @@ class FacturaVentas : Fragment() {
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
 
-        val tareaFacturas = buscarFacturas("Factura")
+        val tareaFacturas = buscarFacturasOCompra("Factura")
 
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas

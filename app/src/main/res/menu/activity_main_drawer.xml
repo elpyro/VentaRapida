@@ -36,4 +36,12 @@
             android:title="@string/RegistroCompras" />
     </group>
 
+    <group>
+    <item
+        android:id="@+id/configuracion"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="@string/configuracion" />
+
+    </group>
+
 </menu>

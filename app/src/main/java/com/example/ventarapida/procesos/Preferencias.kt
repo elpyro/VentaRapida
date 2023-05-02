@@ -1,13 +1,53 @@
 package com.example.ventarapida.procesos
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.widget.Toast
+import androidx.preference.PreferenceManager
 import com.example.ventarapida.MainActivity
+import com.example.ventarapida.MainActivity.Companion.datosEmpresa
+import com.example.ventarapida.MainActivity.Companion.tono
+import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.FirebaseDatosEmpresa.obtenerDatosEmpresa
 import com.example.ventarapida.ui.procesos.ServiciosSubirFoto
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.squareup.picasso.Picasso
+
 
 class Preferencias {
+
+    fun preferenciasConfiguracion(context: Context){
+        // Obtener el valor de la preferencia
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val informacionSuperior = sharedPreferences.getString("inf_superior", "")
+        val informacionInferior = sharedPreferences.getString("inf_inferior", "")
+        MainActivity.tono = sharedPreferences.getBoolean("sonido", true)
+
+
+        obtenerDatosEmpresa("1", object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Procesar los datos en el snapshot
+                datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
+                if (!datosEmpresa.url.isEmpty()){
+                    Picasso.get().load(datosEmpresa.url).into(MainActivity.logotipo)
+                    MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
+                    MainActivity.editText_nombreEmpresa.text = MainActivity.datosEmpresa.nombre
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Manejar el error
+            }
+        })
+
+    }
 
     fun guardarPreferenciaListaSeleccionada(context: Context, map: MutableMap<ModeloProducto, Int>, referencia:String) {
 
@@ -91,8 +131,9 @@ class Preferencias {
             val fileUri = servicio.first
             val storageRefString = servicio.second
             val idProducto = servicio.third
+            val tablaReferencia = servicio.fourth
 
-            fotosParaSubir.guardarServicioPendiente(context, fileUri, storageRefString, idProducto)
+            fotosParaSubir.guardarServicioPendiente(context, fileUri, storageRefString, idProducto,tablaReferencia)
         }
     }
 

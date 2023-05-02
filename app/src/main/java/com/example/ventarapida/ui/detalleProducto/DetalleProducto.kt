@@ -154,7 +154,6 @@ class DetalleProducto : Fragment() {
         binding?.editTextCantidad?.setText(producto.cantidad)
        if (!producto.url.isEmpty()){
            Picasso.get().load(producto.url).into(binding?.imageViewFoto)
-//           Picasso.get().load(producto.url).into(verificarImagenCambiada)
        }
 
     }

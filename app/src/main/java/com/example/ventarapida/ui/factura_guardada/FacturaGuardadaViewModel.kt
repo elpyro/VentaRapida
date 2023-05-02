@@ -1,12 +1,18 @@
 package com.example.ventarapida.ui.factura_guardada
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.datos.ModeloFactura
+import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.FirebaseFacturaOCompra
+import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
+import com.example.ventarapida.procesos.FirebaseProductos
 
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -82,6 +88,36 @@ class FacturaGuardadaViewModel : ViewModel() {
         // Calcular información adicional
         referencias.value = listaProductos.size.toString().formatoMonenda()
         items.value = listaProductos.sumByDouble { it.cantidad.toDouble() }.toString().formatoMonenda()
+    }
+
+    fun eliminarFactura(context:Context, modeloFactura:ModeloFactura) {
+
+        val arrayListProductosFacturados = ArrayList(datosProductosFacturados.value ?: emptyList())
+        FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(
+            "ProductosFacturados",
+            arrayListProductosFacturados
+        )
+
+        //Restar cantidades de la factura
+        val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+
+        datosProductosFacturados.value?.forEach { productoFacturado ->
+            val producto = ModeloProducto(
+                id = productoFacturado.id_producto
+            )
+            val cantidad = -1 * ( productoFacturado.cantidad.toInt())
+            productosSeleccionados[producto] = cantidad
+        }
+
+        //crear cola de transacciones para restar
+        UtilidadesBaseDatos.guardarTransaccionesBd("venta",context, productosSeleccionados)
+        val transaccionesPendientes =
+            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+        FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+
+        FirebaseFacturaOCompra.eliminarFacturaOCompra("Factura", modeloFactura.id_pedido)
+
+
     }
 
 }

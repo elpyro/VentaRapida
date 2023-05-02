@@ -76,7 +76,7 @@ class CompraAdaptador(
          val cardview: CardView = itemView.findViewById(R.id.cardview_itemProducto)
          val botonRestar: ImageButton = itemView.findViewById(R.id.imageButton_restarCantidad)
          val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_producto)
-
+        private lateinit var existenciaSinCambios: String
         @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto) {
 
@@ -94,6 +94,7 @@ class CompraAdaptador(
 
             seleccion.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
                 if(seleccion.hasFocus()) {
+                    this.existenciaSinCambios = product.cantidad
                     seleccion.addTextChangedListener(textWatcher)
                 }
                 if (!hasFocus) {
@@ -113,7 +114,9 @@ class CompraAdaptador(
                 if (!s.isNullOrBlank()) {
                     // Obtener la cantidad seleccionada como un número entero, o 0 si no se puede analizar como número
                     val cantidadSeleccionada = s.toString().toIntOrNull() ?: 0
-                    // Si la cantidad seleccionada es mayor que cero y el usuario está editando
+
+                    existencia.text= "X"+(existenciaSinCambios.toInt() + cantidadSeleccionada).toString()
+
                     if (cantidadSeleccionada > 0 && isUserEditing) {
                         // Hacer visible el botón restar
                         botonRestar.visibility = View.VISIBLE
@@ -129,6 +132,7 @@ class CompraAdaptador(
                     // Si el usuario está editando
                 } else if (isUserEditing) {
                     // Actualizar la cantidad del producto en el ViewModel a cero
+                    existencia.text= "X$existenciaSinCambios"
                     viewModel.actualizarCantidadProducto(products[position], 0)
                     botonRestar.visibility = View.GONE
                 }

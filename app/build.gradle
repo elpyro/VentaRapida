@@ -57,6 +57,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:18.3.6'
     implementation 'com.google.firebase:firebase-analytics:21.2.2'
     implementation 'com.google.firebase:firebase-firestore:24.5.0'
+    implementation 'androidx.preference:preference:1.2.0'
 
 
     testImplementation 'junit:junit:4.13.2'
@@ -76,7 +77,7 @@ dependencies {
     //crear pdf
     implementation 'com.itextpdf:itextpdf:5.5.13.2'
     //visor pdf
-    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
 
 
 

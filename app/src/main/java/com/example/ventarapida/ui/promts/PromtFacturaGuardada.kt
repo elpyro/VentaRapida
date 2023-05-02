@@ -7,7 +7,7 @@ import android.widget.Toast
 import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.FirebaseProductoFacturados
+import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
@@ -16,8 +16,8 @@ import android.view.LayoutInflater
 import android.widget.ImageButton
 import androidx.fragment.app.FragmentActivity
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.procesos.FirebaseFactura.guardarFactura
-import com.example.ventarapida.procesos.FirebaseProductoFacturados.actualizarPrecioDescuento
+import com.example.ventarapida.procesos.FirebaseFacturaOCompra.guardarFacturaOCompra
+import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
 
 
 
@@ -86,9 +86,9 @@ class PromtFacturaGuardada() {
             listaProductosFacturados.add(item)
             if(nuevaCantidad.toInt()!=0){
 
-                FirebaseProductoFacturados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados)
+                FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados)
             }else{
-                FirebaseProductoFacturados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados)
+                FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados)
                 Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
             }
         }
@@ -144,7 +144,7 @@ class PromtFacturaGuardada() {
                 "documento" to nuevoDocumento,
                 "direccion" to nuevaDireccion
             )
-            guardarFactura("Factura",updates)
+            guardarFacturaOCompra("Factura",updates)
           }
 
 // Configurar el botón "Cancelar"
@@ -189,7 +189,7 @@ class PromtFacturaGuardada() {
             )
 
             if (datosFactura.descuento != editTextDescuento.text.toString()) actualizarPrecioDescuento(datosFactura.id_pedido,nuevoDescuento.toDouble())
-            guardarFactura("Factura",updates)
+            guardarFacturaOCompra("Factura",updates)
 
 
         }
@@ -229,7 +229,7 @@ class PromtFacturaGuardada() {
                 "id_pedido" to datosFactura.id_pedido,
                 "nombre" to nuevoNombre,
             )
-            guardarFactura("Compra",updates)
+            guardarFacturaOCompra("Compra",updates)
         }
 
 // Configurar el botón "Cancelar"

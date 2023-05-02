@@ -45,7 +45,7 @@ class NuevoProductoViewModel : ViewModel() {
             intent.putExtra("fileUri", fileUri)
             intent.putExtra("storageRef", storageRef.toString())
             intent.putExtra("idProducto", idProducto)
-
+            intent.putExtra("tablaReferencia", "Productos")
 
             // Iniciar el servicio en segundo plano utilizando JobIntentService
             JobIntentService.enqueueWork(

@@ -12,8 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentNuevoProductoBinding
+
 import com.example.ventarapida.procesos.FirebaseProductos.guardarProducto
-import com.example.ventarapida.procesos.OcultarTeclado
 import com.example.ventarapida.procesos.TomarFotoYGaleria
 import com.example.ventarapida.procesos.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE
 import com.example.ventarapida.procesos.TomarFotoYGaleria.Companion.GALERIA_REQUEST_CODE
@@ -63,7 +63,7 @@ class NuevoProducto : Fragment() {
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_nuevo_producto, menu)
+        inflater.inflate(R.menu.menu_guardar_y_foto, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -76,6 +76,7 @@ class NuevoProducto : Fragment() {
             }
             R.id.action_camara->{
                 val imageHandler = TomarFotoYGaleria(this)
+
                 imageHandler.cargarImagen()
                 return true
             }

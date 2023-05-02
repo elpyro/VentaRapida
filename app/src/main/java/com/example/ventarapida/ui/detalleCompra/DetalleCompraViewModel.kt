@@ -58,7 +58,7 @@ class DetalleCompraViewModel : ViewModel() {
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
         FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
 
-        FirebaseFactura.guardarFactura("Compra",datosPedido)
+        FirebaseFacturaOCompra.guardarFacturaOCompra("Compra",datosPedido)
 
         val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
 
@@ -89,7 +89,7 @@ class DetalleCompraViewModel : ViewModel() {
             }
         }
 
-        FirebaseProductoFacturados.guardarProductoFacturado("ProductosComprados" ,listaProductosFacturados)
+        FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosComprados" ,listaProductosFacturados)
 
     }
 

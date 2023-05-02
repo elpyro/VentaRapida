@@ -160,6 +160,6 @@ class AgregarProductoFacturaViewModel : ViewModel() {
             }
         }
 
-        FirebaseProductoFacturados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados)
+        FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados)
     }
 }

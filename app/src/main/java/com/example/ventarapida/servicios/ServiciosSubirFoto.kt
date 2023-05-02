@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 
 import androidx.core.app.JobIntentService
+import com.example.ventarapida.datos.Quatruple
+import com.example.ventarapida.procesos.Preferencias
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -18,8 +20,10 @@ class ServiciosSubirFoto : JobIntentService() {
         val fileUriString = fileUri.toString()
         val storageRefString = intent.getStringExtra("storageRef")
         val idProducto = intent.getStringExtra("idProducto")
+        val tablaReferencia = intent.getStringExtra("tablaReferencia")
 
-        agregarServicioPendiente(applicationContext,fileUriString,storageRefString,idProducto)
+
+        agregarServicioPendiente(applicationContext,fileUriString,storageRefString,idProducto, tablaReferencia)
 
         val serviciosPendientes = getServiciosPendientes(applicationContext)
 
@@ -27,15 +31,18 @@ class ServiciosSubirFoto : JobIntentService() {
             val fileUri = servicio.first
             val storageRefString = servicio.second
             val idProducto = servicio.third
+            val tablaReferencia=servicio.fourth
 
-            guardarServicioPendiente(applicationContext, fileUri, storageRefString, idProducto)
+            guardarServicioPendiente(applicationContext, fileUri, storageRefString, idProducto,tablaReferencia)
         }
     }
 
-     fun guardarServicioPendiente(context: Context, fileUri: String?, storageRefString: String?, idProducto: String?) {
-        if (fileUri != null && storageRefString != null && idProducto != null) {
-            // Crear una referencia al almacenamiento de Firebase
-            val storageRef = Firebase.storage.getReferenceFromUrl(storageRefString)
+     fun guardarServicioPendiente(context: Context, fileUri: String?, storageRefString: String?, idImagen: String?, tablaReferencia: String?) {
+            //Tambien puede almacenar el logo de la empresa
+
+         if (fileUri != null && storageRefString != null && idImagen != null) {
+
+            val storageRef = Firebase.storage.reference.child("imagenes").child("$idImagen.jpg")
             val subirArchivo=Uri.parse(fileUri)
             // Subir el archivo al servidor
             val uploadTask = storageRef.putFile(subirArchivo)
@@ -50,11 +57,18 @@ class ServiciosSubirFoto : JobIntentService() {
                     )
 
                     val database = FirebaseDatabase.getInstance()
-                    val registroRef = database.getReference("Productos").child(idProducto)
+                    val registroRef = database.getReference(tablaReferencia!!).child(idImagen)
+
 
                     registroRef.updateChildren(updates).
                     addOnSuccessListener {
-                        borrarServicioPendiente(context, idProducto)
+                        borrarServicioPendiente(context, idImagen)
+
+                        //actualiza las preferencias si cambia la imagen de la empresa
+                        if(tablaReferencia.equals("DatosEmpresa")){
+                            val preferencias= Preferencias()
+                            preferencias.preferenciasConfiguracion(context)
+                        }
                     }
 
                 }
@@ -64,11 +78,11 @@ class ServiciosSubirFoto : JobIntentService() {
     }
 
     // Obtener la lista de imágenes pendientes de las preferencias compartidas
-    fun getServiciosPendientes(context: Context): List<Triple<String?, String?, String?>> {
+    fun getServiciosPendientes(context: Context): List<Quatruple<String?, String?, String?, String?>> {
         val prefs = context.getSharedPreferences("PreferenciaSubirFotos", Context.MODE_PRIVATE)
         val jsonString = prefs.getString("imagenes_pendientes", null)
         return if (jsonString != null) {
-            val typeToken = object : TypeToken<List<Triple<String?, String?, String?>>>() {}.type
+            val typeToken = object : TypeToken<List<Quatruple<String?, String?, String?, String?>>>() {}.type
             Gson().fromJson(jsonString, typeToken)
         } else {
             emptyList()
@@ -77,9 +91,10 @@ class ServiciosSubirFoto : JobIntentService() {
 
 
     // Agregar una imagen pendiente a la lista
-    fun agregarServicioPendiente(context: Context, fileUri: String?, storageRefString: String?, idProducto: String?) {
+
+    fun agregarServicioPendiente(context: Context, fileUri: String?, storageRefString: String?, idProducto: String?, tablaReferencia:String?) {
         val serviciosPendientes = getServiciosPendientes(context).toMutableList()
-        serviciosPendientes.add(Triple(fileUri, storageRefString, idProducto))
+        serviciosPendientes.add(Quatruple(fileUri, storageRefString, idProducto, tablaReferencia))
         val jsonString = Gson().toJson(serviciosPendientes)
         val prefs = context.getSharedPreferences("PreferenciaSubirFotos", Context.MODE_PRIVATE)
         val editor = prefs.edit()
