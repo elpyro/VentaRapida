@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,12 +16,13 @@ import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleCompraBinding
 import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
-import com.example.ventarapida.ui.detalleVenta.DetalleVentaAdaptador
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,6 +34,7 @@ class DetalleCompra : Fragment() {
     var binding: FragmentDetalleCompraBinding? = null
     private lateinit var vista:View
     private lateinit var adaptador: DetalleCompraAdaptador
+    var idPedido=""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,6 +50,8 @@ class DetalleCompra : Fragment() {
         viewModel = ViewModelProvider(this).get(DetalleCompraViewModel::class.java)
 
         setHasOptionsMenu(true)
+
+        idPedido = UUID.randomUUID().toString()
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
@@ -177,7 +182,7 @@ class DetalleCompra : Fragment() {
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_detalle_factura, menu)
+        inflater.inflate(R.menu.menu_detalle_factura_o_compra, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -192,32 +197,19 @@ class DetalleCompra : Fragment() {
                     return true
                 }
 
-                val idPedido = UUID.randomUUID().toString()
 
-                val currentTime = Calendar.getInstance().time
+                MainActivity.progressDialog?.show()
 
-                val pattern = "HH:mm:ss"
-                val formatoHora = SimpleDateFormat(pattern)
-                val horaActual = formatoHora.format(currentTime)
-
-                val formatoFecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                val fechaActual = formatoFecha.format(Date())
-
-                val nombre= binding?.editTextTienda?.text.toString().ifBlank { "Desconocida" }
-                val total=binding?.textViewTotal?.text.toString().eliminarPuntosComasLetras()
-
-                val datosPedido = hashMapOf<String, Any>(
-                    "id_pedido" to idPedido,
-                    "nombre" to nombre,
-                    "fecha" to fechaActual,
-                    "hora" to horaActual,
-                    "id_vendedor" to "id_vendedor",
-                    "nombre_vendedor" to "nombre_vendedor",
-                    "total" to total
-                )
+                val datosPedido= obtenerDatosPedido()
+                var listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
 
 
-                viewModel.subirDatos(datosPedido, MainActivity.compraProductosSeleccionados)
+                lifecycleScope.launch {
+                    viewModel.subirDatos(datosPedido,
+                        MainActivity.compraProductosSeleccionados,listaConvertida )
+                }
+
+                viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
 
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
@@ -227,9 +219,86 @@ class DetalleCompra : Fragment() {
                 return true
             }
 
+            R.id.action_ver_pdf ->{
+
+                val datosPedido=obtenerDatosPedido()
+                var listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
+                viewModel.abrirPDFConPreferencias(listaConvertida,datosPedido)
+
+
+                return true
+            }
+
             else -> return super.onOptionsItemSelected(item)
         }
     }
+
+
+    private fun obtenerDatosPedido(): HashMap<String, Any> {
+        val currentTime = Calendar.getInstance().time
+
+        val pattern = "HH:mm:ss"
+        val formatoHora = SimpleDateFormat(pattern)
+        val horaActual = formatoHora.format(currentTime)
+
+        val formatoFecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val fechaActual = formatoFecha.format(Date())
+        val total=binding?.textViewTotal?.text.toString().eliminarPuntosComasLetras()
+        val nombre= binding?.editTextTienda?.text.toString().ifBlank { "Desconocida" }
+
+        val datosPedido = hashMapOf<String, Any>(
+            "id_pedido" to idPedido,
+            "nombre" to nombre,
+            "telefono" to "",
+            "documento" to "",
+            "direccion" to "",
+            "descuento" to "0",
+            "envio" to "0",
+            "fecha" to fechaActual,
+            "hora" to horaActual,
+            "id_vendedor" to "id_vendedor",
+            "nombre_vendedor" to "nombre_vendedor",
+            "total" to total
+        )
+        return datosPedido
+    }
+
+    private fun convertirLista(
+        compraProductosSeleccionados: MutableMap<ModeloProducto, Int>,
+        datosPedido: HashMap<String, Any>
+    ): ArrayList<ModeloProductoFacturado> {
+
+        val listaProductosComprados = arrayListOf<ModeloProductoFacturado>()
+
+        val idPedido = datosPedido["id_pedido"].toString()
+        val horaActual = datosPedido["hora"].toString()
+        val fechaActual = datosPedido["fecha"].toString()
+
+        compraProductosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
+            //calculamos el precio descuento para tener la referencia para los reportes
+            if (cantidadSeleccionada!=0){
+
+                val productoFacturado = ModeloProductoFacturado(
+                    id_producto_pedido = UUID.randomUUID().toString(),
+                    id_producto = producto.id,
+                    id_pedido = idPedido,
+                    id_vendedor = "idVendedor",
+                    vendedor = "Nombre vendedor",
+                    producto = producto.nombre,
+                    cantidad = cantidadSeleccionada.toString(),
+                    costo = producto.p_compra,
+                    venta = producto.p_diamante,
+                    fecha = fechaActual,
+                    hora=horaActual,
+                    imagenUrl=producto.url
+                )
+                listaProductosComprados.add(productoFacturado)
+            }
+        }
+        return listaProductosComprados
+    }
+
+
 
     fun filtrarProductos(nombreFiltrado: String) {
 

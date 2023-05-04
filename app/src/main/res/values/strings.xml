@@ -89,4 +89,6 @@
     <string name="pagina">Página</string>
     <string name="correo">Correo</string>
     <string name="garantia">Terminos de garantia</string>
+    <string name="ver_pdf">Ver PDF</string>
+    <string name="clientes">Clientes</string>
 </resources>

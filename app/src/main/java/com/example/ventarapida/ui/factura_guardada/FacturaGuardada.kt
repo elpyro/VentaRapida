@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
-import com.example.ventarapida.VistaPDF
+import com.example.ventarapida.VistaPDFFacturaOCompra
 import com.example.ventarapida.databinding.FragmentFacturaGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
@@ -171,7 +171,7 @@ class FacturaGuardada : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_factura_guardada, menu)
+        inflater.inflate(R.menu.menu_factura_o_compra_guardada, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -190,7 +190,7 @@ class FacturaGuardada : Fragment() {
                 return true
             }
             R.id.action_crear_pdf -> {
-                val intent = Intent(activity, VistaPDF::class.java)
+                val intent = Intent(activity, VistaPDFFacturaOCompra::class.java)
                 intent.putExtra("id", modeloFactura.id_pedido)
                 intent.putExtra("tablaReferencia", "Factura")
                 startActivity(intent)

@@ -1,7 +1,10 @@
 package com.example.ventarapida.procesos
 
+import android.util.Log
+import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -64,4 +67,29 @@ object FirebaseProductoFacturadosOComprados {
         refProductosFacturados.orderByChild("id_pedido").equalTo(idPedido).addListenerForSingleValueEvent(listener)
 
     }
+
+    fun buscarProductosPorPedido(tablaReferencia: String, idPedido: String): Task<List<ModeloProductoFacturado>> {
+        val taskCompletionSource = TaskCompletionSource<List<ModeloProductoFacturado>>()
+        val database = FirebaseDatabase.getInstance()
+        val productosRef = database.getReference(tablaReferencia).orderByChild("id_pedido").equalTo(idPedido)
+
+        productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val datosFactura = mutableListOf<ModeloProductoFacturado>()
+                for (facturaSnapshot in dataSnapshot.children) {
+                    val factura = facturaSnapshot.getValue(ModeloProductoFacturado::class.java)
+                    factura?.let { datosFactura.add(it) }
+                }
+                taskCompletionSource.setResult(datosFactura)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                taskCompletionSource.setException(error.toException())
+            }
+        })
+
+        return taskCompletionSource.task
+    }
+
+
 }

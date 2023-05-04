@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VentaRapida">
         <activity
-            android:name=".VistaPDF"
+            android:name=".VistaPDFFacturaOCompra"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

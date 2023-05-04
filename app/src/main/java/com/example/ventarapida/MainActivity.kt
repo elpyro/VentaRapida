@@ -1,5 +1,6 @@
 package com.example.ventarapida
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.media.Image
 import android.os.Bundle
@@ -34,11 +35,15 @@ class MainActivity : AppCompatActivity() {
         const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
         var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
         var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+
+        //Elementos sacados de las preferencias para usarlos en la aplicacion
         var tono = true
         lateinit var datosEmpresa: ModeloDatosEmpresa
         lateinit var logotipo: ImageView
         lateinit var editText_nombreEmpresa: TextView
-
+        lateinit var preferencia_informacion_superior:String
+        lateinit var preferencia_informacion_inferior:String
+        var progressDialog: ProgressDialog? = null
         fun init(context: Context) {
             logotipo = ImageView(context)
             editText_nombreEmpresa= TextView(context)
@@ -52,9 +57,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         init(this)
+        cargarDatos()
 
-
-
+        cargarDialogoProceso()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -78,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         permissionManager = PermissionManager(this as AppCompatActivity)
         permissionManager.checkAndRequestStoragePermission()
 
-       cargarDatos()
+
     }
 
 
@@ -103,6 +108,14 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
+
+
+    fun cargarDialogoProceso() {
+        progressDialog = ProgressDialog(this)
+        progressDialog?.setMessage("Cargando...")
+        progressDialog?.setCancelable(false)
+    }
+
 
 
 

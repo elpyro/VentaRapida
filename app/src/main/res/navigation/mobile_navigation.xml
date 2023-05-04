@@ -70,5 +70,10 @@
         android:name="com.example.ventarapida.ui.configuracion.datosEmpresa.DatosEmpresa"
         android:label="@string/datosempresa"
         tools:layout="@layout/fragment_datos_empresa" />
+    <fragment
+        android:id="@+id/listaClientes"
+        android:name="com.example.ventarapida.ui.clientes.ListaClientes"
+        android:label="@string/clientes"
+        tools:layout="@layout/fragment_lista_clientes" />
 
 </navigation>

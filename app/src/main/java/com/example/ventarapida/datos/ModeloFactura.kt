@@ -6,12 +6,12 @@ data class ModeloFactura(
     var telefono: String = "",
     var documento: String = "",
     var direccion: String = "",
-    val descuento: String = "",
-    val envio: String = "",
+    val descuento: String = "0",
+    val envio: String = "0",
     val fecha: String = "",
     val hora: String = "",
     val id_vendedor: String = "",
     val nombre_vendedor: String = "",
-    var total: String = ""
+    var total: String = "0"
 
 ):java.io.Serializable

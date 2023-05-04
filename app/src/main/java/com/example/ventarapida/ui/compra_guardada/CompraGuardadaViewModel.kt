@@ -105,7 +105,5 @@ class CompraGuardadaViewModel : ViewModel() {
         FirebaseFacturaOCompra.eliminarFacturaOCompra("Compra", modeloFactura.id_pedido)
     }
 
-    fun crearPDF() {
 
-    }
 }

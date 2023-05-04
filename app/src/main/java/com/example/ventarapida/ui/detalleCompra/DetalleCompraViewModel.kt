@@ -1,9 +1,12 @@
 package com.example.ventarapida.ui.detalleCompra
 
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity
+import com.example.ventarapida.VistaPDFFacturaOCompra
+import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.*
@@ -49,47 +52,25 @@ class DetalleCompraViewModel : ViewModel() {
 
     fun subirDatos(
         datosPedido: HashMap<String, Any>,
-        productosSeleccionados: MutableMap<ModeloProducto, Int>
+        productosSeleccionados: MutableMap<ModeloProducto, Int>,
+        listaProductosFacturados:ArrayList<ModeloProductoFacturado>
     ) {
 
 
-        UtilidadesBaseDatos.guardarTransaccionesBd("compra",context, productosSeleccionados)
+        UtilidadesBaseDatos.guardarTransaccionesBd("compra", context, productosSeleccionados)
         val transaccionesPendientes =
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
         FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
 
         FirebaseFacturaOCompra.guardarFacturaOCompra("Compra",datosPedido)
 
-        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
-
-        val idPedido = datosPedido["id_pedido"].toString()
-        val horaActual = datosPedido["hora"].toString()
-        val fechaActual = datosPedido["fecha"].toString()
-
-
-        productosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
-            //calculamos el precio descuento para tener la referencia para los reportes
-            if (cantidadSeleccionada!=0){
-
-                val productoFacturado = ModeloProductoFacturado(
-                    id_producto_pedido = UUID.randomUUID().toString(),
-                    id_producto = producto.id,
-                    id_pedido = idPedido,
-                    id_vendedor = "idVendedor",
-                    vendedor = "Nombre vendedor",
-                    producto = producto.nombre,
-                    cantidad = cantidadSeleccionada.toString(),
-                    costo = producto.p_compra,
-                    venta = producto.p_diamante,
-                    fecha = fechaActual,
-                    hora=horaActual,
-                    imagenUrl=producto.url
-                )
-                listaProductosFacturados.add(productoFacturado)
+        FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
+            "ProductosComprados",
+            listaProductosFacturados
+        )
+            .addOnSuccessListener {
+                MainActivity.progressDialog?.dismiss()
             }
-        }
-
-        FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosComprados" ,listaProductosFacturados)
 
     }
 
@@ -115,6 +96,35 @@ class DetalleCompraViewModel : ViewModel() {
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context,
             MainActivity.compraProductosSeleccionados,"compra_seleccionada")
+    }
+
+    fun abrirPDFConPreferencias(
+        productosSeleccionados: ArrayList<ModeloProductoFacturado>,
+        datosPedido: HashMap<String, Any>
+    ) {
+
+        val modeloFactura = ModeloFactura(
+            datosPedido["id_pedido"].toString(),
+            datosPedido["nombre"].toString(),
+            datosPedido["telefono"].toString(),
+            datosPedido["documento"].toString(),
+            datosPedido["direccion"].toString(),
+            datosPedido["descuento"].toString(),
+            datosPedido["envio"].toString(),
+            datosPedido["fecha"].toString(),
+            datosPedido["hora"].toString(),
+            datosPedido["id_vendedor"].toString(),
+            datosPedido["nombre_vendedor"].toString(),
+            datosPedido["total"].toString()
+        )
+
+
+        val intent = Intent(context, VistaPDFFacturaOCompra::class.java)
+        intent.putExtra("id", "enProceso")
+        intent.putExtra("tablaReferencia", "Compra")
+        intent.putExtra("datosFactura", modeloFactura)
+        intent.putExtra("listaProductos", productosSeleccionados )
+        context.startActivity(intent)
 
     }
 }

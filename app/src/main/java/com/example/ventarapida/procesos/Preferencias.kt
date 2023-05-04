@@ -26,8 +26,10 @@ class Preferencias {
         // Obtener el valor de la preferencia
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val informacionSuperior = sharedPreferences.getString("inf_superior", "")
-        val informacionInferior = sharedPreferences.getString("inf_inferior", "")
+        MainActivity.preferencia_informacion_superior =
+            sharedPreferences.getString("inf_superior", "")!!
+        MainActivity.preferencia_informacion_inferior =
+            sharedPreferences.getString("inf_inferior", "")!!
         MainActivity.tono = sharedPreferences.getBoolean("sonido", true)
 
 

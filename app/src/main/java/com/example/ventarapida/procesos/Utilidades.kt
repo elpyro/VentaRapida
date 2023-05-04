@@ -1,5 +1,6 @@
 package com.example.ventarapida.procesos
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
@@ -33,6 +34,7 @@ object Utilidades {
             e.printStackTrace()
         }
     }
+
     fun ocultarTeclado(context: Context,view: View) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)

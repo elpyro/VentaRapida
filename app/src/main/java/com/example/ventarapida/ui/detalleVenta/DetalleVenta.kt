@@ -10,27 +10,33 @@ import android.view.*
 import android.widget.EditText
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.R
-import com.example.ventarapida.VistaPDF
+import com.example.ventarapida.VistaPDFFacturaOCompra
 import com.example.ventarapida.databinding.FragmentDetalleVentaBinding
+import com.example.ventarapida.datos.ModeloFactura
 
 import com.example.ventarapida.datos.ModeloProducto
-import com.example.ventarapida.procesos.PermissionManager
+import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.ProgressDialogFragment
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
-import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import kotlinx.coroutines.launch
 
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class DetalleVenta : Fragment() {
 
@@ -41,6 +47,7 @@ class DetalleVenta : Fragment() {
     var binding: FragmentDetalleVentaBinding? = null
     private lateinit var vista:View
     private lateinit var adaptador:DetalleVentaAdaptador
+    var idPedido=""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,6 +68,7 @@ class DetalleVenta : Fragment() {
         binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
         adaptador = DetalleVentaAdaptador(ventaProductosSeleccionados )
 
+        idPedido = UUID.randomUUID().toString()
 
         adaptador.setOnClickItem() { item, cantidad, position ->
             editarItem(item, cantidad)
@@ -82,7 +90,6 @@ class DetalleVenta : Fragment() {
      fun editarItem(item: ModeloProducto, cantidad: Int) {
          val dialogBuilder = AlertDialog.Builder(context)
 
-// Inflar el layout para el diálogo
          val inflater = requireActivity().layoutInflater
          val dialogView = inflater.inflate(R.layout.promt_factura, null)
          dialogBuilder.setView(dialogView)
@@ -129,6 +136,9 @@ class DetalleVenta : Fragment() {
         binding!!.editTextEnvio.escribirFormatoMoneda()
         binding!!.editDescuento.escribirFormatoMoneda()
 
+        binding?.imageButtonBuscarCliente?.setOnClickListener{
+            Navigation.findNavController(vista).navigate(R.id.listaClientes)
+        }
 
         binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -230,7 +240,7 @@ class DetalleVenta : Fragment() {
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_detalle_factura, menu)
+        inflater.inflate(R.menu.menu_detalle_factura_o_compra, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -245,52 +255,114 @@ class DetalleVenta : Fragment() {
                     return true
                 }
 
-                val idPedido = UUID.randomUUID().toString()
+                MainActivity.progressDialog?.show()
 
-                val currentTime = Calendar.getInstance().time
-
-                val pattern = "HH:mm:ss"
-                val formatoHora = SimpleDateFormat(pattern)
-                val horaActual = formatoHora.format(currentTime)
-
-                val formatoFecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                val fechaActual = formatoFecha.format(Date())
-
-                val nombre= binding?.editTextNombre?.text.toString().ifBlank { "Anonimo" }
-                val envio= binding?.editTextEnvio?.text.toString().ifBlank { "0" }
-                val descuento= binding?.editDescuento?.text.toString().ifBlank { "0" }
-                val total=binding?.textViewTotal?.text.toString().eliminarPuntosComasLetras()
-
-                val datosPedido = hashMapOf<String, Any>(
-                    "id_pedido" to idPedido,
-                    "nombre" to nombre,
-                    "telefono" to binding?.editTextTelefono?.text.toString(),
-                    "documento" to binding?.editTextDocumento?.text.toString(),
-                    "direccion" to binding?.editTextDireccion?.text.toString(),
-                    "descuento" to descuento.eliminarPuntosComasLetras(),
-                    "envio" to envio.eliminarPuntosComasLetras(),
-                    "fecha" to fechaActual,
-                    "hora" to horaActual,
-                    "id_vendedor" to "id_vendedor",
-                    "nombre_vendedor" to "nombre_vendedor",
-                    "total" to total
-                )
+                val datosPedido= obtenerDatosPedido()
+                var listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
 
 
-                viewModel.subirDatos(datosPedido, ventaProductosSeleccionados)
+                lifecycleScope.launch {
+                    viewModel.subirDatos(datosPedido, ventaProductosSeleccionados ,listaConvertida )
+                }
+
+                viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
 
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
 
-                esperarUnSegundo()
-
                 findNavController().popBackStack()
+                return true
+            }
+
+            R.id.action_ver_pdf ->{
+
+                val datosPedido=obtenerDatosPedido()
+                var listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
+                viewModel.abrirPDFConPreferencias(listaConvertida,datosPedido)
+
                 return true
             }
 
             else -> return super.onOptionsItemSelected(item)
         }
     }
+
+    private fun obtenerDatosPedido(): HashMap<String, Any> {
+        val currentTime = Calendar.getInstance().time
+
+        val pattern = "HH:mm:ss"
+        val formatoHora = SimpleDateFormat(pattern)
+        val horaActual = formatoHora.format(currentTime)
+
+        val formatoFecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val fechaActual = formatoFecha.format(Date())
+
+        val nombre= binding?.editTextNombre?.text.toString().ifBlank { "Anonimo" }
+        val envio= binding?.editTextEnvio?.text.toString().ifBlank { "0" }
+        val descuento= binding?.editDescuento?.text.toString().ifBlank { "0" }
+        val total=binding?.textViewTotal?.text.toString().eliminarPuntosComasLetras()
+
+        val datosPedido = hashMapOf<String, Any>(
+            "id_pedido" to idPedido,
+            "nombre" to nombre,
+            "telefono" to binding?.editTextTelefono?.text.toString(),
+            "documento" to binding?.editTextDocumento?.text.toString(),
+            "direccion" to binding?.editTextDireccion?.text.toString(),
+            "descuento" to descuento.eliminarPuntosComasLetras(),
+            "envio" to envio.eliminarPuntosComasLetras(),
+            "fecha" to fechaActual,
+            "hora" to horaActual,
+            "id_vendedor" to "id_vendedor",
+            "nombre_vendedor" to "nombre_vendedor",
+            "total" to total
+        )
+        return datosPedido
+    }
+
+    private fun convertirLista(
+        ventaProductosSeleccionados: MutableMap<ModeloProducto, Int>,
+        datosPedido: HashMap<String, Any>
+    ): ArrayList<ModeloProductoFacturado> {
+
+        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
+
+        val idPedido = datosPedido["id_pedido"].toString()
+        val horaActual = datosPedido["hora"].toString()
+        val fechaActual = datosPedido["fecha"].toString()
+        val descuento = datosPedido["descuento"].toString().toInt()
+        val envio=datosPedido["envio"].toString().toInt()
+
+        ventaProductosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
+            //calculamos el precio descuento para tener la referencia para los reportes
+            if (cantidadSeleccionada!=0){
+
+                val porcentajeDescuento = descuento.toDouble() / 100
+                var precioDescuento:Double=producto.p_diamante.toDouble()
+                precioDescuento *= (1 - porcentajeDescuento)
+                precioDescuento += envio.toDouble()
+
+                val productoFacturado = ModeloProductoFacturado(
+                    id_producto_pedido = UUID.randomUUID().toString(),
+                    id_producto = producto.id,
+                    id_pedido = idPedido,
+                    id_vendedor = "idVendedor",
+                    vendedor = "Nombre vendedor",
+                    producto = producto.nombre,
+                    cantidad = cantidadSeleccionada.toString(),
+                    costo = producto.p_compra,
+                    venta = producto.p_diamante,
+                    precioDescuentos = precioDescuento.toString().formatoMonenda()!!,
+                    fecha = fechaActual,
+                    hora=horaActual,
+                    imagenUrl=producto.url
+                )
+                listaProductosFacturados.add(productoFacturado)
+            }
+        }
+        return listaProductosFacturados
+    }
+
+
 
     fun filtrarProductos(nombreFiltrado: String) {
 
