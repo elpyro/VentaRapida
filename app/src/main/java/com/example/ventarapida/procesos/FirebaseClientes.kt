@@ -12,10 +12,11 @@ import com.google.firebase.database.ValueEventListener
 
 object FirebaseClientes {
 
+    private const val TABLA_REFERENCIA = "Clientes"
 
     fun buscarTodosClientes(): Task<MutableList<ModeloClientes>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference("Clientes")
+        val tablaRef = database.getReference(TABLA_REFERENCIA)
 
         val clientes = mutableListOf<ModeloClientes>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloClientes>>()
@@ -40,5 +41,19 @@ object FirebaseClientes {
 
         return taskCompletionSource.task
     }
+
+    fun guardarCliente(updates: HashMap<String, Any>): Task<Void> {
+        val database = FirebaseDatabase.getInstance()
+        val registroRef = database.getReference(TABLA_REFERENCIA).child(updates["id"] as String)
+        return registroRef.updateChildren(updates)
+    }
+
+    fun eliminarCliente(id: String): Task<Void> {
+        val database2 = FirebaseDatabase.getInstance()
+        val registroRef = database2.getReference(TABLA_REFERENCIA).child(id)
+
+        return registroRef.removeValue()
+    }
+
 
 }

@@ -1,7 +1,6 @@
 package com.example.ventarapida.ui.detalleVenta
 
 import android.app.AlertDialog
-import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +10,7 @@ import android.widget.EditText
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -19,13 +19,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.R
-import com.example.ventarapida.VistaPDFFacturaOCompra
 import com.example.ventarapida.databinding.FragmentDetalleVentaBinding
-import com.example.ventarapida.datos.ModeloFactura
+import com.example.ventarapida.datos.ModeloClientes
 
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.ProgressDialogFragment
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
@@ -48,11 +46,14 @@ class DetalleVenta : Fragment() {
     private lateinit var vista:View
     private lateinit var adaptador:DetalleVentaAdaptador
     var idPedido=""
+    var limpiar=false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDetalleVentaBinding.inflate(inflater, container, false)
+
+
         return binding!!.root // Retorna la vista inflada
     }
 
@@ -87,49 +88,7 @@ class DetalleVenta : Fragment() {
 
     }
 
-     fun editarItem(item: ModeloProducto, cantidad: Int) {
-         val dialogBuilder = AlertDialog.Builder(context)
 
-         val inflater = requireActivity().layoutInflater
-         val dialogView = inflater.inflate(R.layout.promt_factura, null)
-         dialogBuilder.setView(dialogView)
-
-         val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
-         val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
-         val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
-
-         // Seleccionar tode el contenido del EditText al recibir foco
-         editTextProducto.setSelectAllOnFocus(true)
-         editTextCantidad.setSelectAllOnFocus(true)
-         editTextPrecio.setSelectAllOnFocus(true)
-
-         editTextProducto.setText( item.nombre)
-         editTextCantidad.setText(cantidad.toString())
-         editTextPrecio.setText(item.p_diamante.formatoMonenda())
-
-         editTextPrecio.escribirFormatoMoneda()
-
-
-
-// Configurar el botón "Aceptar"
-         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
-             val nuevoNombre=editTextProducto.text.toString()
-             val nuevaCantidad = editTextCantidad.text.toString()
-             val nuevoPrecio = editTextPrecio.text.toString().replace(".", "")
-
-             viewModel.actualizarProducto(item, nuevoPrecio.toInt(),nuevaCantidad.toInt(), nuevoNombre)
-             adaptador.notifyDataSetChanged()
-         }
-
-// Configurar el botón "Cancelar"
-         dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
-             // No hacer nada
-         }
-
-// Mostrar el diálogo
-         val alertDialog = dialogBuilder.create()
-         alertDialog.show()
-     }
 
     private fun listeners() {
 
@@ -227,14 +186,23 @@ class DetalleVenta : Fragment() {
         }
 
         viewModel.referencias.observe(viewLifecycleOwner) {
-            binding?.textViewReferencias?.text="Referencias: "+it.formatoMonenda()
+            binding?.textViewReferencias?.text = "Referencias: "+it.formatoMonenda()
         }
         viewModel.itemsSeleccionados.observe(viewLifecycleOwner) {
-            binding?.textViewItems?.text="Items: "+ it.formatoMonenda()
+            binding?.textViewItems?.text = "Items: "+ it.formatoMonenda()
+
         }
 
         viewModel.mensajeToast.observe(viewLifecycleOwner){
             Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
+        }
+
+        DetalleVentaViewModel.datosCliente.observe(viewLifecycleOwner){
+
+            binding?.editTextNombre?.setText(it.nombre)
+            binding?.editTextTelefono?.setText(it.telefono)
+            binding?.editTextDocumento?.setText(it.documento)
+            binding?.editTextDireccion?.setText(it.direccion)
         }
     }
 
@@ -258,7 +226,7 @@ class DetalleVenta : Fragment() {
                 MainActivity.progressDialog?.show()
 
                 val datosPedido= obtenerDatosPedido()
-                var listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
+                val listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
 
 
                 lifecycleScope.launch {
@@ -267,17 +235,20 @@ class DetalleVenta : Fragment() {
 
                 viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
 
-                //limpiamos los productos seleccionados
-                viewModel.limpiarProductosSelecionados(requireContext())
+                viewModel.limpiar(requireContext())
+                limpiar=true
+
 
                 findNavController().popBackStack()
+
+
                 return true
             }
 
             R.id.action_ver_pdf ->{
 
                 val datosPedido=obtenerDatosPedido()
-                var listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
+                val listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
                 viewModel.abrirPDFConPreferencias(listaConvertida,datosPedido)
 
                 return true
@@ -371,7 +342,7 @@ class DetalleVenta : Fragment() {
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
 
 
-        adaptador!!.setOnClickItem() { item, cantidad, position ->
+        adaptador.setOnClickItem() { item, cantidad, position ->
             editarItem(item, cantidad)
         }
 
@@ -379,9 +350,70 @@ class DetalleVenta : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
+
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        if (limpiar==false){
+            val datosCliente = DetalleVentaViewModel.datosCliente.value?: ModeloClientes()
+            datosCliente.nombre = binding?.editTextNombre?.text.toString()
+            datosCliente.telefono = binding?.editTextTelefono?.text.toString()
+            datosCliente.documento = binding?.editTextDocumento?.text.toString()
+            datosCliente.direccion = binding?.editTextDireccion?.text.toString()
+            DetalleVentaViewModel.datosCliente.postValue(datosCliente)
+        }else{
+            DetalleVentaViewModel.datosCliente = MutableLiveData<ModeloClientes>()
+        }
+
+    }
+
+    fun editarItem(item: ModeloProducto, cantidad: Int) {
+        val dialogBuilder = AlertDialog.Builder(context)
+
+        val inflater = requireActivity().layoutInflater
+        val dialogView = inflater.inflate(R.layout.promt_factura, null)
+        dialogBuilder.setView(dialogView)
+
+        val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
+        val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
+        val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
+
+        // Seleccionar tode el contenido del EditText al recibir foco
+        editTextProducto.setSelectAllOnFocus(true)
+        editTextCantidad.setSelectAllOnFocus(true)
+        editTextPrecio.setSelectAllOnFocus(true)
+
+        editTextProducto.setText( item.nombre)
+        editTextCantidad.setText(cantidad.toString())
+        editTextPrecio.setText(item.p_diamante.formatoMonenda())
+
+        editTextPrecio.escribirFormatoMoneda()
+
+
+
+// Configurar el botón "Aceptar"
+        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
+            val nuevoNombre=editTextProducto.text.toString()
+            val nuevaCantidad = editTextCantidad.text.toString()
+            val nuevoPrecio = editTextPrecio.text.toString().replace(".", "")
+
+            viewModel.actualizarProducto(item, nuevoPrecio.toInt(),nuevaCantidad.toInt(), nuevoNombre)
+            adaptador.notifyDataSetChanged()
+        }
+
+// Configurar el botón "Cancelar"
+        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
+            // No hacer nada
+        }
+
+// Mostrar el diálogo
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+    }
 
 }

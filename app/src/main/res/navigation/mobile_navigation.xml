@@ -75,5 +75,9 @@
         android:name="com.example.ventarapida.ui.clientes.ListaClientes"
         android:label="@string/clientes"
         tools:layout="@layout/fragment_lista_clientes" />
+    <fragment
+        android:id="@+id/clienteAgregarModificar"
+        android:name="ClienteAgregarModificar"
+        android:label="@string/cliente" />
 
 </navigation>

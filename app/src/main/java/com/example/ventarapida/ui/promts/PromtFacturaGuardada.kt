@@ -2,6 +2,7 @@ package com.example.ventarapida.ui.promts
 
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
 import com.example.ventarapida.R
@@ -13,8 +14,10 @@ import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageButton
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.Navigation
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra.guardarFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
@@ -22,6 +25,7 @@ import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.act
 
 
 class PromtFacturaGuardada() {
+
 
     fun editarProducto( tipo:String, item: ModeloProductoFacturado, context: Context){
         val dialogBuilder = AlertDialog.Builder(context)
@@ -103,7 +107,7 @@ class PromtFacturaGuardada() {
         alertDialog.show()
     }
 
-    fun promtEditarDatosCliente(datosFactura: ModeloFactura, context: FragmentActivity) {
+    fun promtEditarDatosCliente(datosFactura: ModeloFactura, context: FragmentActivity,vista : View) {
         val dialogBuilder = AlertDialog.Builder(context)
 
 // Inflar el layout para el diálogo
@@ -116,7 +120,10 @@ class PromtFacturaGuardada() {
         val editTextTelefono = dialogView.findViewById<EditText>(R.id.editText_telefono)
         val editTextDocumento= dialogView.findViewById<EditText>(R.id.editText_documento)
         val editTextDireccion = dialogView.findViewById<EditText>(R.id.editText_direccion)
-        val buttonBuscar=dialogView.findViewById<ImageButton>(R.id.imageButton_buscarCliente)
+        val botonBuscar=dialogView.findViewById<ImageButton>(R.id.imageButton_buscarCliente)
+
+
+
 
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextCliente.setSelectAllOnFocus(true)
@@ -124,10 +131,13 @@ class PromtFacturaGuardada() {
         editTextDocumento.setSelectAllOnFocus(true)
         editTextDireccion.setSelectAllOnFocus(true)
 
-        editTextCliente.setText( datosFactura.nombre)
-        editTextTelefono.setText(datosFactura.telefono)
-        editTextDocumento.setText(datosFactura.documento)
-        editTextDireccion.setText(datosFactura.direccion)
+
+            editTextCliente.setText( datosFactura.nombre)
+            editTextTelefono.setText(datosFactura.telefono)
+            editTextDocumento.setText(datosFactura.documento)
+            editTextDireccion.setText(datosFactura.direccion)
+
+
 
 // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
@@ -155,6 +165,13 @@ class PromtFacturaGuardada() {
 // Mostrar el diálogo
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
+
+        botonBuscar.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable("modeloFactura", datosFactura)
+            Navigation.findNavController(vista).navigate(R.id.listaClientes,bundle)
+            alertDialog.dismiss()
+        }
     }
 
     fun promtEditarModificadoresFactura(datosFactura: ModeloFactura, context: FragmentActivity) {

@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.VistaPDFFacturaOCompra
+import com.example.ventarapida.datos.ModeloClientes
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloProducto
@@ -29,6 +30,10 @@ import kotlin.collections.HashMap
 class DetalleVentaViewModel : ViewModel() {
 
     lateinit var context: Context // propiedad para almacenar el contexto
+
+    companion object{
+        var datosCliente= MutableLiveData<ModeloClientes>()
+    }
 
     var subTotal= MutableLiveData<String>()
     var totalFactura= MutableLiveData<String>()
@@ -103,10 +108,11 @@ class DetalleVentaViewModel : ViewModel() {
         totalFactura()
     }
 
-    fun limpiarProductosSelecionados(context: Context) {
+    fun limpiar(context: Context) {
         ventaProductosSeleccionados.clear()
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context, ventaProductosSeleccionados,"venta_seleccionada")
+
 
     }
 

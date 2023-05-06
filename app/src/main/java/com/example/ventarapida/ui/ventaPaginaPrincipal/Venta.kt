@@ -169,6 +169,12 @@ class Venta : Fragment() {
 
             lista = productos as ArrayList<ModeloProducto>?
             binding!!.recyclerViewProductosVenta.adapter = adapter
+
+            //si el valor esta filtrado buscarlo
+            val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
+            if(busqueda!=""){
+                filtro(busqueda)
+            }
         }
     }
 
@@ -210,6 +216,7 @@ class Venta : Fragment() {
                 if (numerosSeparados.second!=null){
                     cantidadPorVoz= numerosSeparados.second!!.toInt()
                 }
+                binding?.searchViewProductosVenta?.isIconified=false
                 binding?.searchViewProductosVenta?.setQuery(numerosSeparados.first.trim(), true)
             }
 

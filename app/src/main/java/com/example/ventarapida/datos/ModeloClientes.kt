@@ -4,8 +4,8 @@ import java.io.Serializable
 
 data class ModeloClientes (
     val id: String= "",
-    val nombre: String= "",
-    val documento: String= "",
-    val telefono: String= "",
-    val direccion: String= "",
+    var nombre: String= "",
+    var documento: String= "",
+    var telefono: String= "",
+    var direccion: String= "",
 ): Serializable

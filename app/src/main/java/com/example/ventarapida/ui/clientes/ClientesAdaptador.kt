@@ -9,7 +9,6 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloClientes
-import com.example.ventarapida.datos.ModeloProducto
 
 import java.util.*
 
@@ -37,20 +36,21 @@ class ClientesAdaptador(
     override fun onBindViewHolder(holder: ClienteViewHolder, position: Int) {
 
         // Obtener la clave del elemento que corresponde a la posición
-        val Cliente =sortedFacturas[position]
-
+        val cliente =sortedFacturas[position]
 
         // Vincular los datos del producto con la vista del ViewHolder
-        holder.bind(Cliente)
-
-        holder.cardView.setOnClickListener {
-            onClickItem?.invoke(Cliente)
-        }
+        holder.bind(cliente)
 
         holder.cardView.setOnClickListener() {
-            onClickItem?.invoke(Cliente)
+            onClickItem?.invoke(cliente)
         }
+
+        holder.cardView.setOnLongClickListener() {
+            onLongClickItem?.invoke(cliente)
+            true
         }
+
+    }
 
 
     private var onClickItem: ((ModeloClientes) -> Unit)? = null
@@ -61,10 +61,9 @@ class ClientesAdaptador(
     }
 
     // Callback para el evento de click largo en un item de la lista
-    private var onLongClickItem: ((ModeloClientes, Int) -> Unit)? = null
+    private var onLongClickItem: ((ModeloClientes) -> Unit)? = null
 
-    // Configurar el callback para el evento de click largo en un item de la lista
-    fun setOnLongClickItem(callback: (ModeloClientes, Int) -> Unit) {
+    fun setOnLongClickItem(callback: (ModeloClientes) -> Unit) {
         this.onLongClickItem = callback
     }
 

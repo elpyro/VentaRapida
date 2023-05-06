@@ -75,7 +75,6 @@ class FacturaGuardada : Fragment() {
                 binding?.textViewHora?.text=detalleFactura.hora
                 binding?.textViewId?.text=detalleFactura.id_pedido.substring(0, 5)
             }
-
         }
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
@@ -119,7 +118,8 @@ class FacturaGuardada : Fragment() {
 
         binding?.cardViewCliente?.setOnClickListener {
             val promtEditarDatos=PromtFacturaGuardada()
-            promtEditarDatos.promtEditarDatosCliente(modeloFactura,requireActivity())
+            promtEditarDatos.promtEditarDatosCliente(modeloFactura,requireActivity(),vista)
+
         }
         binding?.cardViewTotales?.setOnClickListener {
             val promtEditarDatos=PromtFacturaGuardada()

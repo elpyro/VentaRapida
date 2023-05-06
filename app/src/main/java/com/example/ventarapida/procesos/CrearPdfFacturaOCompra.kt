@@ -323,7 +323,7 @@ class CrearPdf {
 
             if(envio!="0") {
                 precioModificado=true
-                temp = Paragraph("Envio: $envio", FONT_CELL)
+                temp = Paragraph("Envio: ${envio.formatoMonenda()}", FONT_CELL)
                 temp.alignment = Element.ALIGN_RIGHT
                 cell.addElement(temp)
             }
