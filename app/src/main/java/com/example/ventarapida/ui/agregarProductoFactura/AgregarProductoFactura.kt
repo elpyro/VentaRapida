@@ -16,17 +16,23 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentAgregarProductoFacturaBinding
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.separarNumerosDelString
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 import java.util.*
 
@@ -99,8 +105,17 @@ class AgregarProductoFactura : Fragment() {
         builder.setMessage("¿Estás seguro de agregar ${productosSeleccionadosAgregar.size} productos a la factura?")
         builder.setPositiveButton("Agregar") { dialog, which ->
 
+            MainActivity.progressDialog?.show()
+
             viewModel.subirDatos(requireContext(), modeloFactura!!)
 
+            lifecycleScope.launch {
+                val transaccionesPendientes =
+                    UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+            }
+
+            MainActivity.progressDialog?.dismiss()
             Toast.makeText(requireContext(), "${productosSeleccionadosAgregar.size} Productos Agregados", Toast.LENGTH_LONG).show()
             findNavController().popBackStack()
         }

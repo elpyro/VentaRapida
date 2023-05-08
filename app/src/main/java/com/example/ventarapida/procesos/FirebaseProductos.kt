@@ -13,10 +13,10 @@ object FirebaseProductos {
     private const val TABLA_REFERENCIA = "Productos"
 
 
-    fun guardarProducto(updates: HashMap<String, Any>): Task<Void> {
+    fun guardarProducto(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(TABLA_REFERENCIA).child(updates["id"] as String)
-        return registroRef.updateChildren(updates)
+        registroRef.updateChildren(updates)
     }
 
     fun transaccionesCambiarCantidad(context: Context?, solicitudes: List<ModeloTransaccionSumaRestaProducto>){

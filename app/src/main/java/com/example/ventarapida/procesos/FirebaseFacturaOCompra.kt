@@ -13,16 +13,16 @@ object FirebaseFacturaOCompra {
 
     // las tablas de referencia pueden ser Factura o Compra
 
-    fun guardarFacturaOCompra(tablaReferencia:String, updates: HashMap<String, Any>): Task<Void> {
+    fun guardarDetalleFacturaOCompra(tablaReferencia:String, updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(tablaReferencia).child(updates["id_pedido"] as String)
-        return registroRef.updateChildren(updates)
+        registroRef.updateChildren(updates)
     }
 
-    fun eliminarFacturaOCompra(tablaReferencia: String, id_pedido: String): Task<Void> {
+    fun eliminarFacturaOCompra(tablaReferencia: String, id_pedido: String) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(tablaReferencia).child(id_pedido)
-        return registroRef.removeValue()
+        registroRef.removeValue()
     }
 
     fun buscarFacturasOCompra(tablaReferencia: String): Task<MutableList<ModeloFactura>> {

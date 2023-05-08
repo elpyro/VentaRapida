@@ -8,6 +8,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,11 +19,14 @@ import com.example.ventarapida.databinding.FragmentFacturaGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.example.ventarapida.ui.promts.PromtFacturaGuardada
+import kotlinx.coroutines.launch
 
 class FacturaGuardada : Fragment() {
 
@@ -52,7 +56,7 @@ class FacturaGuardada : Fragment() {
         viewModel = ViewModelProvider(this).get(FacturaGuardadaViewModel::class.java)
 
         viewModel.cargarDatosFactura(modeloFactura)
-
+        viewModel.buscarProductos(modeloFactura.id_pedido)
         observadores()
         listeners()
         return binding!!.root
@@ -86,7 +90,7 @@ class FacturaGuardada : Fragment() {
                 "id_pedido" to modeloFactura.id_pedido,
                 "total" to it.eliminarAcentosTildes(),
             )
-            FirebaseFacturaOCompra.guardarFacturaOCompra("Factura",updates)
+            FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",updates)
         }
         viewModel.subTotal.observe(viewLifecycleOwner){
             binding?.textViewSubtotal?.text="Sub-Total: $it"
@@ -209,9 +213,13 @@ class FacturaGuardada : Fragment() {
 
             banderaElimandoFactura=true
 
-            viewModel.eliminarFactura(requireContext(),modeloFactura)
+            viewModel.eliminarFactura(requireContext())
 
-            Utilidades.esperarUnSegundo()
+            lifecycleScope.launch {
+                val transaccionesPendientes =
+                    UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+            }
 
             Toast.makeText(context,modeloFactura.nombre+"\nFactura Eliminada", Toast.LENGTH_LONG).show()
 

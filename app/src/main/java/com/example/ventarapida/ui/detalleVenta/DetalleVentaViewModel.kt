@@ -4,10 +4,8 @@ import android.content.Context
 import android.content.Intent
 
 
-import com.example.ventarapida.procesos.FirebaseProductos.transaccionesCambiarCantidad
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.VistaPDFFacturaOCompra
 import com.example.ventarapida.datos.ModeloClientes
@@ -16,12 +14,11 @@ import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.CrearTono
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
+import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
-import com.example.ventarapida.procesos.UtilidadesBaseDatos.guardarTransaccionesBd
-import com.example.ventarapida.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
-import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.guardarProductoFacturado
+
 
 import java.util.*
 import kotlin.collections.HashMap
@@ -74,21 +71,13 @@ class DetalleVentaViewModel : ViewModel() {
 
     fun subirDatos(
         datosPedido: HashMap<String, Any>,
-        productosSeleccionados: MutableMap<ModeloProducto, Int>,
         listaProductosFacturados:ArrayList<ModeloProductoFacturado>
     ) {
 
+        FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",datosPedido)
 
-        guardarTransaccionesBd("venta",context, productosSeleccionados)
-        val transaccionesPendientes = obtenerTransaccionesSumaRestaProductos(context)
-        transaccionesCambiarCantidad(context, transaccionesPendientes)
+        FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados,"venta",context)
 
-        FirebaseFacturaOCompra.guardarFacturaOCompra("Factura",datosPedido)
-
-        guardarProductoFacturado("ProductosFacturados",listaProductosFacturados)
-            .addOnSuccessListener {
-                MainActivity.progressDialog?.dismiss()
-            }
 
     }
 

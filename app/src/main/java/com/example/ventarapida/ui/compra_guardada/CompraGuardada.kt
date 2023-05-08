@@ -8,6 +8,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,10 +19,13 @@ import com.example.ventarapida.databinding.FragmentCompraGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.example.ventarapida.ui.promts.PromtFacturaGuardada
+import kotlinx.coroutines.launch
 
 class CompraGuardada : Fragment() {
 
@@ -51,6 +55,7 @@ class CompraGuardada : Fragment() {
         viewModel = ViewModelProvider(this).get(CompraGuardadaViewModel::class.java)
 
         viewModel.cargarDatosFactura(modeloFactura)
+        viewModel.buscarProductos(modeloFactura.id_pedido)
 
         observadores()
         listeners()
@@ -83,7 +88,7 @@ class CompraGuardada : Fragment() {
                 "id_pedido" to modeloFactura.id_pedido,
                 "total" to it.eliminarAcentosTildes(),
             )
-            FirebaseFacturaOCompra.guardarFacturaOCompra("Compra", updates)
+            FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Compra", updates)
         }
 
         viewModel.datosProductosComprados.observe(viewLifecycleOwner) { productosComprados ->
@@ -209,9 +214,13 @@ class CompraGuardada : Fragment() {
 
             banderaElimandoFactura=true
 
-            viewModel.eliminarCompra(requireContext(),modeloFactura)
+            viewModel.eliminarCompra(requireContext())
 
-            esperarUnSegundo()
+            lifecycleScope.launch {
+                val transaccionesPendientes =
+                    UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+            }
 
             Toast.makeText(requireContext(),modeloFactura.nombre+"\nFactura Eliminada",Toast.LENGTH_LONG).show()
             findNavController().popBackStack()

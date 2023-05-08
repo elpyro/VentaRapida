@@ -41,14 +41,14 @@ class CompraGuardadaViewModel : ViewModel() {
                     factura?.let { datosFacturaRecuperados.add(it) }
                 }
                 datosFactura.value = datosFacturaRecuperados.firstOrNull()
-                datosFactura.value?.id_pedido?.let { buscarProductos(it) }
+
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    private fun buscarProductos(idPedido: String) {
+    fun buscarProductos(idPedido: String) {
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference("ProductosComprados").orderByChild("id_pedido").equalTo(idPedido)
 
@@ -78,31 +78,36 @@ class CompraGuardadaViewModel : ViewModel() {
         items.value = listaProductos.sumByDouble { it.cantidad.toDouble() }.toString().formatoMonenda()
     }
 
-    fun eliminarCompra(context:Context, modeloFactura:ModeloFactura ) {
+    fun eliminarCompra( context:Context) {
+
         val arrayListProductosFacturados = ArrayList(datosProductosComprados.value ?: emptyList())
+
         FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(
             "ProductosComprados",
-            arrayListProductosFacturados
+            arrayListProductosFacturados,
+            context,
+            "venta"
         )
 
         //Restar cantidades de la factura
-        val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+//        val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
+//
+//        datosProductosComprados.value?.forEach { productoFacturado ->
+//            val producto = ModeloProducto(
+//                id = productoFacturado.id_producto
+//            )
+//            val cantidad = -1 * ( productoFacturado.cantidad.toInt())
+//            productosSeleccionados[producto] = cantidad
+//        }
+        //TODO
 
-        datosProductosComprados.value?.forEach { productoFacturado ->
-            val producto = ModeloProducto(
-                id = productoFacturado.id_producto
-            )
-            val cantidad = -1 * ( productoFacturado.cantidad.toInt())
-            productosSeleccionados[producto] = cantidad
-        }
-
-        //crear cola de transacciones para restar
-        UtilidadesBaseDatos.guardarTransaccionesBd("compra",context, productosSeleccionados)
-        val transaccionesPendientes =
-            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-        FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-
-        FirebaseFacturaOCompra.eliminarFacturaOCompra("Compra", modeloFactura.id_pedido)
+//        //crear cola de transacciones para restar
+//        UtilidadesBaseDatos.guardarTransaccionesBd("compra",context, productosSeleccionados)
+//        val transaccionesPendientes =
+//            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+//        FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+//
+//        FirebaseFacturaOCompra.eliminarFacturaOCompra("Compra", modeloFactura.id_pedido)
     }
 
 

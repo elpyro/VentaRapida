@@ -18,13 +18,13 @@ import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.FirebaseProductos.guardarProducto
-import com.example.ventarapida.procesos.OcultarTeclado
 import com.example.ventarapida.procesos.TomarFotoYGaleria
+import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
+import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -191,7 +191,7 @@ class DetalleProducto : Fragment() {
         // Actualizamos el fragmento con los detalles del siguiente producto
         cargarProducto(siguienteModeloProducto)
         verificarPosiciones()
-        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
+        Utilidades.ocultarTeclado(requireContext(), vista!!)
     }
 
     private fun cargarSiguienteProducto() {
@@ -209,7 +209,7 @@ class DetalleProducto : Fragment() {
         // Actualizamos el fragmento con los detalles del siguiente producto
         cargarProducto(siguienteModeloProducto)
         verificarPosiciones()
-        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
+        Utilidades.ocultarTeclado(requireContext(), vista!!)
     }
 
 
@@ -248,7 +248,7 @@ class DetalleProducto : Fragment() {
 
 
     private fun eliminar() {
-        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
+        Utilidades.ocultarTeclado(requireContext(), vista!!)
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
@@ -264,7 +264,7 @@ class DetalleProducto : Fragment() {
      @SuppressLint("SuspiciousIndentation")
      fun guardar() {
 
-        OcultarTeclado(requireContext()).hideKeyboard(vista!!)
+         Utilidades.ocultarTeclado(requireContext(), vista!!)
 
         //verificando campos vacios
         if (id_producto.isEmpty() || this.binding!!.editTextProducto.text.toString().isEmpty()
@@ -290,12 +290,9 @@ class DetalleProducto : Fragment() {
         )
 
          guardarProducto(updates)
-             .addOnSuccessListener {
+
             Toast.makeText(requireContext(),"Producto Actualizado",Toast.LENGTH_LONG).show()
-             }
-             .addOnFailureListener {
-                 Toast.makeText(requireContext(),"Error al guardar",Toast.LENGTH_LONG).show()
-             }
+
 
          val verificarConexion= VerificarInternet()
 

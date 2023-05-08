@@ -13,15 +13,16 @@
             app:itemIconSize="60dp"/>
 
         <item
+            android:id="@+id/compra"
+            android:icon="@drawable/baseline_add_business_24"
+            android:title="@string/compra" />
+
+        <item
             android:id="@+id/nav_nuevoProdcuto"
             android:icon="@drawable/baseline_bookmark_add_24"
             android:title="@string/NuevoProducto" />
 
 
-        <item
-            android:id="@+id/compra"
-            android:icon="@drawable/baseline_add_business_24"
-            android:title="@string/compra" />
         <item
             android:title="__________________________________"
             android:enabled="false"/>

@@ -52,25 +52,12 @@ class DetalleCompraViewModel : ViewModel() {
 
     fun subirDatos(
         datosPedido: HashMap<String, Any>,
-        productosSeleccionados: MutableMap<ModeloProducto, Int>,
         listaProductosFacturados:ArrayList<ModeloProductoFacturado>
     ) {
 
+        FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Compra",datosPedido)
 
-        UtilidadesBaseDatos.guardarTransaccionesBd("compra", context, productosSeleccionados)
-        val transaccionesPendientes =
-            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-        FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-
-        FirebaseFacturaOCompra.guardarFacturaOCompra("Compra",datosPedido)
-
-        FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
-            "ProductosComprados",
-            listaProductosFacturados
-        )
-            .addOnSuccessListener {
-                MainActivity.progressDialog?.dismiss()
-            }
+        FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosComprados",listaProductosFacturados,"compra",context)
 
     }
 

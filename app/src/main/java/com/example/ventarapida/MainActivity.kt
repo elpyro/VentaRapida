@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     fun cargarDialogoProceso() {
         progressDialog = ProgressDialog(this)
-        progressDialog?.setMessage("Cargando...")
+        progressDialog?.setMessage("Guardando...")
         progressDialog?.setCancelable(false)
     }
 

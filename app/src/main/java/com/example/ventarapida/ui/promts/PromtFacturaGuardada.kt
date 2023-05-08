@@ -1,6 +1,7 @@
 package com.example.ventarapida.ui.promts
 
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.Context
 import android.os.Bundle
 import android.widget.EditText
@@ -18,10 +19,12 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
+import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.procesos.FirebaseFacturaOCompra.guardarFacturaOCompra
+import com.example.ventarapida.procesos.FirebaseFacturaOCompra.guardarDetalleFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
-
+import com.example.ventarapida.procesos.UtilidadesBaseDatos.editarProductoTransaccion
+import java.util.UUID
 
 
 class PromtFacturaGuardada() {
@@ -60,9 +63,9 @@ class PromtFacturaGuardada() {
 // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
 
-            val nuevoNombre=editTextProducto.text.toString()
-            val nuevaCantidad = editTextCantidad.text.toString()
-            val nuevoPrecio = editTextPrecio.text.toString().replace(".", "")
+            val nuevoNombre=editTextProducto.text.toString().takeIf { it.isNotEmpty() } ?: "Item"
+            val nuevaCantidad = editTextCantidad.text.toString().takeIf { it.isNotEmpty() } ?: "0"
+            val nuevoPrecio = (editTextPrecio.text.toString().replace(".", "")).takeIf { it.isNotEmpty() } ?: "0"
 
             val cantidadAnterior = item.cantidad
 
@@ -79,22 +82,55 @@ class PromtFacturaGuardada() {
                 val nuevoProducto = ModeloProducto(id = item.id_producto)
                 //multiplicamos *-1  para que en vez de restar sume en la base de datos
                 productosSeleccionados[nuevoProducto] = diferenciaCantidad
+                val listaProductosEditar = arrayListOf<ModeloProductoFacturado>()
 
-                UtilidadesBaseDatos.guardarTransaccionesBd(tipo,context, productosSeleccionados)
-                val transaccionesPendientes =
-                    UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+                productosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
+                    //calculamos el precio descuento para tener la referencia para los reportes
+                    if (cantidadSeleccionada!=0){
+
+                        val productoFacturado = ModeloProductoFacturado(
+                            id_producto_pedido = UUID.randomUUID().toString(),
+                            id_producto = producto.id,
+                            id_vendedor = "idVendedor",
+                            vendedor = "Nombre vendedor",
+                            producto = producto.nombre,
+                            cantidad = cantidadSeleccionada.toString(),
+                            costo = producto.p_compra,
+                            venta = producto.p_diamante,
+                            imagenUrl=producto.url
+                        )
+                        listaProductosEditar.add(productoFacturado)
+
+                        editarProductoTransaccion(context,tipo,diferenciaCantidad,productoFacturado)
+
+
+                    }
+                }
+
+
+                        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
+                        listaProductosFacturados.add(item)
+                        if(nuevaCantidad.toInt()!=0){
+                            //si es edicion no crea aqui la cola de transaccion
+                            FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados,"edicion",context)
+
+                        }else{
+                            FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados,context,tipo)
+                            Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
+                        }
+
+                    val transaccionesPendientes =
+                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+
+
+
+
             }
 
-            val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
-            listaProductosFacturados.add(item)
-            if(nuevaCantidad.toInt()!=0){
 
-                FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados)
-            }else{
-                FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados)
-                Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
-            }
+
+
         }
 
 // Configurar el botón "Cancelar"
@@ -106,6 +142,9 @@ class PromtFacturaGuardada() {
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
     }
+
+
+
 
     fun promtEditarDatosCliente(datosFactura: ModeloFactura, context: FragmentActivity,vista : View) {
         val dialogBuilder = AlertDialog.Builder(context)
@@ -154,7 +193,7 @@ class PromtFacturaGuardada() {
                 "documento" to nuevoDocumento,
                 "direccion" to nuevaDireccion
             )
-            guardarFacturaOCompra("Factura",updates)
+            guardarDetalleFacturaOCompra("Factura",updates)
           }
 
 // Configurar el botón "Cancelar"
@@ -206,7 +245,7 @@ class PromtFacturaGuardada() {
             )
 
             if (datosFactura.descuento != editTextDescuento.text.toString()) actualizarPrecioDescuento(datosFactura.id_pedido,nuevoDescuento.toDouble())
-            guardarFacturaOCompra("Factura",updates)
+            guardarDetalleFacturaOCompra("Factura",updates)
 
 
         }
@@ -246,7 +285,7 @@ class PromtFacturaGuardada() {
                 "id_pedido" to datosFactura.id_pedido,
                 "nombre" to nuevoNombre,
             )
-            guardarFacturaOCompra("Compra",updates)
+            guardarDetalleFacturaOCompra("Compra",updates)
         }
 
 // Configurar el botón "Cancelar"

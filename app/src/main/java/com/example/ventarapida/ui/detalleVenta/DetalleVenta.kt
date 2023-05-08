@@ -24,11 +24,13 @@ import com.example.ventarapida.datos.ModeloClientes
 
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import kotlinx.coroutines.launch
 
 import java.text.SimpleDateFormat
@@ -228,16 +230,21 @@ class DetalleVenta : Fragment() {
                 val datosPedido= obtenerDatosPedido()
                 val listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
 
+                viewModel.subirDatos(datosPedido ,listaConvertida )
 
                 lifecycleScope.launch {
-                    viewModel.subirDatos(datosPedido, ventaProductosSeleccionados ,listaConvertida )
+                    val transaccionesPendientes =
+                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
                 }
+
 
                 viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
 
                 viewModel.limpiar(requireContext())
                 limpiar=true
 
+                MainActivity.progressDialog?.dismiss()
 
                 findNavController().popBackStack()
 

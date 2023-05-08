@@ -28,6 +28,7 @@ import com.example.ventarapida.procesos.TomarFotoYGaleria
 import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.ui.procesos.ServiciosSubirFoto
+import com.google.android.gms.tasks.OnCanceledListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
@@ -107,14 +108,19 @@ class DatosEmpresa : Fragment() {
                 }
 
                 guardarDatosEmpresa(updates)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(),"Datos Actualizados",Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Datos Actualizados",Toast.LENGTH_LONG).show()
 
-                        esperarUnSegundo()
+                esperarUnSegundo()
 
-                        findNavController().popBackStack()
+                findNavController().popBackStack()
 
-                    }
+
+
+                val preferenciasConfiguracion= Preferencias()
+                preferenciasConfiguracion.preferenciasConfiguracion(requireContext())
+
+
+
 
 
                 return true

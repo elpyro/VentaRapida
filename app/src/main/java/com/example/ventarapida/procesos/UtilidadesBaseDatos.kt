@@ -2,9 +2,12 @@ package com.example.ventarapida.procesos
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import com.example.ventarapida.baseDatos.MyDatabaseHelper
-import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
+import com.google.android.gms.tasks.Task
+import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 object UtilidadesBaseDatos {
@@ -18,36 +21,82 @@ object UtilidadesBaseDatos {
     }
 
     fun guardarTransaccionesBd(
-        tipo:String,
+        tipo: String,
         context: Context?,
-        productosSeleccionados: MutableMap<ModeloProducto, Int>
-    ){
-
-        //guarda en la base de datos los productos que van a subir a firebase cuando hay intentet
+        listaProductosFacturados: MutableList<ModeloProductoFacturado>
+    ) {
         val dbHelper = MyDatabaseHelper(context!!)
         val db = dbHelper.readableDatabase
 
-       productosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
-           var multiplicador=1
-            // en las compras se multipica por -1 para que en vez de restar en la base de datos sume
-           if(tipo.equals("compra")) multiplicador=-1
 
-           val sumarORestar= cantidadSeleccionada * multiplicador
+        listaProductosFacturados.forEach { modeloProductoFacturado ->
+            var multiplicador = 1
+            if (tipo == "compra") multiplicador = -1
 
-           if(cantidadSeleccionada!=0){
-               val idTransaccion = UUID.randomUUID().toString()
-               val values = ContentValues().apply {
-                   put("idTransaccion", idTransaccion)
-                   put("idProducto", producto.id)
-                   put("cantidad", sumarORestar.toString())
-               }
-               db.insert("transaccionesSumaRestaProductos", null, values)
-           }
+            if (modeloProductoFacturado.cantidad.toInt() != 0) {
+                val sumarORestar = modeloProductoFacturado.cantidad.toInt() * multiplicador
+
+                val idTransaccion = UUID.randomUUID().toString()
+                val values = ContentValues().apply {
+                    put("idTransaccion", idTransaccion)
+                    put("idProducto", modeloProductoFacturado.id_producto)
+                    put("cantidad", sumarORestar.toString())
+                }
+                // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
+                db.insert("transaccionesSumaRestaProductos", null, values)
+
+            }
         }
 
         db.close()
     }
 
+    //las transacciones se ejecutaran en segundo plano para actualizar las cantidades de los productos
+    //en firebase
+    fun crearTransaccionBD(
+        modeloProductoFacturado: ModeloProductoFacturado,
+        tipo: String,
+        db: SQLiteDatabase
+    ) {
+
+
+        var multiplicador = 1
+        if (tipo == "compra") multiplicador = -1
+
+        if (modeloProductoFacturado.cantidad.toInt() != 0) {
+            val sumarORestar = modeloProductoFacturado.cantidad.toInt() * multiplicador
+
+            val idTransaccion = UUID.randomUUID().toString()
+            val values = ContentValues().apply {
+                put("idTransaccion", idTransaccion)
+                put("idProducto", modeloProductoFacturado.id_producto)
+                put("cantidad", sumarORestar.toString())
+            }
+            // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
+            db.insert("transaccionesSumaRestaProductos", null, values)
+        }
+
+    }
+
+    fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, productoFacturado:ModeloProductoFacturado) {
+        val dbHelper = MyDatabaseHelper(context!!)
+        val db = dbHelper.readableDatabase
+        var multiplicador = 1
+        if (tipo == "compra") multiplicador = -1
+
+        if (diferenciaCantidad != 0) {
+            val sumarORestar = diferenciaCantidad * multiplicador
+
+            val idTransaccion = UUID.randomUUID().toString()
+            val values = ContentValues().apply {
+                put("idTransaccion", idTransaccion)
+                put("idProducto", productoFacturado.id_producto)
+                put("cantidad", sumarORestar.toString())
+            }
+            // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
+            db.insert("transaccionesSumaRestaProductos", null, values)
+        }
+    }
 
 
     fun obtenerTransaccionesSumaRestaProductos(context: Context?): List<ModeloTransaccionSumaRestaProducto> {

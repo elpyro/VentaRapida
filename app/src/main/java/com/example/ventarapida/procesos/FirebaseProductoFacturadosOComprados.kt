@@ -1,41 +1,73 @@
 package com.example.ventarapida.procesos
 
-import android.util.Log
-import com.example.ventarapida.datos.ModeloFactura
+import android.content.ContentValues
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.UtilidadesBaseDatos.crearTransaccionBD
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.util.UUID
 
 object FirebaseProductoFacturadosOComprados {
 
     //las tablas referencias son ProductosComprados y ProductosFacturados
 
-    fun guardarProductoFacturado(tablaReferencia: String,listaProductosFacturados: ArrayList<ModeloProductoFacturado>): Task<Void> {
+    fun guardarProductoFacturado(
+        tablaReferencia: String,
+        listaProductosFacturados: MutableList<ModeloProductoFacturado>,
+        tipo: String,
+        context: Context
+    ) {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(tablaReferencia)
 
+        val dbHelper = MyDatabaseHelper(context!!)
+        val db = dbHelper.readableDatabase
+
         val updates = HashMap<String, Any>()
+
         for (producto in listaProductosFacturados) {
             val idProductoPedido = producto.id_producto_pedido
             val update = producto
             updates[idProductoPedido] = update
+
+            //creamos una transccion de para restarlos luego a la cantidad de productos
+            if(tipo!="edicion")  crearTransaccionBD(producto, tipo, db)
+
         }
 
-        return referencia.updateChildren(updates)
+         referencia.updateChildren(updates)
+         db.close()
     }
 
-    fun eliminarProductoFacturado(tablaReferencia: String, listaProductosFacturados: ArrayList<ModeloProductoFacturado>) {
+
+
+    fun eliminarProductoFacturado(
+        tablaReferencia: String,
+        listaProductosFacturados: MutableList<ModeloProductoFacturado>,
+        context: Context,
+        tipo:String
+    ) {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(tablaReferencia)
+
+        val dbHelper = MyDatabaseHelper(context!!)
+        val db = dbHelper.readableDatabase
 
         for (producto in listaProductosFacturados) {
             val id_producto = producto.id_producto_pedido
             referencia.child(id_producto).removeValue()
+
+            crearTransaccionBD(producto, tipo, db)
+
         }
+        db.close()
         return
     }
 

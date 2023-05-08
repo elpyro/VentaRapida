@@ -126,12 +126,9 @@ class AgregarProductoFacturaViewModel : ViewModel() {
 
     fun subirDatos(context: Context, modeloFactura:ModeloFactura){
 
-        UtilidadesBaseDatos.guardarTransaccionesBd("venta",context, AgregarProductoFactura.productosSeleccionadosAgregar)
-        val transaccionesPendientes =
-            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-        FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+        //convertirmos los productos seleccionados en un ModeloProductoFacturado
+        val listaProductosFacturados = mutableListOf<ModeloProductoFacturado>()
 
-        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
         AgregarProductoFactura.productosSeleccionadosAgregar.forEach{ (producto, cantidadSeleccionada)->
             //calculamos el precio descuento para tener la referencia para los reportes
             if (cantidadSeleccionada!=0){
@@ -160,6 +157,11 @@ class AgregarProductoFacturaViewModel : ViewModel() {
             }
         }
 
-        FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados)
-    }
+        FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados,"venta",context)
+
+        }
+
+
+
+
 }

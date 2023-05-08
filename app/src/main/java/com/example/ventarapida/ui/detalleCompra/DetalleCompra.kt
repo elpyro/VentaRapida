@@ -17,11 +17,13 @@ import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleCompraBinding
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -203,13 +205,17 @@ class DetalleCompra : Fragment() {
                 val datosPedido= obtenerDatosPedido()
                 var listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
 
+                viewModel.subirDatos(datosPedido,listaConvertida)
 
                 lifecycleScope.launch {
-                    viewModel.subirDatos(datosPedido,
-                        MainActivity.compraProductosSeleccionados,listaConvertida )
+                    val transaccionesPendientes =
+                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
                 }
 
                 viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
+
+                MainActivity.progressDialog?.dismiss()
 
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())

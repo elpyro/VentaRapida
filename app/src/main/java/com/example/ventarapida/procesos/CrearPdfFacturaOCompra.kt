@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
+import androidx.core.content.ContextCompat
 import com.example.ventarapida.MainActivity
+import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
@@ -50,7 +52,7 @@ class CrearPdf {
         document.open()
 
         metadata(document)
-        cabezera( document,tipo, modeloFactura)
+        cabezera( document,tipo, modeloFactura, context)
         document.add(Paragraph("\n"))
         datosFactura( document, tipo, modeloFactura, listaProductos)
         document.add(Paragraph("\n"))
@@ -70,7 +72,7 @@ class CrearPdf {
         document.addCreator("Eloy Castellanos")
     }
 
-    private fun cabezera( document: Document, tipo:String, modeloFactura: ModeloFactura) {
+    private fun cabezera( document: Document, tipo:String, modeloFactura: ModeloFactura, context:Context) {
 
         var titulo: Paragraph? =null
         if (tipo == "Compra"){
@@ -147,12 +149,27 @@ class CrearPdf {
                 logoTable.horizontalAlignment = Element.ALIGN_RIGHT
                 logoTable.defaultCell.verticalAlignment = Element.ALIGN_RIGHT
 
-                val bmp  = (MainActivity.logotipo.drawable as BitmapDrawable).bitmap
-                val stream = ByteArrayOutputStream()
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                val logo = Image.getInstance(stream.toByteArray())
-                logo.widthPercentage = 70f
-                logo.scaleToFit(155f, 70f)
+
+                val defaultDrawable = ContextCompat.getDrawable(context, R.drawable.ic_menu_camera); // Reemplaza "default_logo" con el nombre de tu imagen drawable por defecto
+                val logo: Image
+
+                if (MainActivity.logotipo.drawable != null) {
+                    val bmp = (MainActivity.logotipo.drawable as BitmapDrawable).bitmap
+                    val stream = ByteArrayOutputStream()
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    logo = Image.getInstance(stream.toByteArray())
+                    logo.widthPercentage = 70f
+                    logo.scaleToFit(155f, 70f)
+                } else {
+                    val bmp = (defaultDrawable as BitmapDrawable).bitmap
+                    val stream = ByteArrayOutputStream()
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    logo = Image.getInstance(stream.toByteArray())
+                    logo.widthPercentage = 70f
+                    logo.scaleToFit(155f, 70f)
+                }
+
+
                 var logoCell = PdfPCell(logo)
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
                 logoCell.verticalAlignment = Element.ALIGN_CENTER

@@ -14,10 +14,8 @@ import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentClienteAgregarModificarBinding
 import com.example.ventarapida.datos.ModeloClientes
-import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.FirebaseClientes.eliminarCliente
 import com.example.ventarapida.procesos.FirebaseClientes.guardarCliente
-import com.example.ventarapida.procesos.OcultarTeclado
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.ui.clientes.ClienteAgregarModificarViewModel
 import java.util.UUID
@@ -99,10 +97,10 @@ class ClienteAgregarModificar : Fragment() {
                     )
 
                 guardarCliente(updates)
-                    .addOnSuccessListener {
+
                         MainActivity.progressDialog?.dismiss()
                         findNavController().popBackStack()
-                    }
+
                 return true
             }
 
@@ -116,10 +114,10 @@ class ClienteAgregarModificar : Fragment() {
                     builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
                     builder.setPositiveButton("Eliminar") { dialog, which ->
                         eliminarCliente(idCliente)
-                            .addOnSuccessListener {
+
                                 Toast.makeText(requireContext(),"Cliente Eliminado", Toast.LENGTH_LONG).show()
                                 findNavController().popBackStack()
-                            }
+
                     }
                     builder.setNegativeButton("Cancelar", null)
                     builder.show()

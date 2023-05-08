@@ -42,17 +42,17 @@ object FirebaseClientes {
         return taskCompletionSource.task
     }
 
-    fun guardarCliente(updates: HashMap<String, Any>): Task<Void> {
+    fun guardarCliente(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(TABLA_REFERENCIA).child(updates["id"] as String)
-        return registroRef.updateChildren(updates)
+        registroRef.updateChildren(updates)
     }
 
-    fun eliminarCliente(id: String): Task<Void> {
+    fun eliminarCliente(id: String) {
         val database2 = FirebaseDatabase.getInstance()
         val registroRef = database2.getReference(TABLA_REFERENCIA).child(id)
 
-        return registroRef.removeValue()
+        registroRef.removeValue()
     }
 
 

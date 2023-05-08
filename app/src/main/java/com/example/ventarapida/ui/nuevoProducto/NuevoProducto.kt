@@ -164,12 +164,8 @@ class NuevoProducto : Fragment() {
             )
 
         guardarProducto(updates)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(),"Producto Actualizado",Toast.LENGTH_LONG).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(),"Error al guardar",Toast.LENGTH_LONG).show()
-            }
+
+                Toast.makeText(requireContext(),"Producto Guardado",Toast.LENGTH_LONG).show()
 
         //limpiando campos
         binding?.editTextProducto?.setText("")
