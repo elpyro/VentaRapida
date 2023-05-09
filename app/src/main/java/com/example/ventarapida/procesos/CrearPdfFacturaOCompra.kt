@@ -2,6 +2,7 @@ package com.example.ventarapida.procesos
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
 import androidx.core.content.ContextCompat
@@ -150,7 +151,7 @@ class CrearPdf {
                 logoTable.defaultCell.verticalAlignment = Element.ALIGN_RIGHT
 
 
-                val defaultDrawable = ContextCompat.getDrawable(context, R.drawable.ic_menu_camera); // Reemplaza "default_logo" con el nombre de tu imagen drawable por defecto
+
                 val logo: Image
 
                 if (MainActivity.logotipo.drawable != null) {
@@ -161,9 +162,24 @@ class CrearPdf {
                     logo.widthPercentage = 70f
                     logo.scaleToFit(155f, 70f)
                 } else {
-                    val bmp = (defaultDrawable as BitmapDrawable).bitmap
+
+                    val defaultDrawable = ContextCompat.getDrawable(context, R.drawable.ic_menu_camera)
+                    val bitmap = if (defaultDrawable is BitmapDrawable) {
+                        defaultDrawable.bitmap
+                    } else {
+                        // Convertir el VectorDrawable a Bitmap
+                        val width = defaultDrawable?.intrinsicWidth
+                        val height = defaultDrawable?.intrinsicHeight
+                        val bitmap = Bitmap.createBitmap(width!!, height!!, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        defaultDrawable?.setBounds(0, 0, canvas.width, canvas.height)
+                        defaultDrawable?.draw(canvas)
+                        bitmap
+
+                    }
+
                     val stream = ByteArrayOutputStream()
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                     logo = Image.getInstance(stream.toByteArray())
                     logo.widthPercentage = 70f
                     logo.scaleToFit(155f, 70f)

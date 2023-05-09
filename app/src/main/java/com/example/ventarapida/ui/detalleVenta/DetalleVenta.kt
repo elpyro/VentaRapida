@@ -244,7 +244,7 @@ class DetalleVenta : Fragment() {
                 viewModel.limpiar(requireContext())
                 limpiar=true
 
-                MainActivity.progressDialog?.dismiss()
+
 
                 findNavController().popBackStack()
 

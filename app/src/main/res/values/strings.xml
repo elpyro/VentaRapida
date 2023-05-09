@@ -92,4 +92,7 @@
     <string name="ver_pdf">Ver PDF</string>
     <string name="clientes">Clientes</string>
     <string name="NuevoCliente">Nuevo Cliente</string>
+    <string name="Reportes">Reportes\n</string>
+    <string name="Inventario">Inventario</string>
+    <string name="SeleccioneInforme">Seleccione tipo de informe</string>
 </resources>

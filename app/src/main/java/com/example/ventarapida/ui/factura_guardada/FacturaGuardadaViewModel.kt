@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.FirebaseFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
-
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
@@ -95,34 +94,14 @@ class FacturaGuardadaViewModel : ViewModel() {
 
         val arrayListProductosFacturados = ArrayList(datosProductosFacturados.value ?: emptyList())
 
+        FirebaseFacturaOCompra.eliminarFacturaOCompra("Factura",datosFactura.value!!.id_pedido)
+
         FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(
             "ProductosFacturados",
             arrayListProductosFacturados,
             context,
             "compra"
         )
-
-
-//        //Restar cantidades de la factura
-//        val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
-//
-//        datosProductosFacturados.value?.forEach { productoFacturado ->
-//            val producto = ModeloProducto(
-//                id = productoFacturado.id_producto
-//            )
-//            val cantidad = -1 * ( productoFacturado.cantidad.toInt())
-//            productosSeleccionados[producto] = cantidad
-//        }
-////TODO
-
-//        //crear cola de transacciones para restar
-//        UtilidadesBaseDatos.guardarTransaccionesBd("venta",context, productosSeleccionados)
-//        val transaccionesPendientes =
-//            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-//        FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-//
-//        FirebaseFacturaOCompra.eliminarFacturaOCompra("Factura", modeloFactura.id_pedido)
-//
 
     }
 

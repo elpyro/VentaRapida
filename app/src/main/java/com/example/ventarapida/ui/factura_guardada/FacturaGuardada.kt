@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.VistaPDFFacturaOCompra
 import com.example.ventarapida.databinding.FragmentFacturaGuardadaBinding
@@ -212,10 +213,14 @@ class FacturaGuardada : Fragment() {
         builder.setPositiveButton("Eliminar") { dialog, which ->
 
             banderaElimandoFactura=true
+            MainActivity.progressDialog?.show()
 
-            viewModel.eliminarFactura(requireContext())
+
 
             lifecycleScope.launch {
+
+                viewModel.eliminarFactura(requireContext())
+
                 val transaccionesPendientes =
                     UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
                 FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)

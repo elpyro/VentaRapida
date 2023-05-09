@@ -82,32 +82,14 @@ class CompraGuardadaViewModel : ViewModel() {
 
         val arrayListProductosFacturados = ArrayList(datosProductosComprados.value ?: emptyList())
 
+        FirebaseFacturaOCompra.eliminarFacturaOCompra("Compra",datosFactura.value!!.id_pedido)
+
         FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(
             "ProductosComprados",
             arrayListProductosFacturados,
             context,
             "venta"
         )
-
-        //Restar cantidades de la factura
-//        val productosSeleccionados = mutableMapOf<ModeloProducto, Int>()
-//
-//        datosProductosComprados.value?.forEach { productoFacturado ->
-//            val producto = ModeloProducto(
-//                id = productoFacturado.id_producto
-//            )
-//            val cantidad = -1 * ( productoFacturado.cantidad.toInt())
-//            productosSeleccionados[producto] = cantidad
-//        }
-        //TODO
-
-//        //crear cola de transacciones para restar
-//        UtilidadesBaseDatos.guardarTransaccionesBd("compra",context, productosSeleccionados)
-//        val transaccionesPendientes =
-//            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-//        FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-//
-//        FirebaseFacturaOCompra.eliminarFacturaOCompra("Compra", modeloFactura.id_pedido)
     }
 
 

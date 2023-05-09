@@ -3,6 +3,7 @@ package com.example.ventarapida.procesos
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.UtilidadesBaseDatos.crearTransaccionBD
@@ -52,7 +53,7 @@ object FirebaseProductoFacturadosOComprados {
         tablaReferencia: String,
         listaProductosFacturados: MutableList<ModeloProductoFacturado>,
         context: Context,
-        tipo:String
+        tipo: String
     ) {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(tablaReferencia)
@@ -60,15 +61,23 @@ object FirebaseProductoFacturadosOComprados {
         val dbHelper = MyDatabaseHelper(context!!)
         val db = dbHelper.readableDatabase
 
+        var contador = 0
+
         for (producto in listaProductosFacturados) {
             val id_producto = producto.id_producto_pedido
             referencia.child(id_producto).removeValue()
 
             crearTransaccionBD(producto, tipo, db)
 
+            contador++
+        }
+
+        if (contador == listaProductosFacturados.size) {
+            MainActivity.progressDialog?.dismiss()
         }
         db.close()
-        return
+
+
     }
 
     fun actualizarPrecioDescuento(idPedido:String, descuento:Double){

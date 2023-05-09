@@ -9,4 +9,10 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+    <string-array name="reportes">
+        <item>Ganancias</item>
+        <item>Más Vendidos</item>
+        <item>Por Vendedor</item>
+    </string-array>
 </resources>

@@ -215,8 +215,6 @@ class DetalleCompra : Fragment() {
 
                 viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
 
-                MainActivity.progressDialog?.dismiss()
-
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
 

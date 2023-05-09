@@ -35,6 +35,11 @@
             android:id="@+id/listaCompras"
             android:icon="@drawable/baseline_storefront_24"
             android:title="@string/RegistroCompras" />
+
+        <item
+            android:id="@+id/reportes"
+            android:icon="@drawable/baseline_bar_chart_24"
+            android:title="@string/Reportes" />
     </group>
 
     <group>
