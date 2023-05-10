@@ -160,7 +160,8 @@ class Venta : Fragment() {
 
         productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
 
-            adapter = VentaAdaptador(productos, productViewModel)
+            val productosOrdenados = productos?.sortedBy { it.nombre }
+            adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
 
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista, position)
@@ -229,11 +230,12 @@ class Venta : Fragment() {
         val filtro = lista?.filter { objeto: ModeloProducto ->
             objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
         }
-        val adaptador = filtro?.let { VentaAdaptador(it,productViewModel) }
+        val filtroOrdenado = filtro?.sortedBy { it.nombre }
+        val adaptador = filtroOrdenado?.let { VentaAdaptador(it,productViewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
-        if (filtro?.size==1 && cantidadPorVoz!=0){
-            productViewModel.actualizarCantidadProducto(filtro[0], cantidadPorVoz)
+        if (filtroOrdenado?.size==1 && cantidadPorVoz!=0){
+            productViewModel.actualizarCantidadProducto(filtroOrdenado[0], cantidadPorVoz)
             cantidadPorVoz=0
         }
 
@@ -241,7 +243,7 @@ class Venta : Fragment() {
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)
-            val arrayList: ArrayList<ModeloProducto> = filtro.toCollection(ArrayList())
+            val arrayList: ArrayList<ModeloProducto> = filtroOrdenado.toCollection(ArrayList())
             bundle.putSerializable("listaProductos", arrayList)
             Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
         }

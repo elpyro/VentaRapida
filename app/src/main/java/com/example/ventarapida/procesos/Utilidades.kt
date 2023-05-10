@@ -58,14 +58,23 @@ object Utilidades {
 
 
     fun obtenerFechaActual(): String {
-            val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val fechaActual = Date()
-            return formatoFecha.format(fechaActual)
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES")) // Especifica la configuración regional adecuada
+        val fechaActual = Date()
+        return formatoFecha.format(fechaActual)
     }
+
     fun obtenerHoraActual(): String {
-        val formatoHora = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        val formatoHora = SimpleDateFormat("HH:mm:ss", Locale("es", "ES")) // Especifica la configuración regional adecuada
         val horaActual = Date()
         return formatoHora.format(horaActual)
+    }
+
+    fun obtenerFechaBusquedas(): String {
+        val fecha = Date()
+        val formatoFecha = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        formatoFecha.timeZone = TimeZone.getTimeZone("UTC") // Establecer la zona horaria en UTC
+        val fechaISO8601 = formatoFecha.format(fecha)
+        return fechaISO8601
     }
 
     fun EditText.escribirFormatoMoneda() {

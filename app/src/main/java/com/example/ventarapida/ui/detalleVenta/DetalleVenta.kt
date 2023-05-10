@@ -21,7 +21,6 @@ import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionado
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleVentaBinding
 import com.example.ventarapida.datos.ModeloClientes
-
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.FirebaseProductos
@@ -30,12 +29,12 @@ import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
+import com.example.ventarapida.procesos.Utilidades.obtenerFechaBusquedas
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
-
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -269,9 +268,6 @@ class DetalleVenta : Fragment() {
 
     private fun obtenerDatosPedido(): HashMap<String, Any> {
 
-
-
-
         val horaActual = obtenerHoraActual()
         val fechaActual = obtenerFechaActual()
 
@@ -292,7 +288,8 @@ class DetalleVenta : Fragment() {
             "hora" to horaActual,
             "id_vendedor" to "id_vendedor",
             "nombre_vendedor" to "nombre_vendedor",
-            "total" to total
+            "total" to total,
+            "fechaBusquedas" to obtenerFechaBusquedas()
         )
         return datosPedido
     }
@@ -332,7 +329,8 @@ class DetalleVenta : Fragment() {
                     precioDescuentos = precioDescuento.toString().formatoMonenda()!!,
                     fecha = fechaActual,
                     hora=horaActual,
-                    imagenUrl=producto.url
+                    imagenUrl=producto.url,
+                    fechaBusquedas =obtenerFechaBusquedas()
                 )
                 listaProductosFacturados.add(productoFacturado)
             }

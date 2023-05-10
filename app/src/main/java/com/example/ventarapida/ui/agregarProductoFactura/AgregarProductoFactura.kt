@@ -198,7 +198,8 @@ class AgregarProductoFactura : Fragment() {
 
         viewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
-            adapter = AgregarProductoFacturaAdaptador(productos, viewModel)
+            val productosOrdenados = productos.sortedBy { it.nombre }
+            adapter = AgregarProductoFacturaAdaptador(productosOrdenados, viewModel)
 
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista, position)
@@ -261,11 +262,12 @@ class AgregarProductoFactura : Fragment() {
             objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(
                 Locale.getDefault()))
         }
-        val adaptador = filtro?.let { AgregarProductoFacturaAdaptador(it,viewModel) }
+        val productosOrdenados = filtro?.sortedBy { it.nombre }
+        val adaptador = productosOrdenados?.let { AgregarProductoFacturaAdaptador(it,viewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
-        if (filtro?.size==1 && cantidadPorVoz!=0){
-            viewModel.actualizarCantidadProducto(filtro[0], cantidadPorVoz)
+        if (productosOrdenados?.size==1 && cantidadPorVoz!=0){
+            viewModel.actualizarCantidadProducto(productosOrdenados!![0], cantidadPorVoz)
             cantidadPorVoz=0
         }
 
@@ -273,7 +275,7 @@ class AgregarProductoFactura : Fragment() {
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)
-            val arrayList: ArrayList<ModeloProducto> = filtro.toCollection(ArrayList())
+            val arrayList: ArrayList<ModeloProducto> = productosOrdenados.toCollection(ArrayList())
             bundle.putSerializable("listaProductos", arrayList)
             Navigation.findNavController(vista!!).navigate(R.id.detalleProducto,bundle)
         }

@@ -26,6 +26,7 @@ import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -260,7 +261,8 @@ class DetalleCompra : Fragment() {
             "hora" to horaActual,
             "id_vendedor" to "id_vendedor",
             "nombre_vendedor" to "nombre_vendedor",
-            "total" to total
+            "total" to total,
+            "fechaBusquedas" to Utilidades.obtenerFechaBusquedas()
         )
         return datosPedido
     }
@@ -292,7 +294,8 @@ class DetalleCompra : Fragment() {
                     venta = producto.p_diamante,
                     fecha = fechaActual,
                     hora=horaActual,
-                    imagenUrl=producto.url
+                    imagenUrl=producto.url,
+                    fechaBusquedas = Utilidades.obtenerFechaBusquedas()
                 )
                 listaProductosComprados.add(productoFacturado)
             }

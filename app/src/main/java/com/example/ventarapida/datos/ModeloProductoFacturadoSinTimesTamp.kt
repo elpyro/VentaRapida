@@ -2,10 +2,9 @@ package com.example.ventarapida.datos
 
 import java.io.Serializable
 import com.google.firebase.Timestamp
-import java.util.Date
 
-
-data class ModeloProductoFacturado (
+//Solo se usa para pasar los serealizable a los intent
+data class ModeloProductoFacturadoSinTimesTamp (
     val id_producto_pedido:String="",
     val id_producto:String="",
     val id_pedido:String ="",
@@ -19,5 +18,5 @@ data class ModeloProductoFacturado (
     val fecha:String="",
     val hora:String="",
     val imagenUrl:String="",
-    val fechaBusquedas: String=""
+    val fechaBusquedas: Timestamp? = null
     ): Serializable

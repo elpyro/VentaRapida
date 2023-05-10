@@ -19,7 +19,7 @@ class CompraGuardadaAdaptador(
     val listaFacturas: MutableList<ModeloProductoFacturado>,
 ) : RecyclerView.Adapter<CompraGuardadaAdaptador.FacturaViewHolder>() {
 
-    val formatoFecha = SimpleDateFormat("dd-MM-yyyy")
+    val formatoFecha = SimpleDateFormat("dd/MM/yyyy")
     val sortedFacturas = listaFacturas.sortedWith(
         compareByDescending<ModeloProductoFacturado> { formatoFecha.parse(it.fecha) }
             .thenByDescending { it.hora }

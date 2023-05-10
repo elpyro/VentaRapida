@@ -11,6 +11,7 @@ import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.*
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.google.firebase.Timestamp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -151,7 +152,8 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     precioDescuentos = precioDescuento.toString().formatoMonenda()!!,
                     fecha = modeloFactura!!.fecha,
                     hora=modeloFactura!!.hora,
-                    imagenUrl=producto.url
+                    imagenUrl=producto.url,
+                    fechaBusquedas =  modeloFactura!!.fechaBusquedas
                 )
                 listaProductosFacturados.add(productoFacturado)
             }
