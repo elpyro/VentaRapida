@@ -13,6 +13,6 @@
     <string-array name="reportes">
         <item>Ganancias</item>
         <item>Más Vendidos</item>
-        <item>Por Vendedor</item>
+        <item>Ventas Por Vendedor</item>
     </string-array>
 </resources>

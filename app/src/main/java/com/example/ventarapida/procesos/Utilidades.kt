@@ -10,6 +10,7 @@ import android.widget.EditText
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.Normalizer
+import java.text.SimpleDateFormat
 import java.util.*
 
 object Utilidades {
@@ -53,6 +54,18 @@ object Utilidades {
             // Si no hay números al final del string, devolver el string completo y null
             return Pair(string.trim(), null)
         }
+    }
+
+
+    fun obtenerFechaActual(): String {
+            val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val fechaActual = Date()
+            return formatoFecha.format(fechaActual)
+    }
+    fun obtenerHoraActual(): String {
+        val formatoHora = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        val horaActual = Date()
+        return formatoHora.format(horaActual)
     }
 
     fun EditText.escribirFormatoMoneda() {

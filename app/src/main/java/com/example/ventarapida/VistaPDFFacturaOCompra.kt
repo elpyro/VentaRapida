@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.CrearPdf
+import com.example.ventarapida.procesos.CrearPdfFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.github.barteksc.pdfviewer.PDFView
@@ -80,7 +80,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
     }
 
     private fun compartirPDF() {
-        val fileName = "factura.pdf"
+        val fileName = "reporte.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
 
         val file = File(filePath)
@@ -94,7 +94,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
     private fun compartirWhatsapp(numeroTelefono: String) {
         val codigoArea = "57"
-        val fileName = "factura.pdf"
+        val fileName = "reporte.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
 
         val file = File(filePath)
@@ -144,7 +144,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
         listaProductos2: ArrayList<ModeloProductoFacturado>?
     ) {
 
-        val crearPdf = CrearPdf()
+        val crearPdf = CrearPdfFacturaOCompra()
         crearPdf.facturaOCompra(this, datosFactura, tablaReferencia!!, listaProductos2!!)
 
         visualizarPDF()
@@ -169,7 +169,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
             tareaProductos.addOnSuccessListener { listaProductos->
 
-                val crearPdf=CrearPdf()
+                val crearPdf=CrearPdfFacturaOCompra()
                 crearPdf.facturaOCompra(this, factura!!, tablaReferencia,listaProductos as ArrayList<ModeloProductoFacturado>)
 
                 visualizarPDF()
@@ -181,7 +181,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
     private fun visualizarPDF() {
 
-        val fileName = "factura.pdf"
+        val fileName = "reporte.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
         val pdfView = findViewById<PDFView>(R.id.pdfView)
 

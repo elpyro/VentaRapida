@@ -29,6 +29,8 @@ import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
+import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import kotlinx.coroutines.launch
@@ -266,14 +268,12 @@ class DetalleVenta : Fragment() {
     }
 
     private fun obtenerDatosPedido(): HashMap<String, Any> {
-        val currentTime = Calendar.getInstance().time
 
-        val pattern = "HH:mm:ss"
-        val formatoHora = SimpleDateFormat(pattern)
-        val horaActual = formatoHora.format(currentTime)
 
-        val formatoFecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val fechaActual = formatoFecha.format(Date())
+
+
+        val horaActual = obtenerHoraActual()
+        val fechaActual = obtenerFechaActual()
 
         val nombre= binding?.editTextNombre?.text.toString().ifBlank { "Anonimo" }
         val envio= binding?.editTextEnvio?.text.toString().ifBlank { "0" }

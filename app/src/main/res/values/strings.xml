@@ -95,4 +95,5 @@
     <string name="Reportes">Reportes\n</string>
     <string name="Inventario">Inventario</string>
     <string name="SeleccioneInforme">Seleccione tipo de informe</string>
+    <string name="VerPDF">Ver PDF</string>
 </resources>

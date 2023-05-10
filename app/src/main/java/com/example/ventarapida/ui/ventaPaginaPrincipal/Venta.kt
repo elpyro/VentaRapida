@@ -158,7 +158,7 @@ class Venta : Fragment() {
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
 
-        productViewModel.getProductos().observe(viewLifecycleOwner) { productos ->
+        productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
 
             adapter = VentaAdaptador(productos, productViewModel)
 

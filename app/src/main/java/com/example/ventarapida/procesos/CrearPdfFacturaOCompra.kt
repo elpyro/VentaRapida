@@ -25,12 +25,11 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-class CrearPdf {
+class CrearPdfFacturaOCompra {
 
     private val FONT_TITLE = Font(Font.FontFamily.TIMES_ROMAN, 20f, Font.BOLD)
     private val FONT_SUBTITLE = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.BOLD)
-    private val DATOSEMPRESAFUENTE = Font(Font.FontFamily.TIMES_ROMAN, 10f, Font.NORMAL)
-
+    private val DATOSEMPRESAFUENTE = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.ITALIC)
     private val FONT_CURSIVA=Font(Font.FontFamily.HELVETICA, 12f, Font.ITALIC)
     private val FONT_GARANTIA=Font(Font.FontFamily.HELVETICA, 7f, Font.ITALIC)
     private val FONT_CELL = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.NORMAL)
@@ -43,7 +42,7 @@ class CrearPdf {
         listaProductos: ArrayList<ModeloProductoFacturado>
     ) {
 
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "factura.pdf")
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
         val outputStream = FileOutputStream(file)
 
         // Crea el documento PDF

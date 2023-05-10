@@ -1,11 +1,15 @@
 package com.example.ventarapida.procesos
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.UtilidadesBaseDatos.eliminarColaSubidaCantidadProducto
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.*
+import java.util.concurrent.CompletableFuture
 
 
 object FirebaseProductos {
@@ -54,5 +58,67 @@ object FirebaseProductos {
             })
         }
     }
+
+    fun obtenerProductos(): CompletableFuture<List<ModeloProducto>> {
+        val future = CompletableFuture<List<ModeloProducto>>()
+
+        val firebaseDatabase = FirebaseDatabase.getInstance()
+        val productReference = firebaseDatabase.getReference(TABLA_REFERENCIA)
+
+        productReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val productos = mutableListOf<ModeloProducto>()
+
+                for (productoSnapshot in snapshot.children) {
+                    val producto = productoSnapshot.getValue(ModeloProducto::class.java)
+                    productos.add(producto!!)
+                }
+
+                future.complete(productos)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                future.completeExceptionally(error.toException())
+            }
+        })
+
+        return future
+    }
+
+    fun buscarProductos(mayorCero: Boolean): Task<MutableList<ModeloProducto>> {
+        val database = FirebaseDatabase.getInstance()
+        val tablaRef = database.getReference(TABLA_REFERENCIA)
+
+        val productos = mutableListOf<ModeloProducto>()
+        val taskCompletionSource = TaskCompletionSource<MutableList<ModeloProducto>>()
+
+        tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (facturaSnapshot in snapshot.children) {
+                    val factura = facturaSnapshot.getValue(ModeloProducto::class.java)
+                    if (mayorCero){
+
+                        factura?.let {
+                            if (it.cantidad.toInt() > 0) { // Filtrar productos con cantidad mayor a 0
+                                productos.add(factura)
+                            }
+                        }
+                    }else{
+                        productos.add(factura!!)
+                    }
+                }
+
+                taskCompletionSource.setResult(productos)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("MiApp", "Error al buscar facturas: ${error.message}")
+                taskCompletionSource.setException(error.toException())
+            }
+        })
+
+        return taskCompletionSource.task
+    }
+
 
 }

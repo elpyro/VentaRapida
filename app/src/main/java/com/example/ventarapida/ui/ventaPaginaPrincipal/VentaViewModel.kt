@@ -103,7 +103,7 @@ class VentaViewModel : ViewModel() {
             calcularTotal()
         }
 
-    fun getProductos(): LiveData<List<ModeloProducto>> {
+    fun obtenerProductos(): LiveData<List<ModeloProducto>> {
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
         val productReference = firebaseDatabase.getReference("Productos")

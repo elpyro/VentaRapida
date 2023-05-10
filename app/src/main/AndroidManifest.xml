@@ -25,6 +25,9 @@
             android:name=".VistaPDFFacturaOCompra"
             android:exported="false" />
         <activity
+            android:name=".VistaPDFReporte"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.VentaRapida.NoActionBar">
