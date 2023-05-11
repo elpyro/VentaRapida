@@ -1,7 +1,6 @@
 package com.example.ventarapida.ui.promts
 
 import android.app.AlertDialog
-import android.content.ContentValues
 import android.content.Context
 import android.os.Bundle
 import android.widget.EditText
@@ -19,7 +18,6 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
-import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra.guardarDetalleFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
@@ -97,7 +95,7 @@ class PromtFacturaGuardada() {
                             cantidad = cantidadSeleccionada.toString(),
                             costo = producto.p_compra,
                             venta = producto.p_diamante,
-                            imagenUrl=producto.url
+                            imagenUrl =producto.url
                         )
                         listaProductosEditar.add(productoFacturado)
 

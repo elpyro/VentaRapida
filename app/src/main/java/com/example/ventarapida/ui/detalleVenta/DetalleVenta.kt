@@ -29,11 +29,10 @@ import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
-import com.example.ventarapida.procesos.Utilidades.obtenerFechaBusquedas
+import com.example.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
-import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
@@ -289,7 +288,7 @@ class DetalleVenta : Fragment() {
             "id_vendedor" to "id_vendedor",
             "nombre_vendedor" to "nombre_vendedor",
             "total" to total,
-            "fechaBusquedas" to obtenerFechaBusquedas()
+            "fechaBusquedas" to obtenerFechaUnix()
         )
         return datosPedido
     }
@@ -328,9 +327,9 @@ class DetalleVenta : Fragment() {
                     venta = producto.p_diamante,
                     precioDescuentos = precioDescuento.toString().formatoMonenda()!!,
                     fecha = fechaActual,
-                    hora=horaActual,
-                    imagenUrl=producto.url,
-                    fechaBusquedas =obtenerFechaBusquedas()
+                    hora =horaActual,
+                    imagenUrl =producto.url,
+                    fechaBusquedas = obtenerFechaUnix()
                 )
                 listaProductosFacturados.add(productoFacturado)
             }

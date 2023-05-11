@@ -1,23 +1,27 @@
 package com.example.ventarapida.procesos
 
-import android.content.ContentValues
+
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
+
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.example.ventarapida.procesos.UtilidadesBaseDatos.crearTransaccionBD
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
-import java.util.UUID
+
 
 object FirebaseProductoFacturadosOComprados {
 
     //las tablas referencias son ProductosComprados y ProductosFacturados
+
 
     fun guardarProductoFacturado(
         tablaReferencia: String,
@@ -132,5 +136,33 @@ object FirebaseProductoFacturadosOComprados {
         return taskCompletionSource.task
     }
 
+
+
+
+
+    fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long): Task<List<ModeloProductoFacturado>> {
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val reference: DatabaseReference = database.getReference("ProductosFacturados")
+
+        val tcs = TaskCompletionSource<List<ModeloProductoFacturado>>()
+
+        reference.orderByChild("fechaBusquedas").startAt(fechaInicio.toDouble()).endAt(fechaFin.toDouble())
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val productos = mutableListOf<ModeloProductoFacturado>()
+                    for (snapshot in dataSnapshot.children) {
+                        val elemento = snapshot.getValue(ModeloProductoFacturado::class.java)
+                        productos.add(elemento!!)
+                    }
+                    tcs.setResult(productos)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    tcs.setException(databaseError.toException())
+                }
+            })
+
+        return tcs.task
+    }
 
 }

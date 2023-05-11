@@ -17,6 +17,6 @@ data class ModeloFactura(
     val id_vendedor: String = "",
     val nombre_vendedor: String = "",
     var total: String = "0",
-    val fechaBusquedas: String=""
+    val fechaBusquedas: Long=0
 
 ): Serializable

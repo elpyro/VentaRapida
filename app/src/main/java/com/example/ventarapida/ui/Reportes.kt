@@ -5,11 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.databinding.FragmentReportesBinding
+import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.buscarProductosPorFecha
+import com.example.ventarapida.procesos.Utilidades.convertirFechaAUnix
 import java.util.Calendar
+
 
 class Reportes : Fragment() {
 
@@ -40,7 +44,6 @@ class Reportes : Fragment() {
         }
 
         binding?.textViewDesde?.setOnClickListener{
-            binding?.textViewDesde?.setOnClickListener{
                 val c = Calendar.getInstance()
                 val dia = c[Calendar.DAY_OF_MONTH]
                 val mes = c[Calendar.MONTH]
@@ -56,12 +59,11 @@ class Reportes : Fragment() {
                     }, ano, mes, dia
                 )
                 datepickerDialogo.show()
-            }
 
         }
 
         binding?.textViewHasta?.setOnClickListener{
-            binding?.textViewHasta?.setOnClickListener{
+
                 val c = Calendar.getInstance()
                 val dia = c[Calendar.DAY_OF_MONTH]
                 val mes = c[Calendar.MONTH]
@@ -77,7 +79,20 @@ class Reportes : Fragment() {
                     }, ano, mes, dia
                 )
                 datepickerDialogo.show()
-            }
+        }
+
+        binding?.buttonInforme?.setOnClickListener {
+
+            var fechaInicio="01/01/2000"
+            var fechaFin="01/01/2050"
+
+            if(binding?.textViewDesde?.text.toString()!="Desde") fechaInicio=binding?.textViewDesde?.text.toString()
+            if(binding?.textViewHasta?.text.toString()!="Hasta") fechaFin=binding?.textViewHasta?.text.toString()
+
+            buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin) )
+                .addOnSuccessListener { productos ->
+                    Toast.makeText(requireContext(),productos.size.toString(),Toast.LENGTH_LONG).show()
+                }
 
         }
     }

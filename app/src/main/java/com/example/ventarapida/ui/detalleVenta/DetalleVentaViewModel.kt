@@ -124,7 +124,8 @@ class DetalleVentaViewModel : ViewModel() {
                 datosPedido["hora"].toString(),
                 datosPedido["id_vendedor"].toString(),
                 datosPedido["nombre_vendedor"].toString(),
-                datosPedido["total"].toString()
+                datosPedido["total"].toString(),
+                datosPedido["fechaBusquedas"] as Long
             )
 
 

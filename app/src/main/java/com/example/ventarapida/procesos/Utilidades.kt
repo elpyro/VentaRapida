@@ -69,13 +69,34 @@ object Utilidades {
         return formatoHora.format(horaActual)
     }
 
-    fun obtenerFechaBusquedas(): String {
-        val fecha = Date()
-        val formatoFecha = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        formatoFecha.timeZone = TimeZone.getTimeZone("UTC") // Establecer la zona horaria en UTC
-        val fechaISO8601 = formatoFecha.format(fecha)
-        return fechaISO8601
+
+
+    fun obtenerFechaUnix():Long{
+        // Obtener la fecha actual sin la hora
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+        val fecha = calendar.timeInMillis
+        return fecha
     }
+
+    fun convertirFechaAUnix(fecha: String): Long {
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val fechaObjeto = formatoFecha.parse(fecha)
+
+        val calendar = Calendar.getInstance()
+        calendar.time = fechaObjeto
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+        return calendar.timeInMillis
+    }
+
 
     fun EditText.escribirFormatoMoneda() {
         val textWatcher = object : TextWatcher {
