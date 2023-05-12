@@ -6,7 +6,6 @@ import android.content.Context
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.example.ventarapida.procesos.UtilidadesBaseDatos.crearTransaccionBD
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -14,7 +13,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 
 
@@ -32,7 +30,7 @@ object FirebaseProductoFacturadosOComprados {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(tablaReferencia)
 
-        val dbHelper = MyDatabaseHelper(context!!)
+        val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
 
         val updates = HashMap<String, Any>()
@@ -62,7 +60,7 @@ object FirebaseProductoFacturadosOComprados {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(tablaReferencia)
 
-        val dbHelper = MyDatabaseHelper(context!!)
+        val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
 
         var contador = 0

@@ -16,6 +16,7 @@ import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloProducto
 
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -147,12 +148,25 @@ class CompraAdaptador(
             existencia.text ="X${product.cantidad}"
 
             // Limpiar la imagen anterior
-            Picasso.get().cancelRequest(imagenProducto)
+            //  Picasso.get().cancelRequest(imagenProducto)
 
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
             if (!product.url.isEmpty() && imagenProducto.tag != product.url) {
                 imagenProducto.tag = product.url
-                Picasso.get().load(product.url).into(imagenProducto)
+                Picasso.get()
+                    .load(product.url)
+                    .networkPolicy(NetworkPolicy.OFFLINE) // Configurar la política de caché y persistencia
+                    .into(imagenProducto, object : com.squareup.picasso.Callback {
+                        override fun onSuccess() {
+                            // La imagen se cargó exitosamente desde la caché o persistencia
+                        }
+
+                        override fun onError(e: Exception) {
+                            // Ocurrió un error al cargar la imagen desde la caché o persistencia
+                            // Intentar cargar la imagen desde la red
+                            Picasso.get().load(product.url).into(imagenProducto)
+                        }
+                    })
             } else if (product.url.isEmpty()) {
                 // Si la URL está vacía, mostrar una imagen por defecto o limpiar la vista
                 // dependiendo del diseño que se quiera obtener
