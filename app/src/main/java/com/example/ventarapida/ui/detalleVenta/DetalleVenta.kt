@@ -313,7 +313,7 @@ class DetalleVenta : Fragment() {
                 val porcentajeDescuento = descuento.toDouble() / 100
                 var precioDescuento:Double=producto.p_diamante.toDouble()
                 precioDescuento *= (1 - porcentajeDescuento)
-                precioDescuento += envio.toDouble()
+
 
                 val productoFacturado = ModeloProductoFacturado(
                     id_producto_pedido = UUID.randomUUID().toString(),
@@ -325,7 +325,7 @@ class DetalleVenta : Fragment() {
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,
                     venta = producto.p_diamante,
-                    precioDescuentos = precioDescuento.toString().formatoMonenda()!!,
+                    precioDescuentos = precioDescuento.toString(),
                     fecha = fechaActual,
                     hora =horaActual,
                     imagenUrl =producto.url,

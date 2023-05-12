@@ -148,7 +148,7 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,
                     venta = producto.p_diamante,
-                    precioDescuentos = precioDescuento.toString().formatoMonenda()!!,
+                    precioDescuentos = precioDescuento.toString(),
                     fecha = modeloFactura!!.fecha,
                     hora =modeloFactura!!.hora,
                     imagenUrl =producto.url,

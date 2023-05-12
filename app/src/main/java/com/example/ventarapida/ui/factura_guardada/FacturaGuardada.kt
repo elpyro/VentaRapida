@@ -79,6 +79,8 @@ class FacturaGuardada : Fragment() {
                 binding?.textViewFecha?.text=detalleFactura.fecha
                 binding?.textViewHora?.text=detalleFactura.hora
                 binding?.textViewId?.text=detalleFactura.id_pedido.substring(0, 5)
+
+                viewModel.calcularTotal()
             }
         }
 
@@ -89,7 +91,7 @@ class FacturaGuardada : Fragment() {
             binding?.textViewTotal?.text="Total: $it"
             val updates = hashMapOf<String, Any>(
                 "id_pedido" to modeloFactura.id_pedido,
-                "total" to it.eliminarAcentosTildes(),
+                "total" to it.eliminarAcentosTildes()
             )
             FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",updates)
         }
@@ -214,8 +216,6 @@ class FacturaGuardada : Fragment() {
 
             banderaElimandoFactura=true
             MainActivity.progressDialog?.show()
-
-
 
             lifecycleScope.launch {
 

@@ -144,14 +144,27 @@ object FirebaseProductoFacturadosOComprados {
 
         val tcs = TaskCompletionSource<List<ModeloProductoFacturado>>()
 
-        reference.orderByChild("fechaBusquedas").startAt(fechaInicio.toDouble()).endAt(fechaFin.toDouble())
+        reference.orderByChild("fechaBusquedas")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val productos = mutableListOf<ModeloProductoFacturado>()
+
                     for (snapshot in dataSnapshot.children) {
                         val elemento = snapshot.getValue(ModeloProductoFacturado::class.java)
-                        productos.add(elemento!!)
+
+                        // Obtener la fecha del elemento actual
+                        val fechaElemento = elemento?.fechaBusquedas ?: 0
+
+                        // Verificar si la fecha está dentro del rango deseado
+                        if (fechaElemento in fechaInicio..fechaFin) {
+
+                            productos.sortWith(compareBy<ModeloProductoFacturado> { it.fechaBusquedas }
+                                .thenBy { it.id_pedido })
+
+                            productos.add(elemento!!)
+                        }
                     }
+
                     tcs.setResult(productos)
                 }
 

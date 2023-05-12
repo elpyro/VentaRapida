@@ -98,6 +98,14 @@ object Utilidades {
     }
 
 
+
+    fun convertirUnixAFecha(fechaUnix: Long): String {
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+        val fecha = Date(fechaUnix)
+        return formatoFecha.format(fecha)
+    }
+
+
     fun EditText.escribirFormatoMoneda() {
         val textWatcher = object : TextWatcher {
             var isProgrammaticChange = false

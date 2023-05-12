@@ -16,10 +16,7 @@ import com.google.firebase.database.ValueEventListener
 
 class FacturaGuardadaViewModel : ViewModel() {
 
-
     val datosFactura = MutableLiveData<ModeloFactura>()
-
-
     val datosProductosFacturados = MutableLiveData<List<ModeloProductoFacturado>>()
     val subTotal = MutableLiveData<String>()
     val totalFactura = MutableLiveData<String>()
@@ -68,7 +65,7 @@ class FacturaGuardadaViewModel : ViewModel() {
         })
     }
 
-    private fun calcularTotal() {
+    fun calcularTotal() {
         val listaProductos = datosProductosFacturados.value ?: emptyList()
 
         // Calcular subtotal
@@ -90,7 +87,6 @@ class FacturaGuardadaViewModel : ViewModel() {
     }
 
     fun eliminarFactura(context:Context) {
-
 
         val arrayListProductosFacturados = ArrayList(datosProductosFacturados.value ?: emptyList())
 
