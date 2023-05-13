@@ -96,4 +96,9 @@
     <string name="Inventario">Inventario</string>
     <string name="SeleccioneInforme">Seleccione tipo de informe</string>
     <string name="VerPDF">Ver PDF</string>
+    <string name="Usuario">Usuario</string>
+    <string name="administrador">Administrador</string>
+    <string name="inactivo">Inactivo</string>
+    <string name="Usuarios">Usuarios</string>
+    <string name="gmail">\@gmail.com</string>
 </resources>

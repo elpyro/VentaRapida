@@ -3,17 +3,16 @@ package com.example.ventarapida.procesos
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
 import androidx.core.content.ContextCompat
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
-import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.Utilidades.convertirUnixAFecha
-import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
+import com.example.ventarapida.ui.ReportesViewModel
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Document
 import com.itextpdf.text.Element
@@ -27,8 +26,13 @@ import com.itextpdf.text.pdf.PdfWriter
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import java.util.Random
 
-class CrearPdfGanancias {
+class CrearPdfMasVendidos {
 
     private val FONT_TITLE = Font(Font.FontFamily.TIMES_ROMAN, 20f, Font.BOLD)
     private val FONT_SUBTITLE = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.BOLD)
@@ -36,11 +40,11 @@ class CrearPdfGanancias {
     private val FONT_CELL = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.NORMAL)
     private val FONT_COLUMN = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.NORMAL)
 
-    fun ganacias(
+    fun masVendidos(
         context: Context,
-        fechaInicio:String,
-        fechaFin:String,
-        listaProductos: ArrayList<ModeloProductoFacturado>
+        fechaInicio: String,
+        fechaFin: String,
+        listaMasVendidos: Map<ReportesViewModel.ProductoKey, Int>,
     ) {
 
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
@@ -55,7 +59,7 @@ class CrearPdfGanancias {
         metadata(document)
         cabezera(document, context,fechaInicio,fechaFin)
 
-        val tablaGanancias = crearTabla(listaProductos)
+        val tablaGanancias = crearTabla(listaMasVendidos)
         val totalGanacias = tablaGanancias.ganancia
         val totalVentas = tablaGanancias.ventas
         val totalCostos = tablaGanancias.costos
@@ -142,7 +146,7 @@ class CrearPdfGanancias {
             cell.isUseAscender = true
 
             val titulo: Paragraph?
-            titulo = Paragraph("Reporte Ganancias", FONT_TITLE)
+            titulo = Paragraph("Más Vendidos", FONT_TITLE)
             titulo.alignment = Element.ALIGN_CENTER
 
             val temp = Paragraph(titulo)
@@ -236,22 +240,16 @@ class CrearPdfGanancias {
 
     data class TablaInventario(val tabla: PdfPTable, val ganancia: Double, val ventas:Double, val costos:Double)
 
-    private fun crearTabla(dataTable: List<ModeloProductoFacturado>): TablaInventario {
-        val table1 = PdfPTable(6)
+    private fun crearTabla(listaMasVendidos: Map<ReportesViewModel.ProductoKey, Int>): TablaInventario {
+        val table1 = PdfPTable(5)
         table1.widthPercentage = 100f
-        table1.setWidths(floatArrayOf(8f, 1.5f, 1.5f, 2f,2f, 3f))
+        table1.setWidths(floatArrayOf(8f, 1.5f, 2f,2f, 3f))
         table1.headerRows = 1
         table1.defaultCell.verticalAlignment = Element.ALIGN_CENTER
         table1.defaultCell.horizontalAlignment = Element.ALIGN_CENTER
         var cell: PdfPCell
         run {
             cell = PdfPCell(Phrase("Producto", FONT_COLUMN))
-            cell.horizontalAlignment = Element.ALIGN_CENTER
-            cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
-            table1.addCell(cell)
-
-            cell = PdfPCell(Phrase("ID.", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)
@@ -285,40 +283,36 @@ class CrearPdfGanancias {
         var alternate = false
         val lt_gray = BaseColor(221, 221, 221) //#DDDDDD
         var cell_color: BaseColor?
-        val size = dataTable.size
+        val size = listaMasVendidos.size
         var totalGanancias=0.0
         var totalVentas=0.0
         var totalCostos=0.0
-        for (i in 0 until size) {
+        for ((producto, cantidad) in listaMasVendidos) {
             cell_color = if (alternate) lt_gray else BaseColor.WHITE
-            val temp = dataTable[i]
+
 
             cell = PdfPCell()
-            setCellFormat(cell, cell_color!!, temp.producto)
+            setCellFormat(cell, cell_color!!, producto.nombreProducto)
             cell.horizontalAlignment = Element.ALIGN_LEFT
             table1.addCell(cell)
 
             cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.id_pedido.substring(0, 5) )
+            setCellFormat(cell, cell_color, cantidad.toString())
             table1.addCell(cell)
 
             cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.cantidad)
-            table1.addCell(cell)
-
-            cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.costo.formatoMonenda()!!)
+            setCellFormat(cell, cell_color, producto.costo.formatoMonenda()!!)
             table1.addCell(cell)
 
 
             cell = PdfPCell()
-            setCellFormat(cell, cell_color,temp.precioDescuentos.formatoMonenda()!!)
+            setCellFormat(cell, cell_color,producto.venta.formatoMonenda()!!)
             table1.addCell(cell)
 
-            val totalProducto = temp.cantidad.toDouble() *(temp.precioDescuentos.toDouble()- temp.costo.toDouble())
+            val totalProducto = cantidad.toDouble() *(producto.venta.toDouble()- producto.costo.toDouble())
             totalGanancias += totalProducto
-            totalVentas += temp.precioDescuentos.toDouble()* temp.cantidad.toDouble()
-            totalCostos += temp.costo.toDouble()* temp.cantidad.toDouble()
+            totalVentas += producto.venta.toDouble()*cantidad.toDouble()
+            totalCostos += producto.costo.toDouble()*cantidad.toDouble()
 
             cell = PdfPCell()
             setCellFormat(cell, cell_color, totalProducto.toString().formatoMonenda()!!)
@@ -339,5 +333,7 @@ class CrearPdfGanancias {
         cell.backgroundColor = backgroundColor
         cell.phrase = Phrase(text, FONT_CELL)
     }
+
+
 
 }

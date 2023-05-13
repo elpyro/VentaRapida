@@ -6,16 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.VistaPDFReporte
 import com.example.ventarapida.databinding.FragmentReportesBinding
-import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.CrearPdfGanancias
-import com.example.ventarapida.procesos.CrearPdfInventario
+import com.example.ventarapida.procesos.CrearPdfMasVendidos
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.buscarProductosPorFecha
 import com.example.ventarapida.procesos.Utilidades.convertirFechaAUnix
 import java.util.Calendar
@@ -89,10 +87,38 @@ class Reportes : Fragment() {
 
         binding?.buttonInforme?.setOnClickListener {
 
+            var fechaInicio="01/01/2000"
+            var fechaFin="01/01/2050"
+
+            if(binding?.textViewDesde?.text.toString()!="Desde") fechaInicio=binding?.textViewDesde?.text.toString()
+            if(binding?.textViewHasta?.text.toString()!="Hasta") fechaFin=binding?.textViewHasta?.text.toString()
+
             if(binding?.spinnerTipoReporte?.selectedItemPosition==0){
-                ReporteGanancia()
+                ReporteGanancia(fechaInicio,fechaFin)
+            }
+
+            if(binding?.spinnerTipoReporte?.selectedItemPosition==1){
+                ReporteMasVendidos(fechaInicio, fechaFin)
+            }
+
+            if(binding?.spinnerTipoReporte?.selectedItemPosition==2){
+                //reporte por vendedro
             }
         }
+    }
+
+    private fun ReporteMasVendidos(fechaInicio: String, fechaFin: String) {
+        buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin) )
+            .addOnSuccessListener { productos ->
+
+               var listaMasVendidos= viewModel.crearListaMasVendidos(productos)
+
+                val crearPdf= CrearPdfMasVendidos()
+                crearPdf.masVendidos(requireContext(), fechaInicio, fechaFin,listaMasVendidos)
+
+                val intent = Intent(requireContext(), VistaPDFReporte::class.java)
+                requireContext().startActivity(intent)
+            }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,12 +126,8 @@ class Reportes : Fragment() {
         vista=view
     }
 
-    fun ReporteGanancia (){
-        var fechaInicio="01/01/2000"
-        var fechaFin="01/01/2050"
+    fun ReporteGanancia(fechaInicio: String, fechaFin: String) {
 
-        if(binding?.textViewDesde?.text.toString()!="Desde") fechaInicio=binding?.textViewDesde?.text.toString()
-        if(binding?.textViewHasta?.text.toString()!="Hasta") fechaFin=binding?.textViewHasta?.text.toString()
 
         buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin) )
         .addOnSuccessListener { productos ->

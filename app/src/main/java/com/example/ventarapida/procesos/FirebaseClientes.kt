@@ -49,8 +49,8 @@ object FirebaseClientes {
     }
 
     fun eliminarCliente(id: String) {
-        val database2 = FirebaseDatabase.getInstance()
-        val registroRef = database2.getReference(TABLA_REFERENCIA).child(id)
+        val database = FirebaseDatabase.getInstance()
+        val registroRef = database.getReference(TABLA_REFERENCIA).child(id)
 
         registroRef.removeValue()
     }

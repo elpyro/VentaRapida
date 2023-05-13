@@ -84,5 +84,10 @@
         android:name="com.example.ventarapida.ui.Reportes"
         android:label="@string/Reportes"
         tools:layout="@layout/fragment_reportes" />
+    <fragment
+        android:id="@+id/registroUsuarios"
+        android:name="com.example.ventarapida.ui.usuarios.RegistroUsuario"
+        android:label="@string/Usuario"
+        tools:layout="@layout/fragment_registro_usuario" />
 
 </navigation>

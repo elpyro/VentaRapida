@@ -43,6 +43,12 @@
     </group>
 
     <group>
+
+        <item
+            android:id="@+id/registroUsuarios"
+            android:icon="@drawable/baseline_groups_24"
+            android:title="@string/Usuarios" />
+
     <item
         android:id="@+id/configuracion"
         android:icon="@drawable/baseline_settings_24"
