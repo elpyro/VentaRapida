@@ -43,7 +43,7 @@ class DetalleProductoViewModel : ViewModel() {
     }
 
     private val database = FirebaseDatabase.getInstance()
-    private val productosRef = database.getReference("Productos")
+    private val productosRef = database.getReference(MainActivity.datosEmpresa.id).child("Productos")
 
     // LiveData que contiene los detalles de un producto
     val detalleProducto = MutableLiveData<List<ModeloProducto>>()
@@ -96,7 +96,7 @@ class DetalleProductoViewModel : ViewModel() {
     fun eliminarProducto(id:String ): Task<Void> {
 
         val database2 = FirebaseDatabase.getInstance()
-        val registroRef = database2.getReference("Productos").child(id)
+        val registroRef = database2.getReference(MainActivity.datosEmpresa.id).child("Productos").child(id)
         listaProductos.removeIf { it.id == id }
         val task = registroRef.removeValue().addOnSuccessListener {
             mensajeToast.value="Producto eliminado"

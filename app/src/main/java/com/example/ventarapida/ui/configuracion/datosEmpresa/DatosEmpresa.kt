@@ -58,7 +58,8 @@ class DatosEmpresa : Fragment() {
         vista=view
         viewModel = ViewModelProvider(this)[DatosEmpresaViewModel::class.java]
         setHasOptionsMenu(true)
-        cargarDatos()
+        if(MainActivity.datosEmpresa.id!="")cargarDatos()
+
     }
 
     private fun cargarDatos() {
@@ -86,7 +87,7 @@ class DatosEmpresa : Fragment() {
 
             R.id.action_guardar ->{
                 ocultarTeclado(requireContext(),vista)
-                val empresaID ="1"
+                val empresaID =MainActivity.datosEmpresa.id
 
                 val updates = hashMapOf(
                     "id" to empresaID,
@@ -99,7 +100,7 @@ class DatosEmpresa : Fragment() {
                     "direccion" to binding?.editTextDireccion?.text.toString(),
                     "garantia" to binding?.editTextGarantia?.text.toString(),
                     "premiun" to "true",
-                    "ultimo_pago" to "Activo",
+                    "ultimo_pago" to "Activo"
 
                 )
 

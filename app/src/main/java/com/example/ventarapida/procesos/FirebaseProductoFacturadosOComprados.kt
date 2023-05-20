@@ -28,7 +28,7 @@ object FirebaseProductoFacturadosOComprados {
         context: Context
     ) {
         val database = FirebaseDatabase.getInstance()
-        val referencia = database.getReference(tablaReferencia)
+        val referencia = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
 
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
@@ -58,7 +58,7 @@ object FirebaseProductoFacturadosOComprados {
         tipo: String
     ) {
         val database = FirebaseDatabase.getInstance()
-        val referencia = database.getReference(tablaReferencia)
+        val referencia = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
 
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
@@ -84,7 +84,7 @@ object FirebaseProductoFacturadosOComprados {
 
     fun actualizarPrecioDescuento(idPedido:String, descuento:Double){
         val database = FirebaseDatabase.getInstance()
-        val refProductosFacturados = database.getReference("ProductosFacturados")
+        val refProductosFacturados = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados")
 
         val porcentajeDescuento = descuento / 100
 
@@ -114,7 +114,7 @@ object FirebaseProductoFacturadosOComprados {
     fun buscarProductosPorPedido(tablaReferencia: String, idPedido: String): Task<List<ModeloProductoFacturado>> {
         val taskCompletionSource = TaskCompletionSource<List<ModeloProductoFacturado>>()
         val database = FirebaseDatabase.getInstance()
-        val productosRef = database.getReference(tablaReferencia).orderByChild("id_pedido").equalTo(idPedido)
+        val productosRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).orderByChild("id_pedido").equalTo(idPedido)
 
         productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -140,7 +140,7 @@ object FirebaseProductoFacturadosOComprados {
 
     fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long): Task<List<ModeloProductoFacturado>> {
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-        val reference: DatabaseReference = database.getReference("ProductosFacturados")
+        val reference: DatabaseReference = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados")
 
         val tcs = TaskCompletionSource<List<ModeloProductoFacturado>>()
 

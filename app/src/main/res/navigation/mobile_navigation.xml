@@ -89,5 +89,15 @@
         android:name="com.example.ventarapida.ui.usuarios.RegistroUsuario"
         android:label="@string/Usuario"
         tools:layout="@layout/fragment_registro_usuario" />
+    <fragment
+        android:id="@+id/detalleUsuario"
+        android:name="com.example.ventarapida.ui.usuarios.DetalleSesion"
+        android:label="@string/detalleSesion"
+        tools:layout="@layout/fragment_detalle_usuario" />
+    <fragment
+        android:id="@+id/usuarioNoRegistrado"
+        android:name="com.example.ventarapida.ui.usuarios.UsuarioNoRegistrado"
+        android:label="fragment_usuario_no_registrado"
+        tools:layout="@layout/fragment_usuario_no_registrado" />
 
 </navigation>

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 
 import androidx.core.app.JobIntentService
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.Quatruple
 import com.example.ventarapida.procesos.Preferencias
 import com.google.firebase.database.FirebaseDatabase
@@ -55,21 +56,36 @@ class ServiciosSubirFoto : JobIntentService() {
                     val updates = hashMapOf<String, Any>(
                         "url" to url.trim(),
                     )
+                    if(tablaReferencia.equals("DatosEmpresa")){
+                        val preferencias= Preferencias()
+                        preferencias.preferenciasConfiguracion(context)
+                        val database = FirebaseDatabase.getInstance()
+                        val registroRef = database.getReference("DatosEmpresa").child(idImagen)
 
-                    val database = FirebaseDatabase.getInstance()
-                    val registroRef = database.getReference(tablaReferencia!!).child(idImagen)
 
+                        registroRef.updateChildren(updates).
+                        addOnSuccessListener {
+                            borrarServicioPendiente(context, idImagen)
 
-                    registroRef.updateChildren(updates).
-                    addOnSuccessListener {
-                        borrarServicioPendiente(context, idImagen)
+                            //actualiza las preferencias si cambia la imagen de la empresa
 
-                        //actualiza las preferencias si cambia la imagen de la empresa
-                        if(tablaReferencia.equals("DatosEmpresa")){
-                            val preferencias= Preferencias()
-                            preferencias.preferenciasConfiguracion(context)
                         }
+                    }else{
+                        val database = FirebaseDatabase.getInstance()
+                        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia!!).child(idImagen)
+
+
+                        registroRef.updateChildren(updates).
+                        addOnSuccessListener {
+                            borrarServicioPendiente(context, idImagen)
+
+                            //actualiza las preferencias si cambia la imagen de la empresa
+
+                        }
+
                     }
+
+
 
                 }
             }

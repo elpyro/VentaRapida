@@ -1,6 +1,7 @@
 package com.example.ventarapida.procesos
 
 import android.util.Log
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloFactura
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -15,19 +16,19 @@ object FirebaseFacturaOCompra {
 
     fun guardarDetalleFacturaOCompra(tablaReferencia:String, updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(tablaReferencia).child(updates["id_pedido"] as String)
+        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).child(updates["id_pedido"] as String)
         registroRef.updateChildren(updates)
     }
 
     fun eliminarFacturaOCompra(tablaReferencia: String, id_pedido: String) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(tablaReferencia).child(id_pedido)
+        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).child(id_pedido)
         registroRef.removeValue()
     }
 
     fun buscarFacturasOCompra(tablaReferencia: String): Task<MutableList<ModeloFactura>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(tablaReferencia)
+        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
 
         val facturas = mutableListOf<ModeloFactura>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloFactura>>()
@@ -56,7 +57,7 @@ object FirebaseFacturaOCompra {
 
     fun buscarFacturaOCompraPorId(tablaReferencia: String, facturaId: String): Task<ModeloFactura?> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(tablaReferencia)
+        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
 
         val taskCompletionSource = TaskCompletionSource<ModeloFactura?>()
 

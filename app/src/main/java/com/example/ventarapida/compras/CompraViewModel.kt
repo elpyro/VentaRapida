@@ -107,7 +107,7 @@ class CompraViewModel : ViewModel() {
     fun getProductos(): LiveData<List<ModeloProducto>> {
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        val productReference = firebaseDatabase.getReference("Productos")
+        val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
 
         productReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

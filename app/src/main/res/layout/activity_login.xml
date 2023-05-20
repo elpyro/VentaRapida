@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login"
+    android:background="@drawable/fondo">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/usuarioNoResgistrado"
+                android:textSize="26sp"
+                android:layout_gravity="center"
+                android:theme="@style/ColorFuenteEnFondoGris" />
+
+
+            <TextView
+                android:id="@+id/textView_correo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:theme="@style/ColorFuenteEnFondoGris" />
+            <TextView
+                android:id="@+id/textView_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:theme="@style/ColorFuenteEnFondoGris" />
+
+
+            <Button
+                android:id="@+id/button_RegistrarUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bordes_boton"
+                android:text="@string/registrarUsuario" />
+
+            <Button
+                android:id="@+id/button_cerrarSesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:background="@drawable/bordes_boton"
+                android:text="@string/cerrar_session" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

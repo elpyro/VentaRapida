@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.VentaBinding
 import com.example.ventarapida.datos.ModeloProducto
@@ -42,7 +43,7 @@ class Venta : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        setHasOptionsMenu(true)
+
         binding = VentaBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -85,7 +86,7 @@ class Venta : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vista= view
-
+        setHasOptionsMenu(true)
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager
 
@@ -103,7 +104,9 @@ class Venta : Fragment() {
 
     private fun listeners() {
 
-
+//        binding?.buttonRegistrarUsuario?.setOnClickListener{
+//            Navigation.findNavController(vista).navigate(R.id.usuarioNoRegistrado)
+//        }
 
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
@@ -158,25 +161,26 @@ class Venta : Fragment() {
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
 
-        productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
 
-            val productosOrdenados = productos?.sortedBy { it.nombre }
-            adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
 
-            adapter!!.setOnLongClickItem { item, position ->
-                abriDetalle(item,vista, position)
+            productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
+                val productosOrdenados = productos?.sortedBy { it.nombre }
+                adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
+
+                adapter!!.setOnLongClickItem { item, position ->
+                    abriDetalle(item,vista, position)
+                }
+
+                lista = productos as ArrayList<ModeloProducto>?
+                binding!!.recyclerViewProductosVenta.adapter = adapter
+
+                //si el valor esta filtrado buscarlo
+                val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
+                if(busqueda!=""){
+                    filtro(busqueda)
+                }
             }
 
-
-            lista = productos as ArrayList<ModeloProducto>?
-            binding!!.recyclerViewProductosVenta.adapter = adapter
-
-            //si el valor esta filtrado buscarlo
-            val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
-            if(busqueda!=""){
-                filtro(busqueda)
-            }
-        }
     }
 
     private fun mensajeEliminar() {
@@ -239,7 +243,7 @@ class Venta : Fragment() {
             cantidadPorVoz=0
         }
 
-            adaptador!!.setOnLongClickItem { item, position ->
+            adaptador?.setOnLongClickItem { item, position ->
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)

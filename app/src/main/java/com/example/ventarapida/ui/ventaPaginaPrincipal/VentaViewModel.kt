@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.CrearTono
@@ -105,25 +106,26 @@ class VentaViewModel : ViewModel() {
 
     fun obtenerProductos(): LiveData<List<ModeloProducto>> {
 
-        val firebaseDatabase = FirebaseDatabase.getInstance()
-        val productReference = firebaseDatabase.getReference("Productos")
+            val firebaseDatabase = FirebaseDatabase.getInstance()
+            val productReference =
+                firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
 
-        productReference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val productos = mutableListOf<ModeloProducto>()
+            productReference.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val productos = mutableListOf<ModeloProducto>()
 
-                for (productoSnapshot in snapshot.children) {
-                    val producto = productoSnapshot.getValue(ModeloProducto::class.java)
-                    productos.add(producto!!)
+                    for (productoSnapshot in snapshot.children) {
+                        val producto = productoSnapshot.getValue(ModeloProducto::class.java)
+                        productos.add(producto!!)
+                    }
+
+                    productosLiveData.value = productos
                 }
 
-                productosLiveData.value = productos
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("ProductViewModel", "Error al cargar productos", error.toException())
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("ProductViewModel", "Error al cargar productos", error.toException())
+                }
+            })
 
         return productosLiveData
     }

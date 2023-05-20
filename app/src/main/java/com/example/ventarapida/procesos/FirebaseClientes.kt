@@ -1,6 +1,7 @@
 package com.example.ventarapida.procesos
 
 import android.util.Log
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloClientes
 import com.example.ventarapida.datos.ModeloFactura
 import com.google.android.gms.tasks.Task
@@ -16,7 +17,7 @@ object FirebaseClientes {
 
     fun buscarTodosClientes(): Task<MutableList<ModeloClientes>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(TABLA_REFERENCIA)
+        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
 
         val clientes = mutableListOf<ModeloClientes>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloClientes>>()
@@ -44,13 +45,13 @@ object FirebaseClientes {
 
     fun guardarCliente(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(TABLA_REFERENCIA).child(updates["id"] as String)
+        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
         registroRef.updateChildren(updates)
     }
 
     fun eliminarCliente(id: String) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(TABLA_REFERENCIA).child(id)
+        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(id)
 
         registroRef.removeValue()
     }

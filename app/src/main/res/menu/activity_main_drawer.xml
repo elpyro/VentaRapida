@@ -22,38 +22,48 @@
             android:icon="@drawable/baseline_bookmark_add_24"
             android:title="@string/NuevoProducto" />
 
+        <item android:title="">
+            <menu>
+                <item
+                    android:id="@+id/ventas"
+                    android:icon="@drawable/baseline_menu_book_24"
+                    android:title="@string/RegistrosVentas" />
 
-        <item
-            android:title="__________________________________"
-            android:enabled="false"/>
-        <item
-            android:id="@+id/ventas"
-            android:icon="@drawable/baseline_menu_book_24"
-            android:title="@string/RegistrosVentas" />
+                <item
+                    android:id="@+id/listaCompras"
+                    android:icon="@drawable/baseline_storefront_24"
+                    android:title="@string/RegistroCompras" />
 
-        <item
-            android:id="@+id/listaCompras"
-            android:icon="@drawable/baseline_storefront_24"
-            android:title="@string/RegistroCompras" />
-
-        <item
-            android:id="@+id/reportes"
-            android:icon="@drawable/baseline_bar_chart_24"
-            android:title="@string/Reportes" />
-    </group>
-
-    <group>
-
-        <item
-            android:id="@+id/registroUsuarios"
-            android:icon="@drawable/baseline_groups_24"
-            android:title="@string/Usuarios" />
-
-    <item
-        android:id="@+id/configuracion"
-        android:icon="@drawable/baseline_settings_24"
-        android:title="@string/configuracion" />
+                <item
+                    android:id="@+id/reportes"
+                    android:icon="@drawable/baseline_bar_chart_24"
+                    android:title="@string/Reportes" />
+            </menu>
+        </item>
 
     </group>
+
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/detalleUsuario"
+                android:icon="@drawable/baseline_person_24"
+                android:title="@string/mi_sesion" />
+
+            <item
+                android:id="@+id/registroUsuarios"
+                android:icon="@drawable/baseline_groups_24"
+                android:title="@string/Usuarios" />
+
+            <item
+                android:id="@+id/configuracion"
+                android:icon="@drawable/baseline_settings_24"
+                android:title="@string/configuracion" />
+
+        </menu>
+    </item>
+
+
 
 </menu>

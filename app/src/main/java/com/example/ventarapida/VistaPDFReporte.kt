@@ -1,22 +1,13 @@
 package com.example.ventarapida
 
 import android.app.ProgressDialog
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
-import android.telephony.PhoneNumberUtils
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.CrearPdfFacturaOCompra
-import com.example.ventarapida.procesos.FirebaseFacturaOCompra
-import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
 import java.io.File

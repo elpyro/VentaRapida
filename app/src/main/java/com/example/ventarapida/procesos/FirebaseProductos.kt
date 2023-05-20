@@ -3,6 +3,7 @@ package com.example.ventarapida.procesos
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.UtilidadesBaseDatos.eliminarColaSubidaCantidadProducto
@@ -19,13 +20,13 @@ object FirebaseProductos {
 
     fun guardarProducto(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(TABLA_REFERENCIA).child(updates["id"] as String)
+        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
         registroRef.updateChildren(updates)
     }
 
     fun transaccionesCambiarCantidad(context: Context?, solicitudes: List<ModeloTransaccionSumaRestaProducto>){
         val database = FirebaseDatabase.getInstance()
-        val productosRef = database.getReference(TABLA_REFERENCIA)
+        val productosRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
 
         solicitudes.forEach { solicitud ->
             val idTransaccion = solicitud.idTransaccion
@@ -63,7 +64,7 @@ object FirebaseProductos {
         val future = CompletableFuture<List<ModeloProducto>>()
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        val productReference = firebaseDatabase.getReference(TABLA_REFERENCIA)
+        val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
 
         productReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -87,7 +88,7 @@ object FirebaseProductos {
 
     fun buscarProductos(mayorCero: Boolean): Task<MutableList<ModeloProducto>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(TABLA_REFERENCIA)
+        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
 
         val productos = mutableListOf<ModeloProducto>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloProducto>>()

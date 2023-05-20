@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.navigation.fragment.findNavController
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.databinding.FragmentRegistroUsuarioBinding
 import com.example.ventarapida.procesos.FirebaseUsuarios.guardarUsuario
@@ -56,6 +58,14 @@ class RegistroUsuario : Fragment() {
         })
 
         binding?.buttonRegister?.setOnClickListener {
+            if (binding?.editTextUsuario?.text.toString()==""){
+                binding?.editTextUsuario?.error = "Obligatorio"
+                return@setOnClickListener
+            }
+            if (binding?.editTextCorreo?.text.toString()==""){
+                binding?.editTextCorreo?.error = "Obligatorio"
+                return@setOnClickListener
+            }
             val id= UUID.randomUUID().toString()
             var perfil= ""
             if(binding?.radioButtonVendedor?.isChecked==true) perfil="Vendedor"
@@ -67,12 +77,16 @@ class RegistroUsuario : Fragment() {
             val updates = hashMapOf<String, Any>(
                 "id" to id,
                 "nombre" to  binding?.editTextUsuario?.text.toString(),
-                "correo" to  correo,
+                "correo" to  correo.toLowerCase(),
                 "idEmpresa" to  MainActivity.datosEmpresa.id,
+                "empresa" to  MainActivity.datosEmpresa.nombre,
                 "perfil" to perfil
             )
 
             guardarUsuario(updates)
+
+            Toast.makeText(requireContext(),"Usuario Guardado",Toast.LENGTH_LONG).show()
+            findNavController().popBackStack()
 
 
         }

@@ -7,6 +7,11 @@
     android:background="@drawable/fondo"
     app:layoutDescription="@xml/fragment_home_scene">
 
+    <RelativeLayout
+        android:id="@+id/RelativeLaoyut_usuarioRegistrado"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_productosVenta"
         android:layout_width="match_parent"
@@ -86,5 +91,6 @@
             android:src="@drawable/baseline_mic_24"
             android:contentDescription="@string/microfono" />
     </LinearLayout>
+    </RelativeLayout>
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

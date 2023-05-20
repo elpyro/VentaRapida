@@ -3,6 +3,7 @@ package com.example.ventarapida.ui.compra_guardada
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
@@ -31,7 +32,7 @@ class CompraGuardadaViewModel : ViewModel() {
 
     private fun obtenerFactura(idPedido: String) {
         val database = FirebaseDatabase.getInstance()
-        val productosRef = database.getReference("Compra").orderByChild("id_pedido").equalTo(idPedido)
+        val productosRef = database.getReference(MainActivity.datosEmpresa.id).child("Compra").orderByChild("id_pedido").equalTo(idPedido)
 
         productosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -50,7 +51,7 @@ class CompraGuardadaViewModel : ViewModel() {
 
     fun buscarProductos(idPedido: String) {
         val database = FirebaseDatabase.getInstance()
-        val productosRef = database.getReference("ProductosComprados").orderByChild("id_pedido").equalTo(idPedido)
+        val productosRef = database.getReference(MainActivity.datosEmpresa.id).child("ProductosComprados").orderByChild("id_pedido").equalTo(idPedido)
 
         productosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

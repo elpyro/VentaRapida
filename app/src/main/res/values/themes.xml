@@ -18,6 +18,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:statusBarColor">#FF0000</item>
     </style>
@@ -30,16 +31,23 @@
         <item name="android:background">@color/rojo</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="ApareciaTextoMenu">
         <item name="android:textSize">18sp</item>
         <item name="color">@color/white</item>
     </style>
+
     <style name="ColorFuentes">
         <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="ColorFuenteEnFondoGris">
         <item name="android:textColor">@color/white</item>
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.VentaRapida" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
 

@@ -26,10 +26,10 @@ import com.itextpdf.text.pdf.PdfWriter
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
+//import com.github.mikephil.charting.charts.PieChart
+//import com.github.mikephil.charting.data.PieData
+//import com.github.mikephil.charting.data.PieDataSet
+//import com.github.mikephil.charting.data.PieEntry
 import java.util.Random
 
 class CrearPdfMasVendidos {

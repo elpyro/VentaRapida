@@ -15,5 +15,6 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
+
 rootProject.name = "VentaRapida"
 include ':app'

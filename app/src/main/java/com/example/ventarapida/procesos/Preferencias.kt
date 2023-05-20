@@ -33,14 +33,24 @@ class Preferencias {
         MainActivity.tono = sharedPreferences.getBoolean("sonido", true)
 
 
-        obtenerDatosEmpresa("1", object : ValueEventListener {
+        obtenerDatosEmpresa(MainActivity.datosUsuario.idEmpresa, object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // Procesar los datos en el snapshot
                 datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
                 if (!datosEmpresa.url.isEmpty()){
+
                     Picasso.get().load(datosEmpresa.url).into(MainActivity.logotipo)
                     MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
                     MainActivity.editText_nombreEmpresa.text = MainActivity.datosEmpresa.nombre
+
+
+                    obtenerSeleccionPendiente(context,"venta_seleccionada")
+                    obtenerSeleccionPendiente(context,"compra_seleccionada")
+                    obtenerServicioPendiente(context)
+
+                    val transaccionesPendientes=
+                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
                 }
             }
 

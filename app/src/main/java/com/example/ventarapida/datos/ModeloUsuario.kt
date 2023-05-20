@@ -5,5 +5,6 @@ data class ModeloUsuario(
     var nombre: String= "",
     var correo: String= "",
     var idEmpresa: String= "",
+    var empresa: String= "",
     val perfil:String=""
     )

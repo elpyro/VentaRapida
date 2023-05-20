@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloFactura
 
 import com.example.ventarapida.datos.ModeloProducto
@@ -102,7 +103,7 @@ class AgregarProductoFacturaViewModel : ViewModel() {
     fun getProductos(): LiveData<List<ModeloProducto>> {
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        val productReference = firebaseDatabase.getReference("Productos")
+        val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
 
         productReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
