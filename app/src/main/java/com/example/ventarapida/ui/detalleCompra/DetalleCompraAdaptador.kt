@@ -21,7 +21,7 @@ class DetalleCompraAdaptador(
     val products: MutableMap<ModeloProducto, Int>,
 ) : RecyclerView.Adapter<DetalleCompraAdaptador.ProductViewHolder>() {
 
-    private val sortedProducts = MainActivity.compraProductosSeleccionados.keys.sortedBy { it.nombre }
+    private val sortedProducts = products.keys.sortedBy { it.nombre }
 
 
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
@@ -84,11 +84,15 @@ class DetalleCompraAdaptador(
 
 
             //sumamos la existencia los prodocutos seleccionados
-            existencia.text ="X"+ (product.cantidad.toInt() + cantidadSeleccion!!.toInt())
+            try {
+                existencia.text ="X"+ (product.cantidad.toInt() + cantidadSeleccion!!.toInt())
+            } catch (e: Exception) {
+            }
+
 
             //se edita que el campo sea el de compra
             precio.let { precio.setText(product.p_compra.formatoMonenda()) }
-            val total= cantidadSeleccion.times(product.p_compra.toInt())
+            val total= cantidadSeleccion?.times(product.p_compra.toInt())
 
             total_producto.text=total.toString().formatoMonenda()
 

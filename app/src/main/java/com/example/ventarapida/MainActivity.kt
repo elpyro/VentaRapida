@@ -21,9 +21,11 @@ import com.example.ventarapida.databinding.ActivityMainBinding
 import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloUsuario
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.FirebaseUsuarios.buscarUsuariosPorCorreo
 import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.PermissionManager
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -32,6 +34,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,10 +72,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         init(this)
-        cargarDatos()
 
         cargarDialogoProceso()
 
+        cargarDatos()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -87,38 +90,29 @@ class MainActivity : AppCompatActivity() {
         logotipo = navHeader.findViewById<ImageView>(R.id.imageView)
         editText_nombreEmpresa=navHeader.findViewById<TextView>(R.id.textView_nombreEmpresa)
 
+        MainActivity.editText_nombreEmpresa.text = datosEmpresa.nombre
+        if (!datosEmpresa.url.isEmpty()){
+            Picasso.get().load(datosEmpresa.url).into(MainActivity.logotipo)
+            MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
+        }
 
-        appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home), drawerLayout)
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-
-
-
-     //   iniciarSesionConGoogle(this)
     }
 
-    fun iniciarSesionConGoogle(context: Context) {
-
-        auth = FirebaseAuth.getInstance()
-        // Configurar las opciones de inicio de sesión de Google
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        // Construir el cliente de inicio de sesión de Google
-        googleSignInClient = GoogleSignIn.getClient(context, gso)
-        // Implementar el inicio de sesión de Google en respuesta a un evento de clic o botón
-
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
 
 
     private fun cargarDatos() {
         val preferenciasServicios= Preferencias()
         preferenciasServicios.preferenciasConfiguracion(this)
+
+        preferenciasServicios.obtenerServicioPendiente(this)
+
+        val transaccionesPendientes=
+            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
+        FirebaseProductos.transaccionesCambiarCantidad(this, transaccionesPendientes)
+
     }
 
 
@@ -127,6 +121,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+
+//        // Obtener referencia al grupo de menú para administradores
+//        val grupoAdministrador = menu.findItem(R.id.panel_administrador)
+//
+//        // Obtener referencia al grupo de menú para vendedores
+//        val grupoVendedor = menu.findItem(R.id.panel_vendedor)
+//
+//        // Verificar el perfil del usuario y mostrar/ocultar los grupos de menú apropiados
+//        if (datosUsuario.perfil == "Administrador") {
+//            grupoAdministrador.isVisible = true
+//            grupoVendedor.isVisible = false
+//        } else if (datosUsuario.perfil == "Vendedor") {
+//            grupoAdministrador.isVisible = false
+//            grupoVendedor.isVisible = true
+//        }
         return true
     }
 
@@ -136,9 +145,6 @@ class MainActivity : AppCompatActivity() {
         progressDialog?.setMessage("Guardando...")
         progressDialog?.setCancelable(false)
     }
-
-
-
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)

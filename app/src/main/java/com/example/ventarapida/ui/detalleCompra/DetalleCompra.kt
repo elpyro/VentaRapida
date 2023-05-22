@@ -258,8 +258,8 @@ class DetalleCompra : Fragment() {
             "envio" to "0",
             "fecha" to fechaActual,
             "hora" to horaActual,
-            "id_vendedor" to "id_vendedor",
-            "nombre_vendedor" to "nombre_vendedor",
+            "id_vendedor" to MainActivity.datosUsuario.id,
+            "nombre_vendedor" to MainActivity.datosUsuario.nombre,
             "total" to total,
             "fechaBusquedas" to obtenerFechaUnix()
         )

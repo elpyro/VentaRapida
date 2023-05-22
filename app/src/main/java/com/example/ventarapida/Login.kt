@@ -4,9 +4,12 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import com.example.ventarapida.databinding.ActivityLoginBinding
+import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloUsuario
+import com.example.ventarapida.procesos.FirebaseDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseUsuarios
 import com.example.ventarapida.ui.usuarios.CrearNuevaEmpresa
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -15,6 +18,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 class Login : AppCompatActivity() {
 
@@ -34,14 +40,14 @@ class Login : AppCompatActivity() {
 
 
     private fun listeners() {
-        binding?.buttonRegistrarUsuario?.setOnClickListener {
+        binding.buttonRegistrarUsuario.setOnClickListener {
             val intent = Intent(this, CrearNuevaEmpresa::class.java)
-            intent.putExtra("correo", binding?.textViewCorreo?.text.toString())
-            intent.putExtra("nombre", binding?.textViewNombre?.text.toString())
+            intent.putExtra("correo", binding.textViewCorreo.text.toString())
+            intent.putExtra("nombre", binding.textViewNombre.text.toString())
             startActivity(intent)
             finish()
         }
-        binding?.buttonCerrarSesion?.setOnClickListener {
+        binding.buttonCerrarSesion.setOnClickListener {
             MainActivity.auth.signOut()
             MainActivity.googleSignInClient.signOut().addOnCompleteListener(this) {
                 Toast.makeText(this, "Sesion cerrada", Toast.LENGTH_SHORT).show()
@@ -68,6 +74,7 @@ class Login : AppCompatActivity() {
         startActivityForResult(signInIntent, MainActivity.RC_SIGN_IN)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -91,10 +98,12 @@ class Login : AppCompatActivity() {
                     if (usuario.size > 0) {
                         usuarioRegistrado(usuario)
                     } else {
+                        binding.LinearLayoutBienvenido.visibility= View.GONE
+                        binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
                         // USUARIO NO REGISTRADO
                         Toast.makeText(this, "${displayName}, No registrado", Toast.LENGTH_LONG).show()
-                        binding?.textViewCorreo?.text = email
-                        binding?.textViewNombre?.text = displayName
+                        binding.textViewCorreo.text = email
+                        binding.textViewNombre.text = displayName
                     }
 
                 }
@@ -110,10 +119,31 @@ class Login : AppCompatActivity() {
     private fun usuarioRegistrado(usuario: MutableList<ModeloUsuario>) {
         MainActivity.datosUsuario = usuario[0]
 
+        FirebaseDatosEmpresa.obtenerDatosEmpresa(
+            usuario[0].idEmpresa,
+            object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    // Procesar los datos en el snapshot
+                    MainActivity.datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
+
+                    abrirPantallaPrincipal()
+                    }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Manejar el error
+                }
+            })
+
+    }
+
+    private fun abrirPantallaPrincipal() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
-        Toast.makeText(this, "Bienvenido ${MainActivity.datosUsuario.nombre}", Toast.LENGTH_LONG).show()
-
+        Toast.makeText(
+            this,
+            "Bienvenido ${MainActivity.datosUsuario.nombre}",
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

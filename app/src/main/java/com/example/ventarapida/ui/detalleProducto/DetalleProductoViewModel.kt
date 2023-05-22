@@ -53,9 +53,9 @@ class DetalleProductoViewModel : ViewModel() {
 
     fun getProductos(): LiveData<List<ModeloProducto>> {
         val productosList = mutableListOf<ModeloProducto>()
-
+        productosRef.keepSynced(true)
         // Agregamos un listener a la referencia de la base de datos
-        productosRef.addValueEventListener(object : ValueEventListener {
+        productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Limpiamos la lista de productos antes de llenarla de nuevo
                 productosList.clear()

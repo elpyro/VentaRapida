@@ -35,10 +35,7 @@ class DetalleSesion : Fragment() {
 
     private var binding: FragmentDetalleUsuarioBinding? = null
     private lateinit var vista: View
-
     private lateinit var viewModel: DetalleSesionViewModel
-    private lateinit var auth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,8 +67,6 @@ class DetalleSesion : Fragment() {
                     val intent = Intent(requireContext(), Login::class.java)
                     startActivity(intent)
 
-
-
                 }
 
             }
@@ -81,71 +76,11 @@ class DetalleSesion : Fragment() {
 
     }
 
-    fun iniciarSesionConGoogle(context: Context) {
-
-        // Configurar las opciones de inicio de sesión de Google
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        // Construir el cliente de inicio de sesión de Google
-        googleSignInClient = GoogleSignIn.getClient(context, gso)
-        // Implementar el inicio de sesión de Google en respuesta a un evento de clic o botón
-
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        }
-    }
-
-    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-
-            // Autenticación exitosa, puedes obtener información del usuario a través de la cuenta de Google
-            val displayName = account?.displayName
-            val email = account?.email
-//            val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
-//
-//            autenticaconGmail.signInWithCredential(credential)
-            MainActivity.datosUsuario = ModeloUsuario()
-
-            FirebaseUsuarios.buscarUsuariosPorCorreo(email!!)
-                .addOnSuccessListener { usuario ->
-                    if(usuario.size>0){
-                        MainActivity.datosUsuario =usuario[0]
-                        Toast.makeText(requireContext(),"Bienvenido ${MainActivity.datosUsuario.nombre}",Toast.LENGTH_LONG).show()
-                    }else{
-                        Toast.makeText(requireContext(),"${displayName}, No registrado",Toast.LENGTH_LONG).show()
-
-                    }
-                    findNavController().popBackStack()
-
-                }
-                .addOnFailureListener {exception ->
-                    exception.printStackTrace()
-                    Toast.makeText(requireActivity(),"${displayName}, Error iniciando",Toast.LENGTH_LONG).show()
-                }
-
-        } catch (e: ApiException) {
-            Toast.makeText(requireContext(), "Error al iniciar sesión con Google", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-
     private fun cargarDatosUsario() {
         binding?.TextviewNombreUsuario?.text=MainActivity.datosUsuario.nombre
-        binding?.textViewCorreo?.text=MainActivity.datosUsuario.correo
-        binding?.textViewEmpresa?.text=MainActivity.datosUsuario.empresa
-        binding?.textViewPerfil?.text=MainActivity.datosUsuario.perfil
+        binding?.textViewCorreo?.text="Correo: "+MainActivity.datosUsuario.correo
+        binding?.textViewEmpresa?.text="Empresa: "+MainActivity.datosEmpresa.nombre
+        binding?.textViewPerfil?.text="Perfil: "+MainActivity.datosUsuario.perfil
     }
 
 

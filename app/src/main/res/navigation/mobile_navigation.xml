@@ -99,5 +99,10 @@
         android:name="com.example.ventarapida.ui.usuarios.UsuarioNoRegistrado"
         android:label="fragment_usuario_no_registrado"
         tools:layout="@layout/fragment_usuario_no_registrado" />
+    <fragment
+        android:id="@+id/listaUsuarios"
+        android:name="com.example.ventarapida.ui.usuarios.ListaUsuarios"
+        android:label="@string/Usuarios"
+        tools:layout="@layout/fragment_lista_usuarios" />
 
 </navigation>

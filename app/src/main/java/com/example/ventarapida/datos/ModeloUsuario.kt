@@ -1,5 +1,7 @@
 package com.example.ventarapida.datos
 
+import java.io.Serializable
+
 data class ModeloUsuario(
     val id: String= "",
     var nombre: String= "",
@@ -7,4 +9,4 @@ data class ModeloUsuario(
     var idEmpresa: String= "",
     var empresa: String= "",
     val perfil:String=""
-    )
+    ):Serializable

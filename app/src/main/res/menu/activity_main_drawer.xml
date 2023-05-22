@@ -5,7 +5,8 @@
 
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/panel_administrador">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/baseline_monetization_on_24"
@@ -41,7 +42,7 @@
             </menu>
         </item>
 
-    </group>
+
 
 
     <item android:title="">
@@ -52,7 +53,7 @@
                 android:title="@string/mi_sesion" />
 
             <item
-                android:id="@+id/registroUsuarios"
+                android:id="@+id/listaUsuarios"
                 android:icon="@drawable/baseline_groups_24"
                 android:title="@string/Usuarios" />
 
@@ -64,6 +65,29 @@
         </menu>
     </item>
 
+    </group>
 
+
+
+<!--    <group android:checkableBehavior="single"-->
+<!--        android:id="@+id/panel_vendedor">-->
+
+<!--    <item-->
+<!--        android:id="@+id/nav_home"-->
+<!--        android:icon="@drawable/baseline_monetization_on_24"-->
+<!--        android:title="@string/venta"-->
+<!--        app:itemIconSize="60dp"/>-->
+
+<!--        <item-->
+<!--            android:id="@+id/detalleUsuario"-->
+<!--            android:icon="@drawable/baseline_person_24"-->
+<!--            android:title="@string/mi_sesion" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/configuracion"-->
+<!--        android:icon="@drawable/baseline_settings_24"-->
+<!--        android:title="@string/configuracion" />-->
+
+<!--    </group>-->
 
 </menu>

@@ -104,7 +104,7 @@ class AgregarProductoFacturaViewModel : ViewModel() {
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
         val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
-
+        productReference.keepSynced(true)
         productReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val productos = mutableListOf<ModeloProducto>()

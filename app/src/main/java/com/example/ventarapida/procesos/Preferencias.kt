@@ -30,34 +30,10 @@ class Preferencias {
             sharedPreferences.getString("inf_superior", "")!!
         MainActivity.preferencia_informacion_inferior =
             sharedPreferences.getString("inf_inferior", "")!!
-        MainActivity.tono = sharedPreferences.getBoolean("sonido", true)
+        tono = sharedPreferences.getBoolean("sonido", true)
 
-
-        obtenerDatosEmpresa(MainActivity.datosUsuario.idEmpresa, object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                // Procesar los datos en el snapshot
-                datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
-                if (!datosEmpresa.url.isEmpty()){
-
-                    Picasso.get().load(datosEmpresa.url).into(MainActivity.logotipo)
-                    MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
-                    MainActivity.editText_nombreEmpresa.text = MainActivity.datosEmpresa.nombre
-
-
-                    obtenerSeleccionPendiente(context,"venta_seleccionada")
-                    obtenerSeleccionPendiente(context,"compra_seleccionada")
-                    obtenerServicioPendiente(context)
-
-                    val transaccionesPendientes=
-                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Manejar el error
-            }
-        })
+        obtenerSeleccionPendiente(context,"venta_seleccionada")
+        obtenerSeleccionPendiente(context,"compra_seleccionada")
 
     }
 
@@ -65,7 +41,7 @@ class Preferencias {
 
         limpiarPreferenciaListaSeleccionada(context,referencia)
 
-        val sharedPreferences = context.getSharedPreferences(referencia, Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences(referencia, MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val gson = Gson()
         val json = gson.toJson(map)
@@ -82,39 +58,34 @@ class Preferencias {
 
     }
 
-    fun obtenerSeleccionPendiente(context: Context, referencia:String) {
+    fun obtenerSeleccionPendiente(context: Context, referencia: String) {
         val sharedPreferences = context.getSharedPreferences(referencia, Context.MODE_PRIVATE)
         val gson = Gson()
         val json = sharedPreferences.getString("seleccion", "")
 
-        if(referencia.equals("compra_seleccionada")) {
+        if (referencia.equals("compra_seleccionada")) {
             if (json!!.isNotEmpty()) {
                 val mapType = object : TypeToken<MutableMap<String, Int>>() {}.type
                 val mapString: MutableMap<String, Int> = gson.fromJson(json, mapType)
 
                 mapString.forEach { (productoJson, cantidad) ->
-
                     val modeloProducto = parsearModeloProducto(productoJson)
-
                     MainActivity.compraProductosSeleccionados[modeloProducto] = cantidad
                 }
             }
         }
-        if(referencia.equals("venta_seleccionada")){
+
+        if (referencia.equals("venta_seleccionada")) {
             if (json!!.isNotEmpty()) {
                 val mapType = object : TypeToken<MutableMap<String, Int>>() {}.type
                 val mapString: MutableMap<String, Int> = gson.fromJson(json, mapType)
 
                 mapString.forEach { (productoJson, cantidad) ->
-
                     val modeloProducto = parsearModeloProducto(productoJson)
-
                     MainActivity.ventaProductosSeleccionados[modeloProducto] = cantidad
                 }
+            }
         }
-
-        }
-        return
     }
 
     fun parsearModeloProducto(productoJson: String): ModeloProducto {

@@ -60,7 +60,7 @@ object FirebaseFacturaOCompra {
         val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
 
         val taskCompletionSource = TaskCompletionSource<ModeloFactura?>()
-
+        tablaRef.keepSynced(true)
         tablaRef.child(facturaId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val factura = snapshot.getValue(ModeloFactura::class.java)

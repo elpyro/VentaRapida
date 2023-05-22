@@ -21,7 +21,7 @@ class DetalleVentaAdaptador(
     val products: MutableMap<ModeloProducto, Int>,
 ) : RecyclerView.Adapter<DetalleVentaAdaptador.ProductViewHolder>() {
 
-    private val sortedProducts = MainActivity.ventaProductosSeleccionados.keys.sortedBy { it.nombre }
+    private val sortedProducts = products.keys.sortedBy { it.nombre }
 
 
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
@@ -82,7 +82,11 @@ class DetalleVentaAdaptador(
 
             cantidadSeleccion?.let { seleccion.setText(it.toString().formatoMonenda()) }
 
-            existencia.text ="X"+ (product.cantidad.toInt() - cantidadSeleccion!!.toInt())
+            try {
+                existencia.text ="X"+ (product.cantidad.toInt() + cantidadSeleccion!!.toInt())
+            } catch (e: Exception) {
+            }
+
 
             precio?.let { precio.setText(product.p_diamante.formatoMonenda()) }
             val total= cantidadSeleccion?.times(product.p_diamante.toInt())

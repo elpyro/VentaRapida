@@ -3,7 +3,6 @@ package com.example.ventarapida.procesos
 import android.util.Log
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloClientes
-import com.example.ventarapida.datos.ModeloFactura
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.DataSnapshot
@@ -21,7 +20,7 @@ object FirebaseClientes {
 
         val clientes = mutableListOf<ModeloClientes>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloClientes>>()
-
+        tablaRef.keepSynced(true)
         tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (facturaSnapshot in snapshot.children) {

@@ -150,9 +150,6 @@ class VentaAdaptador(
 
             existencia.text ="X${product.cantidad}"
 
-            // Limpiar la imagen anterior
-//            Picasso.get().cancelRequest(imagenProducto)
-
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
             if (!product.url.isEmpty() && imagenProducto.tag != product.url) {
                 imagenProducto.tag = product.url

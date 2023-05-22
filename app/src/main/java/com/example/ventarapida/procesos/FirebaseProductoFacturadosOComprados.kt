@@ -106,7 +106,7 @@ object FirebaseProductoFacturadosOComprados {
                 // Maneja el error aquí si es necesario
             }
         }
-
+        refProductosFacturados.keepSynced(true)
         refProductosFacturados.orderByChild("id_pedido").equalTo(idPedido).addListenerForSingleValueEvent(listener)
 
     }
@@ -115,7 +115,7 @@ object FirebaseProductoFacturadosOComprados {
         val taskCompletionSource = TaskCompletionSource<List<ModeloProductoFacturado>>()
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).orderByChild("id_pedido").equalTo(idPedido)
-
+        productosRef.keepSynced(true)
         productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val datosFactura = mutableListOf<ModeloProductoFacturado>()
@@ -143,7 +143,7 @@ object FirebaseProductoFacturadosOComprados {
         val reference: DatabaseReference = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados")
 
         val tcs = TaskCompletionSource<List<ModeloProductoFacturado>>()
-
+        reference.keepSynced(true)
         reference.orderByChild("fechaBusquedas")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

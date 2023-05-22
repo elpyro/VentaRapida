@@ -108,8 +108,8 @@ class CompraViewModel : ViewModel() {
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
         val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
-
-        productReference.addValueEventListener(object : ValueEventListener {
+        productReference.keepSynced(true)
+        productReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val productos = mutableListOf<ModeloProducto>()
 

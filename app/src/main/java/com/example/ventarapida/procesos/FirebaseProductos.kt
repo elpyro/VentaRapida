@@ -65,7 +65,7 @@ object FirebaseProductos {
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
         val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
-
+        productReference.keepSynced(true)
         productReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val productos = mutableListOf<ModeloProducto>()
@@ -92,7 +92,7 @@ object FirebaseProductos {
 
         val productos = mutableListOf<ModeloProducto>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloProducto>>()
-
+        tablaRef.keepSynced(true)
         tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (facturaSnapshot in snapshot.children) {
