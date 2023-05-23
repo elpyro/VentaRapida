@@ -46,15 +46,15 @@
 
             <ImageView
                 android:id="@+id/imageView_eliminarCarrito"
-                android:layout_width="80dp"
-                android:layout_height="50dp"
-                android:src="@drawable/baseline_shopping_cart_24"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:src="@drawable/baseline_delete_24"
                 android:contentDescription="@string/carrito" />
 
             <TextView
                 android:id="@+id/textView_listaSeleccion"
                 android:layout_width="60dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:layout_alignParentStart="@+id/imageView_eliminarCarrito"
                 android:layout_marginBottom="12dp"
                 android:gravity="center"
@@ -63,6 +63,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText,TextSizeCheck" />
+
 
 
 

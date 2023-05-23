@@ -18,12 +18,14 @@ class CrearNuevaEmpresa : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityCrearNuevaEmpresaBinding.inflate(layoutInflater)
+
+        setContentView(binding.root)
+
         val correo = intent.getStringExtra("correo")
         val nombre = intent.getStringExtra("nombre")
 
         binding?.editTextUsuario?.setText(nombre)
         binding?.hintCorreo?.text=correo
-        setContentView(binding.root)
 
         listeners()
     }
@@ -32,9 +34,11 @@ class CrearNuevaEmpresa : AppCompatActivity() {
       binding?.buttonRegister?.setOnClickListener {
           if(binding?.editTextEmpresa?.text.toString()==""){
               binding.editTextEmpresa.setError("Obligatorio")
+              return@setOnClickListener
           }
           if(binding?.editTextUsuario?.text.toString()==""){
               binding.editTextUsuario.setError("Obligatorio")
+              return@setOnClickListener
           }
 
           val idEmpresa=UUID.randomUUID().toString()

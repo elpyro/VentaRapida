@@ -53,7 +53,7 @@ class Venta : Fragment() {
 
 
         productViewModel.totalCarritoLiveData.observe(viewLifecycleOwner){it->
-            val title = SpannableString("Total: $it")
+            val title = SpannableString("Carrito: $it")
             title.setSpan(
                 AbsoluteSizeSpan(20, true), // Tamaño de texto en sp
                 0,

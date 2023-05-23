@@ -32,7 +32,7 @@ class FacturaGuardadaViewModel : ViewModel() {
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference(MainActivity.datosEmpresa.id).child("Factura").orderByChild("id_pedido").equalTo(idPedido)
         productosRef.keepSynced(true)
-        productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        productosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val datosFacturaRecuperados = mutableListOf<ModeloFactura>()
                 for (facturaSnapshot in dataSnapshot.children) {
@@ -51,7 +51,7 @@ class FacturaGuardadaViewModel : ViewModel() {
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados").orderByChild("id_pedido").equalTo(idPedido)
          productosRef.keepSynced(true)
-        productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        productosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val datosFactura = mutableListOf<ModeloProductoFacturado>()
                 for (facturaSnapshot in dataSnapshot.children) {
