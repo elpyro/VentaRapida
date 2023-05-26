@@ -41,11 +41,16 @@ class VentaAdaptador(
         // Vincular los datos del producto con la vista del ViewHolder
         holder.bind(products[position])
 
-        // Configurar el evento de click largo en el cardview del producto
-        holder.cardview.setOnLongClickListener { motionEvent ->
-            onLongClickItem?.invoke(products[position], position)
-            true // Devuelve true para indicar que el evento ha sido consumido
+        // si el usario es un administrador puede editar datos del producto
+        if(MainActivity.datosUsuario.perfil.equals("Administrador")){
+
+            holder.cardview.setOnLongClickListener { motionEvent ->
+                onLongClickItem?.invoke(products[position], position)
+                true // Devuelve true para indicar que el evento ha sido consumido
+            }
+
         }
+
 
         holder.seleccion.setOnClickListener {
             holder.seleccion.post {

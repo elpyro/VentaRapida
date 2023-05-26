@@ -99,6 +99,18 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        if(datosUsuario.perfil=="Administrador"){
+            navView.getMenu()
+                .setGroupVisible(R.id.panel_administrador, true)
+        }
+
+        if(datosUsuario.perfil=="Vendedor"){
+            navView.getMenu()
+                .setGroupVisible(R.id.panel_vendedor, true)
+        }
+
+
     }
 
 
@@ -112,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         val transaccionesPendientes=
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
         FirebaseProductos.transaccionesCambiarCantidad(this, transaccionesPendientes)
+
 
     }
 

@@ -22,20 +22,22 @@ import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import java.util.ArrayList
 
 
+@Suppress("DEPRECATION")
 class ListaUsuarios : Fragment() {
 
     private var binding: FragmentListaUsuariosBinding? = null
     private lateinit var vista: View
     private var lista: ArrayList<ModeloUsuario>? = null
-    private lateinit var viewModel: ListaUsuariosViewModel
+
     private lateinit var adaptador: UsuariosAdaptador
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentListaUsuariosBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[ListaUsuariosViewModel::class.java]
+
 
         setHasOptionsMenu(true)
 
@@ -43,11 +45,13 @@ class ListaUsuarios : Fragment() {
         return binding!!.root
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_nuevo_usuario, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 

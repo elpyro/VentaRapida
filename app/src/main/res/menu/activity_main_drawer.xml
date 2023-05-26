@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single"
-        android:id="@+id/panel_administrador">
+        android:id="@+id/panel_administrador"
+        android:visible="false">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/baseline_monetization_on_24"
             android:title="@string/venta"
-            app:itemIconSize="60dp"/>
+            app:itemIconSize="60dp" />
 
         <item
             android:id="@+id/compra"
@@ -23,7 +23,7 @@
             android:icon="@drawable/baseline_bookmark_add_24"
             android:title="@string/NuevoProducto" />
 
-        <item android:title="">
+        <item tools:ignore="MenuTitle">
             <menu>
                 <item
                     android:id="@+id/ventas"
@@ -39,55 +39,55 @@
                     android:id="@+id/reportes"
                     android:icon="@drawable/baseline_bar_chart_24"
                     android:title="@string/Reportes" />
+
+                <item
+                    android:id="@+id/datosEmpresa"
+                    android:icon="@drawable/baseline_corporate_fare_24"
+                    android:title="@string/datosempresa"
+                    tools:ignore="DuplicateIds" />
             </menu>
         </item>
 
+        <item
+            android:id="@+id/listaUsuarios"
+            android:icon="@drawable/baseline_groups_24"
+            android:title="@string/Usuarios" />
 
-
-
-    <item android:title="">
-        <menu>
-            <item
-                android:id="@+id/detalleUsuario"
-                android:icon="@drawable/baseline_person_24"
-                android:title="@string/mi_sesion" />
-
-            <item
-                android:id="@+id/listaUsuarios"
-                android:icon="@drawable/baseline_groups_24"
-                android:title="@string/Usuarios" />
-
-            <item
-                android:id="@+id/configuracion"
-                android:icon="@drawable/baseline_settings_24"
-                android:title="@string/configuracion" />
-
-        </menu>
-    </item>
+        <item
+            android:id="@+id/configuracion"
+            android:icon="@drawable/baseline_settings_24"
+            android:title="@string/configuracion"
+            tools:ignore="DuplicateIds" />
 
     </group>
 
+    <group android:checkableBehavior="single"
+        android:id="@+id/panel_vendedor"
+        android:visible="false">
 
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/baseline_monetization_on_24"
+            android:title="@string/venta"
+            app:itemIconSize="60dp"
+            tools:ignore="DuplicateIds" />
 
-<!--    <group android:checkableBehavior="single"-->
-<!--        android:id="@+id/panel_vendedor">-->
+        <item
+            android:id="@+id/ventas"
+            android:icon="@drawable/baseline_menu_book_24"
+            android:title="@string/RegistrosVentas"
+            tools:ignore="DuplicateIds"/>
+        <item
+            android:id="@+id/configuracion"
+            android:icon="@drawable/baseline_settings_24"
+            android:title="@string/configuracion"
+            tools:ignore="DuplicateIds" />
 
-<!--    <item-->
-<!--        android:id="@+id/nav_home"-->
-<!--        android:icon="@drawable/baseline_monetization_on_24"-->
-<!--        android:title="@string/venta"-->
-<!--        app:itemIconSize="60dp"/>-->
+    </group>
 
-<!--        <item-->
-<!--            android:id="@+id/detalleUsuario"-->
-<!--            android:icon="@drawable/baseline_person_24"-->
-<!--            android:title="@string/mi_sesion" />-->
-
-<!--    <item-->
-<!--        android:id="@+id/configuracion"-->
-<!--        android:icon="@drawable/baseline_settings_24"-->
-<!--        android:title="@string/configuracion" />-->
-
-<!--    </group>-->
+    <item
+        android:id="@+id/detalleUsuario"
+        android:icon="@drawable/baseline_person_24"
+        android:title="@string/mi_sesion" />
 
 </menu>

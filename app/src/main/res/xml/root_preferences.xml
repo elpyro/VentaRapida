@@ -23,10 +23,6 @@
             android:key="sonido"
             android:title="@string/sonido" />
 
-        <Preference
-            android:title="@string/datosempresa"
-            android:key="datos_empresa"/>
-
     </PreferenceCategory>
 
 

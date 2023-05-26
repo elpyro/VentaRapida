@@ -95,7 +95,6 @@ class RegistroUsuario : Fragment() {
 
         binding?.buttonRegister?.setOnClickListener {
             registrarUsuario()
-
         }
 
 
@@ -111,7 +110,7 @@ class RegistroUsuario : Fragment() {
             binding?.editTextCorreo?.error = "Obligatorio"
             return
         }
-        val id= UUID.randomUUID().toString()
+
         var perfil= ""
         if(binding?.radioButtonVendedor?.isChecked==true) perfil="Vendedor"
         if(binding?.radioButtonAdministrador?.isChecked==true) perfil="Administrador"

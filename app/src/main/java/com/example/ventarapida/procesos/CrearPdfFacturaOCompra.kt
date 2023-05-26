@@ -151,37 +151,43 @@ class CrearPdfFacturaOCompra {
 
 
 
-                val logo: Image
+                var logo: Image
 
-                if (MainActivity.logotipo.drawable != null) {
-                    val bmp = (MainActivity.logotipo.drawable as BitmapDrawable).bitmap
-                    val stream = ByteArrayOutputStream()
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                    logo = Image.getInstance(stream.toByteArray())
-                    logo.widthPercentage = 70f
-                    logo.scaleToFit(155f, 70f)
-                } else {
-
-                    val defaultDrawable = ContextCompat.getDrawable(context, R.drawable.ic_menu_camera)
-                    val bitmap = if (defaultDrawable is BitmapDrawable) {
-                        defaultDrawable.bitmap
+                try {
+                    if (MainActivity.logotipo.drawable != null) {
+                        val bmp = (MainActivity.logotipo.drawable as BitmapDrawable).bitmap
+                        val stream = ByteArrayOutputStream()
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                        logo = Image.getInstance(stream.toByteArray())
+                        logo.widthPercentage = 70f
+                        logo.scaleToFit(155f, 70f)
                     } else {
-                        // Convertir el VectorDrawable a Bitmap
-                        val width = defaultDrawable?.intrinsicWidth
-                        val height = defaultDrawable?.intrinsicHeight
-                        val bitmap = Bitmap.createBitmap(width!!, height!!, Bitmap.Config.ARGB_8888)
-                        val canvas = Canvas(bitmap)
-                        defaultDrawable?.setBounds(0, 0, canvas.width, canvas.height)
-                        defaultDrawable?.draw(canvas)
-                        bitmap
+                        val defaultDrawable = ContextCompat.getDrawable(context, R.drawable.ic_menu_camera)
+                        val bitmap = if (defaultDrawable is BitmapDrawable) {
+                            defaultDrawable.bitmap
+                        } else {
+                            // Convertir el VectorDrawable a Bitmap
+                            val width = defaultDrawable?.intrinsicWidth
+                            val height = defaultDrawable?.intrinsicHeight
+                            val bitmap = Bitmap.createBitmap(width!!, height!!, Bitmap.Config.ARGB_8888)
+                            val canvas = Canvas(bitmap)
+                            defaultDrawable?.setBounds(0, 0, canvas.width, canvas.height)
+                            defaultDrawable?.draw(canvas)
+                            bitmap
+                        }
 
+                        val stream = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                        logo = Image.getInstance(stream.toByteArray())
+                        logo.widthPercentage = 70f
+                        logo.scaleToFit(155f, 70f)
                     }
+                } catch (e: Exception) {
+                    // Manejar la excepción (por ejemplo, mostrar un mensaje de error)
+                    e.printStackTrace()
+                    // Asignar una imagen de reemplazo o realizar alguna otra acción adecuada
+                    logo = Image.getInstance(1, 1, 1, 1, byteArrayOf())
 
-                    val stream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                    logo = Image.getInstance(stream.toByteArray())
-                    logo.widthPercentage = 70f
-                    logo.scaleToFit(155f, 70f)
                 }
 
 

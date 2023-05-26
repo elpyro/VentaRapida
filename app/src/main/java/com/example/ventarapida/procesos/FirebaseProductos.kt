@@ -21,13 +21,14 @@ object FirebaseProductos {
     fun guardarProducto(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
+        registroRef.keepSynced(true)
         registroRef.updateChildren(updates)
     }
 
     fun transaccionesCambiarCantidad(context: Context?, solicitudes: List<ModeloTransaccionSumaRestaProducto>){
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
-
+        productosRef.keepSynced(true)
         solicitudes.forEach { solicitud ->
             val idTransaccion = solicitud.idTransaccion
             val idProducto = solicitud.idProducto
@@ -58,32 +59,6 @@ object FirebaseProductos {
                 }
             })
         }
-    }
-
-    fun obtenerProductos(): CompletableFuture<List<ModeloProducto>> {
-        val future = CompletableFuture<List<ModeloProducto>>()
-
-        val firebaseDatabase = FirebaseDatabase.getInstance()
-        val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
-        productReference.keepSynced(true)
-        productReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val productos = mutableListOf<ModeloProducto>()
-
-                for (productoSnapshot in snapshot.children) {
-                    val producto = productoSnapshot.getValue(ModeloProducto::class.java)
-                    productos.add(producto!!)
-                }
-
-                future.complete(productos)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                future.completeExceptionally(error.toException())
-            }
-        })
-
-        return future
     }
 
     fun buscarProductos(mayorCero: Boolean): Task<MutableList<ModeloProducto>> {

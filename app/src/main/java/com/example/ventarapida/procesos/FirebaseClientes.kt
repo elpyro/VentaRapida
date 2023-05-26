@@ -45,13 +45,14 @@ object FirebaseClientes {
     fun guardarCliente(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
+        registroRef.keepSynced(true)
         registroRef.updateChildren(updates)
     }
 
     fun eliminarCliente(id: String) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(id)
-
+        registroRef.keepSynced(true)
         registroRef.removeValue()
     }
 

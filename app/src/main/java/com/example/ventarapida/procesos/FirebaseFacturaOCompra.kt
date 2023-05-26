@@ -17,12 +17,14 @@ object FirebaseFacturaOCompra {
     fun guardarDetalleFacturaOCompra(tablaReferencia:String, updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).child(updates["id_pedido"] as String)
+        registroRef.keepSynced(true)
         registroRef.updateChildren(updates)
     }
 
     fun eliminarFacturaOCompra(tablaReferencia: String, id_pedido: String) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).child(id_pedido)
+        registroRef.keepSynced(true)
         registroRef.removeValue()
     }
 

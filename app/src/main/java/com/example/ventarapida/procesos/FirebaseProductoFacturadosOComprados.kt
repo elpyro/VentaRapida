@@ -29,6 +29,7 @@ object FirebaseProductoFacturadosOComprados {
     ) {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
+        referencia.keepSynced(true)
 
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
@@ -45,7 +46,7 @@ object FirebaseProductoFacturadosOComprados {
 
         }
 
-         referencia.updateChildren(updates)
+         referencia.setValue(updates)
          db.close()
     }
 
@@ -59,7 +60,7 @@ object FirebaseProductoFacturadosOComprados {
     ) {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
-
+        referencia.keepSynced(true)
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
 
@@ -85,7 +86,7 @@ object FirebaseProductoFacturadosOComprados {
     fun actualizarPrecioDescuento(idPedido:String, descuento:Double){
         val database = FirebaseDatabase.getInstance()
         val refProductosFacturados = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados")
-
+        refProductosFacturados.keepSynced(true)
         val porcentajeDescuento = descuento / 100
 
 

@@ -78,7 +78,6 @@ class DetalleVentaViewModel : ViewModel() {
 
         FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados,"venta",context)
 
-
     }
 
     fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Int, cantidad:Int, nombre:String) {

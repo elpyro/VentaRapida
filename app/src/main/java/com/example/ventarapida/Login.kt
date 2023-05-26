@@ -12,6 +12,8 @@ import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseUsuarios
 import com.example.ventarapida.ui.usuarios.CrearNuevaEmpresa
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,8 +27,12 @@ import com.google.firebase.database.ValueEventListener
 class Login : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+    val RC_SIGN_IN = 123 //inicio sesion gmail
 
-    val auth = FirebaseAuth.getInstance()
+    lateinit var firebaseAuth: FirebaseAuth
+    lateinit var authStateListener: FirebaseAuth.AuthStateListener
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,11 +40,85 @@ class Login : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        iniciarSesionConGoogle(this)
         listeners()
+        autenticacionGoogle()
+
+    }
+
+    private fun autenticacionGoogle() {
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                // El usuario ha iniciado sesión
+                val nombreUsuario = user.displayName
+                val correoUsuario = user.email
+                // Realizar las acciones necesarias con el nombre y correo del usuario
+
+                verificarUsuario(correoUsuario,nombreUsuario)
+            } else {
+                // El usuario no ha iniciado sesión o ha cerrado sesión
+                // Iniciar el flujo de inicio de sesión
+                val providers = arrayListOf(
+                    AuthUI.IdpConfig.GoogleBuilder().build()
+                )
+
+                startActivityForResult(
+                    AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                    RC_SIGN_IN
+                )
+            }
+        }
+        // Registrar el listener
+        firebaseAuth.addAuthStateListener(authStateListener)
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val response = IdpResponse.fromResultIntent(data)
+            if (resultCode == RESULT_OK) {
+                // Inicio de sesión exitoso
+                val user = FirebaseAuth.getInstance().currentUser
+                val nombreUsuario = user?.displayName
+                val correoUsuario = user?.email
+
+                verificarUsuario( correoUsuario,nombreUsuario)
+            } else {
+                Toast.makeText(this,"Error en inicio de sesion Google",Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun verificarUsuario(correoUsuario: String?, nombreUsuario: String?) {
+
+        MainActivity.datosUsuario = ModeloUsuario()
+        FirebaseUsuarios.buscarUsuariosPorCorreo(correoUsuario!!)
+            .addOnSuccessListener { usuario ->
+                if (usuario.size > 0) {
+                    usuarioRegistrado(usuario)
+                } else {
+                    binding.LinearLayoutBienvenido.visibility= View.GONE
+                    binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
+                    // USUARIO NO REGISTRADO
+                    Toast.makeText(this, "${nombreUsuario}, No registrado", Toast.LENGTH_LONG).show()
+                    binding.textViewCorreo.text = correoUsuario
+                    binding.textViewNombre.text = nombreUsuario
+                }
+
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "${nombreUsuario}, Error iniciando", Toast.LENGTH_LONG).show()
+            }
+
+
+    }
 
     private fun listeners() {
         binding.buttonRegistrarUsuario.setOnClickListener {
@@ -49,73 +129,25 @@ class Login : AppCompatActivity() {
             finish()
         }
         binding.buttonCerrarSesion.setOnClickListener {
-            MainActivity.auth.signOut()
-            MainActivity.googleSignInClient.signOut().addOnCompleteListener(this) {
-                Toast.makeText(this, "Sesion cerrada", Toast.LENGTH_SHORT).show()
-
-                iniciarSesionConGoogle(this)
-            }
-        }
-    }
-
-
-    fun iniciarSesionConGoogle(context: Context) {
-
-        MainActivity.auth = FirebaseAuth.getInstance()
-        // Configurar las opciones de inicio de sesión de Google
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        // Construir el cliente de inicio de sesión de Google
-        MainActivity.googleSignInClient = GoogleSignIn.getClient(context, gso)
-        // Implementar el inicio de sesión de Google en respuesta a un evento de clic o botón
-
-        val signInIntent = MainActivity.googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, MainActivity.RC_SIGN_IN)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == MainActivity.RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        }
-    }
-
-    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-
-            // Autenticación exitosa, puedes obtener información del usuario a través de la cuenta de Google
-            val displayName = account?.displayName
-            val email = account?.email
-
-            MainActivity.datosUsuario = ModeloUsuario()
-            FirebaseUsuarios.buscarUsuariosPorCorreo(email!!)
-                .addOnSuccessListener { usuario ->
-                    if (usuario.size > 0) {
-                        usuarioRegistrado(usuario)
-                    } else {
-                        binding.LinearLayoutBienvenido.visibility= View.GONE
-                        binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
-                        // USUARIO NO REGISTRADO
-                        Toast.makeText(this, "${displayName}, No registrado", Toast.LENGTH_LONG).show()
-                        binding.textViewCorreo.text = email
-                        binding.textViewNombre.text = displayName
-                    }
+            AuthUI.getInstance().signOut(this)
+                .addOnCompleteListener { task: Task<Void?>? ->
+                    Toast.makeText(this, "Sesion Cerrada", Toast.LENGTH_LONG).show()
+                    val intent = Intent(this, Login::class.java)
+                    startActivity(intent)
+                    finish()
 
                 }
-                .addOnFailureListener {
-                    Toast.makeText(this, "${displayName}, Error iniciando", Toast.LENGTH_LONG).show()
-                }
-
-        } catch (e: ApiException) {
-            Toast.makeText(this, "Error al iniciar sesión con Google", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+
+
+
+
+
+
+
 
     private fun usuarioRegistrado(usuario: MutableList<ModeloUsuario>) {
         MainActivity.datosUsuario = usuario[0]
@@ -147,4 +179,10 @@ class Login : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
     }
+
+
+//    override fun onPause() {
+//        super.onPause()
+//        firebaseAuth.removeAuthStateListener(authStateListener)
+//    }
 }
