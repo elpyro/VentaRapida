@@ -17,6 +17,7 @@ import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleCompraBinding
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
@@ -207,15 +208,13 @@ class DetalleCompra : Fragment() {
                 val datosPedido= obtenerDatosPedido()
                 var listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
 
-                viewModel.subirDatos(datosPedido,listaConvertida)
+                viewModel.subirDatos(datosPedido,listaConvertida.first)
 
-                lifecycleScope.launch {
-                    val transaccionesPendientes =
-                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-                }
 
-                viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
+                FirebaseProductos.transaccionesCambiarCantidad(context, listaConvertida.second)
+
+
+                viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
 
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
@@ -229,7 +228,7 @@ class DetalleCompra : Fragment() {
 
                 val datosPedido=obtenerDatosPedido()
                 var listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
-                viewModel.abrirPDFConPreferencias(listaConvertida,datosPedido)
+                viewModel.abrirPDFConPreferencias(listaConvertida.first,datosPedido)
 
 
                 return true
@@ -269,9 +268,10 @@ class DetalleCompra : Fragment() {
     private fun convertirLista(
         compraProductosSeleccionados: MutableMap<ModeloProducto, Int>,
         datosPedido: HashMap<String, Any>
-    ): ArrayList<ModeloProductoFacturado> {
+    ):  Pair<ArrayList<ModeloProductoFacturado>, ArrayList<ModeloTransaccionSumaRestaProducto>> {
 
         val listaProductosComprados = arrayListOf<ModeloProductoFacturado>()
+        val listaDescontarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
         val idPedido = datosPedido["id_pedido"].toString()
         val horaActual = datosPedido["hora"].toString()
@@ -281,8 +281,10 @@ class DetalleCompra : Fragment() {
             //calculamos el precio descuento para tener la referencia para los reportes
             if (cantidadSeleccionada!=0){
 
+                val id_producto_pedido = UUID.randomUUID().toString()
+
                 val productoFacturado = ModeloProductoFacturado(
-                    id_producto_pedido = UUID.randomUUID().toString(),
+                    id_producto_pedido =id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = idPedido,
                     id_vendedor = "idVendedor",
@@ -297,9 +299,18 @@ class DetalleCompra : Fragment() {
                     fechaBusquedas = obtenerFechaUnix()
                 )
                 listaProductosComprados.add(productoFacturado)
+
+                val restarProducto = ModeloTransaccionSumaRestaProducto(
+                    idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
+                    idProducto = producto.id,
+                    cantidad = (-1 * cantidadSeleccionada).toString()
+                )
+
+                listaDescontarInventario.add(restarProducto)
+
             }
         }
-        return listaProductosComprados
+        return Pair(listaProductosComprados, listaDescontarInventario)
     }
 
 

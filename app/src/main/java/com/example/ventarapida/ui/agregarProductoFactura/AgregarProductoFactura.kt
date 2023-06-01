@@ -109,12 +109,6 @@ class AgregarProductoFactura : Fragment() {
 
             viewModel.subirDatos(requireContext(), modeloFactura!!)
 
-            lifecycleScope.launch {
-                val transaccionesPendientes =
-                    UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-            }
-
             MainActivity.progressDialog?.dismiss()
             Toast.makeText(requireContext(), "${productosSeleccionadosAgregar.size} Productos Agregados", Toast.LENGTH_LONG).show()
             findNavController().popBackStack()

@@ -6,14 +6,17 @@ import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.util.UUID
 
 class FacturaGuardadaViewModel : ViewModel() {
 
@@ -90,6 +93,7 @@ class FacturaGuardadaViewModel : ViewModel() {
     fun eliminarFactura(context:Context) {
 
         val arrayListProductosFacturados = ArrayList(datosProductosFacturados.value ?: emptyList())
+        val listaSumarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
         FirebaseFacturaOCompra.eliminarFacturaOCompra("Factura",datosFactura.value!!.id_pedido)
 
@@ -99,6 +103,22 @@ class FacturaGuardadaViewModel : ViewModel() {
             context,
             "compra"
         )
+
+        arrayListProductosFacturados.forEach{producto->
+            //calculamos el precio descuento para tener la referencia para los reportes
+
+            val sumarProducto = ModeloTransaccionSumaRestaProducto(
+                idTransaccion =  UUID.randomUUID().toString(),
+                idProducto = producto.id_producto,
+                cantidad = (-1 * producto.cantidad.toInt()).toString()
+            )
+
+            listaSumarInventario.add(sumarProducto)
+        }
+
+        FirebaseProductos.transaccionesCambiarCantidad(context, listaSumarInventario)
+
+
 
     }
 

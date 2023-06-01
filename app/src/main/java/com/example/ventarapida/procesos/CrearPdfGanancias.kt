@@ -43,6 +43,8 @@ class CrearPdfGanancias {
         listaProductos: ArrayList<ModeloProductoFacturado>
     ) {
 
+        //ya se ha organizado el orden en buscarProductosPorFecha
+
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
         val outputStream = FileOutputStream(file)
 

@@ -104,10 +104,6 @@ class Venta : Fragment() {
 
     private fun listeners() {
 
-//        binding?.buttonRegistrarUsuario?.setOnClickListener{
-//            Navigation.findNavController(vista).navigate(R.id.usuarioNoRegistrado)
-//        }
-
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
         }
@@ -160,8 +156,6 @@ class Venta : Fragment() {
         productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
-
-
 
             productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
                 val productosOrdenados = productos?.sortedBy { it.nombre }

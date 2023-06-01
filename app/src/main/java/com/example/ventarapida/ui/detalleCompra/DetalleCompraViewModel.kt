@@ -106,6 +106,7 @@ class DetalleCompraViewModel : ViewModel() {
         )
 
 
+
         val intent = Intent(context, VistaPDFFacturaOCompra::class.java)
         intent.putExtra("id", "enProceso")
         intent.putExtra("tablaReferencia", "Compra")

@@ -5,18 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.example.ventarapida.procesos.FirebaseProductos
 
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
-import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.util.UUID
 
 class CompraGuardadaViewModel : ViewModel() {
 
@@ -82,6 +82,7 @@ class CompraGuardadaViewModel : ViewModel() {
     fun eliminarCompra( context:Context) {
 
         val arrayListProductosFacturados = ArrayList(datosProductosComprados.value ?: emptyList())
+        val listaRestarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
         FirebaseFacturaOCompra.eliminarFacturaOCompra("Compra",datosFactura.value!!.id_pedido)
 
@@ -91,6 +92,19 @@ class CompraGuardadaViewModel : ViewModel() {
             context,
             "venta"
         )
+
+        arrayListProductosFacturados.forEach{producto->
+            //calculamos el precio descuento para tener la referencia para los reportes
+
+                val restarProducto = ModeloTransaccionSumaRestaProducto(
+                    idTransaccion =  UUID.randomUUID().toString(),  //la transaccion tiene el mismo id
+                    idProducto = producto.id_producto,
+                    cantidad = producto.cantidad
+                )
+                listaRestarInventario.add(restarProducto)
+            }
+
+        FirebaseProductos.transaccionesCambiarCantidad(context, listaRestarInventario)
     }
 
 

@@ -117,9 +117,8 @@ class PromtFacturaGuardada() {
                             Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
                         }
 
-                    val transaccionesPendientes =
-                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+
+
 
 
 

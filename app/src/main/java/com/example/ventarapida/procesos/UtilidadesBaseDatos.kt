@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteDatabase
 import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
-import com.google.android.gms.tasks.Task
-import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 object UtilidadesBaseDatos {
@@ -66,7 +64,7 @@ object UtilidadesBaseDatos {
         if (modeloProductoFacturado.cantidad.toInt() != 0) {
             val sumarORestar = modeloProductoFacturado.cantidad.toInt() * multiplicador
 
-            val idTransaccion = UUID.randomUUID().toString()
+            val idTransaccion = modeloProductoFacturado.id_producto_pedido
             val values = ContentValues().apply {
                 put("idTransaccion", idTransaccion)
                 put("idProducto", modeloProductoFacturado.id_producto)
@@ -79,10 +77,12 @@ object UtilidadesBaseDatos {
     }
 
     fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, productoFacturado:ModeloProductoFacturado) {
-        val dbHelper = MyDatabaseHelper(context!!)
+        val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
         var multiplicador = 1
         if (tipo == "compra") multiplicador = -1
+
+        val listaEditarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
         if (diferenciaCantidad != 0) {
             val sumarORestar = diferenciaCantidad * multiplicador
@@ -93,8 +93,21 @@ object UtilidadesBaseDatos {
                 put("idProducto", productoFacturado.id_producto)
                 put("cantidad", sumarORestar.toString())
             }
+
             // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
             db.insert("transaccionesSumaRestaProductos", null, values)
+
+
+            val sumarProducto = ModeloTransaccionSumaRestaProducto(
+                idTransaccion = idTransaccion,
+                idProducto =productoFacturado.id_producto,
+                cantidad = sumarORestar.toString()
+            )
+
+            listaEditarInventario.add(sumarProducto)
+
+            //ejecutamos la transaccion
+            FirebaseProductos.transaccionesCambiarCantidad(context, listaEditarInventario)
         }
     }
 

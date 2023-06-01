@@ -10,6 +10,7 @@ import com.example.ventarapida.datos.ModeloFactura
 
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.*
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
@@ -129,6 +130,7 @@ class AgregarProductoFacturaViewModel : ViewModel() {
 
         //convertirmos los productos seleccionados en un ModeloProductoFacturado
         val listaProductosFacturados = mutableListOf<ModeloProductoFacturado>()
+        val listaDescontarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
         AgregarProductoFactura.productosSeleccionadosAgregar.forEach{ (producto, cantidadSeleccionada)->
             //calculamos el precio descuento para tener la referencia para los reportes
@@ -139,8 +141,9 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                 precioDescuento *= (1 - porcentajeDescuento)
                 precioDescuento += modeloFactura!!.envio.toDouble()
 
+                val id_producto_pedido = UUID.randomUUID().toString()
                 val productoFacturado = ModeloProductoFacturado(
-                    id_producto_pedido = UUID.randomUUID().toString(),
+                    id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = modeloFactura!!.id_pedido,
                     id_vendedor = "idVendedor",
@@ -156,10 +159,20 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     fechaBusquedas =  modeloFactura!!.fechaBusquedas
                 )
                 listaProductosFacturados.add(productoFacturado)
+
+                val restarProducto = ModeloTransaccionSumaRestaProducto(
+                    idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
+                    idProducto = producto.id,
+                    cantidad = (cantidadSeleccionada).toString()
+                )
+                listaDescontarInventario.add(restarProducto)
             }
         }
 
         FirebaseProductoFacturadosOComprados.guardarProductoFacturado("ProductosFacturados",listaProductosFacturados,"venta",context)
+
+        FirebaseProductos.transaccionesCambiarCantidad(context, listaDescontarInventario)
+
 
         }
 

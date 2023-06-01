@@ -39,6 +39,9 @@ class CrearPdfInventario {
         listaProductos: ArrayList<ModeloProducto>
     ) {
 
+        //ordenar alfabetico
+        listaProductos.sortBy { it.nombre }
+
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
         val outputStream = FileOutputStream(file)
 

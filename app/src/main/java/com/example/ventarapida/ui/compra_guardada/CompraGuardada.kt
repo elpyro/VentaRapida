@@ -216,15 +216,11 @@ class CompraGuardada : Fragment() {
             banderaElimandoFactura=true
             MainActivity.progressDialog?.show()
 
-
-
             lifecycleScope.launch {
 
                 viewModel.eliminarCompra(requireContext())
 
-                val transaccionesPendientes =
-                    UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
+
             }
 
             Toast.makeText(requireContext(),modeloFactura.nombre+"\nFactura Eliminada",Toast.LENGTH_LONG).show()

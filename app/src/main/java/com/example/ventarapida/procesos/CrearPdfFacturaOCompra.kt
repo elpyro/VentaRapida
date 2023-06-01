@@ -42,6 +42,9 @@ class CrearPdfFacturaOCompra {
         listaProductos: ArrayList<ModeloProductoFacturado>
     ) {
 
+        //ordenar alfabetico
+        listaProductos.sortBy { it.producto }
+
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
         val outputStream = FileOutputStream(file)
 

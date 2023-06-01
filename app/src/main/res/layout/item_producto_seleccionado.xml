@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_gravity="center"
-    android:foregroundGravity="center"
-    >
+    android:foregroundGravity="center">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview_itemProducto"
@@ -23,7 +22,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,7 +35,6 @@
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -102,37 +101,30 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:orientation="horizontal">
-
 
                     <TextView
                         android:id="@+id/Textview_seleccion"
                         style="@style/ColorFuenteEnFondoGris"
-                        android:layout_width="50dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:gravity="center"
+                        android:gravity="right"
                         android:inputType="number"
                         android:hint="@string/seleccion" />
-
 
                     <TextView
                         style="@style/ColorFuenteEnFondoGris"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:text="X" />
-
+                        android:text=" X " />
 
                     <TextView
                         android:id="@+id/Textview_precio"
                         style="@style/ColorFuenteEnFondoGris"
-                        android:layout_width="100dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:layout_weight="1"
                         android:gravity="center"
                         android:inputType="number"
                         android:hint="@string/precio" />
@@ -141,18 +133,14 @@
                         style="@style/ColorFuenteEnFondoGris"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:text="=" />
+                        android:text=" = " />
 
                     <TextView
                         android:id="@+id/textView_total_productucto"
                         style="@style/ColorFuenteEnFondoGris"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="1dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
                         android:maxLines="1"
                         android:autoSizeTextType="uniform"
                         android:textSize="20sp"
@@ -160,11 +148,9 @@
 
                 </LinearLayout>
 
+
+
             </LinearLayout>
-
-
-
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

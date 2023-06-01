@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -23,6 +24,7 @@ import com.example.ventarapida.databinding.FragmentDetalleVentaBinding
 import com.example.ventarapida.datos.ModeloClientes
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
@@ -32,7 +34,6 @@ import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
-import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
@@ -228,18 +229,15 @@ class DetalleVenta : Fragment() {
                 MainActivity.progressDialog?.show()
 
                 val datosPedido= obtenerDatosPedido()
-                val listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
 
-                viewModel.subirDatos(datosPedido ,listaConvertida )
+                //devolver los registros a subir a firebase, y la lista de productos a descontar de los inventarios
+                val listasConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
 
-                lifecycleScope.launch {
-                    val transaccionesPendientes =
-                        UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
-                    FirebaseProductos.transaccionesCambiarCantidad(context, transaccionesPendientes)
-                }
+                viewModel.subirDatos(datosPedido ,listasConvertida.first )
 
+                FirebaseProductos.transaccionesCambiarCantidad(context, listasConvertida.second)
 
-                viewModel.abrirPDFConPreferencias(listaConvertida, datosPedido)
+                viewModel.abrirPDFConPreferencias(listasConvertida.first, datosPedido)
 
                 viewModel.limpiar(requireContext())
                 limpiar=true
@@ -256,7 +254,7 @@ class DetalleVenta : Fragment() {
 
                 val datosPedido=obtenerDatosPedido()
                 val listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
-                viewModel.abrirPDFConPreferencias(listaConvertida,datosPedido)
+                viewModel.abrirPDFConPreferencias(listaConvertida.first,datosPedido)
 
                 return true
             }
@@ -296,27 +294,28 @@ class DetalleVenta : Fragment() {
     private fun convertirLista(
         ventaProductosSeleccionados: MutableMap<ModeloProducto, Int>,
         datosPedido: HashMap<String, Any>
-    ): ArrayList<ModeloProductoFacturado> {
+    ): Pair<ArrayList<ModeloProductoFacturado>, ArrayList<ModeloTransaccionSumaRestaProducto>> {
 
         val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
+        val listaDescontarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
         val idPedido = datosPedido["id_pedido"].toString()
         val horaActual = datosPedido["hora"].toString()
         val fechaActual = datosPedido["fecha"].toString()
         val descuento = datosPedido["descuento"].toString().toInt()
-        val envio=datosPedido["envio"].toString().toInt()
+        val envio = datosPedido["envio"].toString().toInt()
 
-        ventaProductosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
-            //calculamos el precio descuento para tener la referencia para los reportes
-            if (cantidadSeleccionada!=0){
+        ventaProductosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
+            if (cantidadSeleccionada != 0) {
 
                 val porcentajeDescuento = descuento.toDouble() / 100
-                var precioDescuento:Double=producto.p_diamante.toDouble()
+                var precioDescuento: Double = producto.p_diamante.toDouble()
                 precioDescuento *= (1 - porcentajeDescuento)
 
+                val id_producto_pedido = UUID.randomUUID().toString()
 
                 val productoFacturado = ModeloProductoFacturado(
-                    id_producto_pedido = UUID.randomUUID().toString(),
+                    id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = idPedido,
                     id_vendedor = "idVendedor",
@@ -327,14 +326,23 @@ class DetalleVenta : Fragment() {
                     venta = producto.p_diamante,
                     precioDescuentos = precioDescuento.toString(),
                     fecha = fechaActual,
-                    hora =horaActual,
-                    imagenUrl =producto.url,
+                    hora = horaActual,
+                    imagenUrl = producto.url,
                     fechaBusquedas = obtenerFechaUnix()
                 )
                 listaProductosFacturados.add(productoFacturado)
+
+                val restarProducto = ModeloTransaccionSumaRestaProducto(
+                    idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
+                    idProducto = producto.id,
+                    cantidad = (cantidadSeleccionada).toString()
+                )
+
+                listaDescontarInventario.add(restarProducto)
             }
         }
-        return listaProductosFacturados
+
+        return Pair(listaProductosFacturados, listaDescontarInventario)
     }
 
 
@@ -386,6 +394,7 @@ class DetalleVenta : Fragment() {
         val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
         val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
         val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
+        val imageView_foto= dialogView.findViewById<ImageView>(R.id.imageView_foto)
 
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto.setSelectAllOnFocus(true)

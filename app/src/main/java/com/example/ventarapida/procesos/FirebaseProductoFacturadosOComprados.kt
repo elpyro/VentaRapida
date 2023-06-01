@@ -42,11 +42,13 @@ object FirebaseProductoFacturadosOComprados {
             updates[idProductoPedido] = update
 
             //creamos una transccion de para restarlos luego a la cantidad de productos
-            if(tipo!="edicion")  crearTransaccionBD(producto, tipo, db)
+            if(tipo!="edicion") {
+                crearTransaccionBD(producto, tipo, db)
+            }
 
         }
 
-         referencia.setValue(updates)
+         referencia.updateChildren(updates)
          db.close()
     }
 
