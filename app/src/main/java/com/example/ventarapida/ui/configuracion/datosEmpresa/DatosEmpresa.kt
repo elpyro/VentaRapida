@@ -87,58 +87,8 @@ class DatosEmpresa : Fragment() {
 
 
             R.id.action_guardar ->{
-                ocultarTeclado(requireContext(),vista)
-                val empresaID =MainActivity.datosEmpresa.id
 
-                val updates = hashMapOf(
-                    "id" to empresaID,
-                    "nombre" to binding?.editTextEmpresa?.text.toString(),
-                    "documento" to binding?.editTextId?.text.toString(),
-                    "pagina" to binding?.editTextPagina?.text.toString(),
-                    "correo" to binding?.editTextCorreo?.text.toString(),
-                    "telefono1" to binding?.editTextTelefono1?.text.toString(),
-                    "telefono2" to binding?.editTextTelefono2?.text.toString(),
-                    "direccion" to binding?.editTextDireccion?.text.toString(),
-                    "garantia" to binding?.editTextGarantia?.text.toString(),
-                )
-
-                lifecycleScope.launch {
-                    guardarImagen(empresaID)
-                }
-
-                guardarDatosEmpresa(updates)
-                        //actualizamos los datos actuales
-                    .addOnSuccessListener {
-                        val empresa = ModeloDatosEmpresa(
-                            id = empresaID,
-                            nombre = binding?.editTextEmpresa?.text.toString(),
-                            documento = binding?.editTextId?.text.toString(),
-                            pagina = binding?.editTextPagina?.text.toString(),
-                            correo = binding?.editTextCorreo?.text.toString(),
-                            telefono1 = binding?.editTextTelefono1?.text.toString(),
-                            telefono2 = binding?.editTextTelefono2?.text.toString(),
-                            direccion = binding?.editTextDireccion?.text.toString(),
-                            garantia = binding?.editTextGarantia?.text.toString()
-                        )
-                        MainActivity.datosEmpresa=empresa
-
-                        MainActivity.editText_nombreEmpresa.text = MainActivity.datosEmpresa.nombre
-
-                        if (!MainActivity.datosEmpresa.url.isEmpty()){
-                            Picasso.get().load(MainActivity.datosEmpresa.url).into(MainActivity.logotipo)
-                            MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
-                        }
-
-                        Toast.makeText(requireContext(),"Datos Actualizados",Toast.LENGTH_LONG).show()
-
-
-                        findNavController().popBackStack()
-                    }
-
-
-
-
-
+                guardarDatos()
 
                 return true
             }
@@ -150,6 +100,60 @@ class DatosEmpresa : Fragment() {
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun guardarDatos() {
+        ocultarTeclado(requireContext(),vista)
+        val empresaID =MainActivity.datosEmpresa.id
+
+        val updates = hashMapOf(
+            "id" to empresaID,
+            "nombre" to binding?.editTextEmpresa?.text.toString(),
+            "documento" to binding?.editTextId?.text.toString(),
+            "pagina" to binding?.editTextPagina?.text.toString(),
+            "correo" to binding?.editTextCorreo?.text.toString(),
+            "telefono1" to binding?.editTextTelefono1?.text.toString(),
+            "telefono2" to binding?.editTextTelefono2?.text.toString(),
+            "direccion" to binding?.editTextDireccion?.text.toString(),
+            "garantia" to binding?.editTextGarantia?.text.toString(),
+        )
+
+        lifecycleScope.launch {
+            guardarImagen(empresaID)
+        }
+
+        guardarDatosEmpresa(updates)
+            //actualizamos los datos actuales
+            .addOnSuccessListener {
+                val empresa = ModeloDatosEmpresa(
+                    id = empresaID,
+                    nombre = binding?.editTextEmpresa?.text.toString(),
+                    documento = binding?.editTextId?.text.toString(),
+                    pagina = binding?.editTextPagina?.text.toString(),
+                    correo = binding?.editTextCorreo?.text.toString(),
+                    telefono1 = binding?.editTextTelefono1?.text.toString(),
+                    telefono2 = binding?.editTextTelefono2?.text.toString(),
+                    direccion = binding?.editTextDireccion?.text.toString(),
+                    garantia = binding?.editTextGarantia?.text.toString()
+                )
+                MainActivity.datosEmpresa=empresa
+
+                MainActivity.editText_nombreEmpresa.text = MainActivity.datosEmpresa.nombre
+
+                if (!MainActivity.datosEmpresa.url.isEmpty()){
+                    Picasso.get().load(MainActivity.datosEmpresa.url).into(MainActivity.logotipo)
+                    MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
+                }
+
+                Toast.makeText(requireContext(),"Datos Actualizados",Toast.LENGTH_LONG).show()
+
+
+                findNavController().popBackStack()
+            }
+
+
+
+
     }
 
     private fun guardarImagen(empresaID:String) {

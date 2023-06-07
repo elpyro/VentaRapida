@@ -2,16 +2,13 @@ package com.example.ventarapida
 
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -22,16 +19,9 @@ import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseProductos
-import com.example.ventarapida.procesos.FirebaseUsuarios.buscarUsuariosPorCorreo
 import com.example.ventarapida.procesos.Preferencias
-import com.example.ventarapida.procesos.PermissionManager
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
@@ -40,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
-        const val RC_SIGN_IN = 123 //inicio sesion gmail
+
         var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
         var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
 
@@ -48,8 +38,7 @@ class MainActivity : AppCompatActivity() {
         var tono = true
         var datosEmpresa: ModeloDatosEmpresa = ModeloDatosEmpresa()
         var datosUsuario: ModeloUsuario = ModeloUsuario()
-        lateinit var googleSignInClient: GoogleSignInClient
-        lateinit var auth: FirebaseAuth
+
         lateinit var logotipo: ImageView
         lateinit var editText_nombreEmpresa: TextView
         lateinit var preferencia_informacion_superior:String
@@ -90,10 +79,10 @@ class MainActivity : AppCompatActivity() {
         logotipo = navHeader.findViewById<ImageView>(R.id.imageView)
         editText_nombreEmpresa=navHeader.findViewById<TextView>(R.id.textView_nombreEmpresa)
 
-        MainActivity.editText_nombreEmpresa.text = datosEmpresa.nombre
+        editText_nombreEmpresa.text = datosEmpresa.nombre
         if (!datosEmpresa.url.isEmpty()){
-            Picasso.get().load(datosEmpresa.url).into(MainActivity.logotipo)
-            MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
+            Picasso.get().load(datosEmpresa.url).into(logotipo)
+            logotipo.setImageDrawable(logotipo.drawable)
         }
 
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
@@ -125,30 +114,12 @@ class MainActivity : AppCompatActivity() {
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
         FirebaseProductos.transaccionesCambiarCantidad(this, transaccionesPendientes)
 
-
     }
-
-
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
 
-//        // Obtener referencia al grupo de menú para administradores
-//        val grupoAdministrador = menu.findItem(R.id.panel_administrador)
-//
-//        // Obtener referencia al grupo de menú para vendedores
-//        val grupoVendedor = menu.findItem(R.id.panel_vendedor)
-//
-//        // Verificar el perfil del usuario y mostrar/ocultar los grupos de menú apropiados
-//        if (datosUsuario.perfil == "Administrador") {
-//            grupoAdministrador.isVisible = true
-//            grupoVendedor.isVisible = false
-//        } else if (datosUsuario.perfil == "Vendedor") {
-//            grupoAdministrador.isVisible = false
-//            grupoVendedor.isVisible = true
-//        }
         return true
     }
 

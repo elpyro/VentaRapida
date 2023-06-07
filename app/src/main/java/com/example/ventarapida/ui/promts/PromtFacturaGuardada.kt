@@ -101,30 +101,19 @@ class PromtFacturaGuardada() {
 
                         editarProductoTransaccion(context,tipo,diferenciaCantidad,productoFacturado)
 
-
                     }
                 }
-
-
-                        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
-                        listaProductosFacturados.add(item)
-                        if(nuevaCantidad.toInt()!=0){
-                            //si es edicion no crea aqui la cola de transaccion
-                            FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados,"edicion",context)
-
-                        }else{
-                            FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados,context,tipo)
-                            Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
-                        }
-
-
-
-
-
-
-
             }
+            val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
+            listaProductosFacturados.add(item)
+            if(nuevaCantidad.toInt()!=0){
+                //si es edicion no crea aqui la cola de transaccion
+                FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados,"edicion",context)
 
+            }else{
+                FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados,context,tipo)
+                Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
+            }
 
 
 
