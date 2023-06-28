@@ -11,6 +11,7 @@ import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseUsuarios
+import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.ui.usuarios.CrearNuevaEmpresa
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -104,12 +105,24 @@ class Login : AppCompatActivity() {
                 if (usuario.size > 0) {
                     usuarioRegistrado(usuario)
                 } else {
-                    binding.LinearLayoutBienvenido.visibility= View.GONE
-                    binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
-                    // USUARIO NO REGISTRADO
-                    Toast.makeText(this, "${nombreUsuario}, No registrado", Toast.LENGTH_LONG).show()
-                    binding.textViewCorreo.text = correoUsuario
-                    binding.textViewNombre.text = nombreUsuario
+                    //hacemos una segunda consulta para asegurar que los datos sean persistentes
+                    esperarUnSegundo()
+                    esperarUnSegundo()
+                    FirebaseUsuarios.buscarUsuariosPorCorreo(correoUsuario!!)
+                        .addOnSuccessListener { usuario ->
+                            if (usuario.size > 0) {
+                                usuarioRegistrado(usuario)
+                            } else {
+                                binding.LinearLayoutBienvenido.visibility= View.GONE
+                                binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
+                                // USUARIO NO REGISTRADO
+                                Toast.makeText(this, "${nombreUsuario}, No registrado", Toast.LENGTH_LONG).show()
+                                binding.textViewCorreo.text = correoUsuario
+                                binding.textViewNombre.text = nombreUsuario
+                            }
+                        }
+
+
                 }
 
             }
@@ -173,11 +186,6 @@ class Login : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
-        Toast.makeText(
-            this,
-            "Bienvenido ${MainActivity.datosUsuario.nombre}",
-            Toast.LENGTH_LONG
-        ).show()
     }
 
 

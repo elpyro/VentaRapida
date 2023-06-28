@@ -97,6 +97,7 @@ class FacturaGuardadaViewModel : ViewModel() {
 
         FirebaseFacturaOCompra.eliminarFacturaOCompra("Factura",datosFactura.value!!.id_pedido)
 
+        //se marca como compra para que sume al inventario
         FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(
             "ProductosFacturados",
             arrayListProductosFacturados,
@@ -110,7 +111,8 @@ class FacturaGuardadaViewModel : ViewModel() {
             val sumarProducto = ModeloTransaccionSumaRestaProducto(
                 idTransaccion =  UUID.randomUUID().toString(),
                 idProducto = producto.id_producto,
-                cantidad = (-1 * producto.cantidad.toInt()).toString()
+                cantidad = (-1 * producto.cantidad.toInt()).toString(),
+                subido ="false"
             )
 
             listaSumarInventario.add(sumarProducto)

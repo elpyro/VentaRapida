@@ -86,6 +86,7 @@ class CompraGuardadaViewModel : ViewModel() {
 
         FirebaseFacturaOCompra.eliminarFacturaOCompra("Compra",datosFactura.value!!.id_pedido)
 
+        //se marca como venta para que reste al inventario y guarda la transaccion en la base de datos
         FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(
             "ProductosComprados",
             arrayListProductosFacturados,
@@ -97,13 +98,15 @@ class CompraGuardadaViewModel : ViewModel() {
             //calculamos el precio descuento para tener la referencia para los reportes
 
                 val restarProducto = ModeloTransaccionSumaRestaProducto(
-                    idTransaccion =  UUID.randomUUID().toString(),  //la transaccion tiene el mismo id
+                    idTransaccion =  datosFactura.value!!.id_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id_producto,
-                    cantidad = producto.cantidad
+                    cantidad = producto.cantidad,
+                    subido ="false"
                 )
                 listaRestarInventario.add(restarProducto)
             }
 
+        //ejecuta la transaccion y borra las que hay en la base de datos  si se ejecuta
         FirebaseProductos.transaccionesCambiarCantidad(context, listaRestarInventario)
     }
 

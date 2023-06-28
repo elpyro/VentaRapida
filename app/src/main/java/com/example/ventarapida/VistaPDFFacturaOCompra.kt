@@ -144,10 +144,15 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
         listaProductos2: ArrayList<ModeloProductoFacturado>?
     ) {
 
-        val crearPdf = CrearPdfFacturaOCompra()
-        crearPdf.facturaOCompra(this, datosFactura, tablaReferencia!!, listaProductos2!!)
+        try {
+            val crearPdf = CrearPdfFacturaOCompra()
+            crearPdf.facturaOCompra(this, datosFactura, tablaReferencia!!, listaProductos2!!)
 
-        visualizarPDF()
+            visualizarPDF()
+        }catch (e: Exception ){
+            Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     private fun cargarDesdeFirebase(id: String?, tablaReferencia: String?) {
@@ -168,12 +173,14 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
             }
 
             tareaProductos.addOnSuccessListener { listaProductos->
-
+            try{
                 val crearPdf=CrearPdfFacturaOCompra()
                 crearPdf.facturaOCompra(this, factura!!, tablaReferencia,listaProductos as ArrayList<ModeloProductoFacturado>)
 
                 visualizarPDF()
-
+            }catch (e: Exception ){
+            Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
+        }
             }
 
         }

@@ -96,17 +96,16 @@ class Compra : Fragment() {
         viewModel.context = requireContext()
 
         observadores()
-
+        actualizarLista()
         listeners()
         viewModel.calcularTotal()
-
-
 
     }
 
     private fun listeners() {
-
-
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
+            actualizarLista()
+        }
 
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
@@ -161,6 +160,10 @@ class Compra : Fragment() {
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
 
+
+    }
+
+    fun actualizarLista(){
         viewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
             val productosOrdenados = productos.sortedBy { it.nombre }
@@ -179,6 +182,7 @@ class Compra : Fragment() {
             if(busqueda!=""){
                 filtro(busqueda)
             }
+            binding?.swipeRefreshLayout?.isRefreshing=false
         }
     }
 
@@ -214,14 +218,14 @@ class Compra : Fragment() {
             val query = results?.get(0)
             if (query != null) {
                 //Separamos los ultimos numeros de el string obtenido por voz
-                // para saber si hay un numero y agregar el numero a la seleccion del producto
-                val numerosSeparados= Utilidades.separarNumerosDelString(query.trim())
-
-                if (numerosSeparados.second!=null){
-                    cantidadPorVoz= numerosSeparados.second!!.toInt()
-                }
+//                // para saber si hay un numero y agregar el numero a la seleccion del producto
+//                val numerosSeparados= Utilidades.separarNumerosDelString(query.trim())
+//
+//                if (numerosSeparados.second!=null){
+//                    cantidadPorVoz= numerosSeparados.second!!.toInt()
+//                }
                 binding?.searchViewProductosVenta?.isIconified=false
-                binding?.searchViewProductosVenta?.setQuery(numerosSeparados.first.trim(), true)
+                binding?.searchViewProductosVenta?.setQuery(query, true)
             }
 
         }
@@ -238,10 +242,10 @@ class Compra : Fragment() {
         val adaptador = productosOrdenados?.let { CompraAdaptador(it,viewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
-        if (productosOrdenados?.size==1 && cantidadPorVoz!=0){
-            viewModel.actualizarCantidadProducto(productosOrdenados[0], cantidadPorVoz)
-            cantidadPorVoz=0
-        }
+//        if (productosOrdenados?.size==1 && cantidadPorVoz!=0){
+//            viewModel.actualizarCantidadProducto(productosOrdenados[0], cantidadPorVoz)
+//            cantidadPorVoz=0
+//        }
 
         adaptador!!.setOnLongClickItem { item, position ->
             val bundle = Bundle()

@@ -1,6 +1,7 @@
 package com.example.ventarapida.ui.detalleVenta
 
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
@@ -17,6 +18,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.Login
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.example.ventarapida.R
@@ -220,31 +222,21 @@ class DetalleVenta : Fragment() {
 
             R.id.action_confirmar_venta ->{
                 ocultarTeclado(requireContext(),vista)
+                //validando
+                //evalua si la sesion esta activa
+                if( MainActivity.datosUsuario.id.isNullOrEmpty()){
+                    requireActivity().finish()
+                    val intent = Intent(requireContext(), Login::class.java)
+                    startActivity(intent)
+                    return true
+                }
 
                 if(ventaProductosSeleccionados.size<1){
                     Toast.makeText(context,"No hay productos seleccionados",Toast.LENGTH_LONG).show()
                     return true
                 }
 
-                MainActivity.progressDialog?.show()
-
-                val datosPedido= obtenerDatosPedido()
-
-                //devolver los registros a subir a firebase, y la lista de productos a descontar de los inventarios
-                val listasConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
-
-                viewModel.subirDatos(datosPedido ,listasConvertida.first )
-
-                FirebaseProductos.transaccionesCambiarCantidad(context, listasConvertida.second)
-
-                viewModel.abrirPDFConPreferencias(listasConvertida.first, datosPedido)
-
-                viewModel.limpiar(requireContext())
-                limpiar=true
-
-
-
-                findNavController().popBackStack()
+                crearFacturaVenta()
 
 
                 return true
@@ -261,6 +253,26 @@ class DetalleVenta : Fragment() {
 
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun crearFacturaVenta() {
+        MainActivity.progressDialog?.show()
+
+        val datosPedido= obtenerDatosPedido()
+
+        //devolver los registros a subir a firebase, y la lista de productos a descontar de los inventarios
+        val listasConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
+
+        viewModel.subirDatos(datosPedido ,listasConvertida.first )
+
+        FirebaseProductos.transaccionesCambiarCantidad(context, listasConvertida.second)
+
+        viewModel.abrirPDFConPreferencias(listasConvertida.first, datosPedido)
+
+        viewModel.limpiar(requireContext())
+        limpiar=true
+
+        findNavController().popBackStack()
     }
 
     private fun obtenerDatosPedido(): HashMap<String, Any> {
@@ -318,8 +330,8 @@ class DetalleVenta : Fragment() {
                     id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = idPedido,
-                    id_vendedor = "idVendedor",
-                    vendedor = "Nombre vendedor",
+                    id_vendedor = MainActivity.datosUsuario.id,
+                    vendedor = MainActivity.datosUsuario.nombre,
                     producto = producto.nombre,
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,
@@ -335,7 +347,8 @@ class DetalleVenta : Fragment() {
                 val restarProducto = ModeloTransaccionSumaRestaProducto(
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
-                    cantidad = (cantidadSeleccionada).toString()
+                    cantidad = (cantidadSeleccionada).toString(),
+                    subido ="false"
                 )
 
                 listaDescontarInventario.add(restarProducto)

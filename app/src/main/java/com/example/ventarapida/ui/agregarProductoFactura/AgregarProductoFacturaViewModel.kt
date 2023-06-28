@@ -146,8 +146,8 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = modeloFactura!!.id_pedido,
-                    id_vendedor = "idVendedor",
-                    vendedor = "Nombre vendedor",
+                    id_vendedor = MainActivity.datosUsuario.id,
+                    vendedor = MainActivity.datosUsuario.nombre,
                     producto = producto.nombre,
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,
@@ -163,7 +163,8 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                 val restarProducto = ModeloTransaccionSumaRestaProducto(
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
-                    cantidad = (cantidadSeleccionada).toString()
+                    cantidad = (cantidadSeleccionada).toString(),
+                    subido ="false"
                 )
                 listaDescontarInventario.add(restarProducto)
             }

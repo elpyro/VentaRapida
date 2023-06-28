@@ -7,79 +7,92 @@
     android:background="@drawable/fondo"
     tools:context=".ui.usuarios.DetalleSesion">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/Textview_nombre_usuario"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre de Usuario"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_marginBottom="16dp" />
+            android:orientation="vertical" >
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="4dp"
-            app:cardUseCompatPadding="true"
-            app:cardBackgroundColor="@color/azul_trasparente">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="vertical">
-
-
-                <TextView
-                    android:id="@+id/textView_correo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/ColorFuenteEnFondoGris"
-                    android:textSize="16sp"
-                    android:layout_margin="8dp"
-                    android:text="@string/correo" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/textView_empresa"
+                    android:id="@+id/Textview_nombre_usuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/ColorFuenteEnFondoGris"
-                    android:textSize="16sp"
-                    android:layout_margin="8dp"
-                    android:text="@string/empresa" />
-                <TextView
-                    android:id="@+id/textView_perfil"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:text="Nombre de Usuario"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/ColorFuenteEnFondoGris"
-                    android:textSize="16sp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    app:cardBackgroundColor="@color/azul_trasparente"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="4dp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            android:id="@+id/textView_correo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:text="@string/correo"
+                            android:textSize="16sp"
+                            android:theme="@style/ColorFuenteEnFondoGris" />
+
+                        <TextView
+                            android:id="@+id/textView_empresa"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:text="@string/empresa"
+                            android:textSize="16sp"
+                            android:theme="@style/ColorFuenteEnFondoGris" />
+
+                        <TextView
+                            android:id="@+id/textView_perfil"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:text="@string/perfil"
+                            android:textSize="16sp"
+                            android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    </LinearLayout>
+
+
+                </androidx.cardview.widget.CardView>
+
+                <Button
+                    android:id="@+id/buttonRegister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="8dp"
-                    android:text="@string/perfil" />
+                    android:background="@drawable/bordes_boton"
+                    android:text="@string/cerrar_session" />
 
             </LinearLayout>
-
-
-        </androidx.cardview.widget.CardView>
-
-        <Button
-            android:id="@+id/buttonRegister"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bordes_boton"
-            android:layout_margin="8dp"
-            android:text="@string/cerrar_session" />
-
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

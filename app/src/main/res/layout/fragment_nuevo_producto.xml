@@ -29,6 +29,7 @@
                 android:layout_margin="4dp"
                 android:background="@drawable/edittext_background"
                 android:gravity="center"
+                android:inputType="textCapSentences"
                 android:hint="@string/producto"
                 android:textColor="@color/black"
                 android:textSize="16sp" />

@@ -17,7 +17,7 @@ import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 
 class ListaCompras : Fragment() {
-    private lateinit var viewModel: ListaComprasViewModel
+
     private var binding: FragmentFacturaVentasBinding? = null
     private lateinit var vista:View
 
@@ -34,6 +34,13 @@ class ListaCompras : Fragment() {
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
 
+
+        listeners()
+        cargarLista()
+        return binding!!.root
+    }
+
+    private fun cargarLista() {
         val tareaFacturas = FirebaseFacturaOCompra.buscarFacturasOCompra("Compra")
 
         tareaFacturas.addOnSuccessListener { facturas ->
@@ -45,11 +52,9 @@ class ListaCompras : Fragment() {
             adaptador!!.setOnClickItem() { item ->
                 abriDetalle(item)
             }
+            binding?.swipeRefreshLayout?.isRefreshing=false
         }
 
-        listeners()
-
-        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,7 +62,9 @@ class ListaCompras : Fragment() {
         vista= view
     }
     private fun listeners() {
-
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
+           cargarLista()
+        }
         binding?.recyclerViewFacturaVentas?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

@@ -56,6 +56,18 @@
                         android:minHeight="48dp"
                         android:textSize="20sp" />
 
+
+                    <Spinner
+                        android:visibility="gone"
+                        android:id="@+id/spinner_vendedor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/edittext_background"
+                        android:entries="@array/reportes"
+                        android:minHeight="48dp"
+                        android:textSize="20sp" />
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

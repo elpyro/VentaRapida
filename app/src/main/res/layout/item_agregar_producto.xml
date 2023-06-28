@@ -66,14 +66,12 @@
                         android:autoSizeTextType="uniform"
                         android:layout_weight="0"/>
 
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_weight="1"/>
+
                     <ImageButton
                         android:id="@+id/imageButton_restarCantidad"
+                        android:layout_margin="4dp"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="30dp"
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="right"
                         android:background="@drawable/barrainferior"

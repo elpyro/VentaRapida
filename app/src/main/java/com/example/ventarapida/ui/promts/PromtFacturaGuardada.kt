@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra.guardarDetalleFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
@@ -89,8 +90,8 @@ class PromtFacturaGuardada() {
                         val productoFacturado = ModeloProductoFacturado(
                             id_producto_pedido = UUID.randomUUID().toString(),
                             id_producto = producto.id,
-                            id_vendedor = "idVendedor",
-                            vendedor = "Nombre vendedor",
+                            id_vendedor = MainActivity.datosUsuario.id,
+                            vendedor = MainActivity.datosUsuario.nombre,
                             producto = producto.nombre,
                             cantidad = cantidadSeleccionada.toString(),
                             costo = producto.p_compra,

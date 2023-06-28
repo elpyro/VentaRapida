@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -85,18 +86,23 @@ class MainActivity : AppCompatActivity() {
             logotipo.setImageDrawable(logotipo.drawable)
         }
 
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        if (datosEmpresa.premiun.equals("true")){
+            appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
+            setupActionBarWithNavController(navController, appBarConfiguration)
+            navView.setupWithNavController(navController)
 
-        if(datosUsuario.perfil=="Administrador"){
-            navView.getMenu()
-                .setGroupVisible(R.id.panel_administrador, true)
-        }
+            if(datosUsuario.perfil=="Administrador"){
+                navView.getMenu()
+                    .setGroupVisible(R.id.panel_administrador, true)
+            }
 
-        if(datosUsuario.perfil=="Vendedor"){
-            navView.getMenu()
-                .setGroupVisible(R.id.panel_vendedor, true)
+            if(datosUsuario.perfil=="Vendedor"){
+                navView.getMenu()
+                    .setGroupVisible(R.id.panel_vendedor, true)
+            }
+
+        }else{
+            Toast.makeText(this, "Pasate a Premium",Toast.LENGTH_LONG).show()
         }
 
 
@@ -135,6 +141,9 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        Toast.makeText(this,"Bienvenido: " + MainActivity.datosUsuario.nombre, Toast.LENGTH_SHORT).show()
+    }
 
 }

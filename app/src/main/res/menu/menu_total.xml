@@ -7,4 +7,11 @@
         android:title=""
         android:orderInCategory="100"
         app:showAsAction="always" />
+
+    <item
+        android:visible="false"
+        android:id="@+id/action_premium"
+        android:title="Vuelvete Premiun"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
 </menu>

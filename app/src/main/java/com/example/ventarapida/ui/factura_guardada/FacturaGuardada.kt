@@ -103,8 +103,13 @@ class FacturaGuardada : Fragment() {
             binding?.recyclerViewProductosFacturados?.adapter = adaptador
             adaptador!!.setOnClickItem() { item ->
 
-                val promtEditarItem=PromtFacturaGuardada()
-                promtEditarItem.editarProducto("venta",item,requireActivity())
+                if (MainActivity.datosUsuario.perfil.equals("Vendedor")){
+                    Toast.makeText(requireContext(),"Solo los administradores pueden editar el inventarío",Toast.LENGTH_LONG).show()
+                }else{
+                    val promtEditarItem=PromtFacturaGuardada()
+                    promtEditarItem.editarProducto("venta",item,requireActivity())
+                }
+
 
             }
         }

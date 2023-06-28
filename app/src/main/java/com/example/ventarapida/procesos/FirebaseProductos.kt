@@ -6,11 +6,10 @@ import android.widget.Toast
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
-import com.example.ventarapida.procesos.UtilidadesBaseDatos.eliminarColaSubidaCantidadProducto
+import com.example.ventarapida.procesos.UtilidadesBaseDatos.eliminarColaSubida
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.*
-import java.util.concurrent.CompletableFuture
 
 
 object FirebaseProductos {
@@ -53,7 +52,7 @@ object FirebaseProductos {
                         Toast.makeText(context, "Error al actualizar la cantidad del producto", Toast.LENGTH_SHORT).show()
                     } else {
 
-                        eliminarColaSubidaCantidadProducto(context!!, idTransaccion) // eliminar registro con id
+                        eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
 
                     }
                 }

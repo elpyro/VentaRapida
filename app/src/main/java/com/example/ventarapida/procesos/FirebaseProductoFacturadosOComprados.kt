@@ -141,7 +141,8 @@ object FirebaseProductoFacturadosOComprados {
 
 
 
-    fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long): Task<List<ModeloProductoFacturado>> {
+    fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long, idVendedor:String): Task<List<ModeloProductoFacturado>> {
+
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val reference: DatabaseReference = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados")
 
@@ -164,7 +165,12 @@ object FirebaseProductoFacturadosOComprados {
                             productos.sortWith(compareBy<ModeloProductoFacturado> { it.fechaBusquedas }
                                 .thenBy { it.id_pedido })
 
-                            productos.add(elemento!!)
+                            //evalua si el producto es del vendedor especificado
+                            if(idVendedor=="false") {
+                                productos.add(elemento!!)
+                            }else if (idVendedor.equals(elemento?.id_vendedor)){
+                                productos.add(elemento!!)
+                            }
                         }
                     }
 

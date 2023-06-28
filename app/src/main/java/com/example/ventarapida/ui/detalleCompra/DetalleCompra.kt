@@ -1,6 +1,7 @@
 package com.example.ventarapida.ui.detalleCompra
 
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
@@ -12,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.Login
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleCompraBinding
@@ -197,6 +199,14 @@ class DetalleCompra : Fragment() {
             R.id.action_confirmar_venta ->{
                 Utilidades.ocultarTeclado(requireContext(), vista)
 
+                //evalua si la sesion esta activa
+                if( MainActivity.datosUsuario.id.isNullOrEmpty()){
+                    requireActivity().finish()
+                    val intent = Intent(requireContext(), Login::class.java)
+                    startActivity(intent)
+                    return true
+                }
+
                 if(MainActivity.compraProductosSeleccionados.size<1){
                     Toast.makeText(context,"No hay productos seleccionados", Toast.LENGTH_LONG).show()
                     return true
@@ -287,8 +297,8 @@ class DetalleCompra : Fragment() {
                     id_producto_pedido =id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = idPedido,
-                    id_vendedor = "idVendedor",
-                    vendedor = "Nombre vendedor",
+                    id_vendedor = MainActivity.datosUsuario.id,
+                    vendedor = MainActivity.datosUsuario.nombre,
                     producto = producto.nombre,
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,
@@ -303,7 +313,8 @@ class DetalleCompra : Fragment() {
                 val restarProducto = ModeloTransaccionSumaRestaProducto(
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
-                    cantidad = (-1 * cantidadSeleccionada).toString()
+                    cantidad = (-1 * cantidadSeleccionada).toString(),
+                    subido ="false"
                 )
 
                 listaDescontarInventario.add(restarProducto)

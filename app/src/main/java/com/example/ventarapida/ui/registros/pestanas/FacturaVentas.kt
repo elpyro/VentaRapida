@@ -37,8 +37,17 @@ class FacturaVentas : Fragment() {
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
 
-        val tareaFacturas = buscarFacturasOCompra("Factura")
 
+
+
+
+        listeners()
+        cargarLista()
+        return binding!!.root
+    }
+
+    private fun cargarLista() {
+        val tareaFacturas = buscarFacturasOCompra("Factura")
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas
 
@@ -46,13 +55,10 @@ class FacturaVentas : Fragment() {
             binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
             adaptador!!.setOnClickItem() { item ->
-            abriDetalle(item)
+                abriDetalle(item)
             }
+            binding?.swipeRefreshLayout?.isRefreshing=false
         }
-
-        listeners()
-
-        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +66,9 @@ class FacturaVentas : Fragment() {
         vista= view
     }
     private fun listeners() {
-
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
+            cargarLista()
+        }
         binding?.recyclerViewFacturaVentas?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

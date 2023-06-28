@@ -8,12 +8,12 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
 
     companion object {
         private const val DATABASE_NAME = "MiBaseDatos.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         // Aquí se ejecutan las sentencias SQL para crear las tablas y definir los campos
-        db?.execSQL("CREATE TABLE IF NOT EXISTS transaccionesSumaRestaProductos(idTransaccion Text PRIMARY KEY, idProducto TEXT, cantidad Text)")
+        db?.execSQL("CREATE TABLE IF NOT EXISTS transaccionesSumaRestaProductos(idTransaccion Text , idProducto TEXT, cantidad Text, subido Text)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -21,4 +21,6 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         db?.execSQL("DROP TABLE IF EXISTS transaccionesSumaRestaProductos")
         onCreate(db)
     }
+
+
 }

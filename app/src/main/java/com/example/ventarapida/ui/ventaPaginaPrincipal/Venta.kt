@@ -12,6 +12,7 @@ import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.view.*
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +35,7 @@ class Venta : Fragment() {
     private lateinit var productViewModel: VentaViewModel
     private lateinit var vista:View
     private lateinit var menuItem: MenuItem
+    private lateinit var menuPremium: MenuItem
     private var lista: ArrayList<ModeloProducto>? = null
     private var adapter: VentaAdaptador? = null
     val REQUEST_CODE_VOICE_SEARCH = 1001
@@ -49,10 +51,19 @@ class Venta : Fragment() {
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_total, menu)
+
         menuItem  = menu.findItem(R.id.action_total)
+        menuPremium  = menu.findItem(R.id.action_premium)
+
+        if(MainActivity.datosEmpresa.premiun.equals("false")){
+            menuItem.isVisible = false
+            menuPremium.isVisible = true
+        }
+
 
 
         productViewModel.totalCarritoLiveData.observe(viewLifecycleOwner){it->
+
             val title = SpannableString("Carrito: $it")
             title.setSpan(
                 AbsoluteSizeSpan(20, true), // Tamaño de texto en sp
@@ -71,6 +82,11 @@ class Venta : Fragment() {
 
             R.id.action_total ->{
                 abrirFactura()
+                return true
+            }
+            R.id.action_premium ->{
+                Toast.makeText(requireContext(),"Para Premium +57 3125866072",Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Para Premium +57 3125866072",Toast.LENGTH_LONG).show()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -94,15 +110,16 @@ class Venta : Fragment() {
         productViewModel.context = requireContext()
 
         observadores()
-
+        actualizarLista()
         listeners()
         productViewModel.calcularTotal()
-
-
 
     }
 
     private fun listeners() {
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
+            actualizarLista()
+        }
 
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
@@ -157,23 +174,28 @@ class Venta : Fragment() {
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
 
-            productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
-                val productosOrdenados = productos?.sortedBy { it.nombre }
-                adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
 
-                adapter!!.setOnLongClickItem { item, position ->
-                    abriDetalle(item,vista, position)
-                }
+    }
 
-                lista = productos as ArrayList<ModeloProducto>?
-                binding!!.recyclerViewProductosVenta.adapter = adapter
+    fun actualizarLista(){
+        productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
+            val productosOrdenados = productos?.sortedBy { it.nombre }
+            adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
 
-                //si el valor esta filtrado buscarlo
-                val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
-                if(busqueda!=""){
-                    filtro(busqueda)
-                }
+            adapter!!.setOnLongClickItem { item, position ->
+                abriDetalle(item,vista, position)
             }
+
+            lista = productos as ArrayList<ModeloProducto>?
+            binding!!.recyclerViewProductosVenta.adapter = adapter
+
+            //si el valor esta filtrado buscarlo
+            val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
+            if(busqueda!=""){
+                filtro(busqueda)
+            }
+            binding?.swipeRefreshLayout?.isRefreshing=false
+        }
 
     }
 
@@ -208,21 +230,15 @@ class Venta : Fragment() {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val query = results?.get(0)
             if (query != null) {
-                //Separamos los ultimos numeros de el string obtenido por voz
-                // para saber si hay un numero y agregar el numero a la seleccion del producto
-                val numerosSeparados= separarNumerosDelString(query.trim())
-
-                if (numerosSeparados.second!=null){
-                    cantidadPorVoz= numerosSeparados.second!!.toInt()
-                }
                 binding?.searchViewProductosVenta?.isIconified=false
-                binding?.searchViewProductosVenta?.setQuery(numerosSeparados.first.trim(), true)
+                binding?.searchViewProductosVenta?.setQuery(query, true)
             }
 
         }
     }
 
-    var cantidadPorVoz=0
+
+
     private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
@@ -230,12 +246,8 @@ class Venta : Fragment() {
         }
         val filtroOrdenado = filtro?.sortedBy { it.nombre }
         val adaptador = filtroOrdenado?.let { VentaAdaptador(it,productViewModel) }
-        binding?.recyclerViewProductosVenta?.adapter =adaptador
 
-        if (filtroOrdenado?.size==1 && cantidadPorVoz!=0){
-            productViewModel.actualizarCantidadProducto(filtroOrdenado[0], cantidadPorVoz)
-            cantidadPorVoz=0
-        }
+        binding?.recyclerViewProductosVenta?.adapter =adaptador
 
             adaptador?.setOnLongClickItem { item, position ->
             val bundle = Bundle()

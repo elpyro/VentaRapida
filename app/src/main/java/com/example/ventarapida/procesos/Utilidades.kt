@@ -28,6 +28,11 @@ object Utilidades {
             .replace(",", "")
     }
 
+    fun String.eliminarPuntos(): String {
+        return this.replace(".", "")
+    }
+
+
     fun esperarUnSegundo(){
         try {
             Thread.sleep(1000)

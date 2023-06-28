@@ -13,6 +13,8 @@ import com.example.ventarapida.MainActivity
 import com.firebase.ui.auth.AuthUI
 import com.example.ventarapida.databinding.FragmentDetalleUsuarioBinding
 import com.example.ventarapida.Login
+import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
+import com.example.ventarapida.procesos.UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos
 import com.google.android.gms.tasks.Task
 
 
@@ -61,6 +63,7 @@ class DetalleSesion : Fragment() {
 
 
     private fun cargarDatosUsario() {
+
         binding?.TextviewNombreUsuario?.text=MainActivity.datosUsuario.nombre
         binding?.textViewCorreo?.text="Correo: "+MainActivity.datosUsuario.correo
         binding?.textViewEmpresa?.text="Empresa: "+MainActivity.datosEmpresa.nombre

@@ -7,17 +7,23 @@
     android:background="@drawable/fondo"
     app:layoutDescription="@xml/fragment_home_scene">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_productosVenta"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingStart="10dp"
+        android:paddingStart="12dp"
         android:paddingTop="68dp"
         android:paddingBottom="90dp"
         tools:ignore="RtlSymmetry"
         tools:layout_editor_absoluteX="31dp"
         tools:layout_editor_absoluteY="224dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ImageView
         android:id="@+id/imageView_bannerSuperior"
