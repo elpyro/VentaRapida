@@ -2,6 +2,7 @@ package com.example.ventarapida
 
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.ImageView
@@ -144,6 +145,11 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Toast.makeText(this,"Bienvenido: " + MainActivity.datosUsuario.nombre, Toast.LENGTH_SHORT).show()
+        if(datosUsuario.perfil.isNullOrEmpty()){
+            finish()
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
+        }
     }
 
 }

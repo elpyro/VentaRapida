@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.Login
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.VistaPDFFacturaOCompra
@@ -191,13 +192,19 @@ class FacturaGuardada : Fragment() {
         when (item.itemId) {
 
             R.id.action_agregar_producto->{
+
                 abrirAgregarProducto()
                 return true
             }
 
             R.id.action_eliminar -> {
                 ocultarTeclado(requireContext(),vista)
-                dialogoEliminar()
+                if(MainActivity.datosUsuario.perfil.equals("Administrador")){
+                    dialogoEliminar()
+                }else{
+                    Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
+                }
+
 
                 return true
             }

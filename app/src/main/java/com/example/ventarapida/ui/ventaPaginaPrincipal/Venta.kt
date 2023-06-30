@@ -246,7 +246,6 @@ class Venta : Fragment() {
         }
         val filtroOrdenado = filtro?.sortedBy { it.nombre }
         val adaptador = filtroOrdenado?.let { VentaAdaptador(it,productViewModel) }
-
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
             adaptador?.setOnLongClickItem { item, position ->
