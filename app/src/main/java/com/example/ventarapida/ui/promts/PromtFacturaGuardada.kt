@@ -103,6 +103,7 @@ class PromtFacturaGuardada() {
                         editarProductoTransaccion(context,tipo,diferenciaCantidad,productoFacturado)
 
                     }
+
                 }
             }
             val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()

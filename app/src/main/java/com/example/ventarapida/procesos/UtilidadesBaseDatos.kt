@@ -12,24 +12,26 @@ object UtilidadesBaseDatos {
 
     fun eliminarColaSubida(context: Context, id: String) {
         val dbHelper = MyDatabaseHelper(context)
-        val db = dbHelper.readableDatabase
+        val db = dbHelper.writableDatabase
+
         val contentValues = ContentValues().apply {
             put("subido", "true")
         }
+
         val whereClause = "idTransaccion = ?"
         val whereArgs = arrayOf(id)
-        db.update("transaccionesSumaRestaProductos", contentValues, whereClause, whereArgs)
-        db.close()
 
-//        val dbHelper = MyDatabaseHelper(context)
-//        val db = dbHelper.writableDatabase
-//
-//        val selection = "idTransaccion = ?"
-//        val selectionArgs = arrayOf(id)
-//        //TODO DEBERIA BORRAR 1 SOLO REGISTRO Y NO TODOS A LA VEZ
-//        db.delete("transaccionesSumaRestaProductos", selection, selectionArgs)
-//
-//        db.close()
+        val query = "SELECT * FROM transaccionesSumaRestaProductos WHERE $whereClause LIMIT 1"
+        val cursor = db.rawQuery(query, whereArgs)
+
+        if (cursor.moveToFirst()) {
+            val idColumnIndex = cursor.getColumnIndexOrThrow("idTransaccion")
+            val idValue = cursor.getString(idColumnIndex)
+            db.delete("transaccionesSumaRestaProductos", "idTransaccion = ?", arrayOf(idValue))
+        }
+
+        cursor.close()
+        db.close()
     }
 
 

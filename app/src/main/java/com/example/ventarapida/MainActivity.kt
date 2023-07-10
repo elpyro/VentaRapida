@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -25,6 +26,7 @@ import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 
@@ -49,14 +51,15 @@ class MainActivity : AppCompatActivity() {
         lateinit var  navController: NavController
         lateinit var  drawerLayout: DrawerLayout
         lateinit var navView: NavigationView
+
+         lateinit var appBarConfiguration: AppBarConfiguration
+         lateinit var binding: ActivityMainBinding
         fun init(context: Context) {
             logotipo = ImageView(context)
             editText_nombreEmpresa= TextView(context)
         }
     }
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +69,11 @@ class MainActivity : AppCompatActivity() {
 
         cargarDialogoProceso()
 
-        cargarDatos()
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        cargarDatos()
         setSupportActionBar(binding.appBarMain.toolbar)
 
         drawerLayout = binding.drawerLayout
@@ -109,7 +112,23 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun mostrarFabBottonTransacciones(context: Context) {
+        val transaccionesPendientes=
+            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
 
+        if(transaccionesPendientes.size<1){
+            binding.appBarMain.fabSincronizar.visibility= View.GONE
+        }else{
+            binding.appBarMain.fabSincronizar.visibility=View.VISIBLE
+
+            binding.appBarMain.fabSincronizar.setOnClickListener { view ->
+                Toast.makeText(context,"Subiendo "+transaccionesPendientes.size.toString()+" produtos",Toast.LENGTH_LONG).show()
+            }
+
+        }
+
+
+    }
 
     private fun cargarDatos() {
         val preferenciasServicios= Preferencias()

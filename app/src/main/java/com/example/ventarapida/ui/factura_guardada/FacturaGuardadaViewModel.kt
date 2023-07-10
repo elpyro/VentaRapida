@@ -109,7 +109,7 @@ class FacturaGuardadaViewModel : ViewModel() {
             //calculamos el precio descuento para tener la referencia para los reportes
 
             val sumarProducto = ModeloTransaccionSumaRestaProducto(
-                idTransaccion =  UUID.randomUUID().toString(),
+                idTransaccion =  producto.id_producto_pedido,
                 idProducto = producto.id_producto,
                 cantidad = (-1 * producto.cantidad.toInt()).toString(),
                 subido ="false"

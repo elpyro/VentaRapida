@@ -24,21 +24,34 @@ object FirebaseProductos {
         registroRef.updateChildren(updates)
     }
 
-    fun transaccionesCambiarCantidad(context: Context?, solicitudes: List<ModeloTransaccionSumaRestaProducto>){
+    private val transaccionesEjecutadas = HashSet<String>()
+
+    fun transaccionesCambiarCantidad(context: Context?, solicitudes: List<ModeloTransaccionSumaRestaProducto>) {
+
+        val ocultarBoton=MainActivity( )
+        ocultarBoton.mostrarFabBottonTransacciones(context!!)
+
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
         productosRef.keepSynced(true)
         solicitudes.forEach { solicitud ->
             val idTransaccion = solicitud.idTransaccion
+//            if (transaccionesEjecutadas.contains(idTransaccion)) {
+//                // La transacción ya se ha ejecutado, no es necesario procesarla nuevamente
+//                return@forEach
+//            }
+
             val idProducto = solicitud.idProducto
             val cantidad = solicitud.cantidad
 
             val cantidadActualRef = productosRef.child(idProducto).child("cantidad")
             cantidadActualRef.runTransaction(object : Transaction.Handler {
                 override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                    val cantidadActual = mutableData.getValue(String::class.java)?.toInt() ?: return Transaction.success(mutableData)
+                    val cantidadActual = mutableData.getValue(String::class.java)?.toInt()
+                        ?: return Transaction.success(mutableData)
 
-                    mutableData.value = (cantidadActual  - cantidad.toInt()).toString() // Actualizar la cantidad en la base de datos
+                    mutableData.value = (cantidadActual - cantidad.toInt()).toString() // Actualizar la cantidad en la base de datos
+
                     return Transaction.success(mutableData)
                 }
 
@@ -51,14 +64,17 @@ object FirebaseProductos {
                         // Error al actualizar la cantidad
                         Toast.makeText(context, "Error al actualizar la cantidad del producto", Toast.LENGTH_SHORT).show()
                     } else {
-
                         eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
-
+                        ocultarBoton.mostrarFabBottonTransacciones(context!!)
                     }
                 }
             })
+
+            // Marcar la transacción como ejecutada
+           // transaccionesEjecutadas.add(idTransaccion)
         }
     }
+
 
     fun buscarProductos(mayorCero: Boolean): Task<MutableList<ModeloProducto>> {
         val database = FirebaseDatabase.getInstance()

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,7 @@ class ListaCompras : Fragment() {
 
     private var binding: FragmentFacturaVentasBinding? = null
     private lateinit var vista:View
-
+    var productosFiltrados:List<ModeloFactura> = emptyList()
     private lateinit var adaptador: FacturaVentasAdaptador
     private lateinit var listaFacturas : MutableList<ModeloFactura>
     override fun onCreateView(
@@ -45,7 +46,7 @@ class ListaCompras : Fragment() {
 
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas
-
+            productosFiltrados = listaFacturas
             adaptador = FacturaVentasAdaptador(listaFacturas)
             binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
@@ -95,7 +96,7 @@ class ListaCompras : Fragment() {
     fun filtrarProductos(nombreFiltrado: String) {
 
 
-        val productosFiltrados = listaFacturas.filter {
+        productosFiltrados = listaFacturas.filter {
             it.nombre.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true)
                     || it.fecha.contains(nombreFiltrado)
                     || it.nombre_vendedor.eliminarAcentosTildes().contains(nombreFiltrado)
@@ -114,7 +115,7 @@ class ListaCompras : Fragment() {
         val bundle = Bundle()
 
         bundle.putSerializable("modelo", item)
-
+        bundle.putSerializable("lista",  ArrayList(productosFiltrados))
         Navigation.findNavController(vista).navigate(R.id.compraGuardada,bundle)
     }
 }

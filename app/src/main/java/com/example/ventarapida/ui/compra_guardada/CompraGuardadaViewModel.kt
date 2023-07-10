@@ -12,6 +12,7 @@ import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.example.ventarapida.procesos.FirebaseProductos
 
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -95,19 +96,18 @@ class CompraGuardadaViewModel : ViewModel() {
         )
 
         arrayListProductosFacturados.forEach{producto->
-            //calculamos el precio descuento para tener la referencia para los reportes
 
-                val restarProducto = ModeloTransaccionSumaRestaProducto(
-                    idTransaccion =  datosFactura.value!!.id_pedido,  //la transaccion tiene el mismo id
-                    idProducto = producto.id_producto,
-                    cantidad = producto.cantidad,
-                    subido ="false"
-                )
-                listaRestarInventario.add(restarProducto)
+            UtilidadesBaseDatos.editarProductoTransaccion(
+                context,
+                "venta",
+                producto.cantidad.toInt(),
+                producto
+            )
+
             }
 
         //ejecuta la transaccion y borra las que hay en la base de datos  si se ejecuta
-        FirebaseProductos.transaccionesCambiarCantidad(context, listaRestarInventario)
+
     }
 
 

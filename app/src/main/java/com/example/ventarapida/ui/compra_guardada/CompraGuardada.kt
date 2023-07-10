@@ -18,9 +18,11 @@ import com.example.ventarapida.R
 import com.example.ventarapida.VistaPDFFacturaOCompra
 import com.example.ventarapida.databinding.FragmentCompraGuardadaBinding
 import com.example.ventarapida.datos.ModeloFactura
+import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductos
+import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
@@ -36,6 +38,7 @@ class CompraGuardada : Fragment() {
     private lateinit var vista: View
     private lateinit var adaptador: CompraGuardadaAdaptador
     private lateinit var modeloFactura: ModeloFactura
+    var listaDeProductos: List<ModeloFactura> = emptyList<ModeloFactura>()
     private var banderaElimandoFactura: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,12 +46,12 @@ class CompraGuardada : Fragment() {
     ): View? {
         binding = FragmentCompraGuardadaBinding.inflate(inflater, container, false)
 
-        //activar  menu para este fragment
-        setHasOptionsMenu(true)
 
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
         modeloFactura = (bundle?.getSerializable("modelo") as? ModeloFactura)!!
+        listaDeProductos = (bundle?.getSerializable("lista") as? ArrayList<ModeloFactura>)!!
+        val posicionProducto = bundle?.getInt("position")
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding?.recyclerViewProductosSeleccionados?.layoutManager = gridLayoutManager
@@ -60,6 +63,10 @@ class CompraGuardada : Fragment() {
 
         observadores()
         listeners()
+
+        //activar  menu para este fragment
+        setHasOptionsMenu(true)
+
         return binding!!.root
     }
 
@@ -152,7 +159,6 @@ class CompraGuardada : Fragment() {
             binding?.searchViewBuscarSeleccionados?.isIconified = false
         }
     }
-
 
     fun filtrarProductos(nombreFiltrado: String) {
 
