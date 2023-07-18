@@ -36,37 +36,6 @@ object UtilidadesBaseDatos {
 
 
 
-    fun guardarTransaccionesBd(
-        tipo: String,
-        context: Context?,
-        listaProductosFacturados: MutableList<ModeloProductoFacturado>
-    ) {
-        val dbHelper = MyDatabaseHelper(context!!)
-        val db = dbHelper.readableDatabase
-
-
-        listaProductosFacturados.forEach { modeloProductoFacturado ->
-            var multiplicador = 1
-            if (tipo == "compra") multiplicador = -1
-
-            if (modeloProductoFacturado.cantidad.toInt() != 0) {
-                val sumarORestar = modeloProductoFacturado.cantidad.toInt() * multiplicador
-
-                val idTransaccion = UUID.randomUUID().toString()
-                val values = ContentValues().apply {
-                    put("idTransaccion", idTransaccion)
-                    put("idProducto", modeloProductoFacturado.id_producto)
-                    put("cantidad", sumarORestar.toString())
-                }
-                // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
-                db.insert("transaccionesSumaRestaProductos", null, values)
-
-            }
-        }
-
-        db.close()
-    }
-
     //las transacciones se ejecutaran en segundo plano para actualizar las cantidades de los productos
     //en firebase
     fun crearTransaccionBD(
@@ -94,17 +63,7 @@ object UtilidadesBaseDatos {
         }
 
     }
-    fun marcarTransaccionComoSubida(idTransaccion: String, context: Context) {
-        val dbHelper = MyDatabaseHelper(context)
-        val db = dbHelper.readableDatabase
-        val contentValues = ContentValues().apply {
-            put("subido", "true")
-        }
-        val whereClause = "idTransaccion = ?"
-        val whereArgs = arrayOf(idTransaccion)
-        db.update("transaccionesSumaRestaProductos", contentValues, whereClause, whereArgs)
-        db.close()
-    }
+
     fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, productoFacturado:ModeloProductoFacturado) {
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase

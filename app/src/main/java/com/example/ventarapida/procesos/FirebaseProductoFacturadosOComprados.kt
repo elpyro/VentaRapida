@@ -63,8 +63,6 @@ object FirebaseProductoFacturadosOComprados {
         val database = FirebaseDatabase.getInstance()
         val referencia = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
         referencia.keepSynced(true)
-        val dbHelper = MyDatabaseHelper(context)
-        val db = dbHelper.readableDatabase
 
         var contador = 0
 
@@ -72,15 +70,13 @@ object FirebaseProductoFacturadosOComprados {
             val id_producto = producto.id_producto_pedido
             referencia.child(id_producto).removeValue()
 
-            crearTransaccionBD(producto, tipo, db)
-
             contador++
         }
 
         if (contador == listaProductosFacturados.size) {
             MainActivity.progressDialog?.dismiss()
         }
-        db.close()
+
 
 
     }

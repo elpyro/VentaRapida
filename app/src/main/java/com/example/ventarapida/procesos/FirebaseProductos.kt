@@ -36,10 +36,10 @@ object FirebaseProductos {
         productosRef.keepSynced(true)
         solicitudes.forEach { solicitud ->
             val idTransaccion = solicitud.idTransaccion
-//            if (transaccionesEjecutadas.contains(idTransaccion)) {
-//                // La transacción ya se ha ejecutado, no es necesario procesarla nuevamente
-//                return@forEach
-//            }
+            if (transaccionesEjecutadas.contains(idTransaccion)) {
+                // La transacción ya se ha ejecutado, no es necesario procesarla nuevamente
+                return@forEach
+            }
 
             val idProducto = solicitud.idProducto
             val cantidad = solicitud.cantidad
@@ -70,8 +70,8 @@ object FirebaseProductos {
                 }
             })
 
-            // Marcar la transacción como ejecutada
-           // transaccionesEjecutadas.add(idTransaccion)
+         //    Marcar la transacción como ejecutada
+            transaccionesEjecutadas.add(idTransaccion)
         }
     }
 

@@ -18,6 +18,7 @@ import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.CrearPdfGanancias
 import com.example.ventarapida.procesos.CrearPdfMasVendidos
+import com.example.ventarapida.procesos.CrearPdfMayorGanancia
 import com.example.ventarapida.procesos.CrearPdfVentasPorVendedor
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.buscarProductosPorFecha
 import com.example.ventarapida.procesos.FirebaseUsuarios.buscarTodosUsuariosPorEmpresa
@@ -163,6 +164,10 @@ class Reportes : Fragment() {
             if(binding?.spinnerTipoReporte?.selectedItemPosition==2){
                 ReportePorVendedor(fechaInicio, fechaFin)
             }
+
+            if(binding?.spinnerTipoReporte?.selectedItemPosition==3){
+                ReporteMayorGanancia(fechaInicio, fechaFin)
+            }
         }
     }
 
@@ -187,6 +192,20 @@ class Reportes : Fragment() {
 
                 val crearPdf= CrearPdfMasVendidos()
                 crearPdf.masVendidos(requireContext(), fechaInicio, fechaFin,listaMasVendidos)
+
+                val intent = Intent(requireContext(), VistaPDFReporte::class.java)
+                requireContext().startActivity(intent)
+            }
+    }
+
+    private fun ReporteMayorGanancia(fechaInicio: String, fechaFin: String) {
+        buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin),"false" )
+            .addOnSuccessListener { productos ->
+
+                var listaMasVendidos= viewModel.crearListaMayorGanancia(productos)
+
+                val crearPdf= CrearPdfMayorGanancia()
+                crearPdf.mayorGanancia(requireContext(), fechaInicio, fechaFin,listaMasVendidos)
 
                 val intent = Intent(requireContext(), VistaPDFReporte::class.java)
                 requireContext().startActivity(intent)

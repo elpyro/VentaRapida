@@ -69,11 +69,11 @@ class MainActivity : AppCompatActivity() {
 
         cargarDialogoProceso()
 
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         cargarDatos()
+
         setSupportActionBar(binding.appBarMain.toolbar)
 
         drawerLayout = binding.drawerLayout
@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Toast.makeText(this,"Bienvenido: " + MainActivity.datosUsuario.nombre, Toast.LENGTH_SHORT).show()
+
         if(datosUsuario.perfil.isNullOrEmpty()){
             finish()
             val intent = Intent(this, Login::class.java)

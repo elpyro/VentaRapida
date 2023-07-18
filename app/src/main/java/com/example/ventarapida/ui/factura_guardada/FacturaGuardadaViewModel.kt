@@ -1,9 +1,11 @@
 package com.example.ventarapida.ui.factura_guardada
 
+import android.content.ContentValues
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.MainActivity
+import com.example.ventarapida.baseDatos.MyDatabaseHelper
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
@@ -91,6 +93,8 @@ class FacturaGuardadaViewModel : ViewModel() {
     }
 
     fun eliminarFactura(context:Context) {
+        val dbHelper = MyDatabaseHelper(context)
+        val db = dbHelper.readableDatabase
 
         val arrayListProductosFacturados = ArrayList(datosProductosFacturados.value ?: emptyList())
         val listaSumarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
@@ -106,21 +110,32 @@ class FacturaGuardadaViewModel : ViewModel() {
         )
 
         arrayListProductosFacturados.forEach{producto->
-            //calculamos el precio descuento para tener la referencia para los reportes
+
+            val idTransaccion = UUID.randomUUID().toString()
+            val values = ContentValues().apply {
+                put("idTransaccion", idTransaccion)
+                put("idProducto", producto.id_producto)
+                put("cantidad", (-1 * producto.cantidad.toInt()).toString())
+                put("subido", "false")
+            }
+
+            // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
+            db.insert("transaccionesSumaRestaProductos", null, values)
+
 
             val sumarProducto = ModeloTransaccionSumaRestaProducto(
-                idTransaccion =  producto.id_producto_pedido,
-                idProducto = producto.id_producto,
+                idTransaccion = idTransaccion,
+                idProducto =producto.id_producto,
                 cantidad = (-1 * producto.cantidad.toInt()).toString(),
                 subido ="false"
             )
 
             listaSumarInventario.add(sumarProducto)
+
         }
-
+        db.close()
+        //ejecutamos la transaccion
         FirebaseProductos.transaccionesCambiarCantidad(context, listaSumarInventario)
-
-
 
     }
 

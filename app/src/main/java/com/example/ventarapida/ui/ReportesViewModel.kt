@@ -52,6 +52,33 @@ class ReportesViewModel : ViewModel() {
         // Retornar la lista de ventas por producto ordenada
         return ventasOrdenadas.toMap()
     }
+    data class ProductoLLave(
+        val idProducto: String,
+        val nombreProducto: String
+    )
+
+    fun crearListaMayorGanancia(productos: List<ModeloProductoFacturado>?): Map<ProductoLLave, Double> {
+        val gananciasPorProducto = mutableMapOf<ProductoLLave, Double>()
+
+        for (producto in productos!!) {
+            val idProducto = producto.id_producto
+            val nombreProducto = producto.producto
+
+            val ganancia = ( producto.venta.toDouble()-producto.costo.toDouble() ) * producto.cantidad.toInt()
+            val productoLLave = ProductoLLave(idProducto, nombreProducto)
+
+            if (gananciasPorProducto.containsKey(productoLLave)) {
+                val gananciaActual = gananciasPorProducto[productoLLave] ?: 0.0
+                gananciasPorProducto[productoLLave] = gananciaActual + ganancia
+            } else {
+                gananciasPorProducto[productoLLave] = ganancia
+            }
+        }
+
+        val gananciasOrdenadas = gananciasPorProducto.toList().sortedByDescending { (_, value) -> value }
+
+        return gananciasOrdenadas.toMap()
+    }
 
 
 }
