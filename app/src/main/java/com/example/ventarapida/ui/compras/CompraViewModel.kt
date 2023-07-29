@@ -1,4 +1,4 @@
-package com.example.ventarapida.compras
+package com.example.ventarapida.ui.compras
 
 import android.content.Context
 import android.util.Log

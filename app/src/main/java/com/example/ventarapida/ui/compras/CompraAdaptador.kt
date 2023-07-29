@@ -1,4 +1,4 @@
-package com.example.ventarapida.compras
+package com.example.ventarapida.ui.compras
 
 import android.annotation.SuppressLint
 import android.graphics.Color

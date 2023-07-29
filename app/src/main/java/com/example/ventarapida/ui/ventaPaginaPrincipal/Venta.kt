@@ -26,6 +26,7 @@ import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.Utilidades.separarNumerosDelString
+import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
 
@@ -47,6 +48,9 @@ class Venta : Fragment() {
     ): View {
 
         binding = VentaBinding.inflate(inflater, container, false)
+
+
+
         return binding!!.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -102,6 +106,8 @@ class Venta : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vista= view
+
+
         setHasOptionsMenu(true)
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
         binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager

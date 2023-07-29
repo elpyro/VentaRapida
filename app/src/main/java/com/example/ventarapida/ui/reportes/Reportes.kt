@@ -1,8 +1,7 @@
-package com.example.ventarapida.ui
+package com.example.ventarapida.ui.reportes
 
 
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,24 +11,15 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.ventarapida.MainActivity
-import com.example.ventarapida.VistaPDFReporte
 import com.example.ventarapida.databinding.FragmentReportesBinding
-import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloUsuario
-import com.example.ventarapida.procesos.CrearPdfGanancias
-import com.example.ventarapida.procesos.CrearPdfMasVendidos
-import com.example.ventarapida.procesos.CrearPdfMayorGanancia
-import com.example.ventarapida.procesos.CrearPdfVentasPorVendedor
-import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados.buscarProductosPorFecha
 import com.example.ventarapida.procesos.FirebaseUsuarios.buscarTodosUsuariosPorEmpresa
-import com.example.ventarapida.procesos.Utilidades.convertirFechaAUnix
 import java.util.Calendar
 
 
 class Reportes : Fragment() {
 
     private var binding: FragmentReportesBinding? = null
-    private lateinit var vista: View
     var posicionSpinnerVendedor=0
     lateinit var listaIdUsuarios:List<String>
     private lateinit var viewModel: ReportesViewModel
@@ -62,10 +52,6 @@ class Reportes : Fragment() {
         // Asignar el adaptador al Spinner
         binding?.spinnerVendedor?.adapter = adapter
     }
-
-
-
-
 
 
     private fun listener() {
@@ -106,6 +92,15 @@ class Reportes : Fragment() {
 
             viewModel.crearInventarioPdf(requireContext(), mayorCero)
         }
+
+        binding?.buttonCatalogo?.setOnClickListener {
+            MainActivity.progressDialog?.show()
+            var mayorCero=true
+            if (binding?.radioButtonCatalogoTodos!!.isChecked) mayorCero=false
+
+            viewModel.crearCatalogo(requireContext(), mayorCero)
+        }
+
 
         binding?.textViewDesde?.setOnClickListener{
                 val c = Calendar.getInstance()
@@ -154,83 +149,23 @@ class Reportes : Fragment() {
             if(binding?.textViewHasta?.text.toString()!="Hasta") fechaFin=binding?.textViewHasta?.text.toString()
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==0){
-                ReporteGanancia(fechaInicio,fechaFin)
+                viewModel.ReporteGanancia(requireContext(),fechaInicio,fechaFin)
             }
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==1){
-                ReporteMasVendidos(fechaInicio, fechaFin)
+                viewModel.ReporteMasVendidos(requireContext(),fechaInicio, fechaFin)
             }
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==2){
-                ReportePorVendedor(fechaInicio, fechaFin)
+                viewModel.ReportePorVendedor(requireContext(),fechaInicio, fechaFin, listaIdUsuarios[posicionSpinnerVendedor],binding!!)
             }
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==3){
-                ReporteMayorGanancia(fechaInicio, fechaFin)
+                viewModel.ReporteMayorGanancia(requireContext(),fechaInicio, fechaFin)
             }
         }
     }
 
-    private fun ReportePorVendedor(fechaInicio: String, fechaFin: String) {
-        val idVendedor=listaIdUsuarios[posicionSpinnerVendedor]
-        val nombreVendedor=binding?.spinnerVendedor?.selectedItem.toString()
-        buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin), idVendedor )
-            .addOnSuccessListener { productos ->
-                val crearPdf= CrearPdfVentasPorVendedor()
-                crearPdf.ventas(requireContext(), fechaInicio, fechaFin, productos as ArrayList<ModeloProductoFacturado>,nombreVendedor )
-
-                val intent = Intent(requireContext(), VistaPDFReporte::class.java)
-                requireContext().startActivity(intent)
-            }
-    }
-
-    private fun ReporteMasVendidos(fechaInicio: String, fechaFin: String) {
-        buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin),"false" )
-            .addOnSuccessListener { productos ->
-
-               var listaMasVendidos= viewModel.crearListaMasVendidos(productos)
-
-                val crearPdf= CrearPdfMasVendidos()
-                crearPdf.masVendidos(requireContext(), fechaInicio, fechaFin,listaMasVendidos)
-
-                val intent = Intent(requireContext(), VistaPDFReporte::class.java)
-                requireContext().startActivity(intent)
-            }
-    }
-
-    private fun ReporteMayorGanancia(fechaInicio: String, fechaFin: String) {
-        buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin),"false" )
-            .addOnSuccessListener { productos ->
-
-                var listaMasVendidos= viewModel.crearListaMayorGanancia(productos)
-
-                val crearPdf= CrearPdfMayorGanancia()
-                crearPdf.mayorGanancia(requireContext(), fechaInicio, fechaFin,listaMasVendidos)
-
-                val intent = Intent(requireContext(), VistaPDFReporte::class.java)
-                requireContext().startActivity(intent)
-            }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        vista=view
-    }
-
-    fun ReporteGanancia(fechaInicio: String, fechaFin: String) {
-
-
-        buscarProductosPorFecha(convertirFechaAUnix(fechaInicio), convertirFechaAUnix(fechaFin), "false" )
-        .addOnSuccessListener { productos ->
-
-            val crearPdf= CrearPdfGanancias()
-            crearPdf.ganacias(requireContext(), fechaInicio, fechaFin, productos as ArrayList<ModeloProductoFacturado>)
-
-            val intent = Intent(requireContext(), VistaPDFReporte::class.java)
-            requireContext().startActivity(intent)
-        }
-
-    }
 
 
 }

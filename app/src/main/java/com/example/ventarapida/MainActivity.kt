@@ -24,10 +24,9 @@ import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Callback
+import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
@@ -65,6 +64,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //cargar las preferencias primero para evitar errores de carga
+        val preferenciasServicios= Preferencias()
+        preferenciasServicios.preferenciasConfiguracion(this)
+
+        if (ventaProductosSeleccionados.isNotEmpty()) {
+            Toast.makeText(this,"Lista venta recuperada",Toast.LENGTH_LONG).show()
+        }
+
         init(this)
 
         cargarDialogoProceso()
@@ -85,10 +92,25 @@ class MainActivity : AppCompatActivity() {
         editText_nombreEmpresa=navHeader.findViewById<TextView>(R.id.textView_nombreEmpresa)
 
         editText_nombreEmpresa.text = datosEmpresa.nombre
-        if (!datosEmpresa.url.isEmpty()){
-            Picasso.get().load(datosEmpresa.url).into(logotipo)
-            logotipo.setImageDrawable(logotipo.drawable)
+
+        //colocar logotipo en el menu lateral
+        if (!datosEmpresa.url.isEmpty()) {
+            Picasso.get()
+                .load(datosEmpresa.url)
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Intenta cargar desde caché, no almacena en caché
+                .into(logotipo, object : Callback {
+                    override fun onSuccess() {
+                        // La imagen se cargó correctamente desde la caché o se descargó y almacenó en caché
+                        logotipo.setImageDrawable(logotipo.drawable)
+                    }
+
+                    override fun onError(e: Exception?) {
+                        // Ocurrió un error al cargar la imagen
+                        // Puedes manejar el error aquí si es necesario
+                    }
+                })
         }
+
 
         if (datosEmpresa.premiun.equals("true")){
             appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
@@ -122,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             binding.appBarMain.fabSincronizar.visibility=View.VISIBLE
 
             binding.appBarMain.fabSincronizar.setOnClickListener { view ->
-                Toast.makeText(context,"Subiendo "+transaccionesPendientes.size.toString()+" produtos",Toast.LENGTH_LONG).show()
+                Toast.makeText(context,"Sincronizando "+transaccionesPendientes.size.toString()+" produtos",Toast.LENGTH_LONG).show()
             }
 
         }
@@ -132,9 +154,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun cargarDatos() {
         val preferenciasServicios= Preferencias()
-        preferenciasServicios.preferenciasConfiguracion(this)
-
-        preferenciasServicios.obtenerServicioPendiente(this)
+        preferenciasServicios.obtenerServicioPendienteSubirFoto(this)
 
         val transaccionesPendientes=
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
@@ -152,7 +172,7 @@ class MainActivity : AppCompatActivity() {
 
     fun cargarDialogoProceso() {
         progressDialog = ProgressDialog(this)
-        progressDialog?.setMessage("Guardando...")
+        progressDialog?.setMessage("Un momento...")
         progressDialog?.setCancelable(false)
     }
 

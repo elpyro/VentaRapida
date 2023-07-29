@@ -46,7 +46,7 @@
 
     <fragment
         android:id="@+id/compra"
-        android:name="com.example.ventarapida.compras.Compra"
+        android:name="com.example.ventarapida.ui.compras.Compra"
         android:label="Compra" />
     <fragment
         android:id="@+id/detalleCompra"
@@ -81,7 +81,7 @@
         android:label="@string/cliente" />
     <fragment
         android:id="@+id/reportes"
-        android:name="com.example.ventarapida.ui.Reportes"
+        android:name="com.example.ventarapida.ui.reportes.Reportes"
         android:label="@string/Reportes"
         tools:layout="@layout/fragment_reportes" />
     <fragment

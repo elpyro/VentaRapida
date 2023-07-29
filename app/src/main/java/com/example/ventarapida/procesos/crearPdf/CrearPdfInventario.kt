@@ -1,4 +1,4 @@
-package com.example.ventarapida.procesos
+package com.example.ventarapida.procesos.crearPdf
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,7 +8,8 @@ import android.os.Environment
 import androidx.core.content.ContextCompat
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
-import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.PageNumeration
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
@@ -26,7 +27,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-class CrearPdfVentasPorVendedor {
+class CrearPdfInventario {
 
     private val FONT_TITLE = Font(Font.FontFamily.TIMES_ROMAN, 20f, Font.BOLD)
     private val FONT_SUBTITLE = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.BOLD)
@@ -34,15 +35,13 @@ class CrearPdfVentasPorVendedor {
     private val FONT_CELL = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.NORMAL)
     private val FONT_COLUMN = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.NORMAL)
 
-    fun ventas(
+    fun inventario(
         context: Context,
-        fechaInicio: String,
-        fechaFin: String,
-        listaProductos: ArrayList<ModeloProductoFacturado>,
-        nombreVendedor: String
+        listaProductos: ArrayList<ModeloProducto>
     ) {
 
-        //ya se ha organizado el orden en buscarProductosPorFecha
+        //ordenar alfabetico
+        listaProductos.sortBy { it.nombre }
 
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
         val outputStream = FileOutputStream(file)
@@ -54,22 +53,22 @@ class CrearPdfVentasPorVendedor {
         document.open()
 
         metadata(document)
-        cabezera(document, context,fechaInicio,fechaFin,nombreVendedor)
+        cabezera(document, context)
 
-        val tablaGanancias = crearTabla(listaProductos)
+        val tablaInventario = crearTabla(listaProductos)
+        val totalInventario = tablaInventario.total
 
-        val totalVentas = tablaGanancias.ventas
-
-
-        document.add(Paragraph("\n"))
-
-        val parrafoVentas = Paragraph("Ventas: " + totalVentas.toString().formatoMonenda(), FONT_TITLE)
-        parrafoVentas.alignment = Element.ALIGN_RIGHT
-        document.add(Paragraph(parrafoVentas))
-
+        val parrafoInventarioTotal = Paragraph("Total: " + totalInventario.toString().formatoMonenda(), FONT_TITLE)
+        parrafoInventarioTotal.alignment = Element.ALIGN_RIGHT
 
         document.add(Paragraph("\n"))
-        document.add(tablaGanancias.tabla)
+        document.add(Paragraph(parrafoInventarioTotal))
+
+        document.add(Paragraph("\n"))
+        document.add(tablaInventario.tabla)
+
+        document.add(Paragraph("\n"))
+        document.add(Paragraph(parrafoInventarioTotal))
 
         document.close()
         outputStream.close()
@@ -82,19 +81,16 @@ class CrearPdfVentasPorVendedor {
         document.addCreator("Eloy Castellanos")
     }
 
-    private fun cabezera(
-        document: Document,
-        context: Context,
-        fechaInicio: String,
-        fechaFin: String,
-        nombreVendedor: String
-    ) {
+    private fun cabezera(document: Document, context: Context) {
 
+        val titulo: Paragraph?
+        titulo = Paragraph("Inventario", FONT_TITLE)
+        titulo.alignment = Element.ALIGN_CENTER
 
 
         val table = PdfPTable(3)
         table.widthPercentage = 100f
-        table.setWidths(floatArrayOf(3f, 3f, 3f))
+        table.setWidths(floatArrayOf(4f, 2f, 4f))
         table.defaultCell.border = PdfPCell.NO_BORDER
         table.defaultCell.verticalAlignment = Element.ALIGN_CENTER
         table.defaultCell.horizontalAlignment = Element.ALIGN_CENTER
@@ -109,12 +105,7 @@ class CrearPdfVentasPorVendedor {
             cell.setPadding(4f)
             cell.isUseAscender = true
 
-
-            var temp = Paragraph("Vendedor: "+nombreVendedor+"\n", FONT_SUBTITLE)
-            temp.alignment = Element.ALIGN_LEFT
-            cell.addElement(temp)
-
-            temp = Paragraph("Fecha: " + obtenerFechaActual(), FONT_SUBTITLE)
+            var temp = Paragraph("Fecha: " + obtenerFechaActual(), FONT_SUBTITLE)
             temp.alignment = Element.ALIGN_LEFT
             cell.addElement(temp)
 
@@ -146,27 +137,9 @@ class CrearPdfVentasPorVendedor {
             cell.setPadding(4f)
             cell.isUseAscender = true
 
-            val titulo: Paragraph?
-            titulo = Paragraph("Reporte Ventas", FONT_TITLE)
-            titulo.alignment = Element.ALIGN_CENTER
-
             val temp = Paragraph(titulo)
             temp.alignment = Element.ALIGN_CENTER
             cell.addElement(temp)
-
-            if (fechaInicio != "01/01/2000") {
-                val paragraphInicio = Paragraph("Desde: $fechaInicio")
-                paragraphInicio.alignment = Element.ALIGN_CENTER
-                cell.addElement(paragraphInicio)
-            }
-
-            if (fechaFin != "01/01/2050") {
-                val paragraphFin = Paragraph("Hasta: $fechaFin")
-                paragraphFin.alignment = Element.ALIGN_CENTER
-                cell.addElement(paragraphFin)
-            }
-
-
 
             table.addCell(cell)
         }
@@ -239,31 +212,18 @@ class CrearPdfVentasPorVendedor {
         document.add(table)
     }
 
-    data class TablaInventario(val tabla: PdfPTable, val ganancia: Double, val ventas:Double, val costos:Double)
+    data class TablaInventario(val tabla: PdfPTable, val total: Int)
 
-    private fun crearTabla(dataTable: List<ModeloProductoFacturado>): TablaInventario {
-        val table1 = PdfPTable(6)
+    private fun crearTabla(dataTable: List<ModeloProducto>): TablaInventario {
+        val table1 = PdfPTable(4)
         table1.widthPercentage = 100f
-        table1.setWidths(floatArrayOf(2.5f, 7.5f, 1.5f, 1.5f,2f, 3f))
+        table1.setWidths(floatArrayOf(8f, 1.5f, 3f, 4f))
         table1.headerRows = 1
         table1.defaultCell.verticalAlignment = Element.ALIGN_CENTER
         table1.defaultCell.horizontalAlignment = Element.ALIGN_CENTER
         var cell: PdfPCell
         run {
-
-            cell = PdfPCell(Phrase("Fecha", FONT_COLUMN))
-            cell.horizontalAlignment = Element.ALIGN_CENTER
-            cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
-            table1.addCell(cell)
-
             cell = PdfPCell(Phrase("Producto", FONT_COLUMN))
-            cell.horizontalAlignment = Element.ALIGN_CENTER
-            cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
-            table1.addCell(cell)
-
-            cell = PdfPCell(Phrase("ID.", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)
@@ -275,9 +235,7 @@ class CrearPdfVentasPorVendedor {
             cell.setPadding(4f)
             table1.addCell(cell)
 
-
-
-            cell = PdfPCell(Phrase("Venta", FONT_COLUMN))
+            cell = PdfPCell(Phrase("Costo", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)
@@ -294,39 +252,27 @@ class CrearPdfVentasPorVendedor {
         val lt_gray = BaseColor(221, 221, 221) //#DDDDDD
         var cell_color: BaseColor?
         val size = dataTable.size
-        var totalGanancias=0.0
-        var totalVentas=0.0
-        var totalCostos=0.0
+        var totalInventario=0
         for (i in 0 until size) {
             cell_color = if (alternate) lt_gray else BaseColor.WHITE
             val temp = dataTable[i]
 
             cell = PdfPCell()
-            setCellFormat(cell, cell_color!!, temp.fecha)
+            setCellFormat(cell, cell_color!!, temp.nombre)
             cell.horizontalAlignment = Element.ALIGN_LEFT
             table1.addCell(cell)
 
-            cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.producto.formatoMonenda()!!)
-            table1.addCell(cell)
-
-            cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.id_pedido.substring(0, 5) )
-            table1.addCell(cell)
 
             cell = PdfPCell()
             setCellFormat(cell, cell_color, temp.cantidad)
             table1.addCell(cell)
 
-
             cell = PdfPCell()
-            setCellFormat(cell, cell_color,temp.precioDescuentos.formatoMonenda()!!)
+            setCellFormat(cell, cell_color, temp.p_compra.formatoMonenda()!!)
             table1.addCell(cell)
 
-            val totalProducto = temp.cantidad.toDouble() *(temp.precioDescuentos.toDouble()- temp.costo.toDouble())
-            totalGanancias += totalProducto
-            totalVentas += temp.precioDescuentos.toDouble()* temp.cantidad.toDouble()
-            totalCostos += temp.costo.toDouble()* temp.cantidad.toDouble()
+            val totalProducto = temp.cantidad.toInt() * temp.p_compra.toInt()
+            totalInventario += totalProducto
 
             cell = PdfPCell()
             setCellFormat(cell, cell_color, totalProducto.toString().formatoMonenda()!!)
@@ -334,7 +280,7 @@ class CrearPdfVentasPorVendedor {
 
             alternate = !alternate
         }
-        return TablaInventario(table1, totalGanancias, totalVentas,totalCostos)
+        return TablaInventario(table1, totalInventario)
     }
 
     private fun setCellFormat(cell: PdfPCell, backgroundColor: BaseColor, text: String) {

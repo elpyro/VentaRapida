@@ -1,4 +1,4 @@
-package com.example.ventarapida.compras
+package com.example.ventarapida.ui.compras
 
 import android.Manifest
 import android.app.Activity
@@ -217,13 +217,7 @@ class Compra : Fragment() {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val query = results?.get(0)
             if (query != null) {
-                //Separamos los ultimos numeros de el string obtenido por voz
-//                // para saber si hay un numero y agregar el numero a la seleccion del producto
-//                val numerosSeparados= Utilidades.separarNumerosDelString(query.trim())
-//
-//                if (numerosSeparados.second!=null){
-//                    cantidadPorVoz= numerosSeparados.second!!.toInt()
-//                }
+
                 binding?.searchViewProductosVenta?.isIconified=false
                 binding?.searchViewProductosVenta?.setQuery(query, true)
             }
@@ -231,7 +225,6 @@ class Compra : Fragment() {
         }
     }
 
-    var cantidadPorVoz=0
     private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
@@ -241,11 +234,6 @@ class Compra : Fragment() {
         val productosOrdenados = filtro?.sortedBy { it.nombre }
         val adaptador = productosOrdenados?.let { CompraAdaptador(it,viewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
-
-//        if (productosOrdenados?.size==1 && cantidadPorVoz!=0){
-//            viewModel.actualizarCantidadProducto(productosOrdenados[0], cantidadPorVoz)
-//            cantidadPorVoz=0
-//        }
 
         adaptador!!.setOnLongClickItem { item, position ->
             val bundle = Bundle()

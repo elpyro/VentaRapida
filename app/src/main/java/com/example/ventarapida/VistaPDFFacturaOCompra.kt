@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
-import com.example.ventarapida.procesos.CrearPdfFacturaOCompra
+import com.example.ventarapida.procesos.crearPdf.CrearPdfFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseFacturaOCompra
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.github.barteksc.pdfviewer.PDFView
@@ -174,7 +174,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
             tareaProductos.addOnSuccessListener { listaProductos->
             try{
-                val crearPdf=CrearPdfFacturaOCompra()
+                val crearPdf= CrearPdfFacturaOCompra()
                 crearPdf.facturaOCompra(this, factura!!, tablaReferencia,listaProductos as ArrayList<ModeloProductoFacturado>)
 
                 visualizarPDF()

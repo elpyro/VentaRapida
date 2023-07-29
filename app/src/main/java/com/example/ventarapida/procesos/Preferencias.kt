@@ -2,22 +2,13 @@ package com.example.ventarapida.procesos
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
-import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.example.ventarapida.MainActivity
-import com.example.ventarapida.MainActivity.Companion.datosEmpresa
 import com.example.ventarapida.MainActivity.Companion.tono
-import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloProducto
-import com.example.ventarapida.procesos.FirebaseDatosEmpresa.obtenerDatosEmpresa
 import com.example.ventarapida.ui.procesos.ServiciosSubirFoto
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.squareup.picasso.Picasso
 
 
 class Preferencias {
@@ -32,8 +23,8 @@ class Preferencias {
             sharedPreferences.getString("inf_inferior", "")!!
         tono = sharedPreferences.getBoolean("sonido", true)
 
-        obtenerSeleccionPendiente(context,"venta_seleccionada")
         obtenerSeleccionPendiente(context,"compra_seleccionada")
+        obtenerSeleccionPendiente(context,"venta_seleccionada")
 
     }
 
@@ -105,7 +96,7 @@ class Preferencias {
         return ModeloProducto(cantidad, codigo, descripcion, fecha_ultima_modificacion, id, nombre, p_compra, p_diamante, url, descuento, precio_descuento)
     }
 
-    fun obtenerServicioPendiente(context: Context) {
+    fun obtenerServicioPendienteSubirFoto(context: Context) {
 
         val fotosParaSubir = ServiciosSubirFoto()
         val serviciosPendientes = fotosParaSubir.getServiciosPendientes(context)

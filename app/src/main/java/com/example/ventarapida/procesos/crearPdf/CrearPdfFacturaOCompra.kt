@@ -1,4 +1,4 @@
-package com.example.ventarapida.procesos
+package com.example.ventarapida.procesos.crearPdf
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -10,6 +10,7 @@ import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloFactura
 import com.example.ventarapida.datos.ModeloProductoFacturado
+import com.example.ventarapida.procesos.PageNumeration
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Document

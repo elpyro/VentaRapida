@@ -7,7 +7,7 @@
         android:title="@string/compartir"
         android:orderInCategory="200"
         android:icon="@drawable/baseline_share_24"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_whatsapp"
@@ -15,6 +15,6 @@
         android:orderInCategory="200"
         android:visible="false"
         android:icon="@drawable/whatsapp"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
 </menu>

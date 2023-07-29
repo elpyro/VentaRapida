@@ -1,14 +1,17 @@
-package com.example.ventarapida.procesos
+package com.example.ventarapida.procesos.crearPdf
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Environment
 import androidx.core.content.ContextCompat
+import com.android.car.ui.utils.CarUiUtils.drawableToBitmap
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.PageNumeration
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
@@ -25,8 +28,24 @@ import com.itextpdf.text.pdf.PdfWriter
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
-class CrearPdfInventario {
+import java.net.URL
+
+import java.util.concurrent.CountDownLatch
+
+
+class CrearPdfCatalogo {
 
     private val FONT_TITLE = Font(Font.FontFamily.TIMES_ROMAN, 20f, Font.BOLD)
     private val FONT_SUBTITLE = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.BOLD)
@@ -34,7 +53,7 @@ class CrearPdfInventario {
     private val FONT_CELL = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.NORMAL)
     private val FONT_COLUMN = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.NORMAL)
 
-    fun inventario(
+    suspend fun catalogo(
         context: Context,
         listaProductos: ArrayList<ModeloProducto>
     ) {
@@ -54,20 +73,11 @@ class CrearPdfInventario {
         metadata(document)
         cabezera(document, context)
 
-        val tablaInventario = crearTabla(listaProductos)
-        val totalInventario = tablaInventario.total
-
-        val parrafoInventarioTotal = Paragraph("Total: " + totalInventario.toString().formatoMonenda(), FONT_TITLE)
-        parrafoInventarioTotal.alignment = Element.ALIGN_RIGHT
-
-        document.add(Paragraph("\n"))
-        document.add(Paragraph(parrafoInventarioTotal))
+        val latch = CountDownLatch(listaProductos.size) // Crear el CountDownLatch con el tamaño de la lista de productos
+        val tablaInventario = crearTabla(listaProductos, context, latch) // Pasar el CountDownLatch a la función crearTabla
 
         document.add(Paragraph("\n"))
         document.add(tablaInventario.tabla)
-
-        document.add(Paragraph("\n"))
-        document.add(Paragraph(parrafoInventarioTotal))
 
         document.close()
         outputStream.close()
@@ -75,7 +85,7 @@ class CrearPdfInventario {
 
     private fun metadata(document: Document) {
         document.addTitle("Compra Rapida")
-        document.addSubject("Reporte")
+        document.addSubject("Catalogo")
         document.addAuthor("Eloy Castellanos")
         document.addCreator("Eloy Castellanos")
     }
@@ -83,7 +93,7 @@ class CrearPdfInventario {
     private fun cabezera(document: Document, context: Context) {
 
         val titulo: Paragraph?
-        titulo = Paragraph("Inventario", FONT_TITLE)
+        titulo = Paragraph("Catálogo", FONT_TITLE)
         titulo.alignment = Element.ALIGN_CENTER
 
 
@@ -211,17 +221,23 @@ class CrearPdfInventario {
         document.add(table)
     }
 
-    data class TablaInventario(val tabla: PdfPTable, val total: Int)
+    data class TablaInventario(val tabla: PdfPTable)
 
-    private fun crearTabla(dataTable: List<ModeloProducto>): TablaInventario {
-        val table1 = PdfPTable(4)
+    private suspend fun crearTabla(dataTable: List<ModeloProducto>, context: Context, latch: CountDownLatch): TablaInventario {
+        val table1 = PdfPTable(5)
         table1.widthPercentage = 100f
-        table1.setWidths(floatArrayOf(8f, 1.5f, 3f, 4f))
+        table1.setWidths(floatArrayOf(1f, 8f, 1.5f, 3f, 2.5f))
         table1.headerRows = 1
         table1.defaultCell.verticalAlignment = Element.ALIGN_CENTER
         table1.defaultCell.horizontalAlignment = Element.ALIGN_CENTER
         var cell: PdfPCell
         run {
+            cell = PdfPCell(Phrase("Id", FONT_COLUMN))
+            cell.horizontalAlignment = Element.ALIGN_CENTER
+            cell.verticalAlignment = Element.ALIGN_MIDDLE
+            cell.setPadding(4f)
+            table1.addCell(cell)
+
             cell = PdfPCell(Phrase("Producto", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
@@ -234,13 +250,13 @@ class CrearPdfInventario {
             cell.setPadding(4f)
             table1.addCell(cell)
 
-            cell = PdfPCell(Phrase("Costo", FONT_COLUMN))
+            cell = PdfPCell(Phrase("Precio", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)
             table1.addCell(cell)
 
-            cell = PdfPCell(Phrase("Total", FONT_COLUMN))
+            cell = PdfPCell(Phrase("Imagen", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)
@@ -251,36 +267,89 @@ class CrearPdfInventario {
         val lt_gray = BaseColor(221, 221, 221) //#DDDDDD
         var cell_color: BaseColor?
         val size = dataTable.size
-        var totalInventario=0
+        val images: List<Image?> = loadImagesAsync(dataTable)
         for (i in 0 until size) {
+
             cell_color = if (alternate) lt_gray else BaseColor.WHITE
             val temp = dataTable[i]
+
+            cell = PdfPCell()
+            setCellFormat(cell, cell_color!!, (i+1).toString())
+            table1.addCell(cell)
 
             cell = PdfPCell()
             setCellFormat(cell, cell_color!!, temp.nombre)
             cell.horizontalAlignment = Element.ALIGN_LEFT
             table1.addCell(cell)
 
+            //si la cantidad es menor que 1 mostrar vacia la cantidad
+            if(temp.cantidad.toInt()<1) temp.cantidad=""
 
             cell = PdfPCell()
             setCellFormat(cell, cell_color, temp.cantidad)
             table1.addCell(cell)
 
             cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.p_compra.formatoMonenda()!!)
+            setCellFormat(cell, cell_color, temp.p_diamante.formatoMonenda()!!)
             table1.addCell(cell)
-
-            val totalProducto = temp.cantidad.toInt() * temp.p_compra.toInt()
-            totalInventario += totalProducto
 
             cell = PdfPCell()
-            setCellFormat(cell, cell_color, totalProducto.toString().formatoMonenda()!!)
-            table1.addCell(cell)
+            cell.backgroundColor = cell_color
+
+            if (images[i] != null) {
+                val logoCell = PdfPCell(images[i])
+                logoCell.horizontalAlignment = Element.ALIGN_CENTER
+                logoCell.verticalAlignment = Element.ALIGN_CENTER
+                logoCell.backgroundColor=cell_color
+                logoCell.setPadding(2F)
+                table1.addCell(logoCell)
+            }else{
+                cell = PdfPCell()
+                setCellFormat(cell, cell_color, "No disponible")
+                cell.setPadding(4F)
+                table1.addCell(cell)
+            }
 
             alternate = !alternate
         }
-        return TablaInventario(table1, totalInventario)
+
+
+
+        return TablaInventario(table1)
     }
+
+    private suspend fun loadImage(imageUrl: String): Image? {
+        return withContext(Dispatchers.IO) {
+            try {
+                if (imageUrl.isNotEmpty()) {
+                    val connection = URL(imageUrl).openConnection()
+                    connection.connect()
+                    val stream = connection.getInputStream()
+                    val byteArray = stream.readBytes()
+                    val imagenProducto = Image.getInstance(byteArray)
+                    imagenProducto.widthPercentage = 70f
+                    imagenProducto.scaleToFit(155f, 70f)
+                    imagenProducto
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    private suspend fun loadImagesAsync(dataTable: List<ModeloProducto>): List<Image?> {
+        return coroutineScope {
+            dataTable.map { modeloProducto ->
+                async {
+                    loadImage(modeloProducto.url)
+                }
+            }.awaitAll()
+        }
+    }
+
 
     private fun setCellFormat(cell: PdfPCell, backgroundColor: BaseColor, text: String) {
         cell.horizontalAlignment = Element.ALIGN_CENTER
