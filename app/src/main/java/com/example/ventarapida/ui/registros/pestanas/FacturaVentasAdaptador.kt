@@ -9,8 +9,6 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloFactura
-import com.example.ventarapida.procesos.Utilidades.eliminarPuntos
-import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import java.text.SimpleDateFormat
 
@@ -79,8 +77,8 @@ class FacturaVentasAdaptador(
         fun bind(factura: ModeloFactura) {
 
             cliente.text = factura.nombre
-            val totalSinPuntos=factura.total.eliminarPuntos()
-            total.text= totalSinPuntos.formatoMonenda()
+            val totalfactura=factura.total
+            total.text= totalfactura.formatoMonenda()
             vendedor.text=factura.nombre_vendedor
             fecha.text=factura.fecha
             id.text=factura.id_pedido.substring(0, 5)  //solo mostramos los primero 5 digitos en la vista para evitar exeso de datos

@@ -121,7 +121,7 @@ object Utilidades {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (!isProgrammaticChange && s != null) {
                     removeTextChangedListener(this)
-                    val precio = s.toString().eliminarPuntosComasLetras()
+                    val precio = s.toString()
                     setText(precio.formatoMonenda())
                     setSelection(text.length)
                     addTextChangedListener(this)
@@ -135,12 +135,21 @@ object Utilidades {
         addTextChangedListener(textWatcher)
     }
 
-    fun String.formatoMonenda(): String? {
-        val formatoMoneda = DecimalFormat("###,###.###")
+    fun String.formatoMonenda(): String {
+        val formatoMoneda = DecimalFormat("###,###.00") // Dos decimales
         formatoMoneda.decimalFormatSymbols = DecimalFormatSymbols(Locale("es", "CO"))
-        formatoMoneda.maximumFractionDigits = 2
-        val valorDouble = this.toDoubleOrNull()
-            ?: return this // Retorna el string original si no se puede convertir a double
-        return formatoMoneda.format(valorDouble)
+        val valorDouble = this.toDoubleOrNull() ?: return this // Retorna el string original si no se puede convertir a double
+
+        if (valorDouble == 0.0) {
+            return "0"
+        }
+
+        val formattedValue = formatoMoneda.format(valorDouble)
+
+        // Verifica si el resultado tiene ",00" o ".00" al final de la cadena y si es así, lo reemplaza por "0"
+        val resultWithoutDecimals = formattedValue.replace(Regex("[,.]00$"), "")
+
+        // Verifica si el resultado tiene ".0" al final de la cadena y si es así, lo reemplaza por ""
+        return resultWithoutDecimals.replace(".0$", "")
     }
 }

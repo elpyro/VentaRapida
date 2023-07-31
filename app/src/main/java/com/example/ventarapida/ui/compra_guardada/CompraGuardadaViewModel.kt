@@ -75,11 +75,11 @@ class CompraGuardadaViewModel : ViewModel() {
         val listaProductos = datosProductosComprados.value ?: emptyList()
 
         // Calcular subtotal
-        totalFactura.value = listaProductos.sumByDouble { it.costo.toDouble() * it.cantidad.toDouble() }.toString().formatoMonenda()
+        totalFactura.value = listaProductos.sumByDouble { it.costo.toDouble() * it.cantidad.toDouble() }.toString()
 
         // Calcular información adicional
-        referencias.value = listaProductos.size.toString().formatoMonenda()
-        items.value = listaProductos.sumByDouble { it.cantidad.toDouble() }.toString().formatoMonenda()
+        referencias.value = listaProductos.size.toString()
+        items.value = listaProductos.sumBy { it.cantidad.toInt() }.toString()
     }
 
     fun eliminarCompra( context:Context) {

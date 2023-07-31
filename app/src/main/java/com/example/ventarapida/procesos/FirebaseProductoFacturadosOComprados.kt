@@ -94,7 +94,7 @@ object FirebaseProductoFacturadosOComprados {
                     val productoFacturado = registro.getValue(ModeloProductoFacturado::class.java)
                     if (productoFacturado != null && productoFacturado.id_pedido == idPedido) {
                         // Actualiza el valor del campo "precio_descuento" en el registro
-                        val nuevoValor = productoFacturado.venta.toInt()
+                        val nuevoValor = productoFacturado.venta.toDouble()
                         val productoConDescuento=nuevoValor * (1 - porcentajeDescuento)
                         refProductosFacturados.child(registro.key!!).child("precioDescuentos").setValue(productoConDescuento.toString())
                     }

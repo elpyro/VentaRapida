@@ -128,12 +128,25 @@ class VentaAdaptador(
                     if (cantidadSeleccionada > 0 && isUserEditing) {
                         // Hacer visible el botón restar
                         botonRestar.visibility = View.VISIBLE
+
+                        val color = ContextCompat.getColor(itemView.context, R.color.azul_trasparente)
+                        cardview.setCardBackgroundColor(color)
+                        producto.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+                        precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+                        existencia.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+
                         // Actualizar la cantidad del producto en el ViewModel
                         viewModel.actualizarCantidadProducto(
                             products[position],
                             cantidadSeleccionada
                         )
                     } else {
+
+                        cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
+                        producto.setTextAppearance(R.style.ColorFuentes)
+                        precio.setTextAppearance(R.style.ColorFuentes)
+                        existencia.setTextAppearance(R.style.ColorFuentes)
+
                         // De lo contrario, hacer invisible el botón restar
                         botonRestar.visibility = View.GONE
                     }
@@ -143,6 +156,11 @@ class VentaAdaptador(
                     // Actualizar la cantidad del producto en el ViewModel a cero
                     viewModel.actualizarCantidadProducto(products[position], 0)
                     botonRestar.visibility = View.GONE
+
+                    cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
+                    producto.setTextAppearance(R.style.ColorFuentes)
+                    precio.setTextAppearance(R.style.ColorFuentes)
+                    existencia.setTextAppearance(R.style.ColorFuentes)
                 }
             }
         }

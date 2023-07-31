@@ -75,11 +75,11 @@ class FacturaGuardadaViewModel : ViewModel() {
         val listaProductos = datosProductosFacturados.value ?: emptyList()
 
         // Calcular subtotal
-        subTotal.value = listaProductos.sumOf { it.venta.toDouble() * it.cantidad.toDouble() }.toString().formatoMonenda()
+        subTotal.value = listaProductos.sumOf { it.venta.toDouble() * it.cantidad.toDouble() }.toString()
 
         // Calcular total
-        val subtotal = subTotal.value?.eliminarPuntosComasLetras()?.toDouble() ?: 0.0
-        val envio = datosFactura.value?.envio?.toDouble() ?: 0.0
+        val subtotal = subTotal.value?.toDouble() ?: 0.00
+        val envio = datosFactura.value?.envio?.toDouble() ?: 0.00
         val descuento = datosFactura.value?.descuento?.toDouble() ?: 0.0
         var totalDescuento = subtotal
         val porcentajeDescuento = descuento / 100
@@ -88,8 +88,8 @@ class FacturaGuardadaViewModel : ViewModel() {
         totalFactura.value = totalDescuento.toString().formatoMonenda()
 
         // Calcular información adicional
-        referencias.value = listaProductos.size.toString().formatoMonenda()
-        items.value = listaProductos.sumOf { it.cantidad.toDouble() }.toString().formatoMonenda()
+        referencias.value = listaProductos.size.toString()
+        items.value = listaProductos.sumOf { it.cantidad.toInt() }.toString()
     }
 
     fun eliminarFactura(context:Context) {

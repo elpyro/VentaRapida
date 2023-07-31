@@ -33,7 +33,7 @@ class DetalleCompraViewModel : ViewModel() {
         for ((producto, cantidad) in MainActivity.compraProductosSeleccionados) {
             //multiplicar por -1 para sumar al inventario
             items +=  cantidad
-            total += producto.p_compra.eliminarPuntosComasLetras().toDouble() * cantidad.toDouble()
+            total += producto.p_compra.toDouble() * cantidad.toDouble()
         }
 
         subTotal.value =  total.toString().formatoMonenda()
@@ -61,13 +61,13 @@ class DetalleCompraViewModel : ViewModel() {
 
     }
 
-    fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Int, cantidad:Int, nombre:String) {
+    fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Double, cantidad:Int, nombre:String) {
 
         val productoEncontrado = MainActivity.compraProductosSeleccionados.keys.find { it.id == producto.id }
         if (productoEncontrado != null) {
 
             MainActivity.compraProductosSeleccionados.remove(productoEncontrado)
-            productoEncontrado.p_compra = nuevoPrecio.toString().eliminarPuntosComasLetras()
+            productoEncontrado.p_compra = nuevoPrecio.toString()
             productoEncontrado.nombre = nombre
             MainActivity.compraProductosSeleccionados[productoEncontrado] = cantidad
 

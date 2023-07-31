@@ -79,10 +79,10 @@ class CompraGuardadaAdaptador(
         fun bind(factura: ModeloProductoFacturado) {
 
             producto.text = factura.producto
-            seleccion.text=factura.cantidad.formatoMonenda()
+            seleccion.text=factura.cantidad
             precio.text=factura.costo.formatoMonenda()
             existencia.visibility=View.GONE
-            val total= factura.cantidad.toFloat() * factura.costo.toFloat()
+            val total= factura.cantidad.toInt() * factura.costo.toDouble()
             total_producto.text= total.toString().formatoMonenda()
 
             // Limpiar la imagen anterior

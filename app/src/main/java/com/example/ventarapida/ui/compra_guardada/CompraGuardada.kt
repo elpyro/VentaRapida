@@ -25,6 +25,7 @@ import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
+import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.example.ventarapida.ui.promts.PromtFacturaGuardada
@@ -91,10 +92,11 @@ class CompraGuardada : Fragment() {
 
             if (banderaElimandoFactura == true) return@observe
 
-            binding?.textViewTotal?.text = "Total: $it"
+            binding?.textViewTotal?.text = "Total: ${it.formatoMonenda()}"
+
             val updates = hashMapOf<String, Any>(
                 "id_pedido" to modeloFactura.id_pedido,
-                "total" to it.eliminarAcentosTildes(),
+                "total" to it,
             )
             FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Compra", updates)
         }
@@ -111,10 +113,10 @@ class CompraGuardada : Fragment() {
             }
         }
         viewModel.referencias.observe(viewLifecycleOwner) {
-            binding?.textViewReferencias?.text = "Referencias: $it"
+            binding?.textViewReferencias?.text = "Referencias: ${it}"
         }
         viewModel.items.observe(viewLifecycleOwner) {
-            binding?.textViewItems?.text = "Items: $it"
+            binding?.textViewItems?.text = "Items: ${it}"
         }
     }
 

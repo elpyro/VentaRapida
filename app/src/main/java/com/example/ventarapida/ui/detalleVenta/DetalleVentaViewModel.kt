@@ -47,7 +47,7 @@ class DetalleVentaViewModel : ViewModel() {
             var items=0
             for ((producto, cantidad) in ventaProductosSeleccionados) {
                 items += cantidad
-                total += producto.p_diamante.eliminarPuntosComasLetras().toDouble() * cantidad.toDouble()
+                total += producto.p_diamante.toDouble() * cantidad.toDouble()
             }
             // Obtiene el porcentaje de descuento y lo resta de total
             val porcentajeDescuento = descuento.value!!.toDouble() / 100
@@ -80,12 +80,12 @@ class DetalleVentaViewModel : ViewModel() {
 
     }
 
-    fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Int, cantidad:Int, nombre:String) {
+    fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Double, cantidad:Int, nombre:String) {
         val productoEncontrado = ventaProductosSeleccionados.keys.find { it.id == producto.id }
         if (productoEncontrado != null) {
 
             ventaProductosSeleccionados.remove(productoEncontrado)
-            productoEncontrado.p_diamante = nuevoPrecio.toString().eliminarPuntosComasLetras()
+            productoEncontrado.p_diamante = nuevoPrecio.toString()
             productoEncontrado.nombre = nombre
             ventaProductosSeleccionados[productoEncontrado] = cantidad
 

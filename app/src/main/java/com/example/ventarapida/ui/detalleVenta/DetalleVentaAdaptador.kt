@@ -80,7 +80,7 @@ class DetalleVentaAdaptador(
 
             // Verificar si la cantidad es nula y si no lo es, establecer el texto de la vista de cantidad
 
-            cantidadSeleccion?.let { seleccion.setText(it.toString().formatoMonenda()) }
+            cantidadSeleccion?.let { seleccion.setText(it.toString()) }
 
             try {
                 existencia.text ="X"+ (product.cantidad.toInt() + cantidadSeleccion!!.toInt())
@@ -89,7 +89,7 @@ class DetalleVentaAdaptador(
 
 
             precio?.let { precio.setText(product.p_diamante.formatoMonenda()) }
-            val total= cantidadSeleccion?.times(product.p_diamante.toInt())
+            val total= cantidadSeleccion?.times(product.p_diamante.toDouble())
 
             total_producto.text=total.toString().formatoMonenda()
 

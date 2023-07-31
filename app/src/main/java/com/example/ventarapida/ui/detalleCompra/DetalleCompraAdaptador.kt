@@ -80,7 +80,7 @@ class DetalleCompraAdaptador(
 
             // Verificar si la cantidad es nula y si no lo es, establecer el texto de la vista de cantidad
 
-            cantidadSeleccion?.let { seleccion.setText(it.toString().formatoMonenda()) }
+            cantidadSeleccion?.let { seleccion.setText(it.toString()) }
 
 
             //sumamos la existencia los prodocutos seleccionados
@@ -92,7 +92,7 @@ class DetalleCompraAdaptador(
 
             //se edita que el campo sea el de compra
             precio.let { precio.setText(product.p_compra.formatoMonenda()) }
-            val total= cantidadSeleccion?.times(product.p_compra.toInt())
+            val total= cantidadSeleccion?.times(product.p_compra.toDouble())
 
             total_producto.text=total.toString().formatoMonenda()
 

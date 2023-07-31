@@ -79,10 +79,10 @@ class FacturaGuardadaAdaptador(
         fun bind(factura: ModeloProductoFacturado) {
 
             producto.text = factura.producto
-            seleccion.text=factura.cantidad.formatoMonenda()
+            seleccion.text=factura.cantidad
             precio.text=factura.venta.formatoMonenda()
             existencia.visibility=View.GONE
-            val total= factura.cantidad.toFloat() * factura.venta.toFloat()
+            val total= factura.cantidad.toInt()* factura.venta.toDouble()
             total_producto.text= total.toString().formatoMonenda()
 
 //            Picasso.get().cancelRequest(imagenProducto)

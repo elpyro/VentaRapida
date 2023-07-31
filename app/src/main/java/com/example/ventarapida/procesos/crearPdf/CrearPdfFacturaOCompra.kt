@@ -316,9 +316,9 @@ class CrearPdfFacturaOCompra {
             cell.border = PdfPCell.NO_BORDER
 
             val referencias=listaProductos.size
-            val items= listaProductos.sumByDouble { it.cantidad.toDouble() }.toString().formatoMonenda()
+            val items= listaProductos.sumBy { it.cantidad.toInt() }.toString()
 
-            var temp = Paragraph("Referencias: $referencias, Items: $items", FONT_CURSIVA)
+            var temp = Paragraph("Referencias: $referencias, Items: ${items}", FONT_CURSIVA)
             temp.alignment = Element.ALIGN_LEFT
             cell.addElement(temp)
 
@@ -358,7 +358,7 @@ class CrearPdfFacturaOCompra {
             var precioModificado=false
             if(descuento!="0"){
                 precioModificado=true
-                temp = Paragraph("Descuento: %$descuento",FONT_CELL)
+                temp = Paragraph("Descuento: %${descuento.formatoMonenda()}",FONT_CELL)
                 temp.alignment = Element.ALIGN_RIGHT
                 cell.addElement(temp)
             }
@@ -444,7 +444,7 @@ class CrearPdfFacturaOCompra {
             setCellFormat(cell, cell_color!!, precio.formatoMonenda()!!)
             table1.addCell(cell)
 
-            val totalProducto=temp.cantidad.toInt() * precio.toInt()
+            val totalProducto=temp.cantidad.toInt() * precio.toDouble()
             cell = PdfPCell()
             setCellFormat(cell, cell_color!!, totalProducto.toString().formatoMonenda()!!)
             table1.addCell(cell)

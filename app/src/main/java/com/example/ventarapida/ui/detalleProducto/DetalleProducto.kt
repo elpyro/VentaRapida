@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.example.ventarapida.datos.ModeloProducto
@@ -94,8 +95,7 @@ class DetalleProducto : Fragment() {
         // Carga el producto en la UI
         cargarProducto(modeloProducto)
 
-        binding!!.editTextPCompra.escribirFormatoMoneda()
-        binding!!.editTextPVenta.escribirFormatoMoneda()
+
 
         return binding!!.root // Retorna la vista inflada
     }
@@ -256,6 +256,7 @@ class DetalleProducto : Fragment() {
         builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
         builder.setPositiveButton("Eliminar") { dialog, which ->
             viewModel.eliminarProducto(id_producto)
+            findNavController().popBackStack()
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
@@ -285,8 +286,8 @@ class DetalleProducto : Fragment() {
             "id" to id_producto.trim(),
             "nombre" to this.binding!!.editTextProducto.text.toString().trim(),
             "cantidad" to this.binding!!.editTextCantidad.text.toString().trim(),
-            "p_compra" to this.binding!!.editTextPCompra.text.toString().eliminarPuntosComasLetras().trim(),
-            "p_diamante" to this.binding!!.editTextPVenta.text.toString().eliminarPuntosComasLetras().trim()
+            "p_compra" to this.binding!!.editTextPCompra.text.toString(),
+            "p_diamante" to this.binding!!.editTextPVenta.text.toString()
         )
 
          guardarProducto(updates)

@@ -20,14 +20,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_centerInParent="true">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:src="@drawable/logo2_compra_rapidita">
 
+        </ImageView>
             <TextView
                 android:textSize="38sp"
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:theme="@style/ColorFuenteEnFondoGris"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/Bienvenido" />
+                android:text="@string/CompraRapidita" />
         </LinearLayout>
 
         <LinearLayout

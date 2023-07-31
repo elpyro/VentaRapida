@@ -92,12 +92,12 @@ class FacturaGuardada : Fragment() {
             binding?.textViewTotal?.text="Total: $it"
             val updates = hashMapOf<String, Any>(
                 "id_pedido" to modeloFactura.id_pedido,
-                "total" to it.eliminarAcentosTildes()
+                "total" to it
             )
             FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",updates)
         }
         viewModel.subTotal.observe(viewLifecycleOwner){
-            binding?.textViewSubtotal?.text="Sub-Total: $it"
+            binding?.textViewSubtotal?.text="Sub-Total: ${it.formatoMonenda()}"
         }
         viewModel.datosProductosFacturados.observe(viewLifecycleOwner) { productosFacturados ->
             adaptador = FacturaGuardadaAdaptador(productosFacturados as MutableList<ModeloProductoFacturado>)

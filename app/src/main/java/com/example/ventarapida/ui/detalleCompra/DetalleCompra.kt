@@ -101,19 +101,16 @@ class DetalleCompra : Fragment() {
 
         editTextProducto.setText( item.nombre)
         editTextCantidad.setText(cantidad.toString())
-        editTextPrecio.setText(item.p_compra.formatoMonenda())
-
-        editTextPrecio.escribirFormatoMoneda()
-
+        editTextPrecio.setText(item.p_compra)
 
 
 // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
             val nuevoNombre=editTextProducto.text.toString()
             val nuevaCantidad = editTextCantidad.text.toString()
-            val nuevoPrecio = editTextPrecio.text.toString().replace(".", "")
+            val nuevoPrecio = editTextPrecio.text.toString()
 
-            viewModel.actualizarProducto(item, nuevoPrecio.toInt(),nuevaCantidad.toInt(), nuevoNombre)
+            viewModel.actualizarProducto(item, nuevoPrecio.toDouble(),nuevaCantidad.toInt(), nuevoNombre)
             adaptador.notifyDataSetChanged()
         }
 
@@ -176,10 +173,10 @@ class DetalleCompra : Fragment() {
         }
 
         viewModel.referencias.observe(viewLifecycleOwner) {
-            binding?.textViewReferencias?.text="Referencias: "+it.formatoMonenda()
+            binding?.textViewReferencias?.text="Referencias: "+it
         }
         viewModel.itemsSeleccionados.observe(viewLifecycleOwner) {
-            binding?.textViewItems?.text="Items: "+ it.formatoMonenda()
+            binding?.textViewItems?.text="Items: "+ it
         }
 
         viewModel.mensajeToast.observe(viewLifecycleOwner){
@@ -254,9 +251,9 @@ class DetalleCompra : Fragment() {
         val horaActual = obtenerHoraActual()
         val fechaActual = obtenerFechaActual()
 
-        val total=binding?.textViewTotal?.text.toString().eliminarPuntosComasLetras()
+        val total=binding?.textViewTotal?.text.toString()
         val nombre= binding?.editTextTienda?.text.toString().ifBlank { "Desconocida" }
-
+        val totalconEtiqueta = total.replace("Total:", "Nuevo ").trim()
         val datosPedido = hashMapOf<String, Any>(
             "id_pedido" to idPedido,
             "nombre" to nombre,
@@ -269,7 +266,7 @@ class DetalleCompra : Fragment() {
             "hora" to horaActual,
             "id_vendedor" to MainActivity.datosUsuario.id,
             "nombre_vendedor" to MainActivity.datosUsuario.nombre,
-            "total" to total,
+            "total" to totalconEtiqueta,
             "fechaBusquedas" to obtenerFechaUnix()
         )
         return datosPedido

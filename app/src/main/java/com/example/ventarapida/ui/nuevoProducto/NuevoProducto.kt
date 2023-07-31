@@ -57,8 +57,6 @@ class NuevoProducto : Fragment() {
 
         setHasOptionsMenu(true)
 
-        binding!!.editTextPCompra.escribirFormatoMoneda()
-        binding!!.editTextPVenta.escribirFormatoMoneda()
     }
 
 
@@ -159,8 +157,8 @@ class NuevoProducto : Fragment() {
                 "id" to idProducto,
                 "nombre" to binding!!.editTextProducto.text.toString().trim(),
                 "cantidad" to binding!!.editTextCantidad.text.toString().trim(),
-                "p_compra" to binding!!.editTextPCompra.text.toString().eliminarPuntosComasLetras().trim(),
-                "p_diamante" to binding!!.editTextPVenta.text.toString().eliminarPuntosComasLetras().trim()
+                "p_compra" to binding!!.editTextPCompra.text.toString(),
+                "p_diamante" to binding!!.editTextPVenta.text.toString()
             )
 
         guardarProducto(updates)

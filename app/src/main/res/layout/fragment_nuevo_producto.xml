@@ -55,7 +55,7 @@
                     android:background="@drawable/edittext_background"
                     android:gravity="center"
                     android:hint="@string/compra"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     tools:ignore="TextContrastCheck" />
@@ -76,7 +76,7 @@
                     android:background="@drawable/edittext_background"
                     android:gravity="center"
                     android:hint="@string/venta"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>

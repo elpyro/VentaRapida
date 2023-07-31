@@ -212,7 +212,7 @@ class CrearPdfInventario {
         document.add(table)
     }
 
-    data class TablaInventario(val tabla: PdfPTable, val total: Int)
+    data class TablaInventario(val tabla: PdfPTable, val total: Double)
 
     private fun crearTabla(dataTable: List<ModeloProducto>): TablaInventario {
         val table1 = PdfPTable(4)
@@ -252,7 +252,7 @@ class CrearPdfInventario {
         val lt_gray = BaseColor(221, 221, 221) //#DDDDDD
         var cell_color: BaseColor?
         val size = dataTable.size
-        var totalInventario=0
+        var totalInventario=0.00
         for (i in 0 until size) {
             cell_color = if (alternate) lt_gray else BaseColor.WHITE
             val temp = dataTable[i]
@@ -271,7 +271,7 @@ class CrearPdfInventario {
             setCellFormat(cell, cell_color, temp.p_compra.formatoMonenda()!!)
             table1.addCell(cell)
 
-            val totalProducto = temp.cantidad.toInt() * temp.p_compra.toInt()
+            val totalProducto = temp.cantidad.toInt() * temp.p_compra.toDouble()
             totalInventario += totalProducto
 
             cell = PdfPCell()
