@@ -85,21 +85,35 @@ object FirebaseProductos {
         tablaRef.keepSynced(true)
         tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for (facturaSnapshot in snapshot.children) {
-                    val factura = facturaSnapshot.getValue(ModeloProducto::class.java)
-                    if (mayorCero){
+                // esperamos 2 segundo y volvemos a hacer la misma busqueda para estar seguro que si se obtienen los valores actualizados
+                Utilidades.esperarUnSegundo()
+                Utilidades.esperarUnSegundo()
+                tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (facturaSnapshot in snapshot.children) {
+                            val factura = facturaSnapshot.getValue(ModeloProducto::class.java)
+                            if (mayorCero){
 
-                        factura?.let {
-                            if (it.cantidad.toInt() > 0) { // Filtrar productos con cantidad mayor a 0
-                                productos.add(factura)
+                                factura?.let {
+                                    if (it.cantidad.toInt() > 0) { // Filtrar productos con cantidad mayor a 0
+                                        productos.add(factura)
+                                    }
+                                }
+                            }else{
+                                productos.add(factura!!)
                             }
                         }
-                    }else{
-                        productos.add(factura!!)
-                    }
-                }
 
-                taskCompletionSource.setResult(productos)
+                        taskCompletionSource.setResult(productos)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.w("MiApp", "Error al buscar facturas: ${error.message}")
+                        taskCompletionSource.setException(error.toException())
+                    }
+                })
+
+
             }
 
             override fun onCancelled(error: DatabaseError) {

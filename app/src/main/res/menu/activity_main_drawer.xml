@@ -6,7 +6,7 @@
 
     <group android:checkableBehavior="single"
         android:id="@+id/panel_administrador"
-        android:visible="false">
+        android:visible="true">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/baseline_monetization_on_24"
@@ -23,8 +23,7 @@
             android:icon="@drawable/baseline_bookmark_add_24"
             android:title="@string/NuevoProducto" />
 
-        <item tools:ignore="MenuTitle">
-            <menu>
+
                 <item
                     android:id="@+id/ventas"
                     android:icon="@drawable/baseline_menu_book_24"
@@ -45,8 +44,11 @@
                     android:icon="@drawable/baseline_corporate_fare_24"
                     android:title="@string/datosempresa"
                     tools:ignore="DuplicateIds" />
-            </menu>
-        </item>
+                <item
+                    android:id="@+id/detalleUsuario"
+                    android:icon="@drawable/baseline_credit_card_24"
+                    android:title="@string/Pagos" />
+
 
         <item
             android:id="@+id/listaUsuarios"
@@ -84,6 +86,8 @@
             tools:ignore="DuplicateIds" />
 
     </group>
+
+
 
     <item
         android:id="@+id/detalleUsuario"

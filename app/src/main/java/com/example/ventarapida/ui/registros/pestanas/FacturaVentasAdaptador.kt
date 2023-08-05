@@ -78,7 +78,7 @@ class FacturaVentasAdaptador(
 
             cliente.text = factura.nombre
             val totalfactura=factura.total
-            total.text= totalfactura.formatoMonenda()
+            total.text= totalfactura
             vendedor.text=factura.nombre_vendedor
             fecha.text=factura.fecha
             id.text=factura.id_pedido.substring(0, 5)  //solo mostramos los primero 5 digitos en la vista para evitar exeso de datos

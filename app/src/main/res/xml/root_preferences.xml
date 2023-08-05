@@ -25,5 +25,12 @@
 
     </PreferenceCategory>
 
+    <EditTextPreference
+        android:defaultValue="+"
+        android:key="edit_text_preference_codigo_area"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Codigo Area Whatsapp" />
+
 
 </PreferenceScreen>

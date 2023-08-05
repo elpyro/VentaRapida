@@ -147,30 +147,44 @@ object FirebaseProductoFacturadosOComprados {
         reference.orderByChild("fechaBusquedas")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val productos = mutableListOf<ModeloProductoFacturado>()
+                    // esperamos 2 segundo y volvemos a hacer la misma busqueda para estar seguro que si se obtienen los valores actualizados
+                    Utilidades.esperarUnSegundo()
+                    Utilidades.esperarUnSegundo()
+                    reference.orderByChild("fechaBusquedas")
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                val productos = mutableListOf<ModeloProductoFacturado>()
 
-                    for (snapshot in dataSnapshot.children) {
-                        val elemento = snapshot.getValue(ModeloProductoFacturado::class.java)
+                                for (snapshot in dataSnapshot.children) {
+                                    val elemento = snapshot.getValue(ModeloProductoFacturado::class.java)
 
-                        // Obtener la fecha del elemento actual
-                        val fechaElemento = elemento?.fechaBusquedas ?: 0
+                                    // Obtener la fecha del elemento actual
+                                    val fechaElemento = elemento?.fechaBusquedas ?: 0
 
-                        // Verificar si la fecha está dentro del rango deseado
-                        if (fechaElemento in fechaInicio..fechaFin) {
+                                    // Verificar si la fecha está dentro del rango deseado
+                                    if (fechaElemento in fechaInicio..fechaFin) {
 
-                            productos.sortWith(compareBy<ModeloProductoFacturado> { it.fechaBusquedas }
-                                .thenBy { it.id_pedido })
+                                        productos.sortWith(compareBy<ModeloProductoFacturado> { it.fechaBusquedas }
+                                            .thenBy { it.id_pedido })
 
-                            //evalua si el producto es del vendedor especificado
-                            if(idVendedor=="false") {
-                                productos.add(elemento!!)
-                            }else if (idVendedor.equals(elemento?.id_vendedor)){
-                                productos.add(elemento!!)
+                                        //evalua si el producto es del vendedor especificado
+                                        if(idVendedor=="false") {
+                                            productos.add(elemento!!)
+                                        }else if (idVendedor.equals(elemento?.id_vendedor)){
+                                            productos.add(elemento!!)
+                                        }
+                                    }
+                                }
+
+                                tcs.setResult(productos)
                             }
-                        }
-                    }
 
-                    tcs.setResult(productos)
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                tcs.setException(databaseError.toException())
+                            }
+                        })
+
+
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {

@@ -96,7 +96,7 @@ class CompraGuardada : Fragment() {
 
             val updates = hashMapOf<String, Any>(
                 "id_pedido" to modeloFactura.id_pedido,
-                "total" to it,
+                "total" to it.formatoMonenda(),
             )
             FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Compra", updates)
         }

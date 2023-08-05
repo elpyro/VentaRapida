@@ -156,4 +156,5 @@
     <string name="NuevoUsuario">Nuevo Usuario</string>
     <string name="Catalogo">Catálogo</string>
     <string name="CompraRapidita">Compra Rapidita</string>
+    <string name="Pagos">Pagos</string>
 </resources>

@@ -2,6 +2,8 @@ package com.example.ventarapida.ui.reportes
 
 import android.content.Context
 import android.content.Intent
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ventarapida.VistaPDFReporte
 import com.example.ventarapida.databinding.FragmentReportesBinding
@@ -20,7 +22,8 @@ import kotlinx.coroutines.runBlocking
 
 
 class ReportesViewModel : ViewModel() {
-
+    private val _reporteCompletado = MutableLiveData<Unit>()
+    val reporteCompletado: LiveData<Unit> = _reporteCompletado
     fun crearInventarioPdf(context: Context, mayorCero: Boolean) {
 
         val tareaBuscarProductos = buscarProductos(mayorCero)
@@ -29,8 +32,10 @@ class ReportesViewModel : ViewModel() {
                 val crearPdf = CrearPdfInventario()
                 crearPdf.inventario(context, listaProductos as ArrayList<ModeloProducto>)
 
+                _reporteCompletado.value = Unit
                 val intent = Intent(context, VistaPDFReporte::class.java)
                 context.startActivity(intent)
+
             }
     }
 
@@ -44,6 +49,7 @@ class ReportesViewModel : ViewModel() {
                     val crearPdf = CrearPdfCatalogo()
                     crearPdf.catalogo(context, listaProductos as ArrayList<ModeloProducto>)
 
+                    _reporteCompletado.value = Unit
                     val intent = Intent(context, VistaPDFReporte::class.java)
                     context.startActivity(intent)
                 }
@@ -69,6 +75,7 @@ class ReportesViewModel : ViewModel() {
                 val crearPdf= CrearPdfVentasPorVendedor()
                 crearPdf.ventas(context, fechaInicio, fechaFin, productos as ArrayList<ModeloProductoFacturado>,nombreVendedor )
 
+                _reporteCompletado.value = Unit
                 val intent = Intent(context, VistaPDFReporte::class.java)
                 context.startActivity(intent)
             }
@@ -87,6 +94,7 @@ class ReportesViewModel : ViewModel() {
                 val crearPdf= CrearPdfMasVendidos()
                 crearPdf.masVendidos(context, fechaInicio, fechaFin,listaMasVendidos)
 
+                _reporteCompletado.value = Unit
                 val intent = Intent(context, VistaPDFReporte::class.java)
                 context.startActivity(intent)
             }
@@ -105,8 +113,11 @@ class ReportesViewModel : ViewModel() {
                 val crearPdf= CrearPdfMayorGanancia()
                 crearPdf.mayorGanancia(context, fechaInicio, fechaFin,listaMasVendidos)
 
+                _reporteCompletado.value = Unit
+
                 val intent = Intent(context, VistaPDFReporte::class.java)
                 context.startActivity(intent)
+
             }
     }
 
@@ -123,8 +134,11 @@ class ReportesViewModel : ViewModel() {
                 val crearPdf= CrearPdfGanancias()
                 crearPdf.ganacias(context, fechaInicio, fechaFin, productos as ArrayList<ModeloProductoFacturado>)
 
+                _reporteCompletado.value = Unit
+
                 val intent = Intent(context, VistaPDFReporte::class.java)
                 context.startActivity(intent)
+
             }
 
     }

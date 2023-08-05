@@ -93,7 +93,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
     }
 
     private fun compartirWhatsapp(numeroTelefono: String) {
-        val codigoArea = "57"
+        val numeroTelefonoFormateado=numeroTelefono.replace("[\\s+]".toRegex(), "")
         val fileName = "reporte.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
 
@@ -126,7 +126,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
         builder.setItems(appList.toTypedArray()) { _, which ->
             val selectedPackage = packageNameList[which]
             intent.`package` = selectedPackage
-            intent.putExtra("jid", PhoneNumberUtils.stripSeparators(codigoArea + numeroTelefono) + "@s.whatsapp.net")
+            intent.putExtra("jid", PhoneNumberUtils.stripSeparators(numeroTelefonoFormateado) + "@s.whatsapp.net")
 
             try {
                 startActivity(intent)

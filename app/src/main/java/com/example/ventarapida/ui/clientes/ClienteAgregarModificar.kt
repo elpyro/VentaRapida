@@ -38,6 +38,9 @@ class ClienteAgregarModificar : Fragment() {
         val bundle = arguments
         val modeloCliente = bundle?.getSerializable("modelo") as? ModeloClientes
 
+        //agregar codigo de area por defecto
+        binding?.editTextTelefono?.setText(MainActivity.edit_text_preference_codigo_area+" ")
+
         if (modeloCliente!=null){
             cargarDatos(modeloCliente)
             idCliente= modeloCliente.id
@@ -46,6 +49,7 @@ class ClienteAgregarModificar : Fragment() {
             idCliente= UUID.randomUUID().toString()
 
         }
+
 
         return binding!!.root
     }

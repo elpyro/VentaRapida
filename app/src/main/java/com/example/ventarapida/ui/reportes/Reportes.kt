@@ -2,6 +2,7 @@ package com.example.ventarapida.ui.reportes
 
 
 import android.app.DatePickerDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.databinding.FragmentReportesBinding
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseUsuarios.buscarTodosUsuariosPorEmpresa
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 
@@ -32,12 +37,20 @@ class Reportes : Fragment() {
         viewModel = ViewModelProvider(this)[ReportesViewModel::class.java]
 
         listener()
+        escuchadores()
         buscarTodosUsuariosPorEmpresa().addOnSuccessListener { listaUsuarios->
 
                 if (!listaUsuarios.isEmpty()) crearSpinner(listaUsuarios)
         }
         return binding!!.root
     }
+
+    private fun escuchadores() {
+        viewModel.reporteCompletado.observe(viewLifecycleOwner) {
+            progressDialog.dismiss()
+        }
+    }
+
     private fun crearSpinner(listaUsuarios: MutableList<ModeloUsuario>?) {
         listaIdUsuarios = listaUsuarios?.map { it.id }!!
         val listaNombresUsuarios = listaUsuarios?.map { it.nombre }
@@ -86,19 +99,26 @@ class Reportes : Fragment() {
         }
 
         binding?.buttonInventario?.setOnClickListener {
-            MainActivity.progressDialog?.show()
-            var mayorCero=true
-            if (binding?.radioButtonTodos!!.isChecked) mayorCero=false
+            progressDialog.show()
+            // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+            lifecycleScope.launch(Dispatchers.IO) {
+                var mayorCero = true
+                if (binding?.radioButtonTodos!!.isChecked) mayorCero = false
 
-            viewModel.crearInventarioPdf(requireContext(), mayorCero)
+                viewModel.crearInventarioPdf(requireContext(), mayorCero)
+            }
         }
 
         binding?.buttonCatalogo?.setOnClickListener {
-            MainActivity.progressDialog?.show()
-            var mayorCero=true
-            if (binding?.radioButtonCatalogoTodos!!.isChecked) mayorCero=false
 
-            viewModel.crearCatalogo(requireContext(), mayorCero)
+            progressDialog.show()
+            // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+            lifecycleScope.launch(Dispatchers.IO) {
+                var mayorCero = true
+                if (binding?.radioButtonCatalogoTodos!!.isChecked) mayorCero = false
+
+                viewModel.crearCatalogo(requireContext(), mayorCero)
+            }
         }
 
 
@@ -149,24 +169,54 @@ class Reportes : Fragment() {
             if(binding?.textViewHasta?.text.toString()!="Hasta") fechaFin=binding?.textViewHasta?.text.toString()
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==0){
-                viewModel.ReporteGanancia(requireContext(),fechaInicio,fechaFin)
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReporteGanancia(requireContext(),fechaInicio,fechaFin)
+
+                }
+
             }
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==1){
-                viewModel.ReporteMasVendidos(requireContext(),fechaInicio, fechaFin)
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReporteMasVendidos(requireContext(), fechaInicio, fechaFin)
+                }
             }
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==2){
-                viewModel.ReportePorVendedor(requireContext(),fechaInicio, fechaFin, listaIdUsuarios[posicionSpinnerVendedor],binding!!)
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReportePorVendedor(
+                        requireContext(),
+                        fechaInicio,
+                        fechaFin,
+                        listaIdUsuarios[posicionSpinnerVendedor],
+                        binding!!
+                    )
+                }
             }
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==3){
-                viewModel.ReporteMayorGanancia(requireContext(),fechaInicio, fechaFin)
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReporteMayorGanancia(requireContext(), fechaInicio, fechaFin)
+                }
             }
         }
     }
 
 
+     val progressDialog: ProgressDialog by lazy {
+        ProgressDialog(requireContext()).apply {
+            setMessage("Creando PDF...")
+            setCancelable(true)
+        }
+    }
 
 }
 

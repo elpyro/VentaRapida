@@ -21,7 +21,11 @@ class Preferencias {
             sharedPreferences.getString("inf_superior", "")!!
         MainActivity.preferencia_informacion_inferior =
             sharedPreferences.getString("inf_inferior", "")!!
+        MainActivity.edit_text_preference_codigo_area =
+            sharedPreferences.getString("edit_text_preference_codigo_area","+")!!
+
         tono = sharedPreferences.getBoolean("sonido", true)
+
 
         obtenerSeleccionPendiente(context,"compra_seleccionada")
         obtenerSeleccionPendiente(context,"venta_seleccionada")

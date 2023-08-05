@@ -85,6 +85,8 @@ class DetalleVenta : Fragment() {
         viewModel.context = requireContext()
         viewModel.totalFactura()
 
+        //establece el codigo de area por defecto
+        binding?.editTextTelefono?.setText(MainActivity.edit_text_preference_codigo_area+" ")
 
         observadores()
 

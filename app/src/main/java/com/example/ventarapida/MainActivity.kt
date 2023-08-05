@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         lateinit var editText_nombreEmpresa: TextView
         lateinit var preferencia_informacion_superior:String
         lateinit var preferencia_informacion_inferior:String
+        lateinit var edit_text_preference_codigo_area:String
         var progressDialog: ProgressDialog? = null
         lateinit var  navController: NavController
         lateinit var  drawerLayout: DrawerLayout
