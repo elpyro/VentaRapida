@@ -118,4 +118,9 @@ class ListaCompras : Fragment() {
         bundle.putSerializable("lista",  ArrayList(productosFiltrados))
         Navigation.findNavController(vista).navigate(R.id.compraGuardada,bundle)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding=null
+    }
 }

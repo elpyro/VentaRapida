@@ -177,4 +177,9 @@ class ListaClientes : Fragment() {
         vista=view
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding=null
+    }
+
 }

@@ -148,4 +148,8 @@ class ListaUsuarios : Fragment() {
         Navigation.findNavController(vista).navigate(R.id.registroUsuarios,bundle)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding=null
+    }
 }

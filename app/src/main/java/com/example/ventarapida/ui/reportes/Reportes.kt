@@ -218,5 +218,9 @@ class Reportes : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    binding=null
+    }
 }
 

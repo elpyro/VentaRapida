@@ -11,7 +11,7 @@ data class ModeloProductoFacturado(
     val vendedor:String="",
     var producto:String ="",
     var cantidad:String="",
-    val costo:String="",
+    var costo:String="",
     var venta:String="",
     val precioDescuentos:String="",
     val fecha:String="",

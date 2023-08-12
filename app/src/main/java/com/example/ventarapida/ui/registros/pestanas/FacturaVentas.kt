@@ -20,7 +20,6 @@ import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 class FacturaVentas : Fragment() {
 
 
-    private lateinit var viewModel: FacturaVentasViewModel
     private var binding: FragmentFacturaVentasBinding? = null
     private lateinit var vista:View
 
@@ -32,14 +31,9 @@ class FacturaVentas : Fragment() {
     ): View {
 
         binding= FragmentFacturaVentasBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(FacturaVentasViewModel::class.java)
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
-
-
-
-
 
         listeners()
         cargarLista()
@@ -122,4 +116,8 @@ class FacturaVentas : Fragment() {
         Navigation.findNavController(vista).navigate(R.id.facturaGuardada,bundle)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding=null
+    }
 }

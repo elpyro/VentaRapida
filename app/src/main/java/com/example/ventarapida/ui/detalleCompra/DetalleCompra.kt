@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,14 +22,10 @@ import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
-import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
-import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
-import com.example.ventarapida.procesos.UtilidadesBaseDatos
-import kotlinx.coroutines.launch
+import com.example.ventarapida.ui.agregarProductoFactura.AgregarProductoFactura
 import java.util.*
 
 class DetalleCompra : Fragment() {
@@ -102,7 +97,7 @@ class DetalleCompra : Fragment() {
         editTextProducto.setText( item.nombre)
         editTextCantidad.setText(cantidad.toString())
         editTextPrecio.setText(item.p_compra)
-
+        val precioAnterior = editTextPrecio.text.toString()
 
 // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
@@ -112,6 +107,11 @@ class DetalleCompra : Fragment() {
 
             viewModel.actualizarProducto(item, nuevoPrecio.toDouble(),nuevaCantidad.toInt(), nuevoNombre)
             adaptador.notifyDataSetChanged()
+
+            if(precioAnterior!=nuevoPrecio){
+                dialogoCambiarPreciosDB(nuevoPrecio, item)
+            }
+
         }
 
 // Configurar el botón "Cancelar"
@@ -122,6 +122,23 @@ class DetalleCompra : Fragment() {
 // Mostrar el diálogo
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
+    }
+
+    private fun dialogoCambiarPreciosDB(nuevoPrecio: String, item: ModeloProducto) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Mantente actualizado")
+        builder.setMessage("Desea actualizar el precio de compra para todos los ${item.nombre}")
+        builder.setPositiveButton("Sí") { dialog, which ->
+
+            val updates = hashMapOf<String, Any>(
+                "id" to item.id,
+                "p_compra" to nuevoPrecio,
+            )
+            FirebaseProductos.guardarProducto(updates)
+            Toast.makeText(requireContext(), "${item.nombre} ha sido actualizado", Toast.LENGTH_LONG).show()
+        }
+        builder.setNegativeButton("No", null)
+        builder.show()
     }
 
     private fun listeners() {
@@ -338,6 +355,7 @@ class DetalleCompra : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding=null
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
     }

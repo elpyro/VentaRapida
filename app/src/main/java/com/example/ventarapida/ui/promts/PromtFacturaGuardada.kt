@@ -53,7 +53,8 @@ class PromtFacturaGuardada() {
 
         editTextProducto.setText( item.producto)
         editTextCantidad.setText(item.cantidad)
-        editTextPrecio.setText(item.venta)
+        if (tipo.equals("venta")) editTextPrecio.setText(item.venta)
+        if (tipo.equals("compra")) editTextPrecio.setText(item.costo)
 
 // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
@@ -66,7 +67,9 @@ class PromtFacturaGuardada() {
 
             item.producto=nuevoNombre
             item.cantidad=nuevaCantidad
-            item.venta=nuevoPrecio
+
+            if (tipo.equals("venta"))   item.venta=nuevoPrecio
+            if (tipo.equals("compra"))  item.costo=nuevoPrecio
 
             val diferenciaCantidad = nuevaCantidad.toInt() - cantidadAnterior.toInt()
 

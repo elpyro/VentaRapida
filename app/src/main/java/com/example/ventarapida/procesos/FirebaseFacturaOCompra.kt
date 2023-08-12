@@ -38,14 +38,26 @@ object FirebaseFacturaOCompra {
         tablaRef.keepSynced(true)
         tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for (facturaSnapshot in snapshot.children) {
-                    val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
-                    factura?.let {
-                        facturas.add(it)
+                //volver a consultar para asegurar datos actualizados
+                Utilidades.esperarUnSegundo()
+                Utilidades.esperarUnSegundo()
+                tablaRef.addListenerForSingleValueEvent(object :ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (facturaSnapshot in snapshot.children) {
+                            val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
+                            factura?.let {
+                                facturas.add(it)
+                            }
+                        }
+                        taskCompletionSource.setResult(facturas)
                     }
-                }
 
-                taskCompletionSource.setResult(facturas)
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.w("MiApp", "Error al buscar facturas: ${error.message}")
+                        taskCompletionSource.setException(error.toException())
+                    }
+
+                })
             }
 
             override fun onCancelled(error: DatabaseError) {
