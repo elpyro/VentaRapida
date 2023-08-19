@@ -39,8 +39,9 @@ object FirebaseFacturaOCompra {
         tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //volver a consultar para asegurar datos actualizados
+
                 Utilidades.esperarUnSegundo()
-                Utilidades.esperarUnSegundo()
+
                 tablaRef.addListenerForSingleValueEvent(object :ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
                         for (facturaSnapshot in snapshot.children) {

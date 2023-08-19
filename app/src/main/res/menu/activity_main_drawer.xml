@@ -42,14 +42,6 @@
                     android:id="@+id/reportes"
                     android:icon="@drawable/baseline_bar_chart_24"
                     android:title="@string/Reportes" />
-
-
-                <item
-                    android:id="@+id/suscripcionesDisponibles"
-                    android:icon="@drawable/baseline_credit_card_24"
-                    android:title="@string/Supcripciones" />
-
-
         <item
             android:id="@+id/listaUsuarios"
             android:icon="@drawable/baseline_groups_24"
@@ -62,6 +54,8 @@
             tools:ignore="DuplicateIds" />
 
     </group>
+
+
 
     <group android:checkableBehavior="single"
         android:id="@+id/panel_vendedor"
@@ -87,7 +81,13 @@
 
     </group>
 
-
+    <group android:checkableBehavior="single"
+        android:id="@+id/panel_suscricpion">
+        <item
+            android:id="@+id/suscripcionesDisponibles"
+            android:icon="@drawable/baseline_credit_card_24"
+            android:title="@string/Supcripciones" />
+    </group>
 
     <item
         android:id="@+id/detalleUsuario"

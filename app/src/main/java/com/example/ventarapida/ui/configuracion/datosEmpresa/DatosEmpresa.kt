@@ -24,7 +24,6 @@ import com.example.ventarapida.databinding.FragmentDatosEmpresaBinding
 import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseDatosEmpresa.guardarDatosEmpresa
 import com.example.ventarapida.procesos.GuardarImagenEnDispositivo
-import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.TomarFotoYGaleria
 import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado

@@ -59,7 +59,8 @@ class Venta : Fragment() {
         menuItem  = menu.findItem(R.id.action_total)
         menuPremium  = menu.findItem(R.id.action_premium)
 
-        if(MainActivity.datosEmpresa.premiun.equals("false")){
+
+        if(MainActivity.planVencido!!){
             menuItem.isVisible = false
             menuPremium.isVisible = true
         }
@@ -89,8 +90,7 @@ class Venta : Fragment() {
                 return true
             }
             R.id.action_premium ->{
-                Toast.makeText(requireContext(),"Para Premium +57 3125866072",Toast.LENGTH_LONG).show()
-                Toast.makeText(requireContext(),"Para Premium +57 3125866072",Toast.LENGTH_LONG).show()
+                Navigation.findNavController(vista).navigate(R.id.suscripcionesDisponibles)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

@@ -1,6 +1,7 @@
 package com.example.ventarapida.datos
 
 import java.io.Serializable
+import java.util.Date
 
 data class ModeloDatosEmpresa (
     val id: String= "",
@@ -13,6 +14,8 @@ data class ModeloDatosEmpresa (
     val direccion: String= "",
     val garantia: String= "",
     val premiun:String= "",
-    val ultimo_pago:String= "",
-    val url:String= ""
+    val url:String= "",
+    val plan:String="",
+    val proximo_pago:String ="",
+    val ultimo_pago: String =""
         ):Serializable

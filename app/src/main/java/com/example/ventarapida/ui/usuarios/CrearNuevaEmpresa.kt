@@ -3,21 +3,26 @@ package com.example.ventarapida.ui.usuarios
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import com.example.ventarapida.Login
 import com.example.ventarapida.databinding.ActivityCrearNuevaEmpresaBinding
 import com.example.ventarapida.procesos.FirebaseDatosEmpresa.guardarDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseUsuarios
+import com.example.ventarapida.procesos.Suscripcion
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import java.util.UUID
 
 class CrearNuevaEmpresa : AppCompatActivity() {
     private lateinit var binding: ActivityCrearNuevaEmpresaBinding
-
+    private var suscripcion=Suscripcion()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityCrearNuevaEmpresaBinding.inflate(layoutInflater)
+
+        //COLOCAR LA BARRA SUPERIOR TRANSAPENTE
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         setContentView(binding.root)
 
@@ -41,6 +46,8 @@ class CrearNuevaEmpresa : AppCompatActivity() {
               return@setOnClickListener
           }
 
+          val proximo_pago= suscripcion.calcularFechaFinSuscripcion()
+
           val idEmpresa=UUID.randomUUID().toString()
           val updates = hashMapOf(
               "id" to idEmpresa,
@@ -54,7 +61,9 @@ class CrearNuevaEmpresa : AppCompatActivity() {
               "garantia" to "",
               "correo" to "",
               "url" to "",
-              "ultimo_pago" to obtenerFechaActual()
+              "ultimo_pago" to obtenerFechaActual(),
+              "plan" to "Gratuito",
+              "proximo_pago" to proximo_pago.toString()
               )
 
           guardarDatosEmpresa(updates)
@@ -74,6 +83,7 @@ class CrearNuevaEmpresa : AppCompatActivity() {
           finish()
 
           val intent = Intent(this, Login::class.java)
+          intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
           startActivity(intent)
 
       }

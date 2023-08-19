@@ -23,6 +23,8 @@ import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Preferencias
+import com.example.ventarapida.procesos.Suscripcion
+import com.example.ventarapida.procesos.Utilidades.convertirCadenaAFecha
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Callback
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         var tono = true
         var datosEmpresa: ModeloDatosEmpresa = ModeloDatosEmpresa()
         var datosUsuario: ModeloUsuario = ModeloUsuario()
-
+        var planVencido:Boolean? =false
         lateinit var logotipo: ImageView
         lateinit var editText_nombreEmpresa: TextView
         lateinit var preferencia_informacion_superior:String
@@ -54,12 +56,15 @@ class MainActivity : AppCompatActivity() {
 
          lateinit var appBarConfiguration: AppBarConfiguration
          lateinit var binding: ActivityMainBinding
+
+
         fun init(context: Context) {
             logotipo = ImageView(context)
             editText_nombreEmpresa= TextView(context)
         }
     }
 
+    private var suscripcion=Suscripcion()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,12 +116,14 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
         }
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
 
+        val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
+       if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago!!)
 
-        if (datosEmpresa.premiun.equals("true")){
-            appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            navView.setupWithNavController(navController)
+        if (!planVencido!!){
 
             if(datosUsuario.perfil=="Administrador"){
                 navView.getMenu()
@@ -129,7 +136,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }else{
-            Toast.makeText(this, "Pasate a Premium",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Plan vencido",Toast.LENGTH_LONG).show()
         }
 
 

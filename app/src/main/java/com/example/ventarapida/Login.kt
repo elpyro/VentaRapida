@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.example.ventarapida.databinding.ActivityLoginBinding
 import com.example.ventarapida.datos.ModeloDatosEmpresa
@@ -40,6 +41,9 @@ class Login : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        //COLOCAR LA BARRA SUPERIOR TRANSAPENTE
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         listeners()
         autenticacionGoogle()
@@ -116,7 +120,7 @@ class Login : AppCompatActivity() {
                                 binding.LinearLayoutBienvenido.visibility= View.GONE
                                 binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
                                 // USUARIO NO REGISTRADO
-                                Toast.makeText(this, "${nombreUsuario}, No registrado", Toast.LENGTH_LONG).show()
+                             //   Toast.makeText(this, "${nombreUsuario}, No registrado", Toast.LENGTH_LONG).show()
                                 binding.textViewCorreo.text = correoUsuario
                                 binding.textViewNombre.text = nombreUsuario
                             }
@@ -139,7 +143,6 @@ class Login : AppCompatActivity() {
             intent.putExtra("correo", binding.textViewCorreo.text.toString())
             intent.putExtra("nombre", binding.textViewNombre.text.toString())
             startActivity(intent)
-            finish()
         }
         binding.buttonCerrarSesion.setOnClickListener {
             AuthUI.getInstance().signOut(this)
@@ -184,13 +187,9 @@ class Login : AppCompatActivity() {
 
     private fun abrirPantallaPrincipal() {
         val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
-        finish()
     }
 
 
-//    override fun onPause() {
-//        super.onPause()
-//        firebaseAuth.removeAuthStateListener(authStateListener)
-//    }
 }

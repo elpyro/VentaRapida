@@ -36,11 +36,14 @@ class FacturaVentas : Fragment() {
         binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
 
         listeners()
-        cargarLista()
+
         return binding!!.root
     }
 
+
+
     private fun cargarLista() {
+
         val tareaFacturas = buscarFacturasOCompra("Factura")
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas
@@ -58,6 +61,7 @@ class FacturaVentas : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         vista= view
+        cargarLista()
     }
     private fun listeners() {
         binding?.swipeRefreshLayout?.setOnRefreshListener {

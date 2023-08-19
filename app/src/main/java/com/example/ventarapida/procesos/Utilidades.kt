@@ -74,6 +74,23 @@ object Utilidades {
         return formatoHora.format(horaActual)
     }
 
+    fun convertirCadenaAFecha(cadenaFecha: String): Date? {
+        // Define el formato de la cadena de fecha
+        val formato = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+
+        // Establece la zona horaria adecuada (en este caso, GMT-05:00)
+        formato.timeZone = TimeZone.getTimeZone("GMT-05:00")
+
+        try {
+            // Intenta analizar la cadena de fecha en un objeto Date
+            return formato.parse(cadenaFecha)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
 
 
     fun obtenerFechaUnix():Long{
