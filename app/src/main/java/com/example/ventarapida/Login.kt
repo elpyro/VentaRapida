@@ -42,7 +42,7 @@ class Login : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        //COLOCAR LA BARRA SUPERIOR TRANSAPENTE
+        //COLOCAR LA BARRA SUPERIOR TRANSAPENTE prueba
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         listeners()
