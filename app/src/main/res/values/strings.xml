@@ -169,4 +169,6 @@
     <string name="cambiarCuenta">Cambiar Cuenta</string>
     <string name="precioCompra">Compra</string>
     <string name="InformacionPublicidad4">Comparte tus facturas y reportes con la impresora o redes sociales en PDF</string>
+    <string name="PlanEmpresarial">Plan Empresarial</string>
+    <string name="descripcionPlanEmpresarial">Conecta 30 asuarios al mismo tiempo.</string>
 </resources>

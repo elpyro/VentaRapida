@@ -1,16 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.supscripciones.SuscripcionesDisponibles">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/fondo"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="20sp"
+        android:id="@+id/textViewCurrentPlan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Plan Actual: Premium"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:text="En contruccion" />
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:theme="@style/ColorFuenteEnFondoGris"
+        android:layout_marginBottom="16dp"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/textViewExpirationDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha de Vencimiento: 30 de julio de 2023"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:theme="@style/ColorFuenteEnFondoGris"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="8dp"
+        app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="@color/azul_trasparente">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/textView_total"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/PlanEmpresarial"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:theme="@style/ColorFuenteEnFondoGris" />
+
+            <TextView
+                android:id="@+id/textView_descripcion_empresarial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/descripcionPlanEmpresarial"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:theme="@style/ColorFuenteEnFondoGris"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"/>
+
+            <Button
+                android:id="@+id/buttonPlan_empresarial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Suscribirse a Plan B"
+                android:background="@drawable/gradient_button"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/buttonSubscribePlan2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Suscribirse a Plan B"
+        android:background="@drawable/gradient_button"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/buttonSubscribePlan3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Suscribirse a Plan C"
+        android:background="@drawable/gradient_button"
+        android:textColor="#FFFFFF"/>
+
+</LinearLayout>
