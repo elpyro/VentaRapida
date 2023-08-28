@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/fondo"
+    tools:context=".ui.reportes.ReporteVendedor">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="UselessParent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/azul_trasparente"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/ReporteVentas"
+                    android:textSize="20sp"
+                    android:layout_margin="10dp"
+                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                <TextView
+                    android:id="@+id/textView_nombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+
+                    android:text="@string/vendedor"
+                    android:textSize="20sp"
+                    android:layout_margin="4dp"
+                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_margin="4dp">
+
+                    <TextView
+                        android:id="@+id/textView_desde"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Desde"
+                        android:textSize="20sp"
+                        android:layout_margin="4dp"
+                        android:padding="16dp"
+                        android:theme="@style/ColorFuenteEnFondoGris"/>
+
+                    <TextView
+                        android:id="@+id/textView_hasta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:theme="@style/ColorFuenteEnFondoGris"
+                        android:padding="16dp"
+                        android:layout_margin="4dp"
+                        android:text="Hasta" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/button_informe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bordes_boton"
+                    android:text="@string/PDF" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/azul_trasparente"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="4dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/Catalogo"
+                    android:textSize="20sp"
+                    android:layout_margin="4dp"
+                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioButton_catalogo_positivos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:checked="true"
+                        android:text="Existente" />
+
+                    <RadioButton
+                        android:id="@+id/radio_button_catalogo_todos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="Todo" />
+                </RadioGroup>
+
+                <Button
+                    android:id="@+id/button_catalogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bordes_boton"
+                    android:text="@string/VerPDF" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

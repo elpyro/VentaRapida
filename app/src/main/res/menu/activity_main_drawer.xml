@@ -67,6 +67,13 @@
             android:icon="@drawable/baseline_menu_book_24"
             android:title="@string/RegistrosVentas"
             tools:ignore="DuplicateIds"/>
+
+        <item
+            android:id="@+id/reporteVendedor"
+            android:icon="@drawable/baseline_menu_book_24"
+            android:title="@string/Reportes"
+            tools:ignore="DuplicateIds"/>
+
         <item
             android:id="@+id/configuracion"
             android:icon="@drawable/baseline_settings_24"

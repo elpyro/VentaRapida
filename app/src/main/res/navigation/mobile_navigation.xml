@@ -109,5 +109,10 @@
         android:name="com.example.ventarapida.ui.supscripciones.SuscripcionesDisponibles"
         android:label="@string/Supcripciones"
         tools:layout="@layout/fragment_suscripciones_disponibles" />
+    <fragment
+        android:id="@+id/reporteVendedor"
+        android:name="com.example.ventarapida.ui.reportes.ReporteVendedor"
+        android:label="@string/Reportes"
+        tools:layout="@layout/fragment_reporte_vendedor" />
 
 </navigation>

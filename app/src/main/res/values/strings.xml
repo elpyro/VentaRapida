@@ -173,11 +173,12 @@
     <string name="descripcionPlanEmpresarial">Conecta 30 asuarios al mismo tiempo.</string>
     <string name="comentario">Comentario</string>
     <string name="proveedorDeSurtido">Proveedor de surtido</string>
-    <string name="Agregar_inventario">Agregar al inventario</string>
+    <string name="Agregar_inventario">Agregar a inventario</string>
     <string name="busquedas">Proveedor, Producto</string>
     <string name="descripcionPlanPremium">Conecta 10 usuarios al mismo tiempo</string>
     <string name="PlanPremium">Plan Premium</string>
     <string name="descripcionPlanBasico">Conecta 3 usuarios al mismo tiempo</string>
     <string name="PlanBásico">Plan Basico</string>
     <string name="PlanBasico">Plan Básico</string>
+    <string name="ReporteVentas">Reporte de ventas</string>
 </resources>
