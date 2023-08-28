@@ -1,9 +1,11 @@
 package com.example.ventarapida
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -28,6 +30,8 @@ import com.google.firebase.database.ValueEventListener
 
 class Login : AppCompatActivity() {
 
+    private var idGoogle: String? =null
+    private var progressDialog: ProgressDialog? = null
     private lateinit var binding: ActivityLoginBinding
     val RC_SIGN_IN = 123 //inicio sesion gmail
 
@@ -60,8 +64,9 @@ class Login : AppCompatActivity() {
                 // El usuario ha iniciado sesión
                 val nombreUsuario = user.displayName
                 val correoUsuario = user.email
+                idGoogle= user.uid
                 // Realizar las acciones necesarias con el nombre y correo del usuario
-
+                Log.d("FIREBASEGOOGLE", "el id google es ${idGoogle.toString()}")
                 verificarUsuario(correoUsuario,nombreUsuario)
             } else {
                 // El usuario no ha iniciado sesión o ha cerrado sesión
@@ -102,6 +107,7 @@ class Login : AppCompatActivity() {
     }
 
     private fun verificarUsuario(correoUsuario: String?, nombreUsuario: String?) {
+        showProgressDialog()
 
         MainActivity.datosUsuario = ModeloUsuario()
         FirebaseUsuarios.buscarUsuariosPorCorreo(correoUsuario!!)
@@ -117,20 +123,19 @@ class Login : AppCompatActivity() {
                             if (usuario.size > 0) {
                                 usuarioRegistrado(usuario)
                             } else {
+                                // USUARIO NO REGISTRADO
+                                hideProgressDialog()
                                 binding.LinearLayoutBienvenido.visibility= View.GONE
                                 binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
-                                // USUARIO NO REGISTRADO
-                             //   Toast.makeText(this, "${nombreUsuario}, No registrado", Toast.LENGTH_LONG).show()
                                 binding.textViewCorreo.text = correoUsuario
                                 binding.textViewNombre.text = nombreUsuario
                             }
                         }
-
-
                 }
 
             }
             .addOnFailureListener {
+                hideProgressDialog()
                 Toast.makeText(this, "${nombreUsuario}, Error iniciando", Toast.LENGTH_LONG).show()
             }
 
@@ -140,6 +145,7 @@ class Login : AppCompatActivity() {
     private fun listeners() {
         binding.buttonRegistrarUsuario.setOnClickListener {
             val intent = Intent(this, CrearNuevaEmpresa::class.java)
+            intent.putExtra("idGoogle", idGoogle.toString())
             intent.putExtra("correo", binding.textViewCorreo.text.toString())
             intent.putExtra("nombre", binding.textViewNombre.text.toString())
             startActivity(intent)
@@ -158,13 +164,6 @@ class Login : AppCompatActivity() {
 
 
 
-
-
-
-
-
-
-
     private fun usuarioRegistrado(usuario: MutableList<ModeloUsuario>) {
         MainActivity.datosUsuario = usuario[0]
 
@@ -174,7 +173,6 @@ class Login : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     // Procesar los datos en el snapshot
                     MainActivity.datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
-
                     abrirPantallaPrincipal()
                     }
 
@@ -186,9 +184,23 @@ class Login : AppCompatActivity() {
     }
 
     private fun abrirPantallaPrincipal() {
+        hideProgressDialog()
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
+    }
+
+
+    private fun showProgressDialog() {
+        progressDialog = ProgressDialog(this)
+        progressDialog?.setMessage("Verificando usuario Google...")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
+    }
+
+    private fun hideProgressDialog() {
+        progressDialog?.dismiss()
+        progressDialog = null
     }
 
 

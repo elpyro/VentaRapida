@@ -76,7 +76,9 @@ class DetalleProducto : Fragment() {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
 
-
+        binding?.imageViewFoto?.setOnClickListener{
+            cargarImagen()
+        }
 
         // Define el botón "Siguiente" y configura su OnClickListener
         binding?.imageViewBotonDerecha?.setOnClickListener {
@@ -94,8 +96,6 @@ class DetalleProducto : Fragment() {
 
         // Carga el producto en la UI
         cargarProducto(modeloProducto)
-
-
 
         return binding!!.root // Retorna la vista inflada
     }
@@ -123,6 +123,7 @@ class DetalleProducto : Fragment() {
             CropImage.activity(uri)
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setAspectRatio(1, 1)
+
                 .start(requireContext(), this)
 
         }
@@ -233,8 +234,7 @@ class DetalleProducto : Fragment() {
             }
 
             R.id.action_camara->{
-                val imageHandler = TomarFotoYGaleria(this)
-                imageHandler.cargarImagen()
+                    cargarImagen()
                 return true
             }
 
@@ -244,6 +244,11 @@ class DetalleProducto : Fragment() {
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun cargarImagen() {
+        val imageHandler = TomarFotoYGaleria(this)
+        imageHandler.cargarImagen()
     }
 
 

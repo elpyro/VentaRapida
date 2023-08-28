@@ -23,6 +23,13 @@ object FirebaseUsuarios {
         registroRef.updateChildren(updates)
     }
 
+    fun eliminarUsuarioPorId(idUsuario: String): Task<Void> {
+        val database = FirebaseDatabase.getInstance()
+        val usuarioRef = database.getReference(TABLA_REFERENCIA).child(idUsuario)
+        // Eliminar el usuario
+        return usuarioRef.removeValue()
+    }
+
     fun buscarUsuariosPorCorreo(correo: String): Task<MutableList<ModeloUsuario>> {
         val database = FirebaseDatabase.getInstance()
         val usuariosRef = database.getReference(TABLA_REFERENCIA)
@@ -74,7 +81,5 @@ object FirebaseUsuarios {
         })
         return taskCompletionSource.task
     }
-
-
 
 }

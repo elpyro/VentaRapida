@@ -38,10 +38,7 @@ class ListaUsuarios : Fragment() {
     ): View {
         binding = FragmentListaUsuariosBinding.inflate(inflater, container, false)
 
-
         setHasOptionsMenu(true)
-
-
         return binding!!.root
     }
 

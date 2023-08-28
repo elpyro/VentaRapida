@@ -42,6 +42,11 @@ class NuevoProducto : Fragment() {
     ): View {
 
         binding = FragmentNuevoProductoBinding.inflate(inflater, container, false)
+
+
+        binding?.imageViewFoto?.setOnClickListener{
+            cargarImagen()
+        }
         return binding!!.root // Retorna la vista inflada
     }
 
@@ -73,13 +78,16 @@ class NuevoProducto : Fragment() {
                 return true
             }
             R.id.action_camara->{
-                val imageHandler = TomarFotoYGaleria(this)
-
-                imageHandler.cargarImagen()
+                cargarImagen()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun cargarImagen() {
+        val imageHandler = TomarFotoYGaleria(this)
+        imageHandler.cargarImagen()
     }
 
     //Tomamos la foto resultante de la camara y la colocamos en el imageview

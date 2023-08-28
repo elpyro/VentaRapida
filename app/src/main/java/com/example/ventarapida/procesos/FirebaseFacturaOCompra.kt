@@ -9,7 +9,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
+import android.os.Handler
 object FirebaseFacturaOCompra {
 
     // las tablas de referencia pueden ser Factura o Compra
@@ -38,27 +38,25 @@ object FirebaseFacturaOCompra {
         tablaRef.keepSynced(true)
         tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                //volver a consultar para asegurar datos actualizados
-
-                Utilidades.esperarUnSegundo()
-
-                tablaRef.addListenerForSingleValueEvent(object :ValueEventListener{
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        for (facturaSnapshot in snapshot.children) {
-                            val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
-                            factura?.let {
-                                facturas.add(it)
+                // Hacer una espera de 1 segundo antes de realizar la segunda consulta
+                Handler().postDelayed({
+                    tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            for (facturaSnapshot in snapshot.children) {
+                                val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
+                                factura?.let {
+                                    facturas.add(it)
+                                }
                             }
+                            taskCompletionSource.setResult(facturas)
                         }
-                        taskCompletionSource.setResult(facturas)
-                    }
 
-                    override fun onCancelled(error: DatabaseError) {
-                        Log.w("MiApp", "Error al buscar facturas: ${error.message}")
-                        taskCompletionSource.setException(error.toException())
-                    }
-
-                })
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.w("MiApp", "Error al buscar facturas: ${error.message}")
+                            taskCompletionSource.setException(error.toException())
+                        }
+                    })
+                }, 1500) // Esperar 1 segundo (1000 milisegundos) antes de realizar la segunda consulta
             }
 
             override fun onCancelled(error: DatabaseError) {

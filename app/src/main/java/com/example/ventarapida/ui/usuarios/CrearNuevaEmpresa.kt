@@ -13,6 +13,7 @@ import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import java.util.UUID
 
 class CrearNuevaEmpresa : AppCompatActivity() {
+    private var idGoogle: String? = null
     private lateinit var binding: ActivityCrearNuevaEmpresaBinding
     private var suscripcion=Suscripcion()
 
@@ -26,6 +27,7 @@ class CrearNuevaEmpresa : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        idGoogle = intent.getStringExtra("idGoogle")
         val correo = intent.getStringExtra("correo")
         val nombre = intent.getStringExtra("nombre")
 
@@ -63,13 +65,14 @@ class CrearNuevaEmpresa : AppCompatActivity() {
               "url" to "",
               "ultimo_pago" to obtenerFechaActual(),
               "plan" to "Gratuito",
+              "idDuenoCuenta" to idGoogle.toString(),
               "proximo_pago" to proximo_pago.toString()
               )
 
           guardarDatosEmpresa(updates)
 
           val updatesUsuario = hashMapOf<String, Any>(
-              "id" to  UUID.randomUUID().toString(),
+              "id" to  idGoogle.toString(),
               "nombre" to  binding?.editTextUsuario?.text.toString(),
               "correo" to  binding?.hintCorreo?.text.toString().toLowerCase(),
               "idEmpresa" to  idEmpresa,

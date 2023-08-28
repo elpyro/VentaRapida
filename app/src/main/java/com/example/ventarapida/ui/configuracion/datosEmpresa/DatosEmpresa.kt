@@ -201,6 +201,7 @@ class DatosEmpresa : Fragment() {
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setAspectRatio(1, 1)
                 .start(requireContext(), this)
+
         }
 
         // Si la acción fue elegir una imagen de la galería
