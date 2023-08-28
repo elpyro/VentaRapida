@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.example.ventarapida.MainActivity
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.Normalizer
@@ -15,7 +16,9 @@ import java.util.*
 
 object Utilidades {
 
-
+    fun verificarPermisosAdministrador(): Boolean{
+        return MainActivity.datosUsuario.perfil.equals("Administrador")
+    }
     fun String.eliminarAcentosTildes(): String {
         val normalized = Normalizer.normalize(this, Normalizer.Form.NFD)
         val pattern = "\\p{InCombiningDiacriticalMarks}+".toRegex()

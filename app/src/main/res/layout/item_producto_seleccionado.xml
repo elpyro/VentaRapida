@@ -61,7 +61,7 @@
                         android:gravity="center"
                         android:foregroundGravity="right"
                         android:background="@color/azul_intermedio"
-                        android:scaleType="fitXY"
+                        android:scaleType="fitEnd"
                         android:text="@string/disponible"
                         android:textSize="10sp" />
 

@@ -87,6 +87,7 @@ class DetalleVentaViewModel : ViewModel() {
             ventaProductosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_diamante = nuevoPrecio.toString()
             productoEncontrado.nombre = nombre
+            if (productoEncontrado.editado!= null)productoEncontrado.editado ="true"
             ventaProductosSeleccionados[productoEncontrado] = cantidad
 
         }

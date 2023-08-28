@@ -10,6 +10,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import android.os.Handler
+import com.example.ventarapida.procesos.Utilidades.verificarPermisosAdministrador
+
 object FirebaseFacturaOCompra {
 
     // las tablas de referencia pueden ser Factura o Compra
@@ -45,7 +47,15 @@ object FirebaseFacturaOCompra {
                             for (facturaSnapshot in snapshot.children) {
                                 val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
                                 factura?.let {
-                                    facturas.add(it)
+                                    if(verificarPermisosAdministrador()){
+                                        facturas.add(it)
+                                    }else {
+                                        if (factura.id_vendedor.equals(MainActivity.datosUsuario.id)){
+                                            facturas.add(it)
+                                        } else {
+                                        }
+                                    }
+
                                 }
                             }
                             taskCompletionSource.setResult(facturas)
@@ -67,6 +77,8 @@ object FirebaseFacturaOCompra {
 
         return taskCompletionSource.task
     }
+
+
 
     fun buscarFacturaOCompraPorId(tablaReferencia: String, facturaId: String): Task<ModeloFactura?> {
         val database = FirebaseDatabase.getInstance()

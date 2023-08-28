@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/compra"
         android:name="com.example.ventarapida.ui.compras.Compra"
-        android:label="Compra" />
+        android:label="@string/Agregar_inventario" />
     <fragment
         android:id="@+id/detalleCompra"
         android:name="com.example.ventarapida.ui.detalleCompra.DetalleCompra"

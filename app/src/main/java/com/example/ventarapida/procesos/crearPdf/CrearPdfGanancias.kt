@@ -276,7 +276,7 @@ class CrearPdfGanancias {
             cell.setPadding(4f)
             table1.addCell(cell)
 
-            cell = PdfPCell(Phrase("Total", FONT_COLUMN))
+            cell = PdfPCell(Phrase("Ganancía", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)

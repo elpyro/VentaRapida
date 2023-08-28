@@ -97,6 +97,7 @@ object FirebaseProductoFacturadosOComprados {
                         val nuevoValor = productoFacturado.venta.toDouble()
                         val productoConDescuento=nuevoValor * (1 - porcentajeDescuento)
                         refProductosFacturados.child(registro.key!!).child("precioDescuentos").setValue(productoConDescuento.toString())
+                        refProductosFacturados.child(registro.key!!).child("porcentajeDescuento").setValue(descuento.toString())
                     }
                 }
             }

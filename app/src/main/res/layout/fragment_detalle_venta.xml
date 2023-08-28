@@ -67,7 +67,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bordesredondos"
                             android:contentDescription="@string/buscarUsuario"
-                            android:scaleType="fitCenter"
+                            android:scaleType="fitXY"
                             android:src="@drawable/buscarusuario" />
 
 

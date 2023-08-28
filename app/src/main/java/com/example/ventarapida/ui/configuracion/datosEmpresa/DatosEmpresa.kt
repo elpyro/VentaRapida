@@ -199,7 +199,7 @@ class DatosEmpresa : Fragment() {
             // Recortar la imagen usando la biblioteca CropImage
             CropImage.activity(TomarFotoYGaleria.imagenUri)
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
+                //.setAspectRatio(1, 1)
                 .start(requireContext(), this)
 
         }
@@ -211,7 +211,7 @@ class DatosEmpresa : Fragment() {
             // Recortar la imagen usando la biblioteca CropImage
             CropImage.activity(uri)
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
+                //.setAspectRatio(1, 1)
                 .start(requireContext(), this)
 
         }

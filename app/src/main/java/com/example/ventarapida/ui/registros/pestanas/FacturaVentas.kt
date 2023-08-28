@@ -10,6 +10,7 @@ import android.widget.SearchView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentFacturaVentasBinding
 import com.example.ventarapida.datos.ModeloFactura
@@ -119,6 +120,8 @@ class FacturaVentas : Fragment() {
 
         Navigation.findNavController(vista).navigate(R.id.facturaGuardada,bundle)
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

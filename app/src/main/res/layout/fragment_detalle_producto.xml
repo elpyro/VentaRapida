@@ -5,148 +5,204 @@
     android:layout_height="match_parent"
     android:background="@drawable/fondo">
 
-
-    <LinearLayout
+    <ScrollView
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="320dp"
-        android:layout_marginEnd="30dp"
-        android:orientation="vertical" >
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editText_producto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:background="@drawable/edittext_background"
-                android:gravity="center"
-                android:hint="@string/producto"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                tools:ignore="VisualLintTextFieldSize" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:orientation="vertical" >
 
-            <com.google.android.material.textfield.TextInputLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
+                android:layout_height="match_parent" >
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/barrasuperior"
+                    tools:ignore="ContentDescription" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editText_pCompra"
+                <LinearLayout
+                    android:id="@+id/linearLayout_foto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/edittext_background"
-                    android:gravity="center"
-                    android:hint="@string/precioCompra"
-                    android:inputType="numberDecimal"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="horizontal"
+                    android:layout_marginTop="35dp">
 
+                    <ImageView
+                        android:id="@+id/imageView_botonIzquierda"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:src="@drawable/left_circle"
+                        tools:ignore="ContentDescription" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/imageView_foto"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_menu_camera"
+                        tools:ignore="ContentDescription" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editText_pVenta"
+                    <ImageView
+                        android:id="@+id/imageView_botonDerecha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:src="@drawable/right_circle"
+                        tools:ignore="ContentDescription" />
+
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/edittext_background"
-                    android:gravity="center"
-                    android:hint="@string/venta"
-                    android:inputType="numberDecimal"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    tools:ignore="VisualLintTextFieldSize" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_weight="1"
+                    android:layout_margin="10dp"
+                    tools:ignore="ObsoleteLayoutParam">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editText_cantidad"
+                        android:layout_width="84dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/edittext_background"
+                        android:gravity="center"
+                        android:hint="@string/cantidad"
+                        android:inputType="number"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        tools:ignore="TextContrastCheck" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:orientation="vertical" >
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editText_producto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/edittext_background"
+                        android:gravity="center"
+                        android:hint="@string/producto"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        tools:ignore="VisualLintTextFieldSize" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editText_pCompra"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:background="@drawable/edittext_background"
+                            android:gravity="center"
+                            android:hint="@string/precioCompra"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editText_pVenta"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:background="@drawable/edittext_background"
+                            android:gravity="center"
+                            android:hint="@string/venta"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            tools:ignore="VisualLintTextFieldSize" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editText_comentario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/edittext_background"
+                        android:gravity="center"
+                        android:hint="@string/comentario"
+                        android:inputType="textCapSentences"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        tools:ignore="VisualLintTextFieldSize" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editText_proveedor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/edittext_background"
+                        android:gravity="center"
+                        android:inputType="textCapSentences"
+                        android:hint="@string/proveedorDeSurtido"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        tools:ignore="VisualLintTextFieldSize" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/barrasuperior"
-        tools:ignore="ContentDescription" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout_foto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="35dp">
-
-        <ImageView
-            android:id="@+id/imageView_botonIzquierda"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:src="@drawable/left_circle"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/imageView_foto"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_menu_camera"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/imageView_botonDerecha"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:src="@drawable/right_circle"
-            tools:ignore="ContentDescription" />
-
-    </LinearLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_margin="10dp"
-        tools:ignore="ObsoleteLayoutParam">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editText_cantidad"
-            android:layout_width="84dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="15dp"
-            android:background="@drawable/edittext_background"
-            android:gravity="center"
-            android:hint="@string/cantidad"
-            android:inputType="number"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            tools:ignore="TextContrastCheck" />
-    </com.google.android.material.textfield.TextInputLayout>
 
 
 </FrameLayout>

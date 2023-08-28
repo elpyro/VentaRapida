@@ -243,9 +243,9 @@ class CrearPdfVentasPorVendedor {
     data class TablaInventario(val tabla: PdfPTable, val ganancia: Double, val ventas:Double, val costos:Double)
 
     private fun crearTabla(dataTable: List<ModeloProductoFacturado>): TablaInventario {
-        val table1 = PdfPTable(6)
+        val table1 = PdfPTable(8)
         table1.widthPercentage = 100f
-        table1.setWidths(floatArrayOf(2.5f, 7.5f, 1.5f, 1.5f,2f, 3f))
+        table1.setWidths(floatArrayOf(2.5f, 7.5f, 1.5f, 1.5f, 1.3f, 1.5f,2f, 3f))
         table1.headerRows = 1
         table1.defaultCell.verticalAlignment = Element.ALIGN_CENTER
         table1.defaultCell.horizontalAlignment = Element.ALIGN_CENTER
@@ -270,13 +270,23 @@ class CrearPdfVentasPorVendedor {
             cell.setPadding(4f)
             table1.addCell(cell)
 
+            cell = PdfPCell(Phrase("Desc.", FONT_COLUMN))
+            cell.horizontalAlignment = Element.ALIGN_CENTER
+            cell.verticalAlignment = Element.ALIGN_MIDDLE
+            cell.setPadding(3f)
+            table1.addCell(cell)
+
+            cell = PdfPCell(Phrase("Edit.", FONT_COLUMN))
+            cell.horizontalAlignment = Element.ALIGN_CENTER
+            cell.verticalAlignment = Element.ALIGN_MIDDLE
+            cell.setPadding(2f)
+            table1.addCell(cell)
+
             cell = PdfPCell(Phrase("Cant.", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
+            cell.setPadding(3f)
             table1.addCell(cell)
-
-
 
             cell = PdfPCell(Phrase("Venta", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
@@ -315,6 +325,21 @@ class CrearPdfVentasPorVendedor {
             setCellFormat(cell, cell_color, temp.id_pedido.substring(0, 5) )
             table1.addCell(cell)
 
+            var porcentajeDescuento="0"
+            if(temp.porcentajeDescuento!=null) porcentajeDescuento= temp.porcentajeDescuento
+            cell = PdfPCell()
+            setCellFormat(cell, cell_color, porcentajeDescuento )
+            table1.addCell(cell)
+
+            var editado=""
+            if(temp.productoEditado!=null){
+                if (temp.productoEditado.equals("true")) editado = "Sí"
+            }
+
+            cell = PdfPCell()
+            setCellFormat(cell, cell_color, editado )
+            table1.addCell(cell)
+
             cell = PdfPCell()
             setCellFormat(cell, cell_color, temp.cantidad)
             table1.addCell(cell)
@@ -324,7 +349,7 @@ class CrearPdfVentasPorVendedor {
             setCellFormat(cell, cell_color,temp.precioDescuentos.formatoMonenda()!!)
             table1.addCell(cell)
 
-            val totalProducto = temp.cantidad.toDouble() *(temp.precioDescuentos.toDouble()- temp.costo.toDouble())
+            val totalProducto = temp.cantidad.toDouble() *(temp.precioDescuentos.toDouble())
             totalGanancias += totalProducto
             totalVentas += temp.precioDescuentos.toDouble()* temp.cantidad.toDouble()
             totalCostos += temp.costo.toDouble()* temp.cantidad.toDouble()

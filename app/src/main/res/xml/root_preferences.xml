@@ -2,7 +2,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@drawable/fondo">
 
-    <PreferenceCategory app:title="@string/detalleFactura">
+    <PreferenceCategory
+        app:key="informacion_adicional"
+        app:title="@string/detalleFactura">
 
         <EditTextPreference
             app:key="inf_superior"

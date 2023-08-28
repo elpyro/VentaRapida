@@ -23,7 +23,7 @@
         android:id="@+id/imageView_bannerSuperior"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:scaleType="fitXY"
+        android:scaleType="fitEnd"
         android:src="@drawable/barrasuperior"
         android:contentDescription="@string/banner" />
 

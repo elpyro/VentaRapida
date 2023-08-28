@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="naranja">#F13817</color>
+    <color name="rojoTransparente">#EACCCB</color>
     <color name="negro2">#0C0C0C</color>
     <color name="azul_oscuro">#010523</color>
     <color name="azul_trasparente">#4397979E</color>

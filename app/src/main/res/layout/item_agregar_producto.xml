@@ -41,7 +41,7 @@
                     android:layout_marginStart="5dp"
                     android:contentDescription="@string/foto"
                     android:foregroundGravity="center"
-                    android:scaleType="fitXY"
+                    android:scaleType="fitCenter"
                     app:srcCompat="@drawable/ic_menu_camera" />
 
                 <LinearLayout

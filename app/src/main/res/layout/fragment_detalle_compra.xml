@@ -51,7 +51,7 @@
                                 android:layout_marginRight="4dp"
                                 android:background="@drawable/edittext_background"
                                 android:gravity="center"
-                                android:hint="@string/tienda"
+                                android:hint="@string/proveedorDeSurtido"
                                 android:inputType="textCapWords"
                                 android:textColor="@color/black"
                                 android:textSize="16sp" />

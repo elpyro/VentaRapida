@@ -111,7 +111,7 @@ class DetalleProducto : Fragment() {
             // Recortar la imagen usando la biblioteca CropImage
             CropImage.activity(TomarFotoYGaleria.imagenUri)
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
+                //.setAspectRatio(1, 1)
                 .start(requireContext(), this)
         }
 
@@ -122,7 +122,7 @@ class DetalleProducto : Fragment() {
             // Recortar la imagen usando la biblioteca CropImage
             CropImage.activity(uri)
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
+                //.setAspectRatio(1, 1)
 
                 .start(requireContext(), this)
 
@@ -153,6 +153,8 @@ class DetalleProducto : Fragment() {
         binding?.editTextPCompra?.setText(producto.p_compra)
         binding?.editTextPVenta?.setText(producto.p_diamante)
         binding?.editTextCantidad?.setText(producto.cantidad)
+        binding?.editTextProveedor?.setText(producto.proveedor)
+        if(producto.comentario!=null)binding!!.editTextComentario.setText(producto.comentario.toString())
        if (!producto.url.isEmpty()){
            Picasso.get().load(producto.url).into(binding?.imageViewFoto)
        }
@@ -292,7 +294,9 @@ class DetalleProducto : Fragment() {
             "nombre" to this.binding!!.editTextProducto.text.toString().trim(),
             "cantidad" to this.binding!!.editTextCantidad.text.toString().trim(),
             "p_compra" to this.binding!!.editTextPCompra.text.toString(),
-            "p_diamante" to this.binding!!.editTextPVenta.text.toString()
+            "p_diamante" to this.binding!!.editTextPVenta.text.toString(),
+            "comentario" to binding!!.editTextComentario.text.toString().trim(),
+            "proveedor" to binding!!.editTextProveedor.text.toString()
         )
 
          guardarProducto(updates)

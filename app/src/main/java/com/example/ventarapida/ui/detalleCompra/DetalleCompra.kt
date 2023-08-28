@@ -243,6 +243,7 @@ class DetalleCompra : Fragment() {
                 //limpiamos los productos seleccionados
                 viewModel.limpiarProductosSelecionados(requireContext())
 
+                Toast.makeText(requireContext(), "Los productos fueron agregados al inventario",Toast.LENGTH_LONG).show()
 
                 findNavController().popBackStack()
                 return true

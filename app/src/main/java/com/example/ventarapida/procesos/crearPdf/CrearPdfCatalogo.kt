@@ -302,6 +302,7 @@ class CrearPdfCatalogo {
                 logoCell.verticalAlignment = Element.ALIGN_CENTER
                 logoCell.backgroundColor=cell_color
                 logoCell.setPadding(2F)
+                logoCell.fixedHeight = 100f
                 table1.addCell(logoCell)
             }else{
                 cell = PdfPCell()

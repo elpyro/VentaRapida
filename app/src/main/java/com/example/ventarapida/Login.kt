@@ -157,7 +157,6 @@ class Login : AppCompatActivity() {
                     val intent = Intent(this, Login::class.java)
                     startActivity(intent)
                     finish()
-
                 }
         }
     }
@@ -192,10 +191,14 @@ class Login : AppCompatActivity() {
 
 
     private fun showProgressDialog() {
-        progressDialog = ProgressDialog(this)
-        progressDialog?.setMessage("Verificando usuario Google...")
-        progressDialog?.setCancelable(false)
-        progressDialog?.show()
+        try{
+            progressDialog = ProgressDialog(this@Login)
+            progressDialog?.setMessage("Verificando usuario Google...")
+            progressDialog?.setCancelable(true)
+            progressDialog?.show()
+        }catch (e: Exception) {
+        }
+
     }
 
     private fun hideProgressDialog() {

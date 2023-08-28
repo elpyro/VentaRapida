@@ -9,10 +9,6 @@ import com.example.ventarapida.R
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.procesos.FirebaseProductoFacturadosOComprados
-import com.example.ventarapida.procesos.FirebaseProductos
-import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
-import com.example.ventarapida.procesos.Utilidades.formatoMonenda
-import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
@@ -67,6 +63,7 @@ class PromtFacturaGuardada() {
 
             item.producto=nuevoNombre
             item.cantidad=nuevaCantidad
+            item.productoEditado="true"
 
             if (tipo.equals("venta"))   item.venta=nuevoPrecio
             if (tipo.equals("compra"))  item.costo=nuevoPrecio
@@ -227,7 +224,7 @@ class PromtFacturaGuardada() {
             val updates = hashMapOf<String, Any>(
                 "id_pedido" to datosFactura.id_pedido,
                 "descuento" to nuevoDescuento,
-                "envio" to nuevoEnvio,
+                "envio" to nuevoEnvio
             )
 
             if (datosFactura.descuento != editTextDescuento.text.toString()) actualizarPrecioDescuento(datosFactura.id_pedido,nuevoDescuento.toDouble())

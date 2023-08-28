@@ -82,7 +82,7 @@ class CrearPdfFacturaOCompra {
         if (tipo == "Compra"){
             titulo= Paragraph("Compra", FONT_TITLE)
         }else{
-            titulo= Paragraph("Factura", FONT_TITLE)
+            titulo= Paragraph("Recibo de Venta", FONT_TITLE)
         }
 
         titulo.alignment = Element.ALIGN_CENTER
@@ -473,6 +473,14 @@ class CrearPdfFacturaOCompra {
                 Paragraph(
                     MainActivity.preferencia_informacion_inferior,FONT_CELL)
             )
+
+            document.add(Paragraph("\n"))
+            if(!MainActivity.datosEmpresa.garantia.isEmpty()) {
+                document.add(
+                    Paragraph(
+                       "Terminos de garantía:")
+                )
+            }
             document.add(Paragraph("\n"))
             document.add(
                 Paragraph(

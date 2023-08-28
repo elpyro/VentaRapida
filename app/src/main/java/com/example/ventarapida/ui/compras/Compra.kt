@@ -107,6 +107,10 @@ class Compra : Fragment() {
             actualizarLista()
         }
 
+        binding?.buttonNuevoProducto?.setOnClickListener{
+            Navigation.findNavController(vista).navigate(R.id.nav_nuevoProdcuto)
+        }
+
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
         }
@@ -230,6 +234,8 @@ class Compra : Fragment() {
         val filtro = lista?.filter { objeto: ModeloProducto ->
             objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(
                 Locale.getDefault()))
+                    || objeto.proveedor?.eliminarAcentosTildes()?.lowercase(Locale.getDefault())
+                ?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true
         }
         val productosOrdenados = filtro?.sortedBy { it.nombre }
         val adaptador = productosOrdenados?.let { CompraAdaptador(it,viewModel) }

@@ -162,6 +162,8 @@ class CompraAdaptador(
 
             existencia.text ="X${product.cantidad}"
 
+
+
             // Limpiar la imagen anterior
             //  Picasso.get().cancelRequest(imagenProducto)
 
@@ -212,6 +214,8 @@ class CompraAdaptador(
 
                     //Sumar las existencias
                     existencia.text = "X${(product.cantidad.toInt() + cantidad)}"
+
+
                 }
             } else {
                 isUserEditing = false
@@ -223,6 +227,11 @@ class CompraAdaptador(
                 producto.setTextAppearance(R.style.ColorFuentes)
                 precio.setTextAppearance(R.style.ColorFuentes)
                 existencia.setTextAppearance(R.style.ColorFuentes)
+
+                if(product.cantidad.toInt()<1){
+                    val color = ContextCompat.getColor(itemView.context, R.color.rojoTransparente)
+                    cardview.setCardBackgroundColor(color)
+                }
 
             }
         }

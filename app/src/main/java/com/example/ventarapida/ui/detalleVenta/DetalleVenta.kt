@@ -13,7 +13,6 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,14 +28,10 @@ import com.example.ventarapida.datos.ModeloProductoFacturado
 import com.example.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
-import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
-import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.example.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.example.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -338,6 +333,8 @@ class DetalleVenta : Fragment() {
                     costo = producto.p_compra,
                     venta = producto.p_diamante,
                     precioDescuentos = precioDescuento.toString(),
+                    porcentajeDescuento = binding?.editDescuento?.text.toString().trim(),
+                    productoEditado = producto.editado,
                     fecha = fechaActual,
                     hora = horaActual,
                     imagenUrl = producto.url,

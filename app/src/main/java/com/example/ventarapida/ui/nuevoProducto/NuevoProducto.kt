@@ -101,7 +101,7 @@ class NuevoProducto : Fragment() {
             // Recortar la imagen usando la biblioteca CropImage
             CropImage.activity(imagenUri)
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
+                //.setAspectRatio(1, 1)
                 .start(requireContext(), this)
         }
 
@@ -112,7 +112,7 @@ class NuevoProducto : Fragment() {
             // Recortar la imagen usando la biblioteca CropImage
             CropImage.activity(uri)
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
+                //.setAspectRatio(1, 1)
                 .start(requireContext(), this)
 
         }
@@ -166,7 +166,9 @@ class NuevoProducto : Fragment() {
                 "nombre" to binding!!.editTextProducto.text.toString().trim(),
                 "cantidad" to binding!!.editTextCantidad.text.toString().trim(),
                 "p_compra" to binding!!.editTextPCompra.text.toString(),
-                "p_diamante" to binding!!.editTextPVenta.text.toString()
+                "p_diamante" to binding!!.editTextPVenta.text.toString(),
+                "comentario" to binding!!.editTextComentario.text.toString().trim(),
+                "proveedor" to binding!!.editTextProveedor.text.toString()
             )
 
         guardarProducto(updates)

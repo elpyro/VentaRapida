@@ -135,6 +135,13 @@ class FacturaGuardada : Fragment() {
 
         }
         binding?.cardViewTotales?.setOnClickListener {
+            if(MainActivity.datosUsuario.perfil.equals("Administrador")){
+
+            }else{
+                Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val promtEditarDatos=PromtFacturaGuardada()
             promtEditarDatos.promtEditarModificadoresFactura(modeloFactura,requireActivity())
         }

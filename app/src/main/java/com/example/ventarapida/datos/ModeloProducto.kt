@@ -14,6 +14,10 @@ data class ModeloProducto(
     val url: String = "",
     val descuento: String = "",
     val precio_descuento: String = "",
+    val comentario: String = "",
+    val proveedor: String = "",
+    var editado: String = "" //evalua si el usuario edito el producto antes de vender un producto
+
 
 
     ): Serializable
