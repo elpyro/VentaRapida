@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.telephony.PhoneNumberUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -93,7 +94,9 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
     }
 
     private fun compartirWhatsapp(numeroTelefono: String) {
-        val numeroTelefonoFormateado=numeroTelefono.replace("[\\s+]".toRegex(), "")
+        var numeroTelefonoFormateado=numeroTelefono.replace("[\\s+]".toRegex(), "")
+        Log.d("Informacion", "El numero de telefono whastsapp es: $numeroTelefonoFormateado")
+
         val fileName = "reporte.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
 

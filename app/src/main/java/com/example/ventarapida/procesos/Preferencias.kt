@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.preference.PreferenceManager
 import com.example.ventarapida.MainActivity
+import com.example.ventarapida.MainActivity.Companion.mostrarAgotadosCatalogo
 import com.example.ventarapida.MainActivity.Companion.tono
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.ui.procesos.ServiciosSubirFoto
@@ -25,6 +26,7 @@ class Preferencias {
             sharedPreferences.getString("edit_text_preference_codigo_area","+")!!
 
         tono = sharedPreferences.getBoolean("sonido", true)
+        mostrarAgotadosCatalogo = sharedPreferences.getBoolean("mostrarAgotados", true)
 
 
         obtenerSeleccionPendiente(context,"compra_seleccionada")

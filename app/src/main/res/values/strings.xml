@@ -181,4 +181,6 @@
     <string name="PlanBásico">Plan Basico</string>
     <string name="PlanBasico">Plan Básico</string>
     <string name="ReporteVentas">Reporte de ventas</string>
+    <string name="MostrarAgotados">Mostrar Agotados en Catalogo</string>
+    <string name="informacion_producto">Información del producto</string>
 </resources>

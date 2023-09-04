@@ -48,6 +48,7 @@ object FirebaseFacturaOCompra {
                                 val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
                                 factura?.let {
                                     if(verificarPermisosAdministrador()){
+
                                         facturas.add(it)
                                     }else {
                                         if (factura.id_vendedor.equals(MainActivity.datosUsuario.id)){

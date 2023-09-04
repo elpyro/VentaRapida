@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.ImageView
@@ -31,6 +32,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
 
+
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         //Elementos sacados de las preferencias para usarlos en la aplicacion
         var tono = true
+        var mostrarAgotadosCatalogo= true
         var datosEmpresa: ModeloDatosEmpresa = ModeloDatosEmpresa()
         var datosUsuario: ModeloUsuario = ModeloUsuario()
         var planVencido:Boolean? =false
@@ -121,6 +124,9 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
+
+
+        Log.d("pagos", "su proximo pago es: ${proximoPago} y su plan es ${datosEmpresa.plan}")
        if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago!!)
 
         if (!planVencido!!){

@@ -95,6 +95,6 @@ dependencies {
     //animaciones
     implementation 'com.airbnb.android:lottie:5.2.0'
 
-
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'//acercar imagen
 
 }

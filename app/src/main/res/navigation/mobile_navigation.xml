@@ -114,5 +114,10 @@
         android:name="com.example.ventarapida.ui.reportes.ReporteVendedor"
         android:label="@string/Reportes"
         tools:layout="@layout/fragment_reporte_vendedor" />
+    <fragment
+        android:id="@+id/informacionProducto"
+        android:name="com.example.ventarapida.ui.informacionProducto.InformacionProducto"
+        android:label="@string/informacion_producto"
+        tools:layout="@layout/fragment_informacion_producto" />
 
 </navigation>

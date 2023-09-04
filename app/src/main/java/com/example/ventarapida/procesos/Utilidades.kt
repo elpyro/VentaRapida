@@ -2,17 +2,23 @@ package com.example.ventarapida.procesos
 
 import android.app.ProgressDialog
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.content.FileProvider
 import com.example.ventarapida.MainActivity
+import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.Normalizer
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object Utilidades {
 
@@ -25,6 +31,19 @@ object Utilidades {
         return pattern.replace(normalized, "").lowercase(Locale.getDefault())
     }
 
+    fun obtenerImageUriParaCompartir(bitmap: Bitmap, context: Context): Uri {
+        //otorga el fileprovinder para compartir
+        val idImagen= UUID.randomUUID().toString()
+        val imagePath = "${context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)}/$idImagen.png"
+        val imageFile = File(imagePath)
+
+        // Guardar el bitmap como archivo en el almacenamiento externo
+        imageFile.outputStream().use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        }
+
+        return FileProvider.getUriForFile(context, "com.example.ventarapida.fileprovider", imageFile)
+    }
     fun String.eliminarPuntosComasLetras(): String {
         return this.replace(Regex("[^\\d.]"), "")
             .replace(".", "")
@@ -130,6 +149,34 @@ object Utilidades {
         return formatoFecha.format(fecha)
     }
 
+    fun calcularDiasRestantes(fechaObjetivo: Date): String {
+        // Obtener la fecha actual
+        val fechaActual = Calendar.getInstance().time
+
+        // Calcular la diferencia en milisegundos entre las fechas
+        val diferenciaMillis = fechaObjetivo.time - fechaActual.time
+
+        // Calcular la diferencia en días
+        val diasRestantes = TimeUnit.MILLISECONDS.toDays(diferenciaMillis)
+
+        // Crear un String que indique cuántos días restan
+        val mensaje = "Quedan $diasRestantes días"
+
+        return mensaje
+    }
+
+    fun convertirFechaLegible(fechaStr: String): String {
+        try {
+            val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+            val fecha = inputFormat.parse(fechaStr)
+            return outputFormat.format(fecha)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return fechaStr // Si no se puede convertir, devuelve la cadena original
+    }
 
     fun EditText.escribirFormatoMoneda() {
         val textWatcher = object : TextWatcher {

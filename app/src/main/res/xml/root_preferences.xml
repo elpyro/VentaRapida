@@ -25,6 +25,11 @@
             android:key="sonido"
             android:title="@string/sonido" />
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="mostrarAgotados"
+            android:title="@string/MostrarAgotados" />
+
     </PreferenceCategory>
 
     <EditTextPreference

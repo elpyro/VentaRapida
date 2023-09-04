@@ -62,19 +62,21 @@
                 </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/input_editText_cantidad"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="left"
                     android:layout_margin="10dp"
                     tools:ignore="ObsoleteLayoutParam">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editText_cantidad"
-                        android:layout_width="84dp"
+                        android:layout_width="94dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
+                        android:layout_gravity="start"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="15dp"
+                        android:layout_marginStart="15dp"
                         android:background="@drawable/edittext_background"
                         android:gravity="center"
                         android:hint="@string/cantidad"

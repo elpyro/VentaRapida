@@ -108,9 +108,7 @@ class VentaAdaptador(
                     seleccion.removeTextChangedListener(textWatcher)
                 }
             }
-            // colocamos el editextseleccion aparte para no crear mas de un oyente
-
-            }
+        }
 
         val textWatcher = object : TextWatcher{
 

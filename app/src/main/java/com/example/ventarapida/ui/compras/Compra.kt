@@ -12,6 +12,7 @@ import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.view.*
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -99,6 +100,8 @@ class Compra : Fragment() {
         actualizarLista()
         listeners()
         viewModel.calcularTotal()
+
+        Toast.makeText(requireContext(),"Manten presionado para modificar un producto",Toast.LENGTH_SHORT).show()
 
     }
 

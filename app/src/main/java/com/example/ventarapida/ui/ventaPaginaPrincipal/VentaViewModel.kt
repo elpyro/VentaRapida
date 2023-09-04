@@ -2,6 +2,7 @@ package com.example.ventarapida.ui.ventaPaginaPrincipal
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.CrearTono
 
 import com.example.ventarapida.procesos.Preferencias
+import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -107,7 +109,7 @@ class VentaViewModel : ViewModel() {
         }
 
     fun obtenerProductos(): LiveData<List<ModeloProducto>> {
-
+        Log.d("Preferencia", "Mostrar productos agotados "+ MainActivity.mostrarAgotadosCatalogo.toString())
             val firebaseDatabase = FirebaseDatabase.getInstance()
             val productReference =
                 firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
@@ -118,7 +120,12 @@ class VentaViewModel : ViewModel() {
 
                     for (productoSnapshot in snapshot.children) {
                         val producto = productoSnapshot.getValue(ModeloProducto::class.java)
-                        productos.add(producto!!)
+
+                        if (MainActivity.mostrarAgotadosCatalogo==false) {
+                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto!!)
+                        }
+
+                        if (MainActivity.mostrarAgotadosCatalogo) productos.add(producto!!)
                     }
 
                     productosLiveData.value = productos

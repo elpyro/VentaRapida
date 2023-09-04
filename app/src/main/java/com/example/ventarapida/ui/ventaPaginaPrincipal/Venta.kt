@@ -223,10 +223,8 @@ class Venta : Fragment() {
 
     private fun abriDetalle(modeloProducto: ModeloProducto, view:View, position:Int) {
         val bundle = Bundle()
-        bundle.putInt("position", position)
         bundle.putSerializable("modelo", modeloProducto)
-        bundle.putSerializable("listaProductos", lista)
-        Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
+        Navigation.findNavController(view).navigate(R.id.informacionProducto,bundle)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

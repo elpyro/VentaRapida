@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -47,6 +49,19 @@ class NuevoProducto : Fragment() {
         binding?.imageViewFoto?.setOnClickListener{
             cargarImagen()
         }
+
+        binding?.editTextCantidad?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Realiza alguna validación, por ejemplo, si el contenido no es válido
+                  binding?.inputEditTextCantidad?.error = "Puedes usar SURTIR MI NEGOCIO para agregar"
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         return binding!!.root // Retorna la vista inflada
     }
 
