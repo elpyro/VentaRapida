@@ -49,8 +49,6 @@ class Venta : Fragment() {
 
         binding = VentaBinding.inflate(inflater, container, false)
 
-
-
         return binding!!.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -58,7 +56,6 @@ class Venta : Fragment() {
 
         menuItem  = menu.findItem(R.id.action_total)
         menuPremium  = menu.findItem(R.id.action_premium)
-
 
         if(MainActivity.planVencido!!){
             menuItem.isVisible = false

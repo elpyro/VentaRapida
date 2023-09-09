@@ -13,12 +13,15 @@ import android.widget.SearchView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentListaUsuariosBinding
 import com.example.ventarapida.datos.ModeloUsuario
+import com.example.ventarapida.procesos.FirebaseDatosEmpresa.guardarDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseUsuarios
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 
 
@@ -39,6 +42,34 @@ class ListaUsuarios : Fragment() {
         binding = FragmentListaUsuariosBinding.inflate(inflater, container, false)
 
         setHasOptionsMenu(true)
+
+        val estado = MainActivity.datosEmpresa.mostrarPreciosCompra.toBoolean()
+        binding?.switchPreciosCompra?.isChecked = estado
+
+        binding?.switchPreciosCompra?.setOnCheckedChangeListener { compoundButton, b ->
+
+
+            val updates = hashMapOf(
+                "id" to  MainActivity.datosEmpresa.id.toString(),
+                "mostrarPreciosCompra" to b.toString()
+            )
+            MainActivity.datosEmpresa.mostrarPreciosCompra=b.toString()
+            guardarDatosEmpresa(updates).addOnCompleteListener {
+                if(it.isSuccessful){
+                    if(MainActivity.datosEmpresa.mostrarPreciosCompra.equals("true")){
+                        val rootView = requireView()
+                        val snackbar = Snackbar.make(rootView, "Ahora los vendedores pueden ver los precios de compra y la rentabilidad", Snackbar.LENGTH_SHORT)
+                        val snackbarView = snackbar.view
+                        snackbarView.setBackgroundResource(R.color.rojo)
+                        snackbar.show()
+                    }
+
+                }
+            }
+
+        }
+
+
         return binding!!.root
     }
 

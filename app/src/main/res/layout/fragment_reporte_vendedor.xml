@@ -40,20 +40,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/ReporteVentas"
+                    android:text="Reportes"
                     android:textSize="20sp"
                     android:layout_margin="10dp"
-                    android:theme="@style/ColorFuenteEnFondoGris" />
-
-                <TextView
-                    android:id="@+id/textView_nombre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-
-                    android:text="@string/vendedor"
-                    android:textSize="20sp"
-                    android:layout_margin="4dp"
                     android:theme="@style/ColorFuenteEnFondoGris" />
 
 
@@ -84,14 +73,31 @@
                         android:layout_margin="4dp"
                         android:text="Hasta" />
                 </LinearLayout>
-
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
                 <Button
                     android:id="@+id/button_informe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_margin="8dp"
                     android:background="@drawable/bordes_boton"
-                    android:text="@string/PDF" />
+                    android:text="Ventas" />
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/button_ganancia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bordes_boton"
+                    android:text="Ganancias" />
+                </LinearLayout>
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

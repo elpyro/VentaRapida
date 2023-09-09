@@ -39,7 +39,8 @@ class CrearPdfGanancias {
         context: Context,
         fechaInicio:String,
         fechaFin:String,
-        listaProductos: ArrayList<ModeloProductoFacturado>
+        listaProductos: ArrayList<ModeloProductoFacturado>,
+        nombreVendedor:String
     ) {
 
         //ya se ha organizado el orden en buscarProductosPorFecha
@@ -54,7 +55,7 @@ class CrearPdfGanancias {
         document.open()
 
         metadata(document)
-        cabezera(document, context,fechaInicio,fechaFin)
+        cabezera(document, context,fechaInicio,fechaFin,nombreVendedor)
 
         val tablaGanancias = crearTabla(listaProductos)
         val totalGanacias = tablaGanancias.ganancia
@@ -89,9 +90,13 @@ class CrearPdfGanancias {
         document.addCreator("Eloy Castellanos")
     }
 
-    private fun cabezera(document: Document, context: Context,fechaInicio: String,fechaFin: String) {
-
-
+    private fun cabezera(
+        document: Document,
+        context: Context,
+        fechaInicio: String,
+        fechaFin: String,
+        nombreVendedor: String
+    ) {
 
         val table = PdfPTable(3)
         table.widthPercentage = 100f
@@ -149,6 +154,12 @@ class CrearPdfGanancias {
             val temp = Paragraph(titulo)
             temp.alignment = Element.ALIGN_CENTER
             cell.addElement(temp)
+
+            if(!nombreVendedor.equals("Todos")){
+                val paragraphInicio = Paragraph("Vendedor: $nombreVendedor")
+                paragraphInicio.alignment = Element.ALIGN_CENTER
+                cell.addElement(paragraphInicio)
+            }
 
             if (fechaInicio != "01/01/2000") {
                 val paragraphInicio = Paragraph("Desde: $fechaInicio")

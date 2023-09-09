@@ -278,17 +278,19 @@ class DetalleProducto : Fragment() {
 
          Utilidades.ocultarTeclado(requireContext(), vista!!)
 
-        //verificando campos vacios
-        if (id_producto.isEmpty() || this.binding!!.editTextProducto.text.toString().isEmpty()
-            || this.binding!!.editTextCantidad.text.toString().trim().isEmpty()|| this.binding!!.editTextPCompra.text.toString().trim().isEmpty()
-            || this.binding!!.editTextPVenta.text.toString().trim().isEmpty()){
+         if(binding!!.editTextProducto.text.toString().isEmpty()){
+             binding!!.editTextProducto.error = "Obligatorio"
+             return
+         }
+         if(binding!!.editTextCantidad.text.toString().trim().isEmpty()){
+             binding!!.editTextCantidad.error = "Obligatorio"
+             return
+         }
+         if(binding!!.editTextPVenta.text.toString().trim().isEmpty()){
+             binding!!.editTextPVenta.error = "Obligatorio"
+             return
+         }
 
-            val snackbar= Snackbar.make(vista!!, "Todos los datos son obligatorios", Snackbar.LENGTH_LONG)
-            snackbar.view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.rojo))
-            snackbar.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            snackbar.show()
-            return
-        }
          //veficicar si hay imagen cargada
          if (this.binding?.imageViewFoto!!.drawable is BitmapDrawable) {
              viewModel.subirImagenFirebase(requireContext(),this.binding?.imageViewFoto!!)

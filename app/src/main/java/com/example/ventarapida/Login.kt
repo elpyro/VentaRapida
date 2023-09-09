@@ -179,7 +179,6 @@ class Login : AppCompatActivity() {
                     // Manejar el error
                 }
             })
-
     }
 
     private fun abrirPantallaPrincipal() {

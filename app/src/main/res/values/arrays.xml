@@ -15,5 +15,6 @@
         <item>Más Vendidos</item>
         <item>Ventas Por Vendedor</item>
         <item>Mayor Ganancía</item>
+        <item>Ganancia por Vendedor</item>
     </string-array>
 </resources>

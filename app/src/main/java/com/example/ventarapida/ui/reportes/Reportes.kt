@@ -12,13 +12,12 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.ventarapida.MainActivity
 import com.example.ventarapida.databinding.FragmentReportesBinding
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseUsuarios.buscarTodosUsuariosPorEmpresa
+import com.example.ventarapida.procesos.Utilidades
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 
@@ -38,8 +37,8 @@ class Reportes : Fragment() {
 
         listener()
         escuchadores()
+        binding?.textViewDesde?.setText(Utilidades.obtenerFechaActual())
         buscarTodosUsuariosPorEmpresa().addOnSuccessListener { listaUsuarios->
-
                 if (!listaUsuarios.isEmpty()) crearSpinner(listaUsuarios)
         }
         return binding!!.root
@@ -84,7 +83,7 @@ class Reportes : Fragment() {
         binding?.spinnerTipoReporte?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 // Aquí puedes obtener la posición seleccionada
-                    if(position==2){
+                    if(position==2 || position==4){
                         binding?.spinnerVendedor?.visibility=View.VISIBLE
                     }else{
                         binding?.spinnerVendedor?.visibility=View.GONE
@@ -206,6 +205,15 @@ class Reportes : Fragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     viewModel.ReporteMayorGanancia(requireContext(), fechaInicio, fechaFin)
                 }
+            }
+
+            if(binding?.spinnerTipoReporte?.selectedItemPosition==4){
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReporteGananciaPorVendedor(requireContext(),fechaInicio,fechaFin,listaIdUsuarios[posicionSpinnerVendedor],binding!!)
+                }
+
             }
         }
     }

@@ -16,6 +16,7 @@
             app:title="@string/inf_inferior"
             app:useSimpleSummaryProvider="false" />
 
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/otras_configuraciones">

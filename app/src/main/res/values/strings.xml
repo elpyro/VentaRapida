@@ -171,7 +171,7 @@
     <string name="InformacionPublicidad4">Comparte tus facturas y reportes con la impresora o redes sociales en PDF</string>
     <string name="PlanEmpresarial">Plan Empresarial</string>
     <string name="descripcionPlanEmpresarial">Conecta 30 asuarios al mismo tiempo.</string>
-    <string name="comentario">Comentario</string>
+    <string name="comentario">Descripción</string>
     <string name="proveedorDeSurtido">Proveedor de surtido</string>
     <string name="Agregar_inventario">Agregar a inventario</string>
     <string name="busquedas">Proveedor, Producto</string>
@@ -183,4 +183,5 @@
     <string name="ReporteVentas">Reporte de ventas</string>
     <string name="MostrarAgotados">Mostrar Agotados en Catalogo</string>
     <string name="informacion_producto">Información del producto</string>
+    <string name="MostrarPrecioCompra">Mostrar Precio de Compra a Vendedores</string>
 </resources>

@@ -89,18 +89,20 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
+
+
                 <TextView
                     android:id="@+id/textView_precio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autoSizeTextType="uniform"
                     android:text="@string/precio"
-                    android:textAppearance="@style/ColorFuentes"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     android:layout_marginLeft="10dp"
                     android:textStyle="bold"
-                    android:layout_weight="1" />
-
+                    android:layout_gravity="center"
+                    android:layout_weight="2" />
                 <TextView
                     android:id="@+id/textView_cantidad"
                     android:layout_width="wrap_content"
@@ -115,6 +117,34 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/layout_preciosCompra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/textView_precio_compra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeTextType="uniform"
+                    android:text="compra"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/textView_rentabilidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical|end"
+                    android:textAppearance="@style/ColorFuentes"
+                    android:text="@string/_0"
+                    android:textSize="12sp"
+                    android:layout_marginRight="10dp" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/textView_nombre"
                 android:layout_width="match_parent"
@@ -127,6 +157,8 @@
                 android:textAppearance="@style/ColorFuentes"
                 android:maxLines="1"
                 android:textSize="14sp" />
+
+
 
         </LinearLayout>
 

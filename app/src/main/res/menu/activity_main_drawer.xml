@@ -4,19 +4,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view">
 
+
+
     <group android:checkableBehavior="single"
-        android:id="@+id/panel_administrador"
-        android:visible="false">
+        android:id="@+id/panelVentas"
+        android:visible="true">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/baseline_monetization_on_24"
             android:title="@string/venta"
-            app:itemIconSize="60dp" />
+            app:itemIconSize="60dp"
+            tools:ignore="DuplicateIds" />
 
         <item
             android:id="@+id/ventas"
             android:icon="@drawable/baseline_menu_book_24"
-            android:title="@string/RegistrosVentas" />
+            android:title="@string/RegistrosVentas"
+            tools:ignore="DuplicateIds"/>
+    </group>
+
+
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/panel_administrador"
+        app:itemBackground="@drawable/separator"
+        android:visible="false">
+<!--        <item android:title="@string/AdministraTuNegocio"-->
+<!--              android:titleTextColor="@color/rojo">-->
+<!--        <menu>-->
 
         <item
             android:id="@+id/compra"
@@ -32,63 +47,45 @@
             android:icon="@drawable/baseline_corporate_fare_24"
             android:title="@string/datosempresa"
             tools:ignore="DuplicateIds" />
-                <item
-                    android:id="@+id/reportes"
-                    android:icon="@drawable/baseline_bar_chart_24"
-                    android:title="@string/Reportes" />
+
         <item
             android:id="@+id/listaUsuarios"
             android:icon="@drawable/baseline_groups_24"
             android:title="@string/Usuarios" />
-
-        <item
-            android:id="@+id/configuracion"
-            android:icon="@drawable/baseline_settings_24"
-            android:title="@string/configuracion"
-            tools:ignore="DuplicateIds" />
+<!--        </menu>-->
+<!--        </item>-->
 
     </group>
 
 
-
     <group android:checkableBehavior="single"
-        android:id="@+id/panel_vendedor"
+        android:id="@+id/panel_reporte_vendedor"
         android:visible="false">
-
-        <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/baseline_monetization_on_24"
-            android:title="@string/venta"
-            app:itemIconSize="60dp"
-            tools:ignore="DuplicateIds" />
-
-        <item
-            android:id="@+id/ventas"
-            android:icon="@drawable/baseline_menu_book_24"
-            android:title="@string/RegistrosVentas"
-            tools:ignore="DuplicateIds"/>
-
         <item
             android:id="@+id/reporteVendedor"
-            android:icon="@drawable/baseline_menu_book_24"
-            android:title="@string/Reportes"
-            tools:ignore="DuplicateIds"/>
-
-        <item
-            android:id="@+id/configuracion"
-            android:icon="@drawable/baseline_settings_24"
-            android:title="@string/configuracion"
-            tools:ignore="DuplicateIds" />
-
+            android:icon="@drawable/baseline_bar_chart_24"
+            android:title="@string/Reportes" />
     </group>
 
     <group android:checkableBehavior="single"
-        android:id="@+id/panel_suscricpion">
+        android:id="@+id/panel_reporte_administrador"
+        android:visible="false">
         <item
-            android:id="@+id/suscripcionesDisponibles"
-            android:icon="@drawable/baseline_credit_card_24"
-            android:title="@string/Supcripciones" />
+            android:id="@+id/reportes"
+            android:icon="@drawable/baseline_bar_chart_24"
+            android:title="@string/Reportes" />
     </group>
+
+    <item
+        android:id="@+id/suscripcionesDisponibles"
+        android:icon="@drawable/baseline_credit_card_24"
+        android:title="@string/Supcripciones" />
+
+    <item
+        android:id="@+id/configuracion"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="@string/configuracion"
+        tools:ignore="DuplicateIds" />
 
     <item
         android:id="@+id/detalleUsuario"

@@ -54,7 +54,13 @@ object Utilidades {
         return this.replace(".", "")
     }
 
-
+    fun fechaActual():String{
+        val fechaActual = Date()
+        // Crear un formato de fecha personalizado
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        // Formatear la fecha actual en el formato deseado
+        return  formatoFecha.format(fechaActual)
+    }
     fun esperarUnSegundo(){
         try {
             Thread.sleep(1000)

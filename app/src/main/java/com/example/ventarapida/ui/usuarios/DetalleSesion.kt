@@ -50,6 +50,10 @@ class DetalleSesion : Fragment() {
 
                 AuthUI.getInstance().signOut(requireContext())
                     .addOnCompleteListener { task: Task<Void?>? ->
+
+                        MainActivity.ventaProductosSeleccionados.clear()
+                        MainActivity.compraProductosSeleccionados.clear()
+
                         Toast.makeText(context, "Sesion Cerrada", Toast.LENGTH_LONG).show()
                         val intent = Intent(requireActivity(), Login::class.java)
                         startActivity(intent)

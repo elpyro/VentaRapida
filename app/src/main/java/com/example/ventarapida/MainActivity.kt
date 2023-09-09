@@ -22,12 +22,17 @@ import com.example.ventarapida.databinding.ActivityMainBinding
 import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloUsuario
+import com.example.ventarapida.procesos.FirebaseDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.Suscripcion
 import com.example.ventarapida.procesos.Utilidades.convertirCadenaAFecha
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Callback
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
@@ -129,20 +134,24 @@ class MainActivity : AppCompatActivity() {
         Log.d("pagos", "su proximo pago es: ${proximoPago} y su plan es ${datosEmpresa.plan}")
        if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago!!)
 
-        if (!planVencido!!){
+        if (planVencido!!){
+            val rootView = findViewById<View>(android.R.id.content)
+            val snackbar = Snackbar.make(rootView, "Plan vencido", Snackbar.LENGTH_SHORT)
+            val snackbarView = snackbar.view
+            snackbarView.setBackgroundResource(R.color.rojo)
+            snackbar.show()
+        }
 
-            if(datosUsuario.perfil=="Administrador"){
-                navView.getMenu()
-                    .setGroupVisible(R.id.panel_administrador, true)
-            }
+        if(datosUsuario.perfil=="Administrador"){
+            navView.getMenu()
+                .setGroupVisible(R.id.panel_administrador, true)
+            navView.getMenu()
+                .setGroupVisible(R.id.panel_reporte_administrador, true)
+        }
 
-            if(datosUsuario.perfil=="Vendedor"){
-                navView.getMenu()
-                    .setGroupVisible(R.id.panel_vendedor, true)
-            }
-
-        }else{
-            Toast.makeText(this, "Plan vencido",Toast.LENGTH_LONG).show()
+        if(datosUsuario.perfil=="Vendedor"){
+            navView.getMenu()
+                .setGroupVisible(R.id.panel_reporte_vendedor, true)
         }
 
 
@@ -174,6 +183,24 @@ class MainActivity : AppCompatActivity() {
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
         FirebaseProductos.transaccionesCambiarCantidad(this, transaccionesPendientes)
 
+        cargarEmpresa()
+
+    }
+
+    private fun cargarEmpresa() {
+        //cargar nuevamente los datos de la empresa
+        FirebaseDatosEmpresa.obtenerDatosEmpresa(
+            datosUsuario.idEmpresa,
+            object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    // Procesar los datos en el snapshot
+                    datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Manejar el error
+                }
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

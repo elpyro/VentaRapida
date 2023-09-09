@@ -25,10 +25,8 @@ import com.example.ventarapida.datos.ModeloDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseDatosEmpresa.guardarDatosEmpresa
 import com.example.ventarapida.procesos.GuardarImagenEnDispositivo
 import com.example.ventarapida.procesos.TomarFotoYGaleria
-import com.example.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.ui.procesos.ServiciosSubirFoto
-import com.google.android.gms.tasks.OnCanceledListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso

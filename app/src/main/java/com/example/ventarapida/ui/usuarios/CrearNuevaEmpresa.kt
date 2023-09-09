@@ -66,7 +66,8 @@ class CrearNuevaEmpresa : AppCompatActivity() {
               "ultimo_pago" to obtenerFechaActual(),
               "plan" to "Gratuito",
               "idDuenoCuenta" to idGoogle.toString(),
-              "proximo_pago" to proximo_pago.toString()
+              "proximo_pago" to proximo_pago.toString(),
+              "mostrarPreciosCompra" to "false"
               )
 
           guardarDatosEmpresa(updates)

@@ -17,9 +17,13 @@ import com.example.ventarapida.databinding.FragmentReporteVendedorBinding
 import com.example.ventarapida.databinding.FragmentReportesBinding
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseUsuarios
+import com.example.ventarapida.procesos.Utilidades
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class ReporteVendedor : Fragment() {
 
@@ -35,14 +39,15 @@ class ReporteVendedor : Fragment() {
         binding = FragmentReporteVendedorBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[ReporteVendedorViewModel::class.java]
 
-        binding?.textViewNombre?.setText(MainActivity.datosUsuario.nombre)
+        //mostrar ganancias si esta permitido
+        if(MainActivity.datosEmpresa.mostrarPreciosCompra.equals("true")) binding?.buttonGanancia?.visibility=View.VISIBLE
+
+        binding?.textViewDesde?.setText(Utilidades.obtenerFechaActual())
 
         listener()
         escuchadores()
-        FirebaseUsuarios.buscarTodosUsuariosPorEmpresa().addOnSuccessListener { listaUsuarios->
 
 
-        }
         return binding!!.root
     }
 
@@ -128,7 +133,28 @@ class ReporteVendedor : Fragment() {
                      binding!!)
             }
         }
+
+        binding?.buttonGanancia?.setOnClickListener {
+
+            var fechaInicio="01/01/2000"
+            var fechaFin="01/01/2050"
+
+            if(binding?.textViewDesde?.text.toString()!="Desde") fechaInicio=binding?.textViewDesde?.text.toString()
+            if(binding?.textViewHasta?.text.toString()!="Hasta") fechaFin=binding?.textViewHasta?.text.toString()
+
+            progressDialog.show()
+            // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+            lifecycleScope.launch(Dispatchers.IO) {
+                viewModel.ReporteGananciaPorVendedor(
+                    requireContext(),
+                    fechaInicio,
+                    fechaFin,
+                    MainActivity.datosUsuario.id,MainActivity.datosUsuario.nombre)
+            }
+        }
     }
+
+
 
 
     val progressDialog: ProgressDialog by lazy {

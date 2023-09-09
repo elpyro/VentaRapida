@@ -28,7 +28,7 @@ class FacturaGuardadaViewModel : ViewModel() {
     val totalFactura = MutableLiveData<String>()
     val referencias = MutableLiveData<String>()
     val items = MutableLiveData<String>()
-
+    var datosCargados=false
     fun cargarDatosFactura(modeloFactura: ModeloFactura?) {
         modeloFactura?.id_pedido?.let { obtenerFactura(it) }
     }
@@ -44,10 +44,10 @@ class FacturaGuardadaViewModel : ViewModel() {
                     val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
                     factura?.let { datosFacturaRecuperados.add(it) }
                 }
+
                 datosFactura.value = datosFacturaRecuperados.firstOrNull()
-
+                datosCargados=true
             }
-
             override fun onCancelled(error: DatabaseError) {}
         })
     }

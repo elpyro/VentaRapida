@@ -64,7 +64,6 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
                         android:background="@drawable/edittext_background"
-                        android:entries="@array/reportes"
                         android:minHeight="48dp"
                         android:textSize="20sp" />
 

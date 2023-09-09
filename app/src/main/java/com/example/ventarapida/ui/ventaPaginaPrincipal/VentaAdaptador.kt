@@ -77,11 +77,14 @@ class VentaAdaptador(
         inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val producto: TextView = itemView.findViewById(R.id.textView_nombre)
         private val precio: TextView = itemView.findViewById(R.id.textView_precio)
-         val seleccion: EditText = itemView.findViewById(R.id.editText_seleccionProducto)
+        private val compra: TextView = itemView.findViewById(R.id.textView_precio_compra)
+        private val rentabilidad: TextView = itemView.findViewById(R.id.textView_rentabilidad)
+        val seleccion: EditText = itemView.findViewById(R.id.editText_seleccionProducto)
         private val existencia: TextView = itemView.findViewById(R.id.textView_cantidad)
-         val cardview: CardView = itemView.findViewById(R.id.cardview_itemProducto)
-         val botonRestar: ImageButton = itemView.findViewById(R.id.imageButton_restarCantidad)
-         val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_producto)
+        val cardview: CardView = itemView.findViewById(R.id.cardview_itemProducto)
+        val botonRestar: ImageButton = itemView.findViewById(R.id.imageButton_restarCantidad)
+        val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_producto)
+        private var layout_precios_compra:LinearLayout= itemView.findViewById(R.id.layout_preciosCompra)
         private lateinit var existenciaSinCambios: String
         @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto) {
@@ -131,6 +134,7 @@ class VentaAdaptador(
                         cardview.setCardBackgroundColor(color)
                         producto.setTextAppearance(R.style.ColorFuenteEnFondoGris)
                         precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+                        compra.setTextAppearance(R.style.ColorFuenteEnFondoGris)
                         existencia.setTextAppearance(R.style.ColorFuenteEnFondoGris)
 
                         // Actualizar la cantidad del producto en el ViewModel
@@ -140,10 +144,7 @@ class VentaAdaptador(
                         )
                     } else {
 
-                        cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
-                        producto.setTextAppearance(R.style.ColorFuentes)
-                        precio.setTextAppearance(R.style.ColorFuentes)
-                        existencia.setTextAppearance(R.style.ColorFuentes)
+                      coloresSeleccionados()
 
                         // De lo contrario, hacer invisible el botón restar
                         botonRestar.visibility = View.GONE
@@ -155,10 +156,7 @@ class VentaAdaptador(
                     viewModel.actualizarCantidadProducto(products[position], 0)
                     botonRestar.visibility = View.GONE
 
-                    cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
-                    producto.setTextAppearance(R.style.ColorFuentes)
-                    precio.setTextAppearance(R.style.ColorFuentes)
-                    existencia.setTextAppearance(R.style.ColorFuentes)
+                    coloresNoSeleccionados()
                 }
             }
         }
@@ -166,9 +164,17 @@ class VentaAdaptador(
         private fun cargarProducto(product: ModeloProducto) {
 
             producto.text = product.nombre
-
+            compra.text= product.p_compra.formatoMonenda()
             precio.text = product.p_diamante.formatoMonenda()
 
+            val rentabilidadPorncentaje = String.format("%.1f", ( (product.p_diamante.toDouble()-product.p_compra.toDouble())/product.p_compra.toDouble() ) * 100)
+            rentabilidad.text = "$rentabilidadPorncentaje%"
+
+            if(MainActivity.datosEmpresa.mostrarPreciosCompra.equals("true")){
+                layout_precios_compra.visibility=View.VISIBLE
+            }else{
+                layout_precios_compra.visibility=View.GONE
+            }
             existencia.text ="X${product.cantidad}"
 
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
@@ -209,11 +215,7 @@ class VentaAdaptador(
                         botonRestar.setImageResource(R.drawable.baseline_skip_previous_24)
                     }
 
-                    val color = ContextCompat.getColor(itemView.context, R.color.azul_trasparente)
-                    cardview.setCardBackgroundColor(color)
-                    producto.setTextAppearance(R.style.ColorFuenteEnFondoGris)
-                    precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
-                    existencia.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+                    coloresSeleccionados()
 
                     existencia.text = "X${(product.cantidad.toInt() - cantidad)}"
                 }
@@ -223,12 +225,28 @@ class VentaAdaptador(
                 isUserEditing = true
                 botonRestar.visibility = View.GONE
 
-                cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
-                producto.setTextAppearance(R.style.ColorFuentes)
-                precio.setTextAppearance(R.style.ColorFuentes)
-                existencia.setTextAppearance(R.style.ColorFuentes)
+                coloresNoSeleccionados()
 
             }
+        }
+
+        private fun coloresNoSeleccionados() {
+            cardview.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
+            producto.setTextAppearance(R.style.ColorFuentes)
+            precio.setTextAppearance(R.style.ColorFuentes)
+            compra.setTextAppearance(R.style.ColorFuentes)
+            existencia.setTextAppearance(R.style.ColorFuentes)
+            rentabilidad.setTextAppearance(R.style.ColorFuentes)
+        }
+
+        private fun coloresSeleccionados() {
+            val color = ContextCompat.getColor(itemView.context, R.color.azul_trasparente)
+            cardview.setCardBackgroundColor(color)
+            producto.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+            precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+            compra.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+            existencia.setTextAppearance(R.style.ColorFuenteEnFondoGris)
+            rentabilidad.setTextAppearance(R.style.ColorFuenteEnFondoGris)
         }
 
     }

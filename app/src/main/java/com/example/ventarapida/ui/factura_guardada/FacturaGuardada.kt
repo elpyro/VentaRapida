@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 
 class FacturaGuardada : Fragment() {
 
+    private var primeraCarga=false
     private lateinit var viewModel: FacturaGuardadaViewModel
 
     private var binding: FragmentFacturaGuardadaBinding? = null
@@ -58,6 +59,7 @@ class FacturaGuardada : Fragment() {
         viewModel = ViewModelProvider(this).get(FacturaGuardadaViewModel::class.java)
 
         viewModel.cargarDatosFactura(modeloFactura)
+
         viewModel.buscarProductos(modeloFactura.id_pedido)
         observadores()
         listeners()
@@ -86,15 +88,22 @@ class FacturaGuardada : Fragment() {
         }
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
-
             if (banderaElimandoFactura==true) return@observe
+            if(primeraCarga!=false){
+                binding?.textViewTotal?.text="Total: $it"
 
-            binding?.textViewTotal?.text="Total: $it"
-            val updates = hashMapOf<String, Any>(
-                "id_pedido" to modeloFactura.id_pedido,
-                "total" to it
-            )
-            FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",updates)
+                val updates = hashMapOf<String, Any>(
+                    "id_pedido" to modeloFactura.id_pedido,
+                    "total" to it
+                )
+                FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",updates)
+
+            }
+            primeraCarga=true
+
+
+
+
         }
         viewModel.subTotal.observe(viewLifecycleOwner){
             binding?.textViewSubtotal?.text="Sub-Total: ${it.formatoMonenda()}"

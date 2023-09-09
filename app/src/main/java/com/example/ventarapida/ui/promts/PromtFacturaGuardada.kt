@@ -52,7 +52,7 @@ class PromtFacturaGuardada() {
         if (tipo.equals("venta")) editTextPrecio.setText(item.venta)
         if (tipo.equals("compra")) editTextPrecio.setText(item.costo)
 
-// Configurar el botón "Aceptar"
+        // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
 
             val nuevoNombre=editTextProducto.text.toString().takeIf { it.isNotEmpty() } ?: "Item"
@@ -69,6 +69,17 @@ class PromtFacturaGuardada() {
             if (tipo.equals("compra"))  item.costo=nuevoPrecio
 
             val diferenciaCantidad = nuevaCantidad.toInt() - cantidadAnterior.toInt()
+
+            var descuento= 0.0
+            if(!item.porcentajeDescuento.isEmpty())descuento=item.porcentajeDescuento.toDouble()
+            if(descuento!=0.0){
+                val precioNuevoDescuento=(nuevoPrecio.toDouble() /descuento)
+                val precioNuevoDescuento2=precioNuevoDescuento-nuevoPrecio.toDouble()
+                item.precioDescuentos=precioNuevoDescuento2.toString()
+            }else{
+                item.precioDescuentos=nuevoPrecio.toString()
+            }
+
 
             if(diferenciaCantidad!=0){
                 //hacer una cola para restar o sumar las cantidades del inventario
@@ -88,6 +99,7 @@ class PromtFacturaGuardada() {
                             id_vendedor = MainActivity.datosUsuario.id,
                             vendedor = MainActivity.datosUsuario.nombre,
                             producto = producto.nombre,
+                            precioDescuentos= item.precioDescuentos,
                             cantidad = cantidadSeleccionada.toString(),
                             costo = producto.p_compra,
                             venta = producto.p_diamante,

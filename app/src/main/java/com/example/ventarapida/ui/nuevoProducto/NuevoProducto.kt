@@ -154,17 +154,19 @@ class NuevoProducto : Fragment() {
 
             ocultarTeclado(requireContext(),vista)
 
-            //verificando campos vacios
-            if ( binding!!.editTextProducto.text.toString().isEmpty()
-                || binding!!.editTextCantidad.text.toString().trim().isEmpty()|| binding!!.editTextPCompra.text.toString().trim().isEmpty()
-                ||binding!!.editTextPVenta.text.toString().trim().isEmpty()){
+        if(binding!!.editTextProducto.text.toString().isEmpty()){
+            binding!!.editTextProducto.error = "Obligatorio"
+            return
+        }
+        if(binding!!.editTextCantidad.text.toString().trim().isEmpty()){
+            binding!!.editTextCantidad.error = "Obligatorio"
+            return
+        }
+        if(binding!!.editTextPVenta.text.toString().trim().isEmpty()){
+            binding!!.editTextPVenta.error = "Obligatorio"
+            return
+        }
 
-                val snackbar= Snackbar.make(vista, "Todos los datos son obligatorios", Snackbar.LENGTH_LONG)
-                snackbar.view.setBackgroundColor(resources.getColor(R.color.rojo))
-                snackbar.setTextColor(resources.getColor(R.color.white))
-                snackbar.show()
-                return
-            }
 
         val idProducto = UUID.randomUUID().toString()
 
@@ -195,6 +197,8 @@ class NuevoProducto : Fragment() {
         binding?.editTextCantidad?.setText("0")
         binding?.editTextPCompra?.setText("")
         binding?.editTextPVenta?.setText("")
+        binding?.editTextComentario?.setText("")
+        binding?.editTextProveedor?.setText("")
         binding?.imageViewFoto?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_menu_camera))
 
 

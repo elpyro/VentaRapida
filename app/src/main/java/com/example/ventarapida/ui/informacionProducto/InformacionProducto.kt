@@ -20,6 +20,8 @@ import com.example.ventarapida.databinding.FragmentInformacionProductoBinding
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.formatoMonenda
+import com.squareup.picasso.Callback
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 
 
@@ -53,7 +55,34 @@ class InformacionProducto : Fragment() {
         }
 
         binding.textViewPrecio.setText(modeloProducto?.p_diamante?.formatoMonenda())
-        Picasso.get().load(modeloProducto?.url).into(binding?.photoView)
+        Picasso.get()
+            .load(modeloProducto?.url)
+            .networkPolicy(NetworkPolicy.OFFLINE)
+            .into(binding?.photoView, object : Callback {
+                override fun onSuccess() {
+                    // La imagen se cargó exitosamente desde la caché
+                }
+
+                override fun onError(e: Exception) {
+                    // Ocurrió un error al cargar la imagen desde la caché,
+                    // intentar cargarla desde la red
+                    Picasso.get()
+                        .load(modeloProducto?.url)
+                        .into(binding?.photoView, object : Callback {
+                            override fun onSuccess() {
+                                // La imagen se cargó exitosamente desde la red
+                            }
+
+                            override fun onError(e: Exception) {
+                                // Ocurrió un error al cargar la imagen desde la red,
+                                // aquí puedes manejar el error según tus necesidades
+                            }
+                        })
+                }
+            })
+
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -92,8 +121,9 @@ class InformacionProducto : Fragment() {
         // Obtener el nombre del producto
         val productName = modeloProducto?.nombre
         val precio=modeloProducto?.p_diamante?.formatoMonenda()
+        val descripcion=modeloProducto?.comentario
         // Crear el mensaje que contiene el nombre del producto
-        val message = "$productName Precio: $precio"
+        val message = "$productName Precio: $precio \n$descripcion"
 
         // Llamar a la función para compartir
         compatirInformacionPrincipal(listOf(imageUrl) as List<Uri>, message, requireContext())

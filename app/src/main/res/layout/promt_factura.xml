@@ -89,7 +89,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edittext_background"
                         android:hint="@string/precio"
-                        android:inputType="numberDecimal"
+                        android:inputType="numberSigned"
                         android:gravity="center"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
