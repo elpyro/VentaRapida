@@ -1,5 +1,6 @@
 package com.example.ventarapida
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -28,6 +29,8 @@ import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.Suscripcion
 import com.example.ventarapida.procesos.Utilidades.convertirCadenaAFecha
 import com.example.ventarapida.procesos.UtilidadesBaseDatos
+import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
@@ -154,6 +157,13 @@ class MainActivity : AppCompatActivity() {
                 .setGroupVisible(R.id.panel_reporte_vendedor, true)
         }
 
+        if(datosUsuario.perfil=="Inactivo"){
+            navView.getMenu()
+                .setGroupVisible(R.id.panel_administrador, false)
+            navView.getMenu()
+                .setGroupVisible(R.id.panel_reporte_administrador, false)
+        }
+
 
     }
 
@@ -230,6 +240,36 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, Login::class.java)
             startActivity(intent)
         }
+
+        if(datosUsuario.perfil=="Inactivo"){
+
+            val alertDialogBuilder = AlertDialog.Builder(this)
+
+
+
+            alertDialogBuilder.setCancelable(false)
+            alertDialogBuilder.setTitle("Usuario Inactivo")
+            alertDialogBuilder.setMessage("Su usuario se encuentra Inactivo para ${MainActivity.datosEmpresa.nombre} pongase en contacto con el administrador")
+            alertDialogBuilder.setPositiveButton("Aceptar") { _, _ ->
+
+                AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener { task: Task<Void?>? ->
+
+                     ventaProductosSeleccionados.clear()
+                     compraProductosSeleccionados.clear()
+
+                        Toast.makeText(this, "Sesion Cerrada", Toast.LENGTH_LONG).show()
+                        val intent = Intent(this, Login::class.java)
+                        startActivity(intent)
+                        this.finish()
+
+                    }
+            }
+
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
+
     }
 
 }
