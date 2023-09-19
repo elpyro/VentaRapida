@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentNuevoProductoBinding
-
+import androidx.appcompat.widget.TooltipCompat
 import com.example.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.example.ventarapida.procesos.TomarFotoYGaleria
 import com.example.ventarapida.procesos.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE
@@ -54,9 +54,11 @@ class NuevoProducto : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Realiza alguna validación, por ejemplo, si el contenido no es válido
-                  binding?.inputEditTextCantidad?.error = "Puedes usar SURTIR MI NEGOCIO para agregar"
-
+                if(s.toString().isEmpty()){
+                    binding?.textViewInformacionAgregarCantidades?.visibility=View.GONE
+                }else{
+                    binding?.textViewInformacionAgregarCantidades?.visibility=View.VISIBLE
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -158,14 +160,15 @@ class NuevoProducto : Fragment() {
             binding!!.editTextProducto.error = "Obligatorio"
             return
         }
-        if(binding!!.editTextCantidad.text.toString().trim().isEmpty()){
-            binding!!.editTextCantidad.error = "Obligatorio"
+        if(binding!!.editTextPCompra.text.toString().trim().isEmpty()){
+            binding!!.editTextPCompra.error = "Obligatorio"
             return
         }
         if(binding!!.editTextPVenta.text.toString().trim().isEmpty()){
             binding!!.editTextPVenta.error = "Obligatorio"
             return
         }
+
 
 
         val idProducto = UUID.randomUUID().toString()
@@ -177,11 +180,13 @@ class NuevoProducto : Fragment() {
                     Toast.makeText(requireContext(),"Error al obtener la URL de descarga de la imagen subida.",Toast.LENGTH_LONG).show()
                 }
             }
+        var cantidadDisponible="0"
+        if(!binding!!.editTextCantidad.text.toString().trim().isEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
         //subir datos
             val updates = hashMapOf<String, Any>(
                 "id" to idProducto,
                 "nombre" to binding!!.editTextProducto.text.toString().trim(),
-                "cantidad" to binding!!.editTextCantidad.text.toString().trim(),
+                "cantidad" to cantidadDisponible,
                 "p_compra" to binding!!.editTextPCompra.text.toString(),
                 "p_diamante" to binding!!.editTextPVenta.text.toString(),
                 "comentario" to binding!!.editTextComentario.text.toString().trim(),
@@ -194,7 +199,7 @@ class NuevoProducto : Fragment() {
 
         //limpiando campos
         binding?.editTextProducto?.setText("")
-        binding?.editTextCantidad?.setText("0")
+        binding?.editTextCantidad?.setText("")
         binding?.editTextPCompra?.setText("")
         binding?.editTextPVenta?.setText("")
         binding?.editTextComentario?.setText("")

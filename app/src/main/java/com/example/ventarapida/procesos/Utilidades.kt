@@ -166,7 +166,11 @@ object Utilidades {
         val diasRestantes = TimeUnit.MILLISECONDS.toDays(diferenciaMillis)
 
         // Crear un String que indique cuántos días restan
-        val mensaje = "Quedan $diasRestantes días"
+        var mensaje = "Quedan $diasRestantes días"
+
+        if(diasRestantes.toInt()<0){
+            mensaje="Plan Vencido"
+        }
 
         return mensaje
     }

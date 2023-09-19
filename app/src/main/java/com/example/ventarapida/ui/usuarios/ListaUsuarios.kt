@@ -43,31 +43,7 @@ class ListaUsuarios : Fragment() {
 
         setHasOptionsMenu(true)
 
-        val estado = MainActivity.datosEmpresa.mostrarPreciosCompra.toBoolean()
-        binding?.switchPreciosCompra?.isChecked = estado
 
-        binding?.switchPreciosCompra?.setOnCheckedChangeListener { compoundButton, b ->
-
-
-            val updates = hashMapOf(
-                "id" to  MainActivity.datosEmpresa.id.toString(),
-                "mostrarPreciosCompra" to b.toString()
-            )
-            MainActivity.datosEmpresa.mostrarPreciosCompra=b.toString()
-            guardarDatosEmpresa(updates).addOnCompleteListener {
-                if(it.isSuccessful){
-                    if(MainActivity.datosEmpresa.mostrarPreciosCompra.equals("true")){
-                        val rootView = requireView()
-                        val snackbar = Snackbar.make(rootView, "Ahora los vendedores pueden ver los precios de compra y la rentabilidad", Snackbar.LENGTH_SHORT)
-                        val snackbarView = snackbar.view
-                        snackbarView.setBackgroundResource(R.color.rojo)
-                        snackbar.show()
-                    }
-
-                }
-            }
-
-        }
 
 
         return binding!!.root

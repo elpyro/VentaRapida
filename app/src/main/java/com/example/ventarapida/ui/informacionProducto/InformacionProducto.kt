@@ -123,7 +123,7 @@ class InformacionProducto : Fragment() {
         val precio=modeloProducto?.p_diamante?.formatoMonenda()
         val descripcion=modeloProducto?.comentario
         // Crear el mensaje que contiene el nombre del producto
-        val message = "$productName Precio: $precio \n$descripcion"
+        val message = "$productName \n*Precio: $precio* \n$descripcion"
 
         // Llamar a la función para compartir
         compatirInformacionPrincipal(listOf(imageUrl) as List<Uri>, message, requireContext())

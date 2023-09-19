@@ -162,7 +162,7 @@ class Login : AppCompatActivity() {
     }
 
 
-
+    var bandera=false
     private fun usuarioRegistrado(usuario: MutableList<ModeloUsuario>) {
         MainActivity.datosUsuario = usuario[0]
 
@@ -170,9 +170,20 @@ class Login : AppCompatActivity() {
             usuario[0].idEmpresa,
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    // Procesar los datos en el snapshot
-                    MainActivity.datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
-                    abrirPantallaPrincipal()
+                    // verificarDatos nuevamente
+
+                    if(bandera){
+                        MainActivity.datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
+                        abrirPantallaPrincipal()
+                    }else{
+                        esperarUnSegundo()
+                        esperarUnSegundo()
+                        bandera=true
+                        usuarioRegistrado(usuario)
+                    }
+
+
+
                     }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -192,7 +203,7 @@ class Login : AppCompatActivity() {
     private fun showProgressDialog() {
         try{
             progressDialog = ProgressDialog(this@Login)
-            progressDialog?.setMessage("Verificando usuario Google...")
+            progressDialog?.setMessage("Verificando cuenta...")
             progressDialog?.setCancelable(true)
             progressDialog?.show()
         }catch (e: Exception) {

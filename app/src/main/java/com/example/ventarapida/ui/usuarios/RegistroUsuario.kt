@@ -13,15 +13,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.Navigation
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
 import com.example.ventarapida.databinding.FragmentRegistroUsuarioBinding
+import com.example.ventarapida.datos.ModeloConfiguracionUsuario
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseUsuarios.eliminarUsuarioPorId
 import com.example.ventarapida.procesos.FirebaseUsuarios.guardarUsuario
-import com.example.ventarapida.procesos.Utilidades
 import java.util.UUID
 
 
@@ -52,9 +52,11 @@ class RegistroUsuario : Fragment() {
                 nombreUsuario= modeloUsuario.nombre
                 cargarDatos(modeloUsuario)
                 idUsuario= modeloUsuario.id
+                binding?.TextviewTitulo?.text = modeloUsuario.perfil
                 clienteNuevo=false
             }else{
                 idUsuario= UUID.randomUUID().toString()
+                binding?.TextviewTitulo?.setText("Crea un nuevo usuario")
             }
 
             listeners()
@@ -115,9 +117,25 @@ class RegistroUsuario : Fragment() {
         nombre?.setText(modeloUsuario.nombre)
         editTextCorreo?.setText(modeloUsuario.correo.replace("@gmail.com", ""))
         when (modeloUsuario.perfil) {
-            "Administrador" -> binding?.radioButtonAdministrador?.isChecked = true
-            "Vendedor" -> binding?.radioButtonVendedor?.isChecked = true
-            "Inactivo" -> binding?.radioButtonInactivo?.isChecked = true
+            "Administrador" -> {
+                binding?.radioButtonAdministrador?.isChecked = true
+                binding?.linearLayoutOpcionesVendedor?.isVisible=false
+            }
+            "Vendedor" -> {
+                binding?.radioButtonVendedor?.isChecked = true
+                binding?.linearLayoutOpcionesVendedor?.isVisible=true
+            }
+            "Inactivo" -> {
+                binding?.radioButtonInactivo?.isChecked = true
+                binding?.linearLayoutOpcionesAdministrador?.isVisible=false
+                binding?.linearLayoutOpcionesVendedor?.isVisible=false
+            }
+        }
+        if(modeloUsuario.configuracion!=null){
+            binding?.switchPreciosCompra?.isChecked=modeloUsuario.configuracion.mostrarPreciosCompra
+            binding?.switchReporteGanancia?.isChecked=modeloUsuario.configuracion.mostrarReporteGanancia
+            binding?.switchEditarFacturas?.isChecked=modeloUsuario.configuracion.editarFacturas
+            binding?.switchAgregarInformacion?.isChecked=modeloUsuario.configuracion.agregarInformacionAdicional
         }
     }
 
@@ -146,6 +164,26 @@ class RegistroUsuario : Fragment() {
         binding?.buttonRegister?.setOnClickListener {
             registrarUsuario()
         }
+
+        binding?.radioButtonAdministrador?.setOnClickListener{
+            val seleccion= binding?.radioButtonAdministrador?.isChecked
+            if(seleccion!!){
+                binding?.linearLayoutOpcionesVendedor?.isVisible=false
+                binding?.linearLayoutOpcionesAdministrador?.isVisible=true
+            }
+        }
+        binding?.radioButtonVendedor?.setOnClickListener{
+            val seleccion= binding?.radioButtonVendedor?.isChecked
+            if(seleccion!!){
+                binding?.linearLayoutOpcionesVendedor?.isVisible=true
+                binding?.linearLayoutOpcionesAdministrador?.isVisible=true
+            }
+        }
+        binding?.radioButtonInactivo?.setOnClickListener{
+            binding?.linearLayoutOpcionesAdministrador?.isVisible=false
+            binding?.linearLayoutOpcionesVendedor?.isVisible=false
+        }
+
     }
 
     private fun registrarUsuario() {
@@ -163,6 +201,7 @@ class RegistroUsuario : Fragment() {
         if(binding?.radioButtonAdministrador?.isChecked==true) perfil="Administrador"
         if(binding?.radioButtonInactivo?.isChecked==true) perfil="Inactivo"
 
+        
         if(!perfil.equals("Administrador")){
             val usaurioPrincipal=verificarUsuarioPrincipal()
             if (usaurioPrincipal) {
@@ -173,19 +212,55 @@ class RegistroUsuario : Fragment() {
 
         var correo= binding?.editTextCorreo?.text.toString() +"@gmail.com"
 
+        var permisosUsuario=otorgarPermisos(perfil)
         val updates = hashMapOf<String, Any>(
             "id" to idUsuario,
             "nombre" to  binding?.editTextUsuario?.text.toString(),
             "correo" to  correo.toLowerCase(),
             "idEmpresa" to  MainActivity.datosEmpresa.id,
             "empresa" to  MainActivity.datosEmpresa.nombre,
-            "perfil" to perfil
+            "perfil" to perfil,
+            "configuracion" to permisosUsuario
         )
 
         guardarUsuario(updates)
 
         Toast.makeText(requireContext(),"Usuario Guardado",Toast.LENGTH_LONG).show()
         findNavController().popBackStack()
+
+    }
+
+    private fun otorgarPermisos(perfil: String): ModeloConfiguracionUsuario {
+       var mostrarPercios=true
+       var editarFacturar=true
+       var mostrarReporte=true
+       var agregerInformacion=true
+
+       if(perfil.equals("Administrador")) mostrarPercios= binding?.switchPreciosCompra?.isChecked!!
+
+        if(perfil.equals("Vendedor")){
+             mostrarPercios= binding?.switchPreciosCompra?.isChecked!!
+             editarFacturar= binding?.switchEditarFacturas?.isChecked!!
+             mostrarReporte= binding?.switchReporteGanancia?.isChecked!!
+             agregerInformacion= binding?.switchAgregarInformacion?.isChecked!!
+        }
+
+        if(perfil.equals("Inactivo")){
+             mostrarPercios=false
+             editarFacturar=false
+             mostrarReporte=false
+             agregerInformacion=false
+
+        }
+
+        val configuracionUsuario = ModeloConfiguracionUsuario(
+            mostrarPreciosCompra = mostrarPercios,
+            editarFacturas = editarFacturar,
+            mostrarReporteGanancia = mostrarReporte,
+            agregarInformacionAdicional = agregerInformacion
+        )
+
+        return configuracionUsuario
 
     }
 

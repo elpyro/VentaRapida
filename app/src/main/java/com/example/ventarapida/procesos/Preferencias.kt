@@ -18,10 +18,17 @@ class Preferencias {
         // Obtener el valor de la preferencia
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        MainActivity.preferencia_informacion_superior =
-            sharedPreferences.getString("inf_superior", "")!!
-        MainActivity.preferencia_informacion_inferior =
-            sharedPreferences.getString("inf_inferior", "")!!
+        if (!MainActivity.datosUsuario.configuracion.agregarInformacionAdicional) {
+            MainActivity.preferencia_informacion_superior =""
+            MainActivity.preferencia_informacion_inferior =""
+        }else{
+            MainActivity.preferencia_informacion_superior =
+                sharedPreferences.getString("inf_superior", "")!!
+            MainActivity.preferencia_informacion_inferior =
+                sharedPreferences.getString("inf_inferior", "")!!
+        }
+
+
         MainActivity.edit_text_preference_codigo_area =
             sharedPreferences.getString("edit_text_preference_codigo_area","+")!!
 

@@ -4,7 +4,7 @@
 
     <PreferenceCategory
         app:key="informacion_adicional"
-        app:title="@string/detalleFactura">
+        app:title="@string/informacionAdicional">
 
         <EditTextPreference
             app:key="inf_superior"

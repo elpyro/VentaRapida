@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import com.example.ventarapida.Login
 import com.example.ventarapida.databinding.ActivityCrearNuevaEmpresaBinding
+import com.example.ventarapida.datos.ModeloConfiguracionUsuario
 import com.example.ventarapida.procesos.FirebaseDatosEmpresa.guardarDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseUsuarios
 import com.example.ventarapida.procesos.Suscripcion
@@ -78,6 +79,7 @@ class CrearNuevaEmpresa : AppCompatActivity() {
               "correo" to  binding?.hintCorreo?.text.toString().toLowerCase(),
               "idEmpresa" to  idEmpresa,
               "empresa" to   binding?.editTextEmpresa?.text.toString(),
+              "configuracion" to ModeloConfiguracionUsuario(),
               "perfil" to "Administrador"
           )
 

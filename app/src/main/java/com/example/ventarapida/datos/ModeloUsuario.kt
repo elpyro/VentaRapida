@@ -8,5 +8,6 @@ data class ModeloUsuario(
     var correo: String= "",
     var idEmpresa: String= "",
     var empresa: String= "",
-    val perfil:String=""
+    val perfil:String="",
+    val configuracion: ModeloConfiguracionUsuario= ModeloConfiguracionUsuario()
     ):Serializable

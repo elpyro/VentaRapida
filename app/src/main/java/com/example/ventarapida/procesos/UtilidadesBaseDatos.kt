@@ -64,7 +64,7 @@ object UtilidadesBaseDatos {
 
     }
 
-    fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, productoFacturado:ModeloProductoFacturado) {
+    fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, idProducto:String) {
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
         var multiplicador = 1
@@ -78,7 +78,7 @@ object UtilidadesBaseDatos {
             val idTransaccion = UUID.randomUUID().toString()
             val values = ContentValues().apply {
                 put("idTransaccion", idTransaccion)
-                put("idProducto", productoFacturado.id_producto)
+                put("idProducto", idProducto)
                 put("cantidad", sumarORestar.toString())
                 put("subido", "false")
             }
@@ -89,7 +89,7 @@ object UtilidadesBaseDatos {
 
             val sumarProducto = ModeloTransaccionSumaRestaProducto(
                 idTransaccion = idTransaccion,
-                idProducto =productoFacturado.id_producto,
+                idProducto =idProducto,
                 cantidad = sumarORestar.toString(),
                 subido ="false"
             )

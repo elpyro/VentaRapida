@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.text.Spannable
@@ -24,6 +25,7 @@ import com.example.ventarapida.databinding.FragmentCompraBinding
 import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.Utilidades
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+import com.google.android.material.snackbar.Snackbar
 
 
 import java.util.*
@@ -46,6 +48,7 @@ class Compra : Fragment() {
     ): View {
         setHasOptionsMenu(true)
         binding = FragmentCompraBinding.inflate(inflater, container, false)
+
         return binding!!.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -101,8 +104,16 @@ class Compra : Fragment() {
         listeners()
         viewModel.calcularTotal()
 
-        Toast.makeText(requireContext(),"Manten presionado para modificar un producto",Toast.LENGTH_SHORT).show()
+        crearSnackBarr("Manten presionado para editar un item")
 
+    }
+    private fun crearSnackBarr(s: String) {
+        val rootView = vista
+        val snackbar = Snackbar.make(rootView, s, Snackbar.LENGTH_SHORT)
+        val snackbarView = snackbar.view
+        snackbar.setTextColor(Color.BLACK)
+        snackbarView.setBackgroundResource(R.color.amarillo)
+        snackbar.show()
     }
 
     private fun listeners() {

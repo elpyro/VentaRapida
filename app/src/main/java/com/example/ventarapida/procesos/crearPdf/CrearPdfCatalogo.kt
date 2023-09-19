@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Environment
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.android.car.ui.utils.CarUiUtils.drawableToBitmap
 import com.example.ventarapida.MainActivity
@@ -283,7 +284,13 @@ class CrearPdfCatalogo {
             table1.addCell(cell)
 
             //si la cantidad es menor que 1 mostrar vacia la cantidad
-            if(temp.cantidad.toInt()<1) temp.cantidad=""
+
+            if(temp.cantidad.isNotEmpty()){
+                if(temp.cantidad.toInt()<1) temp.cantidad=""
+            }else{
+                temp.cantidad=""
+            }
+
 
             cell = PdfPCell()
             setCellFormat(cell, cell_color, temp.cantidad)
@@ -299,7 +306,7 @@ class CrearPdfCatalogo {
             if (images[i] != null) {
                 val logoCell = PdfPCell(images[i])
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
-                logoCell.verticalAlignment = Element.ALIGN_CENTER
+                logoCell.verticalAlignment = Element.ALIGN_MIDDLE
                 logoCell.backgroundColor=cell_color
                 logoCell.setPadding(2F)
                 table1.addCell(logoCell)
@@ -307,6 +314,7 @@ class CrearPdfCatalogo {
                 cell = PdfPCell()
                 setCellFormat(cell, cell_color, "No disponible")
                 cell.setPadding(4F)
+                cell.verticalAlignment = Element.ALIGN_MIDDLE
                 table1.addCell(cell)
             }
 
@@ -327,8 +335,7 @@ class CrearPdfCatalogo {
                     val stream = connection.getInputStream()
                     val byteArray = stream.readBytes()
                     val imagenProducto = Image.getInstance(byteArray)
-                    imagenProducto.widthPercentage = 70f
-                    imagenProducto.scaleToFit(155f, 70f)
+                    imagenProducto.scaleToFit(70f, 70f)
                     imagenProducto
                 } else {
                     null

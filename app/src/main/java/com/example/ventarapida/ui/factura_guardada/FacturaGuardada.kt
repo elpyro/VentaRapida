@@ -46,9 +46,8 @@ class FacturaGuardada : Fragment() {
     ): View? {
         binding= FragmentFacturaGuardadaBinding.inflate(inflater, container, false)
 
-        //activar  menu para este fragment
         setHasOptionsMenu(true)
-        
+
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
         modeloFactura= (bundle?.getSerializable("modelo") as? ModeloFactura)!!
@@ -89,7 +88,7 @@ class FacturaGuardada : Fragment() {
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
             if (banderaElimandoFactura==true) return@observe
-            if(primeraCarga!=false){
+
                 binding?.textViewTotal?.text="Total: $it"
 
                 val updates = hashMapOf<String, Any>(
@@ -97,12 +96,6 @@ class FacturaGuardada : Fragment() {
                     "total" to it
                 )
                 FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",updates)
-
-            }
-            primeraCarga=true
-
-
-
 
         }
         viewModel.subTotal.observe(viewLifecycleOwner){
@@ -113,8 +106,8 @@ class FacturaGuardada : Fragment() {
             binding?.recyclerViewProductosFacturados?.adapter = adaptador
             adaptador!!.setOnClickItem() { item ->
 
-                if (MainActivity.datosUsuario.perfil.equals("Vendedor")){
-                    Toast.makeText(requireContext(),"Solo los administradores pueden editar el inventarío",Toast.LENGTH_LONG).show()
+                if (!MainActivity.datosUsuario.configuracion.editarFacturas){
+                    Toast.makeText(requireContext(),"No posee permiso para editar",Toast.LENGTH_LONG).show()
                 }else{
                     val promtEditarItem=PromtFacturaGuardada()
                     promtEditarItem.editarProducto("venta",item,requireActivity())
@@ -144,9 +137,7 @@ class FacturaGuardada : Fragment() {
 
         }
         binding?.cardViewTotales?.setOnClickListener {
-            if(MainActivity.datosUsuario.perfil.equals("Administrador")){
-
-            }else{
+            if(!MainActivity.datosUsuario.configuracion.editarFacturas){
                 Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -208,14 +199,17 @@ class FacturaGuardada : Fragment() {
         when (item.itemId) {
 
             R.id.action_agregar_producto->{
-
+                if(MainActivity.datosUsuario.configuracion.editarFacturas){
                 abrirAgregarProducto()
+                }else{
+                    Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
+                }
                 return true
             }
 
             R.id.action_eliminar -> {
                 ocultarTeclado(requireContext(),vista)
-                if(MainActivity.datosUsuario.perfil.equals("Administrador")){
+                if(MainActivity.datosUsuario.configuracion.editarFacturas){
                     dialogoEliminar()
                 }else{
                     Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
@@ -243,8 +237,13 @@ class FacturaGuardada : Fragment() {
         builder.setPositiveButton("Eliminar") { dialog, which ->
 
             banderaElimandoFactura=true
+
+
+
             MainActivity.progressDialog?.show()
 
+            Utilidades.esperarUnSegundo()
+            Utilidades.esperarUnSegundo()
 
                 viewModel.eliminarFactura(requireContext())
 

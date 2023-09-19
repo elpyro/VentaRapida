@@ -105,9 +105,10 @@ class PromtFacturaGuardada() {
                             venta = producto.p_diamante,
                             imagenUrl =producto.url
                         )
+
                         listaProductosEditar.add(productoFacturado)
 
-                        editarProductoTransaccion(context,tipo,diferenciaCantidad,productoFacturado)
+                        editarProductoTransaccion(context,tipo,diferenciaCantidad,producto.id)
 
                     }
 

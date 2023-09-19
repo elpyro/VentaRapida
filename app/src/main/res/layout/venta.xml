@@ -23,7 +23,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingStart="12dp"
-            android:paddingTop="68dp"
+            android:paddingTop="70dp"
             android:paddingBottom="90dp"
             tools:ignore="RtlSymmetry"
             tools:layout_editor_absoluteX="31dp"
@@ -43,13 +43,21 @@
         android:layout_height="wrap_content"
         android:paddingTop="15dp"
         android:paddingEnd="30dp"
-        android:paddingStart="40dp"
+        android:paddingStart="20dp"
         android:orientation="horizontal"
         android:baselineAligned="true"  >
+
+        <ImageView
+            android:id="@+id/imageView_mostrarPDF"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/baseline_picture_as_pdf_24" />
 
         <RelativeLayout
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:layout_marginStart="10dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1">
 
@@ -92,7 +100,7 @@
             android:id="@+id/imageView_microfono"
             android:layout_marginStart="20dp"
             android:layout_width="30dp"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:src="@drawable/baseline_mic_24"
             android:contentDescription="@string/microfono" />
     </LinearLayout>

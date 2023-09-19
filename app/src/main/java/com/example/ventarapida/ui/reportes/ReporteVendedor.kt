@@ -40,7 +40,7 @@ class ReporteVendedor : Fragment() {
         viewModel = ViewModelProvider(this)[ReporteVendedorViewModel::class.java]
 
         //mostrar ganancias si esta permitido
-        if(MainActivity.datosEmpresa.mostrarPreciosCompra.equals("true")) binding?.buttonGanancia?.visibility=View.VISIBLE
+        if(MainActivity.datosUsuario.configuracion.mostrarReporteGanancia) binding?.buttonGanancia?.visibility=View.VISIBLE
 
         binding?.textViewDesde?.setText(Utilidades.obtenerFechaActual())
 

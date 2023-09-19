@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import com.example.ventarapida.ui.detalleProducto.DetalleProductoViewModel
@@ -23,20 +24,24 @@ import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.example.ventarapida.procesos.TomarFotoYGaleria
 import com.example.ventarapida.procesos.Utilidades
-import com.example.ventarapida.procesos.Utilidades.eliminarPuntosComasLetras
-import com.example.ventarapida.procesos.Utilidades.escribirFormatoMoneda
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.example.ventarapida.procesos.UtilidadesBaseDatos
 import com.example.ventarapida.procesos.VerificarInternet
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.File
+import kotlin.math.absoluteValue
 
 @Suppress("DEPRECATION")
 class DetalleProducto : Fragment() {
 
-//    private lateinit var toolbar: Toolbar
+    private var bitmapFoto: Bitmap? = null
+    private var changeListenerActived: Boolean =false
+    private lateinit var cantidadAntigua: String
+
+    //    private lateinit var toolbar: Toolbar
     private var binding: FragmentDetalleProductoBinding? = null
     private val viewModel: DetalleProductoViewModel by viewModels() // Inicialización de viewModel
     private lateinit var productosViewModel: DetalleProductoViewModel
@@ -67,6 +72,8 @@ class DetalleProducto : Fragment() {
 
         // Observa los cambios en detalleProducto y actualiza la UI en consecuencia
         productosViewModel.detalleProducto.observe(viewLifecycleOwner) { detalleProducto ->
+            binding?.textViewInformacionAgregarCantidades?.visibility=View.GONE
+            changeListenerActived=false
             if (detalleProducto.isNotEmpty()) {
                 val producto = detalleProducto[0]
                 actualizarCampos(producto)
@@ -91,6 +98,20 @@ class DetalleProducto : Fragment() {
         binding?.imageViewBotonIzquierda?.setOnClickListener {
             cargarAnteriorProducto()
         }
+
+        binding?.editTextCantidad?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (changeListenerActived){
+                    binding?.textViewInformacionAgregarCantidades?.visibility=View.VISIBLE
+                }
+                changeListenerActived=true
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
 
 
@@ -139,8 +160,8 @@ class DetalleProducto : Fragment() {
                 val file = File(result.uri.path!!)
                 if (file.exists()) {
                     // Cargar la imagen recortada en el ImageView
-                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                    binding?.imageViewFoto?.setImageBitmap(bitmap)
+                    bitmapFoto = BitmapFactory.decodeFile(file.absolutePath)
+                    binding?.imageViewFoto?.setImageBitmap(bitmapFoto)
                 }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 // Mostrar un mensaje de error si la recortada no fue exitosa
@@ -150,13 +171,13 @@ class DetalleProducto : Fragment() {
         }
     }
 
-//    var  verificarImagenCambiada:ImageView?=null
     private fun actualizarCampos(producto: ModeloProducto) {
         id_producto=producto.id
         binding?.editTextProducto?.setText(producto.nombre)
         binding?.editTextPCompra?.setText(producto.p_compra)
         binding?.editTextPVenta?.setText(producto.p_diamante)
         binding?.editTextCantidad?.setText(producto.cantidad)
+        cantidadAntigua= producto.cantidad
         binding?.editTextProveedor?.setText(producto.proveedor)
         if(producto.comentario!=null)binding!!.editTextComentario.setText(producto.comentario.toString())
        if (!producto.url.isEmpty()){
@@ -275,15 +296,19 @@ class DetalleProducto : Fragment() {
 
      @SuppressLint("SuspiciousIndentation")
      fun guardar() {
+         val verificarConexion= VerificarInternet()
 
-         Utilidades.ocultarTeclado(requireContext(), vista!!)
+
+         ocultarTeclado(requireContext(), vista!!)
+
+
 
          if(binding!!.editTextProducto.text.toString().isEmpty()){
              binding!!.editTextProducto.error = "Obligatorio"
              return
          }
-         if(binding!!.editTextCantidad.text.toString().trim().isEmpty()){
-             binding!!.editTextCantidad.error = "Obligatorio"
+         if(binding!!.editTextPCompra.text.toString().trim().isEmpty()){
+             binding!!.editTextPCompra.error = "Obligatorio"
              return
          }
          if(binding!!.editTextPVenta.text.toString().trim().isEmpty()){
@@ -291,14 +316,20 @@ class DetalleProducto : Fragment() {
              return
          }
 
+
          //veficicar si hay imagen cargada
-         if (this.binding?.imageViewFoto!!.drawable is BitmapDrawable) {
-             viewModel.subirImagenFirebase(requireContext(),this.binding?.imageViewFoto!!)
+         if (bitmapFoto!=null) {
+             viewModel.subirImagenFirebase(requireContext(),bitmapFoto)
+             bitmapFoto=null
          }
+
+         var cantidadDisponible="0"
+         if(!binding!!.editTextCantidad.text.toString().trim().isEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
+         if(cantidadAntigua != cantidadDisponible) actualizarCantidadTransaccion(cantidadDisponible)
+
         val updates = hashMapOf<String, Any>(
             "id" to id_producto.trim(),
             "nombre" to this.binding!!.editTextProducto.text.toString().trim(),
-            "cantidad" to this.binding!!.editTextCantidad.text.toString().trim(),
             "p_compra" to this.binding!!.editTextPCompra.text.toString(),
             "p_diamante" to this.binding!!.editTextPVenta.text.toString(),
             "comentario" to binding!!.editTextComentario.text.toString().trim(),
@@ -309,12 +340,43 @@ class DetalleProducto : Fragment() {
 
             Toast.makeText(requireContext(),"Producto Actualizado",Toast.LENGTH_LONG).show()
 
-
-         val verificarConexion= VerificarInternet()
-
          if (!verificarConexion.verificarConexion(requireContext())){
              Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
          }
+    }
+
+    private fun actualizarCantidadTransaccion(cantidadDisponible: String) {
+        val nuevaCantidad= cantidadDisponible.toInt()-cantidadAntigua.toInt()
+        cantidadAntigua=cantidadDisponible
+        val producto= this.binding!!.editTextProducto.text.toString().trim()
+        if (nuevaCantidad > 0) {
+            UtilidadesBaseDatos.editarProductoTransaccion(
+                requireContext(),
+                "compra",
+                nuevaCantidad,
+                id_producto
+            )
+            crearSnackBarr("Se sumaran $nuevaCantidad $producto al inventario")
+
+        } else if (nuevaCantidad < 0) {
+            UtilidadesBaseDatos.editarProductoTransaccion(
+                requireContext(),
+                "venta",
+                nuevaCantidad*-1,
+                id_producto
+            )
+
+            crearSnackBarr("Se restaran ${nuevaCantidad.absoluteValue} $producto del inventario")
+        }
+
+    }
+
+    private fun crearSnackBarr(s: String) {
+        val rootView = requireView()
+        val snackbar = Snackbar.make(rootView, s, Snackbar.LENGTH_SHORT)
+        val snackbarView = snackbar.view
+        snackbarView.setBackgroundResource(R.color.rojo)
+        snackbar.show()
     }
 
 

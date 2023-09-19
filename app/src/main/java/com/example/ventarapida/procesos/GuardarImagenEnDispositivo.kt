@@ -19,7 +19,7 @@ class GuardarImagenEnDispositivo {
 
         // Convertir el bitmap a un archivo jpeg
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 15, stream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 25, stream)
         val byteArray = stream.toByteArray()
 
         // Escribir el archivo jpeg en el archivo temporal

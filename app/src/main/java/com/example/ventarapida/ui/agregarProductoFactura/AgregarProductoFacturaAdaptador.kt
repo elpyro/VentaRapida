@@ -179,7 +179,11 @@ class AgregarProductoFacturaAdaptador(
                     precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
                     existencia.setTextAppearance(R.style.ColorFuenteEnFondoGris)
 
-                    existencia.text = "X${(product.cantidad.toInt() - cantidad)}"
+                    if(product.cantidad.isNotEmpty()){
+                        existencia.text = "X${(product.cantidad.toInt() - cantidad)}"
+                    }else{
+                        existencia.text= "X${(0 - cantidad)}"
+                    }
                 }
             } else {
                 isUserEditing = false

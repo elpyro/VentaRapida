@@ -213,7 +213,11 @@ class CompraAdaptador(
 
 
                     //Sumar las existencias
-                    existencia.text = "X${(product.cantidad.toInt() + cantidad)}"
+                    if(product.cantidad.isNotEmpty()){
+                        existencia.text = "X${(product.cantidad.toInt() + cantidad)}"
+                    }else{
+                        existencia.text= "X${(0 + cantidad)}"
+                    }
 
 
                 }
@@ -228,10 +232,16 @@ class CompraAdaptador(
                 precio.setTextAppearance(R.style.ColorFuentes)
                 existencia.setTextAppearance(R.style.ColorFuentes)
 
-                if(product.cantidad.toInt()<1){
+                if(product.cantidad.isNotEmpty()){
+                    if(product.cantidad.toInt()<1){
+                        val color = ContextCompat.getColor(itemView.context, R.color.rojoTransparente)
+                        cardview.setCardBackgroundColor(color)
+                    }
+                }else{
                     val color = ContextCompat.getColor(itemView.context, R.color.rojoTransparente)
                     cardview.setCardBackgroundColor(color)
                 }
+
 
             }
         }

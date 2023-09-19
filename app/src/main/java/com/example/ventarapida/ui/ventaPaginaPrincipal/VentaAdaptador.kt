@@ -41,15 +41,10 @@ class VentaAdaptador(
         // Vincular los datos del producto con la vista del ViewHolder
         holder.bind(products[position])
 
-        // si el usario es un administrador puede editar datos del producto
-        if(MainActivity.datosUsuario.perfil.equals("Administrador")){
-
             holder.cardview.setOnLongClickListener { motionEvent ->
                 onLongClickItem?.invoke(products[position], position)
                 true // Devuelve true para indicar que el evento ha sido consumido
             }
-
-        }
 
 
         holder.seleccion.setOnClickListener {
@@ -57,7 +52,6 @@ class VentaAdaptador(
                 holder.seleccion.selectAll()
             }
         }
-
     }
 
     // Este método devuelve el número de elementos en la lista de productos
@@ -170,7 +164,7 @@ class VentaAdaptador(
             val rentabilidadPorncentaje = String.format("%.1f", ( (product.p_diamante.toDouble()-product.p_compra.toDouble())/product.p_compra.toDouble() ) * 100)
             rentabilidad.text = "$rentabilidadPorncentaje%"
 
-            if(MainActivity.datosEmpresa.mostrarPreciosCompra.equals("true")){
+            if(MainActivity.datosUsuario.configuracion.mostrarPreciosCompra){
                 layout_precios_compra.visibility=View.VISIBLE
             }else{
                 layout_precios_compra.visibility=View.GONE
@@ -217,7 +211,12 @@ class VentaAdaptador(
 
                     coloresSeleccionados()
 
-                    existencia.text = "X${(product.cantidad.toInt() - cantidad)}"
+                    if(product.cantidad.isNotEmpty()){
+                        existencia.text = "X${(product.cantidad.toInt() - cantidad)}"
+                    }else{
+                        existencia.text= "X${(0 - cantidad)}"
+                    }
+
                 }
             } else {
                 isUserEditing = false

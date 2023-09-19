@@ -2,6 +2,7 @@ package com.example.ventarapida.ui.detalleProducto
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
 import androidx.core.app.JobIntentService
@@ -106,19 +107,19 @@ class DetalleProductoViewModel : ViewModel() {
 
     }
 
-    fun subirImagenFirebase(context:Context,imageViewFoto: ImageView?) {
+    fun subirImagenFirebase(context:Context,     bitmap: Bitmap?) {
 
         val idProducto= detalleProducto.value?.get(0)?.id
 
         // Obtener la imagen del ImageView como Bitmap
-        val bitmap = (imageViewFoto?.drawable as BitmapDrawable).bitmap
+
 
         // Crear una referencia a la ubicación donde se subirá la imagen en Firebase Storage
         val storageRef = Firebase.storage.reference.child(idProducto + ".jpg")
 
 
         val guardarImagenEnDispositivo= GuardarImagenEnDispositivo()
-        val fileUri = guardarImagenEnDispositivo.guardarImagenEnDispositivo(context ,bitmap)
+        val fileUri = guardarImagenEnDispositivo.guardarImagenEnDispositivo(context , bitmap!!)
 
         // Crear el Intent para iniciar el servicio
         val intent = Intent(context, ServiciosSubirFoto::class.java)

@@ -3,6 +3,7 @@ package com.example.ventarapida.ui.ventaPaginaPrincipal
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,23 +11,31 @@ import android.speech.RecognizerIntent
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ventarapida.MainActivity
 import com.example.ventarapida.R
+import com.example.ventarapida.VistaPDFReporte
 import com.example.ventarapida.databinding.VentaBinding
 import com.example.ventarapida.datos.ModeloProducto
+import com.example.ventarapida.procesos.FirebaseProductos
 import com.example.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.example.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.example.ventarapida.procesos.Utilidades.separarNumerosDelString
+import com.example.ventarapida.procesos.crearPdf.CrearPdfCatalogo
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 
@@ -38,6 +47,7 @@ class Venta : Fragment() {
     private lateinit var menuItem: MenuItem
     private lateinit var menuPremium: MenuItem
     private var lista: ArrayList<ModeloProducto>? = null
+    private var filtro: ArrayList<ModeloProducto>? = null
     private var adapter: VentaAdaptador? = null
     val REQUEST_CODE_VOICE_SEARCH = 1001
 
@@ -124,6 +134,10 @@ class Venta : Fragment() {
             actualizarLista()
         }
 
+        binding?.imageViewMostrarPDF?.setOnClickListener{
+            varidarDatosPDf()
+        }
+
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
         }
@@ -172,6 +186,40 @@ class Venta : Fragment() {
 
     }
 
+    private fun varidarDatosPDf() {
+        ocultarTeclado(requireContext(),vista)
+        if(filtro ==null){
+            Toast.makeText(context, "No hay registros disponibles", Toast.LENGTH_LONG)
+                .show()
+        }else{
+            Log.d("Reportes","tamaño del filtro:${filtro!!.size}" )
+            if(filtro!!.size>0){
+                progressDialog.show()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    crearCatalogo()
+                }
+            }else{
+                Toast.makeText(context, "No hay registros disponibles", Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
+    }
+
+    private fun crearCatalogo( ) {
+                    runBlocking {
+                        val crearPdf = CrearPdfCatalogo()
+                        crearPdf.catalogo(
+                            requireContext(),
+                            filtro as ArrayList<ModeloProducto>
+                        )
+
+                        progressDialog.dismiss()
+                        val intent = Intent(requireContext(), VistaPDFReporte::class.java)
+                        startActivity(intent)
+                    }
+
+    }
+
     private fun observadores() {
         productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
@@ -186,10 +234,11 @@ class Venta : Fragment() {
             adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
 
             adapter!!.setOnLongClickItem { item, position ->
-                abriDetalle(item,vista, position)
+                abriDetalle(item,vista)
             }
 
             lista = productos as ArrayList<ModeloProducto>?
+            filtro=lista
             binding!!.recyclerViewProductosVenta.adapter = adapter
 
             //si el valor esta filtrado buscarlo
@@ -218,7 +267,7 @@ class Venta : Fragment() {
         builder.show()
     }
 
-    private fun abriDetalle(modeloProducto: ModeloProducto, view:View, position:Int) {
+    private fun abriDetalle(modeloProducto: ModeloProducto, view:View) {
         val bundle = Bundle()
         bundle.putSerializable("modelo", modeloProducto)
         Navigation.findNavController(view).navigate(R.id.informacionProducto,bundle)
@@ -242,22 +291,25 @@ class Venta : Fragment() {
 
     private fun filtro(textoParaFiltrar: String) {
 
-        val filtro = lista?.filter { objeto: ModeloProducto ->
+        filtro = lista?.filter { objeto: ModeloProducto ->
             objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
-        }
+        } as ArrayList<ModeloProducto>?
         val filtroOrdenado = filtro?.sortedBy { it.nombre }
         val adaptador = filtroOrdenado?.let { VentaAdaptador(it,productViewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
             adaptador?.setOnLongClickItem { item, position ->
-            val bundle = Bundle()
-            bundle.putSerializable("modelo", item)
-            bundle.putInt("position", position)
-            val arrayList: ArrayList<ModeloProducto> = filtroOrdenado.toCollection(ArrayList())
-            bundle.putSerializable("listaProductos", arrayList)
-            Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
+                abriDetalle(item,vista)
         }
     }
+
+    val progressDialog: ProgressDialog by lazy {
+        ProgressDialog(requireContext()).apply {
+            setMessage("Creando PDF de productos filtrados...")
+            setCancelable(true)
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

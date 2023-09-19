@@ -14,6 +14,7 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/Textview_titulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/Usuario"
@@ -21,7 +22,7 @@
             android:textStyle="bold"
             android:gravity="center"
             android:textColor="@color/white"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="10dp" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -94,6 +95,17 @@
 
     </RelativeLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gris"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gris"
+        android:text="Perfil de Usario" />
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -141,6 +153,89 @@
             android:background="@drawable/bordes_boton"
             android:text="@string/guardar" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gris"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gris"
+            android:text="Configuración de Usuario" />
+    <LinearLayout
+        android:id="@+id/linearLayout_opcionesAdministrador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Switch
+            android:id="@+id/switch_precios_compra"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mostrar Precios Compra en Catálogo" />
     </LinearLayout>
+<LinearLayout
+    android:id="@+id/linearLayout_opcionesVendedor"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+        <Switch
+            android:id="@+id/switch_reporteGanancia"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mostrar Reporte de Ganancia" />
+
+        <Switch
+            android:id="@+id/switch_editarFacturas"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Editar/Eliminar Facturas Completadas" />
+
+        <Switch
+            android:id="@+id/switch_agregarInformacion"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar Información Adicional a Factura" />
+</LinearLayout>
+    </LinearLayout>
+
+<!--<LinearLayout-->
+<!--    android:id="@+id/linearLayout_inviatacion"-->
+<!--    android:visibility="gone"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_gravity="bottom|center"-->
+<!--    android:orientation="vertical"-->
+<!--    android:layout_marginBottom="10dp">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/textView_invitacion"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:layout_weight="1"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:gravity="center"-->
+<!--        android:text="Hemos enviado una invitacion a" />-->
+
+<!--    <com.airbnb.lottie.LottieAnimationView-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="bottom|center"-->
+<!--        app:lottie_autoPlay="true"-->
+<!--        app:lottie_fileName="animacion_email.json"-->
+<!--        app:lottie_imageAssetsFolder="assets"-->
+<!--        app:lottie_loop="true" />-->
+<!--</LinearLayout>-->
 
 </FrameLayout>

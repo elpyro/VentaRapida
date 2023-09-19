@@ -39,6 +39,7 @@ class SuscripcionesDisponibles : Fragment() {
             binding.textViewExpirationDate.setText("Fecha de Vencimiento: ${convertirFechaLegible(MainActivity.datosEmpresa.proximo_pago)}")
 
             val diasRestantes= calcularDiasRestantes(convertirCadenaAFecha(MainActivity.datosEmpresa.proximo_pago)!!)
+
             binding.textViewDiasRestantes.setText(diasRestantes)
         }
 

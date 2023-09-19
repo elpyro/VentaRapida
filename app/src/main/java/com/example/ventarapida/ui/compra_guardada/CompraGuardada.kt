@@ -224,6 +224,10 @@ class CompraGuardada : Fragment() {
             banderaElimandoFactura=true
             MainActivity.progressDialog?.show()
 
+
+            Utilidades.esperarUnSegundo()
+            Utilidades.esperarUnSegundo()
+
             lifecycleScope.launch {
 
                 viewModel.eliminarCompra(requireContext())
