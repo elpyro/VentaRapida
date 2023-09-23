@@ -93,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse a Empresarial"
+                        android:text="Suscribirse por 30 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 
@@ -144,7 +144,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse a Premium"
+                        android:text="Suscribirse por 20 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -191,7 +191,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse a Básico"
+                        android:text="Suscribirse por 8 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 

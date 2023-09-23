@@ -96,6 +96,36 @@ class ListaUsuarios : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        usuariosConectados()
+    }
+
+    private fun usuariosConectados() {
+        val tareaUsuarios = FirebaseUsuarios.buscarTodosUsuariosPorEmpresa()
+        var usuariosActivos=0
+        tareaUsuarios.addOnSuccessListener { usuarios ->
+            if(usuarios.isNotEmpty()){
+                for (usuario in usuarios){
+                    if(usuario.perfil != "Inactivo"){
+                        usuariosActivos++
+                    }
+                    val planActual=verificarPlan()
+                    binding?.textViewUsuariosActivos?.text="Usuarios Activos $usuariosActivos\n$planActual"
+                }
+            }
+        }
+    }
+
+    private fun verificarPlan(): String {
+        var plan="No disponible"
+        if(MainActivity.datosEmpresa.plan.equals("Empresarial")) plan="Plan Empresarial(30 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Premium")) plan="Plan Premium(10 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Basico")) plan="Plan Básico(3 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Gratuito")) plan="Plan Gratuito(30 usuarios activos)"
+        return plan
+    }
+
     private fun listenerAdaptador() {
 
         adaptador.setOnClickItem  { item ->

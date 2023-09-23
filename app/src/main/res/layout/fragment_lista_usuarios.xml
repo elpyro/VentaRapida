@@ -33,6 +33,22 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/textView_usuariosActivos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="8dp"
+            android:background="@color/gris">
+
+        </View>
+
 
 
         <androidx.recyclerview.widget.RecyclerView

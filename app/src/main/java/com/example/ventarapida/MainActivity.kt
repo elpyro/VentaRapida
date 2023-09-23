@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -25,6 +26,7 @@ import com.example.ventarapida.datos.ModeloProducto
 import com.example.ventarapida.datos.ModeloUsuario
 import com.example.ventarapida.procesos.FirebaseDatosEmpresa
 import com.example.ventarapida.procesos.FirebaseProductos
+import com.example.ventarapida.procesos.FirebaseUsuarios
 import com.example.ventarapida.procesos.Preferencias
 import com.example.ventarapida.procesos.Suscripcion
 import com.example.ventarapida.procesos.Utilidades.convertirCadenaAFecha
@@ -70,10 +72,12 @@ class MainActivity : AppCompatActivity() {
 
 
         fun init(context: Context) {
+
             logotipo = ImageView(context)
             editText_nombreEmpresa= TextView(context)
         }
     }
+
 
     private var suscripcion=Suscripcion()
 
@@ -90,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         init(this)
+
 
         cargarDialogoProceso()
 
@@ -131,40 +136,94 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
+        if(!datosEmpresa.plan.equals("Ilimitado")){
+            val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
 
+            Log.d("pagos", "su proximo pago es: ${proximoPago} y su plan es ${datosEmpresa.plan}")
+            if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago)
 
-        Log.d("pagos", "su proximo pago es: ${proximoPago} y su plan es ${datosEmpresa.plan}")
-       if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago!!)
+            if (planVencido!!){
+                val rootView = findViewById<View>(android.R.id.content)
+                val snackbar = Snackbar.make(rootView, "Plan vencido", Snackbar.LENGTH_SHORT)
+                val snackbarView = snackbar.view
+                snackbarView.setBackgroundResource(R.color.rojo)
+                snackbar.show()
+            }
 
-        if (planVencido!!){
-            val rootView = findViewById<View>(android.R.id.content)
-            val snackbar = Snackbar.make(rootView, "Plan vencido", Snackbar.LENGTH_SHORT)
-            val snackbarView = snackbar.view
-            snackbarView.setBackgroundResource(R.color.rojo)
-            snackbar.show()
         }
+        usuariosConectados()
 
         if(datosUsuario.perfil=="Administrador"){
-            navView.getMenu()
+            navView.menu
                 .setGroupVisible(R.id.panel_administrador, true)
-            navView.getMenu()
+            navView.menu
                 .setGroupVisible(R.id.panel_reporte_administrador, true)
         }
 
         if(datosUsuario.perfil=="Vendedor"){
-            navView.getMenu()
+            navView.menu
                 .setGroupVisible(R.id.panel_reporte_vendedor, true)
         }
 
         if(datosUsuario.perfil=="Inactivo"){
-            navView.getMenu()
+            navView.menu
                 .setGroupVisible(R.id.panel_administrador, false)
-            navView.getMenu()
+            navView.menu
                 .setGroupVisible(R.id.panel_reporte_administrador, false)
         }
+    }
+
+    private fun verificarCantidadUsuariosPlan(usuariosActivos: Int) {
+
+        Log.w("Usuarios", "Usuarios activos en la cuenta: $usuariosActivos")
+
+        if(datosEmpresa.plan == "Empresarial" && usuariosActivos>30){
+            NotificacionPlanExedido()
+        }
+        if(datosEmpresa.plan == "Premium"&& usuariosActivos>10){
+            NotificacionPlanExedido()
+        }
+        if(datosEmpresa.plan == "Basico"&& usuariosActivos>3){
+            NotificacionPlanExedido()
+        }
+    }
+
+    private fun usuariosConectados() {
+        val tareaUsuarios = FirebaseUsuarios.buscarTodosUsuariosPorEmpresa()
+        var usuariosActivos=0
+        tareaUsuarios.addOnSuccessListener { usuarios ->
+            if(usuarios.isNotEmpty()){
+                for (usuario in usuarios){
+                    if(usuario.perfil != "Inactivo"){
+                        usuariosActivos++
+                    }
+                }
+                verificarCantidadUsuariosPlan(usuariosActivos)
+            }
+        }
+    }
 
 
+    fun NotificacionPlanExedido (){
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Limite de Usuarios Exedidos")
+        alertDialogBuilder.setCancelable(false)
+        alertDialogBuilder.setMessage("La cuenta ha exedido la cantidad de usuarios permitios, por favor contate al admistrador de la cuenta")
+
+        if(datosUsuario.id.equals(datosEmpresa.idDuenoCuenta)){
+            alertDialogBuilder.setMessage("Ha cuenta ha exedido la cantidad de usuarios permitios, inactive usuarios que no esten usando la app o aplique un nuevo plan")
+            alertDialogBuilder.setCancelable(true)
+            alertDialogBuilder.setPositiveButton("Verificar") { _, _ ->
+                AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener { task: Task<Void?>? ->
+                        val navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
+                        navController.navigate(R.id.listaUsuarios)
+                    }
+            }
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
     fun mostrarFabBottonTransacciones(context: Context) {
@@ -245,11 +304,9 @@ class MainActivity : AppCompatActivity() {
 
             val alertDialogBuilder = AlertDialog.Builder(this)
 
-
-
             alertDialogBuilder.setCancelable(false)
             alertDialogBuilder.setTitle("Usuario Inactivo")
-            alertDialogBuilder.setMessage("Su usuario se encuentra Inactivo para ${MainActivity.datosEmpresa.nombre} pongase en contacto con el administrador")
+            alertDialogBuilder.setMessage("Su usuario se encuentra Inactivo para ${datosEmpresa.nombre} pongase en contacto con el administrador")
             alertDialogBuilder.setPositiveButton("Aceptar") { _, _ ->
 
                 AuthUI.getInstance().signOut(this)
