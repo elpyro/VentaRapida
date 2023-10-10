@@ -26,13 +26,13 @@
             android:src="@drawable/logo2_compra_rapidita"/>
 
             <TextView
-                android:textSize="38sp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:theme="@style/ColorFuenteEnFondoGris"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/CompraRapidita" />
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/CompraRapidita"
+                android:textSize="38sp"
+                android:theme="@style/ColorFuenteEnFondoGris" />
         </LinearLayout>
 
         <LinearLayout

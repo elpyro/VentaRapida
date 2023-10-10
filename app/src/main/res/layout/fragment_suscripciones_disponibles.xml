@@ -93,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse por 30 dolares"
+                        android:text="Suscribirse por 50 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 
@@ -191,7 +191,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse por 8 dolares"
+                        android:text="Suscribirse por 12 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 

@@ -7,72 +7,72 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.ventarapida.ui.ventaPaginaPrincipal.Venta"
+        android:name="com.castellanoseloy.ventarapida.ui.ventaPaginaPrincipal.Venta"
         android:label="@string/venta"
         tools:layout="@layout/venta" />
     <fragment
         android:id="@+id/detalleProducto"
-        android:name="com.example.ve.DetalleProducto"
+        android:name="com.castellanoseloy.ve.DetalleProducto"
         android:label="" />
     <fragment
         android:id="@+id/nav_nuevoProdcuto"
-        android:name="com.example.ventarapida.ui.nuevoProducto.NuevoProducto"
+        android:name="com.castellanoseloy.ventarapida.ui.nuevoProducto.NuevoProducto"
         android:label="Nuevo Producto"
         tools:layout="@layout/fragment_nuevo_producto" />
     <fragment
         android:id="@+id/factura"
-        android:name="com.example.ventarapida.ui.detalleVenta.DetalleVenta"
+        android:name="com.castellanoseloy.ventarapida.ui.detalleVenta.DetalleVenta"
         android:label="@string/detalleFactura"
         tools:layout="@layout/fragment_detalle_venta" />
     <fragment
         android:id="@+id/nav_registros"
-        android:name="com.example.ventarapida.ui.registros.Registros"
+        android:name="com.castellanoseloy.ventarapida.ui.registros.Registros"
         android:label="fragment_registros"
         tools:layout="@layout/fragment_registros" />
     <fragment
         android:id="@+id/ventas"
-        android:name="com.example.ventarapida.ui.registros.pestanas.FacturaVentas"
+        android:name="com.castellanoseloy.ventarapida.ui.registros.pestanas.FacturaVentas"
         android:label="@string/RegistroVentas"
         tools:layout="@layout/fragment_factura_ventas" />
     <fragment
         android:id="@+id/facturaGuardada"
-        android:name="com.example.ventarapida.ui.factura_guardada.FacturaGuardada"
+        android:name="com.castellanoseloy.ventarapida.ui.factura_guardada.FacturaGuardada"
         android:label="@string/detalleFactura"
         tools:layout="@layout/fragment_factura_guardada" />
     <fragment
         android:id="@+id/agregarProductoFactura"
-        android:name="com.example.ventarapida.ui.agregarProductoFactura.AgregarProductoFactura"
+        android:name="com.castellanoseloy.ventarapida.ui.agregarProductoFactura.AgregarProductoFactura"
         android:label="@string/Agregar_producto" />
 
     <fragment
         android:id="@+id/compra"
-        android:name="com.example.ventarapida.ui.compras.Compra"
+        android:name="com.castellanoseloy.ventarapida.ui.compras.Compra"
         android:label="@string/Agregar_inventario" />
     <fragment
         android:id="@+id/detalleCompra"
-        android:name="com.example.ventarapida.ui.detalleCompra.DetalleCompra"
+        android:name="com.castellanoseloy.ventarapida.ui.detalleCompra.DetalleCompra"
         android:label="@string/detalleCompra"
         tools:layout="@layout/fragment_detalle_compra" />
     <fragment
         android:id="@+id/listaCompras"
-        android:name="com.example.ventarapida.ui.registros.pestanas.ListaCompras"
+        android:name="com.castellanoseloy.ventarapida.ui.registros.pestanas.ListaCompras"
         android:label="@string/RegistroCompras" />
     <fragment
         android:id="@+id/compraGuardada"
-        android:name="com.example.ventarapida.ui.compra_guardada.CompraGuardada"
+        android:name="com.castellanoseloy.ventarapida.ui.compra_guardada.CompraGuardada"
         android:label="Compra" />
     <fragment
         android:id="@+id/configuracion"
-        android:name="com.example.ventarapida.ui.configuracion.Configuracion"
+        android:name="com.castellanoseloy.ventarapida.ui.configuracion.Configuracion"
         android:label="Configuracion" />
     <fragment
         android:id="@+id/datosEmpresa"
-        android:name="com.example.ventarapida.ui.configuracion.datosEmpresa.DatosEmpresa"
+        android:name="com.castellanoseloy.ventarapida.ui.configuracion.datosEmpresa.DatosEmpresa"
         android:label="@string/datosempresa"
         tools:layout="@layout/fragment_datos_empresa" />
     <fragment
         android:id="@+id/listaClientes"
-        android:name="com.example.ventarapida.ui.clientes.ListaClientes"
+        android:name="com.castellanoseloy.ventarapida.ui.clientes.ListaClientes"
         android:label="@string/clientes"
         tools:layout="@layout/fragment_lista_clientes" />
     <fragment
@@ -81,42 +81,42 @@
         android:label="@string/cliente" />
     <fragment
         android:id="@+id/reportes"
-        android:name="com.example.ventarapida.ui.reportes.Reportes"
+        android:name="com.castellanoseloy.ventarapida.ui.reportes.Reportes"
         android:label="@string/Reportes"
         tools:layout="@layout/fragment_reportes" />
     <fragment
         android:id="@+id/registroUsuarios"
-        android:name="com.example.ventarapida.ui.usuarios.RegistroUsuario"
+        android:name="com.castellanoseloy.ventarapida.ui.usuarios.RegistroUsuario"
         android:label="@string/Usuario"
         tools:layout="@layout/fragment_registro_usuario" />
     <fragment
         android:id="@+id/detalleUsuario"
-        android:name="com.example.ventarapida.ui.usuarios.DetalleSesion"
+        android:name="com.castellanoseloy.ventarapida.ui.usuarios.DetalleSesion"
         android:label="@string/detalleSesion"
         tools:layout="@layout/fragment_detalle_usuario" />
     <fragment
         android:id="@+id/usuarioNoRegistrado"
-        android:name="com.example.ventarapida.ui.usuarios.UsuarioNoRegistrado"
+        android:name="com.castellanoseloy.ventarapida.ui.usuarios.UsuarioNoRegistrado"
         android:label="fragment_usuario_no_registrado"
         tools:layout="@layout/fragment_usuario_no_registrado" />
     <fragment
         android:id="@+id/listaUsuarios"
-        android:name="com.example.ventarapida.ui.usuarios.ListaUsuarios"
+        android:name="com.castellanoseloy.ventarapida.ui.usuarios.ListaUsuarios"
         android:label="@string/Usuarios"
         tools:layout="@layout/fragment_lista_usuarios" />
     <fragment
         android:id="@+id/suscripcionesDisponibles"
-        android:name="com.example.ventarapida.ui.supscripciones.SuscripcionesDisponibles"
+        android:name="com.castellanoseloy.ventarapida.ui.supscripciones.SuscripcionesDisponibles"
         android:label="@string/Supcripciones"
         tools:layout="@layout/fragment_suscripciones_disponibles" />
     <fragment
         android:id="@+id/reporteVendedor"
-        android:name="com.example.ventarapida.ui.reportes.ReporteVendedor"
+        android:name="com.castellanoseloy.ventarapida.ui.reportes.ReporteVendedor"
         android:label="@string/Reportes"
         tools:layout="@layout/fragment_reporte_vendedor" />
     <fragment
         android:id="@+id/informacionProducto"
-        android:name="com.example.ventarapida.ui.informacionProducto.InformacionProducto"
+        android:name="com.castellanoseloy.ventarapida.ui.informacionProducto.InformacionProducto"
         android:label="@string/informacion_producto"
         tools:layout="@layout/fragment_informacion_producto" />
 

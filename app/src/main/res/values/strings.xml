@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CompraRapidita</string>
+    <string name="app_name">Cataplus</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -155,12 +155,12 @@
     <string name="Bienvenido">Bienvenido</string>
     <string name="NuevoUsuario">Nuevo Usuario</string>
     <string name="Catalogo">Catálogo</string>
-    <string name="CompraRapidita">Compra Rapidita</string>
+    <string name="CompraRapidita">Cataplus</string>
     <string name="Pagos">Pagos</string>
     <string name="Supcripciones">Suscripciones</string>
     <string name="NombreEmpresa">Nombre Empresa</string>
     <string name="Administrador">Administrador</string>
-    <string name="descripcionPublicitaria">BIENVENIDO A COMPRAS RAPIDITA  \n La plataforma resolvera todos los problemas de inventario con multiples usuarios.\nTus usuarios también podran trabajar con/sin intenet para sicronizar posteriormente.\nLas ventas y compran se sicronizan en todos los dipositivos.\nGozaras de perfiles para administradores y vendedores.\nRegistra tu empresa conoce las herramientas y aprovecha el mes de prueba GRATÍS.\n\n\n\n</string>
+    <string name="descripcionPublicitaria">BIENVENIDO A CATAPLUS  \n La plataforma resolvera todos los problemas de inventario con multiples usuarios.\nTus usuarios también podran trabajar con/sin intenet para sicronizar posteriormente.\nLas ventas y compran se sicronizan en todos los dipositivos.\nGozaras de perfiles para administradores y vendedores.\nRegistra tu empresa conoce las herramientas y aprovecha el mes de prueba GRATÍS.\n\n\n\n</string>
     <string name="Plan_vencido">Plan Vencido</string>
     <string name="InformacionPublicidad">Multiples usuarios con el mismo inventario</string>
     <string name="InformacionPublicidad2">Trabaja con o sin internet. Sicronizaciones automaticas</string>
@@ -175,7 +175,7 @@
     <string name="proveedorDeSurtido">Proveedor de surtido</string>
     <string name="Agregar_inventario">Agregar a inventario</string>
     <string name="busquedas">Proveedor, Producto</string>
-    <string name="descripcionPlanPremium">Conecta 10 usuarios al mismo tiempo</string>
+    <string name="descripcionPlanPremium">Conecta 9 usuarios al mismo tiempo</string>
     <string name="PlanPremium">Plan Premium</string>
     <string name="descripcionPlanBasico">Conecta 3 usuarios al mismo tiempo</string>
     <string name="PlanBásico">Plan Basico</string>

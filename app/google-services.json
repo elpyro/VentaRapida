@@ -8,14 +8,22 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:309307936110:android:b3dde79e277df4a38d057f",
+        "mobilesdk_app_id": "1:309307936110:android:6f11a00b506a21978d057f",
         "android_client_info": {
-          "package_name": "com.example.ventarapida"
+          "package_name": "app.castellanoseloy.cataplus"
         }
       },
       "oauth_client": [
         {
-          "client_id": "309307936110-g51f8mvnnuop87ln1urc5o44pplj4kg2.apps.googleusercontent.com",
+          "client_id": "309307936110-ounvvrl7irsls1vvc2r9uc1a3oujig1d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.castellanoseloy.cataplus",
+            "certificate_hash": "4d3572b3a332ceb089bae42bdf0001b3066741e7"
+          }
+        },
+        {
+          "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -28,7 +36,81 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "309307936110-g51f8mvnnuop87ln1urc5o44pplj4kg2.apps.googleusercontent.com",
+              "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309307936110:android:4d9bca29e3f2bdd78d057f",
+        "android_client_info": {
+          "package_name": "com.castellanoseloy.ventarapida"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309307936110-5fh2cl167vl7egqitdk2pi9a002m9omh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.castellanoseloy.ventarapida",
+            "certificate_hash": "4d3572b3a332ceb089bae42bdf0001b3066741e7"
+          }
+        },
+        {
+          "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCus2aOyfw0Hr5W2uUoqtxOWonkxAUAgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309307936110:android:b3dde79e277df4a38d057f",
+        "android_client_info": {
+          "package_name": "com.example.ventarapida"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309307936110-d86rbnkmb5fgeope6lp9jpcvcasrphc2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ventarapida",
+            "certificate_hash": "260eccc98ef77d163e9564e11739be47630ff83f"
+          }
+        },
+        {
+          "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCus2aOyfw0Hr5W2uUoqtxOWonkxAUAgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

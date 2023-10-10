@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="com.android.vending.BILLING" />
+<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+<!--    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+<!--    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>-->
 
     <application
         android:name=".MyApplication"
@@ -60,7 +59,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.ventarapida.fileprovider"
+            android:authorities="com.castellanoseloy.ventarapida.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -68,8 +67,13 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
+<!--        <meta-data-->
+<!--            android:name="com.google.ar.core.min_apk_version"-->
+<!--            android:value="240000000"-->
+<!--            tools:replace="android:value" />-->
+
         <service
-            android:name=".ui.procesos.ServiciosSubirFoto"
+            android:name=".servicios.ServiciosSubirFoto"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
