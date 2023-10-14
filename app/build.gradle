@@ -13,8 +13,8 @@ android {
         applicationId "com.castellanoseloy.ventarapida"
         minSdk 28
         targetSdk 33
-        versionCode 2011
-        versionName "2.011"
+        versionCode 2015
+        versionName "2.015"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -90,5 +90,5 @@ dependencies {
 
     implementation("com.android.billingclient:billing:6.0.1") //compras playstore
 
-
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 }

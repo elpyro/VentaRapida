@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.VentaRapida" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">#699EE0</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -17,11 +17,10 @@
     <style name="Theme.VentaRapida.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">#FF0000</item>
-    </style>
+
 
     <style name="Theme.VentaRapida.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

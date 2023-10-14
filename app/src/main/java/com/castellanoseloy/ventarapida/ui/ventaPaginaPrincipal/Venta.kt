@@ -23,6 +23,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.MainActivity.Companion.datosEmpresa
+import com.castellanoseloy.ventarapida.MainActivity.Companion.datosUsuario
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.VistaPDFReporte
 import com.castellanoseloy.ventarapida.databinding.VentaBinding
@@ -64,9 +66,11 @@ class Venta : Fragment() {
         menuItem  = menu.findItem(R.id.action_total)
         menuPremium  = menu.findItem(R.id.action_premium)
 
-        if(MainActivity.planVencido!!){
-            menuItem.isVisible = false
-            menuPremium.isVisible = true
+        if(MainActivity.planVencido!!){//bloque el boton si el usuario no es el dueño de la cuenta
+            if(datosUsuario.id != datosEmpresa.idDuenoCuenta) {
+                menuItem.isVisible = false
+                menuPremium.isVisible = true
+            }
         }
 
 

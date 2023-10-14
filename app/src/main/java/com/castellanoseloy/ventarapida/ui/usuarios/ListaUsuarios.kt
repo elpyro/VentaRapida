@@ -119,7 +119,7 @@ class ListaUsuarios : Fragment() {
         if(MainActivity.datosEmpresa.plan.equals("Empresarial")) plan="Plan Empresarial(30 usuarios activos)"
         if(MainActivity.datosEmpresa.plan.equals("Premium")) plan="Plan Premium(10 usuarios activos)"
         if(MainActivity.datosEmpresa.plan.equals("Basico")) plan="Plan Básico(3 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan.equals("Gratuito")) plan="Plan Gratuito(30 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Gratuito")) plan="Prueba gratuita(30 usuarios activos)"
         return plan
     }
 

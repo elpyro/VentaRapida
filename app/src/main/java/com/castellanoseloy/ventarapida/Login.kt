@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 
@@ -25,6 +26,7 @@ import com.google.firebase.database.ValueEventListener
 
 class Login : AppCompatActivity() {
 
+    private var nuevoUsuario: Boolean =false
     private var idGoogle: String? =null
     private var progressDialog: ProgressDialog? = null
     private lateinit var binding: ActivityLoginBinding
@@ -37,12 +39,13 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         //COLOCAR LA BARRA SUPERIOR TRANSAPENTE
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+
 
         listeners()
         autenticacionGoogle()
@@ -66,6 +69,7 @@ class Login : AppCompatActivity() {
             } else {
                 // El usuario no ha iniciado sesión o ha cerrado sesión
                 // Iniciar el flujo de inicio de sesión
+                nuevoUsuario=true
                 val providers = arrayListOf(
                     AuthUI.IdpConfig.GoogleBuilder().build()
                 )
@@ -102,7 +106,8 @@ class Login : AppCompatActivity() {
     }
 
     private fun verificarUsuario(correoUsuario: String?, nombreUsuario: String?) {
-        showProgressDialog()
+        if(nuevoUsuario) showProgressDialog()
+
 
         MainActivity.datosUsuario = ModeloUsuario()
         FirebaseUsuarios.buscarUsuariosPorCorreo(correoUsuario!!)
@@ -176,8 +181,6 @@ class Login : AppCompatActivity() {
                         bandera=true
                         usuarioRegistrado(usuario)
                     }
-
-
 
                     }
 

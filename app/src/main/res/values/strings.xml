@@ -22,7 +22,7 @@
     <string name="_0">0</string>
     <string name="producto">Producto</string>
     <string name="compra">Surtir  mi negocio</string>
-    <string name="venta">Catalogo</string>
+    <string name="venta">Catálogo</string>
     <string name="detalleProducto">Detalle del producto</string>
     <string name="cantidad">Cantidad</string>
     <string name="guardar">Guardar</string>
@@ -160,7 +160,7 @@
     <string name="Supcripciones">Suscripciones</string>
     <string name="NombreEmpresa">Nombre Empresa</string>
     <string name="Administrador">Administrador</string>
-    <string name="descripcionPublicitaria">BIENVENIDO A CATAPLUS  \n La plataforma resolvera todos los problemas de inventario con multiples usuarios.\nTus usuarios también podran trabajar con/sin intenet para sicronizar posteriormente.\nLas ventas y compran se sicronizan en todos los dipositivos.\nGozaras de perfiles para administradores y vendedores.\nRegistra tu empresa conoce las herramientas y aprovecha el mes de prueba GRATÍS.\n\n\n\n</string>
+    <string name="descripcionPublicitaria">BIENVENIDO A CATAPLUS  \n La plataforma  de inventario con multiples usuarios.\nTus usuarios también podran trabajar con/sin intenet para sicronizar posteriormente.\nLas ventas y compran se sicronizan en todos los dipositivos.\nGozaras de perfiles para administradores y vendedores.\nRegistra tu empresa conoce las herramientas y aprovecha el mes de prueba GRATÍS.\n\n\n\n</string>
     <string name="Plan_vencido">Plan Vencido</string>
     <string name="InformacionPublicidad">Multiples usuarios con el mismo inventario</string>
     <string name="InformacionPublicidad2">Trabaja con o sin internet. Sicronizaciones automaticas</string>
@@ -170,14 +170,14 @@
     <string name="precioCompra">Compra</string>
     <string name="InformacionPublicidad4">Comparte tus facturas y reportes con la impresora o redes sociales en PDF</string>
     <string name="PlanEmpresarial">Plan Empresarial</string>
-    <string name="descripcionPlanEmpresarial">Conecta 30 asuarios al mismo tiempo.</string>
+    <string name="descripcionPlanEmpresarial">Conecta 30 asuarios al mismo tiempo, sin publicidad</string>
     <string name="comentario">Descripción</string>
     <string name="proveedorDeSurtido">Proveedor de surtido</string>
     <string name="Agregar_inventario">Agregar a inventario</string>
     <string name="busquedas">Proveedor, Producto</string>
-    <string name="descripcionPlanPremium">Conecta 9 usuarios al mismo tiempo</string>
+    <string name="descripcionPlanPremium">Conecta 6 usuarios al mismo tiempo, sin publicidad</string>
     <string name="PlanPremium">Plan Premium</string>
-    <string name="descripcionPlanBasico">Conecta 3 usuarios al mismo tiempo</string>
+    <string name="descripcionPlanBasico">Conecta 3 usuarios al mismo tiempo, sin publicidad</string>
     <string name="PlanBásico">Plan Basico</string>
     <string name="PlanBasico">Plan Básico</string>
     <string name="ReporteVentas">Reporte de ventas</string>
@@ -185,4 +185,7 @@
     <string name="informacion_producto">Información del producto</string>
     <string name="MostrarPrecioCompra">Mostrar Precio de Compra a Vendedores</string>
     <string name="informacionAdicional">Información Adicional(Factura)</string>
+    <string name="Publicidad3">Inventarios y Facturación \nMulti-Usuarios</string>
+    <string name="PlanGratuito">Plan Gratuito</string>
+    <string name="descripcionGratuito">Conecta 1 usuario gratis con publicidad</string>
 </resources>

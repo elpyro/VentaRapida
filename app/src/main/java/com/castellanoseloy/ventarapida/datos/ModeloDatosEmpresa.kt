@@ -14,8 +14,8 @@ data class ModeloDatosEmpresa (
     val garantia: String= "",
     val premiun:String= "",
     val url:String= "",
-    val plan:String="",
-    val proximo_pago:String ="",
+    var plan:String="",
+    var proximo_pago:String ="",
     val ultimo_pago: String ="",
     val idDuenoCuenta: String =""
         ):Serializable

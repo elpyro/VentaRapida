@@ -29,9 +29,6 @@
         android:id="@+id/panel_administrador"
         app:itemBackground="@drawable/separator"
         android:visible="false">
-<!--        <item android:title="@string/AdministraTuNegocio"-->
-<!--              android:titleTextColor="@color/rojo">-->
-<!--        <menu>-->
 
         <item
             android:id="@+id/compra"

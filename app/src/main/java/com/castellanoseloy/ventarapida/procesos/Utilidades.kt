@@ -154,7 +154,7 @@ object Utilidades {
         return formatoFecha.format(fecha)
     }
 
-    fun calcularDiasRestantes(fechaObjetivo: Date): String {
+    fun calcularDiasRestantes(fechaObjetivo: Date): Pair<String, Long> {
         // Obtener la fecha actual
         val fechaActual = Calendar.getInstance().time
 
@@ -167,12 +167,14 @@ object Utilidades {
         // Crear un String que indique cuántos días restan
         var mensaje = "Quedan $diasRestantes días"
 
-        if(diasRestantes.toInt()<0){
-            mensaje="Plan Vencido"
+        if (diasRestantes.toInt() < 0) {
+            mensaje = "Plan Vencido"
         }
 
-        return mensaje
+        // Retornar el mensaje y los días restantes
+        return Pair(mensaje, diasRestantes)
     }
+
 
     fun convertirFechaLegible(fechaStr: String): String {
         try {

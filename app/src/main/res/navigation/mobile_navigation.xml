@@ -60,11 +60,11 @@
     <fragment
         android:id="@+id/compraGuardada"
         android:name="com.castellanoseloy.ventarapida.ui.compra_guardada.CompraGuardada"
-        android:label="Compra" />
+        android:label="Surtidos" />
     <fragment
         android:id="@+id/configuracion"
         android:name="com.castellanoseloy.ventarapida.ui.configuracion.Configuracion"
-        android:label="Configuracion" />
+        android:label="Configuración" />
     <fragment
         android:id="@+id/datosEmpresa"
         android:name="com.castellanoseloy.ventarapida.ui.configuracion.datosEmpresa.DatosEmpresa"

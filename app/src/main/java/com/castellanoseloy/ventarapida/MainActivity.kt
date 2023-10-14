@@ -54,6 +54,8 @@ class MainActivity : AppCompatActivity() {
         var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
         var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
 
+        var verPublicidad: Boolean=false
+
         //Elementos sacados de las preferencias para usarlos en la aplicacion
         var tono = true
         var mostrarAgotadosCatalogo= true
@@ -80,6 +82,7 @@ class MainActivity : AppCompatActivity() {
             editText_nombreEmpresa= TextView(context)
         }
     }
+
 
 
     private var suscripcion=Suscripcion()
@@ -139,23 +142,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        if(!datosEmpresa.plan.equals("Ilimitado")){
-            val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
-
-            Log.d("pagos", "su proximo pago es: ${proximoPago} y su plan es ${datosEmpresa.plan}")
-            if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago)
-
-            if (planVencido!!){
-                val rootView = findViewById<View>(android.R.id.content)
-                val snackbar = Snackbar.make(rootView, "Plan vencido", Snackbar.LENGTH_SHORT)
-                val snackbarView = snackbar.view
-                snackbarView.setBackgroundResource(R.color.rojo)
-                snackbar.show()
-            }
-
-        }
-        usuariosConectados()
-
         if(datosUsuario.perfil=="Administrador"){
             navView.menu
                 .setGroupVisible(R.id.panel_administrador, true)
@@ -173,8 +159,28 @@ class MainActivity : AppCompatActivity() {
                 .setGroupVisible(R.id.panel_administrador, false)
             navView.menu
                 .setGroupVisible(R.id.panel_reporte_administrador, false)
+            navView.menu
+                .setGroupVisible(R.id.panel_reporte_vendedor, false)
+
         }
+
+        if(!datosEmpresa.plan.equals("Ilimitado")){
+            val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
+
+            Log.d("pagos", "su proximo pago es: ${proximoPago} y su plan es ${datosEmpresa.plan}")
+            if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago)
+
+            if (planVencido!!){
+                verPublicidad=true
+                NotificacionPlanVencido()
+            }
+
+        }
+        usuariosConectados()
+
     }
+
+
 
     private fun verificarCantidadUsuariosPlan(usuariosActivos: Int) {
 
@@ -183,7 +189,7 @@ class MainActivity : AppCompatActivity() {
         if(datosEmpresa.plan == "Empresarial" && usuariosActivos>30){
             NotificacionPlanExedido()
         }
-        if(datosEmpresa.plan == "Premium"&& usuariosActivos>10){
+        if(datosEmpresa.plan == "Premium"&& usuariosActivos>6){
             NotificacionPlanExedido()
         }
         if(datosEmpresa.plan == "Basico"&& usuariosActivos>3){
@@ -227,6 +233,45 @@ class MainActivity : AppCompatActivity() {
 
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
+    }
+
+    fun NotificacionPlanVencido (){
+        if(!datosUsuario.id.equals(datosEmpresa.idDuenoCuenta)){
+
+            navView.menu
+                .setGroupVisible(R.id.panel_administrador, false)
+            navView.menu
+                .setGroupVisible(R.id.panel_reporte_administrador, false)
+            navView.menu
+                .setGroupVisible(R.id.panel_reporte_vendedor, false)
+
+            navView.menu
+                .setGroupVisible(R.id.panelVentas, false)
+
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Plan Vencido")
+            alertDialogBuilder.setCancelable(false)
+            alertDialogBuilder.setMessage("El plan se ha vencido por favor renueve el plan para ultilizarlo con mas de 1 usuario")
+
+            alertDialogBuilder.setPositiveButton("Ver Suscripciones") { _, _ ->
+                AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener { task: Task<Void?>? ->
+                        val navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
+                        navController.navigate(R.id.suscripcionesDisponibles)
+                    }
+            }
+
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }else{
+            val rootView = findViewById<View>(android.R.id.content)
+            val snackbar = Snackbar.make(rootView, "Plan vencido", Snackbar.LENGTH_SHORT)
+            val snackbarView = snackbar.view
+            snackbarView.setBackgroundResource(R.color.rojo)
+            snackbar.show()
+        }
+
+
     }
 
     fun mostrarFabBottonTransacciones(context: Context) {
