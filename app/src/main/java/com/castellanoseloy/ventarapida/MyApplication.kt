@@ -1,6 +1,7 @@
 package com.castellanoseloy.ventarapida
 
 import android.app.Application
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 
@@ -10,6 +11,7 @@ class MyApplication : Application() {
         FirebaseApp.initializeApp(this)
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
+        MobileAds.initialize(this)
 
     }
 }

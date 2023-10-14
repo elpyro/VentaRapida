@@ -12,10 +12,12 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.databinding.FragmentReportesBinding
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios.buscarTodosUsuariosPorEmpresa
 import com.castellanoseloy.ventarapida.procesos.Utilidades
+import com.google.android.gms.ads.AdRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -41,7 +43,14 @@ class Reportes : Fragment() {
         buscarTodosUsuariosPorEmpresa().addOnSuccessListener { listaUsuarios->
                 if (!listaUsuarios.isEmpty()) crearSpinner(listaUsuarios)
         }
+        if(MainActivity.verPublicidad)  initLoadAds()
+
         return binding!!.root
+    }
+    private fun initLoadAds() {
+        binding?.banner?.visibility=View.VISIBLE
+        val adRequest = AdRequest.Builder().build()
+        binding?.banner?.loadAd(adRequest)
     }
 
     private fun escuchadores() {

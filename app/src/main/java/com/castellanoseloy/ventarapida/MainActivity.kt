@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
         var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
 
-        var verPublicidad: Boolean=false
+        var verPublicidad: Boolean = true
 
         //Elementos sacados de las preferencias para usarlos en la aplicacion
         var tono = true
@@ -177,9 +178,26 @@ class MainActivity : AppCompatActivity() {
 
         }
         usuariosConectados()
-
+        comportamientoBotonBack()
     }
 
+    private fun comportamientoBotonBack() {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Obtén el destino actual del NavController
+                val currentDestination = navController.currentDestination
+                // Verifica si estás en la pantalla principal (ajusta esto según tu configuración)
+                val isOnHomeScreen = currentDestination?.id == R.id.nav_host_fragment_content_main
+                if (!isOnHomeScreen) {
+                    // No estás en la pantalla principal, permite el comportamiento predeterminado
+                    navController.navigateUp()
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
+    }
 
 
     private fun verificarCantidadUsuariosPlan(usuariosActivos: Int) {
@@ -331,7 +349,7 @@ class MainActivity : AppCompatActivity() {
     fun cargarDialogoProceso() {
         progressDialog = ProgressDialog(this)
         progressDialog?.setMessage("Un momento...")
-        progressDialog?.setCancelable(false)
+        progressDialog?.setCancelable(true)
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -19,6 +19,9 @@ import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import java.util.ArrayList
 
 
@@ -40,10 +43,14 @@ class ListaUsuarios : Fragment() {
 
         setHasOptionsMenu(true)
 
-
-
+        if(MainActivity.verPublicidad)  initLoadAds()
 
         return binding!!.root
+    }
+    private fun initLoadAds() {
+        binding?.banner?.visibility=View.VISIBLE
+        val adRequest = AdRequest.Builder().build()
+        binding?.banner?.loadAd(adRequest)
     }
 
     @Deprecated("Deprecated in Java")
@@ -116,10 +123,10 @@ class ListaUsuarios : Fragment() {
 
     private fun verificarPlan(): String {
         var plan="No disponible"
-        if(MainActivity.datosEmpresa.plan.equals("Empresarial")) plan="Plan Empresarial(30 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan.equals("Premium")) plan="Plan Premium(10 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan.equals("Basico")) plan="Plan Básico(3 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan.equals("Gratuito")) plan="Prueba gratuita(30 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Empresarial")) plan="Plan Empresarial (30 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Premium")) plan="Plan Premium (10 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Basico")) plan="Plan Básico (3 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan.equals("Gratuito")) plan="Prueba gratuita (30 usuarios activos)"
         return plan
     }
 

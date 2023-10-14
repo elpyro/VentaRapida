@@ -9,12 +9,14 @@ import android.widget.SearchView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentFacturaVentasBinding
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra.buscarFacturasOCompra
 import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.google.android.gms.ads.AdRequest
 
 class FacturaVentas : Fragment() {
 
@@ -36,9 +38,15 @@ class FacturaVentas : Fragment() {
 
         listeners()
 
+        if(MainActivity.verPublicidad)  initLoadAds()
+
         return binding!!.root
     }
-
+    private fun initLoadAds() {
+        binding?.banner?.visibility=View.VISIBLE
+        val adRequest = AdRequest.Builder().build()
+        binding?.banner?.loadAd(adRequest)
+    }
 
 
     private fun cargarLista() {

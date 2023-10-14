@@ -47,13 +47,12 @@ object FirebaseFacturaOCompra {
                             for (facturaSnapshot in snapshot.children) {
                                 val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
                                 factura?.let {
-                                    if(factura.fecha!=null){
+                                    if(!factura.fecha.isNullOrEmpty()){
                                         if(verificarPermisosAdministrador()){
                                             facturas.add(it)
                                         }else {
                                             if (factura.id_vendedor.equals(MainActivity.datosUsuario.id)){
                                                 facturas.add(it)
-                                            } else {
                                             }
                                         }
                                     }

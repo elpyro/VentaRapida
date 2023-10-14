@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
@@ -32,6 +33,11 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -39,8 +45,8 @@ import kotlin.collections.HashMap
 class DetalleVenta : Fragment() {
 
 
-
-
+    private var botonVerPdf: Boolean=false
+    private var interstitial: InterstitialAd? = null
     private lateinit var viewModel: DetalleVentaViewModel
     var binding: FragmentDetalleVentaBinding? = null
     private lateinit var vista:View
@@ -87,7 +93,7 @@ class DetalleVenta : Fragment() {
 
         listeners()
 
-
+        initAds()
     }
 
 
@@ -239,9 +245,8 @@ class DetalleVenta : Fragment() {
 
             R.id.action_ver_pdf ->{
 
-                val datosPedido=obtenerDatosPedido()
-                val listaConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
-                viewModel.abrirPDFConPreferencias(listaConvertida.first,datosPedido)
+                botonVerPdf=true
+                mostrarAds()
 
                 return true
             }
@@ -262,12 +267,71 @@ class DetalleVenta : Fragment() {
 
         FirebaseProductos.transaccionesCambiarCantidad(context, listasConvertida.second)
 
-        viewModel.abrirPDFConPreferencias(listasConvertida.first, datosPedido)
+        if (MainActivity.verPublicidad) {
+            mostrarAds()
+        } else {
+            abrirPDFConPreferencias()
+            cerrarYLimpiar()
+        }
+    }
 
+    private fun cerrarYLimpiar() {
         viewModel.limpiar(requireContext())
         limpiar=true
-
         findNavController().popBackStack()
+    }
+
+    private fun mostrarAds() {
+        showAds()
+        initAds()
+    }
+    private fun showAds(){
+
+        if (interstitial != null) {
+            Log.d("Anuncios", "El anuncio se mostró")
+            interstitial?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d("Anuncios", "El usuario cerró la publicidad")
+                    // El usuario ha cerrado la publicidad, así que abrimos el PDF con preferencias
+                    abrirPDFConPreferencias()
+                    if(!botonVerPdf){
+                        cerrarYLimpiar()
+                    }
+                    botonVerPdf=false
+                }
+            }
+            interstitial?.show(requireActivity())
+        }else{
+            Log.d("Anuncios", "El usuario cerró la publicidad")
+            // El usuario ha cerrado la publicidad, así que abrimos el PDF con preferencias
+            abrirPDFConPreferencias()
+            if(!botonVerPdf){
+                cerrarYLimpiar()
+            }
+            botonVerPdf=false
+        }
+
+    }
+
+    private fun abrirPDFConPreferencias() {
+        val datosPedido = obtenerDatosPedido()
+        val listaConvertida = convertirLista(ventaProductosSeleccionados, datosPedido)
+        viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
+    }
+    private fun initAds() {
+        var adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(requireContext(), "ca-app-pub-3940256099942544/1033173712", adRequest, object : InterstitialAdLoadCallback(){
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                Log.d("Anuncios", "El anuncio esta listo para mostrarse")
+                interstitial = interstitialAd
+            }
+
+            override fun onAdFailedToLoad(p0: LoadAdError) {
+                Log.e("Anuncios", "No se cargo el anuncio")
+                interstitial = null
+            }
+        })
     }
 
     private fun obtenerDatosPedido(): HashMap<String, Any> {

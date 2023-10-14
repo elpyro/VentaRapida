@@ -36,7 +36,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
         progressDialogVerPDF = ProgressDialog(this)
         progressDialogVerPDF?.setMessage("Guardando...")
-        progressDialogVerPDF?.setCancelable(false)
+        progressDialogVerPDF?.setCancelable(true)
         progressDialogVerPDF?.show()
 
 
@@ -154,6 +154,8 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
             visualizarPDF()
         }catch (e: Exception ){
+            MainActivity.progressDialog?.dismiss()
+            Log.e("PDF","Error creando pdf $e")
             Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
         }
 
@@ -183,7 +185,8 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
                 visualizarPDF()
             }catch (e: Exception ){
-            Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
+                MainActivity.progressDialog?.dismiss()
+                Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
         }
             }
 
