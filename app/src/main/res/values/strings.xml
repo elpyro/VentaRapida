@@ -185,7 +185,7 @@
     <string name="informacion_producto">Información del producto</string>
     <string name="MostrarPrecioCompra">Mostrar Precio de Compra a Vendedores</string>
     <string name="informacionAdicional">Información Adicional(Factura)</string>
-    <string name="Publicidad3">Inventarios y Facturación \nMulti-Usuarios</string>
+    <string name="Publicidad3">Control de Inventario y Facturación \nMulti-Usuarios</string>
     <string name="PlanGratuito">Plan Gratuito</string>
     <string name="descripcionGratuito">Conecta 1 usuario gratis con publicidad</string>
     <string name="title_activity_instersticial">Instersticial</string>
@@ -198,5 +198,5 @@
         This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
         For more information, see https://support.google.com/admob/answer/3052638
     <!- -->
-    <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-5390342068041092/6706005035</string>
 </resources>

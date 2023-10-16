@@ -4,13 +4,20 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import com.castellanoseloy.ventarapida.MainActivity.Companion.interstitial
 import com.castellanoseloy.ventarapida.R
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import java.io.File
 
 class VistaPDFReporte : AppCompatActivity() {
@@ -26,7 +33,52 @@ class VistaPDFReporte : AppCompatActivity() {
         progressDialogVerPDF?.setCancelable(false)
         progressDialogVerPDF?.show()
 
-        visualizarPDF()
+        if(MainActivity.verPublicidad){
+            mostarPublicida()
+        }else{
+            visualizarPDF()
+        }
+
+
+    }
+
+    private fun mostarPublicida() {
+
+
+            if (interstitial != null) {
+                Log.d("Anuncios", "El anuncio se mostró")
+                interstitial?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d("Anuncios", "El usuario cerró la publicidad")
+                        // El usuario ha cerrado la publicidad, así que abrimos el PDF con preferencias
+                        visualizarPDF()
+                    }
+                }
+                interstitial?.show(this)
+            }else{
+                //no hay anuncio que mostrar
+                visualizarPDF()
+            }
+
+            reiniciarAnuncio()
+    }
+
+    private fun reiniciarAnuncio() {
+
+            var adRequest = AdRequest.Builder().build()
+
+            InterstitialAd.load(this, "ca-app-pub-5390342068041092/6706005035", adRequest, object : InterstitialAdLoadCallback(){
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d("Anuncios", "El anuncio esta listo para mostrarse")
+                    interstitial = interstitialAd
+                }
+
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    Log.e("Anuncios", "No se cargo el anuncio")
+                    interstitial = null
+                }
+            })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

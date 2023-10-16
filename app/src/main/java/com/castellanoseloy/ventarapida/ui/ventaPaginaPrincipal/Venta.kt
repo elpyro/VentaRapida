@@ -40,6 +40,7 @@ import java.util.*
 
 class Venta : Fragment() {
 
+    private var primeraCarga: Boolean=true
     private var binding: VentaBinding? = null
     private lateinit var productViewModel: VentaViewModel
     private lateinit var vista:View
@@ -230,17 +231,21 @@ class Venta : Fragment() {
     }
 
     fun actualizarLista(){
+        Log.d("pruebas", "Se ha  llamado la lista")
         productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
             val productosOrdenados = productos?.sortedBy { it.nombre }
-            adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
-
+            lista = productos as ArrayList<ModeloProducto>?
+            filtro=lista
+            if(primeraCarga){
+                adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
+                binding!!.recyclerViewProductosVenta.adapter = adapter
+                primeraCarga=false
+            }else{
+                adapter!!.updateData(productosOrdenados ?: emptyList())
+            }
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista)
             }
-
-            lista = productos as ArrayList<ModeloProducto>?
-            filtro=lista
-            binding!!.recyclerViewProductosVenta.adapter = adapter
 
             //si el valor esta filtrado buscarlo
             val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
@@ -296,10 +301,10 @@ class Venta : Fragment() {
             objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
         } as ArrayList<ModeloProducto>?
         val filtroOrdenado = filtro?.sortedBy { it.nombre }
-        val adaptador = filtroOrdenado?.let { VentaAdaptador(it,productViewModel) }
-        binding?.recyclerViewProductosVenta?.adapter =adaptador
+        adapter = filtroOrdenado?.let { VentaAdaptador(it,productViewModel) }
+        binding?.recyclerViewProductosVenta?.adapter =adapter
 
-            adaptador?.setOnLongClickItem { item, position ->
+        adapter?.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista)
         }
     }
@@ -310,6 +315,7 @@ class Venta : Fragment() {
             setCancelable(true)
         }
     }
+
 
 
     override fun onDestroyView() {

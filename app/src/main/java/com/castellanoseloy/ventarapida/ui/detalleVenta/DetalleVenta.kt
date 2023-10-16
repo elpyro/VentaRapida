@@ -45,8 +45,6 @@ import kotlin.collections.HashMap
 class DetalleVenta : Fragment() {
 
 
-    private var botonVerPdf: Boolean=false
-    private var interstitial: InterstitialAd? = null
     private lateinit var viewModel: DetalleVentaViewModel
     var binding: FragmentDetalleVentaBinding? = null
     private lateinit var vista:View
@@ -93,7 +91,7 @@ class DetalleVenta : Fragment() {
 
         listeners()
 
-        initAds()
+
     }
 
 
@@ -244,10 +242,7 @@ class DetalleVenta : Fragment() {
             }
 
             R.id.action_ver_pdf ->{
-
-                botonVerPdf=true
-                mostrarAds()
-
+                abrirPDFConPreferencias()
                 return true
             }
 
@@ -267,12 +262,8 @@ class DetalleVenta : Fragment() {
 
         FirebaseProductos.transaccionesCambiarCantidad(context, listasConvertida.second)
 
-        if (MainActivity.verPublicidad) {
-            mostrarAds()
-        } else {
-            abrirPDFConPreferencias()
-            cerrarYLimpiar()
-        }
+        abrirPDFConPreferencias()
+        cerrarYLimpiar()
     }
 
     private fun cerrarYLimpiar() {
@@ -281,58 +272,15 @@ class DetalleVenta : Fragment() {
         findNavController().popBackStack()
     }
 
-    private fun mostrarAds() {
-        showAds()
-        initAds()
-    }
-    private fun showAds(){
 
-        if (interstitial != null) {
-            Log.d("Anuncios", "El anuncio se mostró")
-            interstitial?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    Log.d("Anuncios", "El usuario cerró la publicidad")
-                    // El usuario ha cerrado la publicidad, así que abrimos el PDF con preferencias
-                    abrirPDFConPreferencias()
-                    if(!botonVerPdf){
-                        cerrarYLimpiar()
-                    }
-                    botonVerPdf=false
-                }
-            }
-            interstitial?.show(requireActivity())
-        }else{
-            Log.d("Anuncios", "El usuario cerró la publicidad")
-            // El usuario ha cerrado la publicidad, así que abrimos el PDF con preferencias
-            abrirPDFConPreferencias()
-            if(!botonVerPdf){
-                cerrarYLimpiar()
-            }
-            botonVerPdf=false
-        }
 
-    }
 
     private fun abrirPDFConPreferencias() {
         val datosPedido = obtenerDatosPedido()
         val listaConvertida = convertirLista(ventaProductosSeleccionados, datosPedido)
         viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
     }
-    private fun initAds() {
-        var adRequest = AdRequest.Builder().build()
 
-        InterstitialAd.load(requireContext(), "ca-app-pub-3940256099942544/1033173712", adRequest, object : InterstitialAdLoadCallback(){
-            override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                Log.d("Anuncios", "El anuncio esta listo para mostrarse")
-                interstitial = interstitialAd
-            }
-
-            override fun onAdFailedToLoad(p0: LoadAdError) {
-                Log.e("Anuncios", "No se cargo el anuncio")
-                interstitial = null
-            }
-        })
-    }
 
     private fun obtenerDatosPedido(): HashMap<String, Any> {
 

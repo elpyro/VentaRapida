@@ -1,5 +1,6 @@
 package com.castellanoseloy.ventarapida.ui.registros.pestanas
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,7 +24,7 @@ class FacturaVentas : Fragment() {
 
     private var binding: FragmentFacturaVentasBinding? = null
     private lateinit var vista:View
-
+    private var progressDialog: ProgressDialog? = null
     private lateinit var adaptador: FacturaVentasAdaptador
     private lateinit var listaFacturas : MutableList<ModeloFactura>
     override fun onCreateView(
@@ -42,6 +43,13 @@ class FacturaVentas : Fragment() {
 
         return binding!!.root
     }
+
+    fun processDialogo() {
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog?.setMessage("Cargando...") // Mensaje que se mostrará
+        progressDialog?.setCancelable(false) // Para evitar que se cierre al tocar fuera de él
+        progressDialog?.show()
+    }
     private fun initLoadAds() {
         binding?.banner?.visibility=View.VISIBLE
         val adRequest = AdRequest.Builder().build()
@@ -50,7 +58,7 @@ class FacturaVentas : Fragment() {
 
 
     private fun cargarLista() {
-
+        processDialogo()
         val tareaFacturas = buscarFacturasOCompra("Factura")
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas
@@ -62,12 +70,18 @@ class FacturaVentas : Fragment() {
                 abriDetalle(item)
             }
             binding?.swipeRefreshLayout?.isRefreshing=false
+            progressDialog?.dismiss()
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         vista= view
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         cargarLista()
     }
     private fun listeners() {

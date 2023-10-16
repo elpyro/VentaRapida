@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.View
@@ -36,6 +37,10 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.ActivityMainBinding
 
 import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -51,46 +56,46 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
-
+        var interstitial: InterstitialAd? = null
         var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
         var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
 
-        var verPublicidad: Boolean = true
+        var verPublicidad: Boolean = false
 
-        //Elementos sacados de las preferencias para usarlos en la aplicacion
+        //Elementos de las preferencias para usarlos en la aplicacion
         var tono = true
         var mostrarAgotadosCatalogo= true
         var datosEmpresa: ModeloDatosEmpresa = ModeloDatosEmpresa()
         var datosUsuario: ModeloUsuario = ModeloUsuario()
         var planVencido:Boolean? =false
+
         lateinit var logotipo: ImageView
         lateinit var editText_nombreEmpresa: TextView
+        lateinit var binding: ActivityMainBinding
         lateinit var preferencia_informacion_superior:String
         lateinit var preferencia_informacion_inferior:String
         lateinit var edit_text_preference_codigo_area:String
         var progressDialog: ProgressDialog? = null
-        lateinit var  navController: NavController
-        lateinit var  drawerLayout: DrawerLayout
-        lateinit var navView: NavigationView
-
-         lateinit var appBarConfiguration: AppBarConfiguration
-         lateinit var binding: ActivityMainBinding
-
 
         fun init(context: Context) {
-
             logotipo = ImageView(context)
             editText_nombreEmpresa= TextView(context)
         }
     }
-
-
-
+    lateinit var  navController: NavController
+    lateinit var  drawerLayout: DrawerLayout
+    lateinit var navView: NavigationView
+    lateinit var appBarConfiguration: AppBarConfiguration
     private var suscripcion=Suscripcion()
-
+    private var doubleBackToExitPressedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        verificarPlan()
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         //cargar las preferencias primero para evitar errores de carga
         val preferenciasServicios= Preferencias()
@@ -102,13 +107,10 @@ class MainActivity : AppCompatActivity() {
 
         init(this)
 
-
         cargarDialogoProceso()
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
         cargarDatos()
+
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -133,10 +135,7 @@ class MainActivity : AppCompatActivity() {
                         logotipo.setImageDrawable(logotipo.drawable)
                     }
 
-                    override fun onError(e: Exception?) {
-                        // Ocurrió un error al cargar la imagen
-                        // Puedes manejar el error aquí si es necesario
-                    }
+                    override fun onError(e: Exception?) { }
                 })
         }
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
@@ -165,6 +164,16 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+
+
+        if(verPublicidad) NotificacionPlanVencido()
+
+
+
+        comportamientoBotonBack()
+    }
+
+    private fun verificarPlan() {
         if(!datosEmpresa.plan.equals("Ilimitado")){
             val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
 
@@ -173,12 +182,29 @@ class MainActivity : AppCompatActivity() {
 
             if (planVencido!!){
                 verPublicidad=true
-                NotificacionPlanVencido()
+                cargarAnuncio()
             }
-
         }
         usuariosConectados()
-        comportamientoBotonBack()
+        Log.d("pruebas", "Se ha establecido la publicidad")
+    }
+
+    private fun cargarAnuncio() {
+
+            var adRequest = AdRequest.Builder().build()
+
+            InterstitialAd.load(this, "ca-app-pub-5390342068041092/6706005035", adRequest, object : InterstitialAdLoadCallback(){
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d("Anuncios", "El anuncio esta listo para mostrarse")
+                    interstitial = interstitialAd
+                }
+
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    Log.e("Anuncios", "No se cargo el anuncio")
+                    interstitial = null
+                }
+            })
+
     }
 
     private fun comportamientoBotonBack() {
@@ -188,11 +214,24 @@ class MainActivity : AppCompatActivity() {
             override fun handleOnBackPressed() {
                 // Obtén el destino actual del NavController
                 val currentDestination = navController.currentDestination
+
                 // Verifica si estás en la pantalla principal (ajusta esto según tu configuración)
-                val isOnHomeScreen = currentDestination?.id == R.id.nav_host_fragment_content_main
+                val isOnHomeScreen = currentDestination?.id == R.id.nav_home
                 if (!isOnHomeScreen) {
                     // No estás en la pantalla principal, permite el comportamiento predeterminado
                     navController.navigateUp()
+                }else{
+                    if (doubleBackToExitPressedOnce) {
+                        finish()
+                    }else{
+                        Toast.makeText(this@MainActivity, "Presione de nuevo para salir", Toast.LENGTH_SHORT).show()
+                    }
+
+                    doubleBackToExitPressedOnce = true
+
+                    Handler().postDelayed({
+                        doubleBackToExitPressedOnce = false
+                    }, 2000) // Restablece el valor después de 2 segundos
                 }
             }
         }
@@ -254,7 +293,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun NotificacionPlanVencido (){
-        if(!datosUsuario.id.equals(datosEmpresa.idDuenoCuenta)){
+        if(datosUsuario.id != datosEmpresa.idDuenoCuenta){
 
             navView.menu
                 .setGroupVisible(R.id.panel_administrador, false)
@@ -272,11 +311,8 @@ class MainActivity : AppCompatActivity() {
             alertDialogBuilder.setMessage("El plan se ha vencido por favor renueve el plan para ultilizarlo con mas de 1 usuario")
 
             alertDialogBuilder.setPositiveButton("Ver Suscripciones") { _, _ ->
-                AuthUI.getInstance().signOut(this)
-                    .addOnCompleteListener { task: Task<Void?>? ->
                         val navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
                         navController.navigate(R.id.suscripcionesDisponibles)
-                    }
             }
 
             val alertDialog = alertDialogBuilder.create()
@@ -304,10 +340,7 @@ class MainActivity : AppCompatActivity() {
             binding.appBarMain.fabSincronizar.setOnClickListener { view ->
                 Toast.makeText(context,"Sincronizando "+transaccionesPendientes.size.toString()+" produtos",Toast.LENGTH_LONG).show()
             }
-
         }
-
-
     }
 
     private fun cargarDatos() {

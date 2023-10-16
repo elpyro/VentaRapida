@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.procesos.ProductDiffCallback
 
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.squareup.picasso.NetworkPolicy
@@ -22,7 +24,7 @@ import java.util.*
 
 
 class VentaAdaptador(
-    private val products: List<ModeloProducto>,
+    private var products: List<ModeloProducto>,
     private val viewModel: VentaViewModel
 ) : RecyclerView.Adapter<VentaAdaptador.ProductViewHolder>() {
     private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
@@ -57,6 +59,12 @@ class VentaAdaptador(
     // Este método devuelve el número de elementos en la lista de productos
     override fun getItemCount(): Int {
         return products.size
+    }
+
+    fun updateData(newList: List<ModeloProducto>) {
+        val diffResult = DiffUtil.calculateDiff(ProductDiffCallback(products, newList))
+        products = newList
+        diffResult.dispatchUpdatesTo(this)
     }
 
     // Callback para el evento de click largo en un item de la lista

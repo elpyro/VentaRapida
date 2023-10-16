@@ -31,7 +31,7 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:src="@drawable/logo2_compra_rapidita"/>
 
 
@@ -44,6 +44,17 @@
                 android:text="@string/Publicidad3"
                 android:textSize="20sp"
                 android:theme="@style/ColorFuenteEnFondoGris" />
+
+            <Button
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:id="@+id/button_inicioSesionGoogle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_google"
+                android:text="Iniciar sesion con Google"
+                />
         </LinearLayout>
 
         <LinearLayout

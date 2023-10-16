@@ -12,11 +12,14 @@ import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class CompraViewModel : ViewModel() {
 
+    private lateinit var escuchadorProductos: ValueEventListener
+    private lateinit var productReference: DatabaseReference
     lateinit var context: Context // propiedad para almacenar el contexto
     val productosLiveData = MutableLiveData<List<ModeloProducto>>()
 
@@ -105,11 +108,11 @@ class CompraViewModel : ViewModel() {
     }
 
     fun getProductos(): LiveData<List<ModeloProducto>> {
-
+        Log.d("Escuchadores", "Se ha llamado el escuchador de PAGINA SURTIDO")
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
-        productReference.keepSynced(true)
-        productReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
+
+        escuchadorProductos= productReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val productos = mutableListOf<ModeloProducto>()
 
@@ -117,7 +120,7 @@ class CompraViewModel : ViewModel() {
                     val producto = productoSnapshot.getValue(ModeloProducto::class.java)
                     productos.add(producto!!)
                 }
-
+                Log.d("Escuchadores", "Ocurrio un envento en la pagina de surtido")
                 productosLiveData.value = productos
             }
 
@@ -128,6 +131,10 @@ class CompraViewModel : ViewModel() {
 
         return productosLiveData
     }
-
+    fun detenerEscuchadores(){
+        if (::productReference.isInitialized && ::productReference.isInitialized) {
+            productReference.removeEventListener(escuchadorProductos)
+        }
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.castellanoseloy.ventarapida
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +9,10 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.view.isVisible
+import androidx.navigation.Navigation
 
 import com.castellanoseloy.ventarapida.datos.ModeloDatosEmpresa
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
@@ -67,25 +71,13 @@ class Login : AppCompatActivity() {
                 Log.d("FIREBASEGOOGLE", "el id google es ${idGoogle.toString()}")
                 verificarUsuario(correoUsuario,nombreUsuario)
             } else {
-                // El usuario no ha iniciado sesión o ha cerrado sesión
-                // Iniciar el flujo de inicio de sesión
-                nuevoUsuario=true
-                val providers = arrayListOf(
-                    AuthUI.IdpConfig.GoogleBuilder().build()
-                )
-
-                startActivityForResult(
-                    AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                    RC_SIGN_IN
-                )
+                mostrarAlertDialog()
             }
         }
         // Registrar el listener
         firebaseAuth.addAuthStateListener(authStateListener)
     }
+
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -101,12 +93,14 @@ class Login : AppCompatActivity() {
                 verificarUsuario( correoUsuario,nombreUsuario)
             } else {
                 Toast.makeText(this,"Error en inicio de sesion Google",Toast.LENGTH_LONG).show()
+                mostrarBotonIncioSesion()
             }
         }
     }
 
     private fun verificarUsuario(correoUsuario: String?, nombreUsuario: String?) {
         if(nuevoUsuario) showProgressDialog()
+        ocultarBotonIncioSesion()
 
 
         MainActivity.datosUsuario = ModeloUsuario()
@@ -125,6 +119,7 @@ class Login : AppCompatActivity() {
                             } else {
                                 // USUARIO NO REGISTRADO
                                 hideProgressDialog()
+                                ocultarBotonIncioSesion()
                                 binding.LinearLayoutBienvenido.visibility= View.GONE
                                 binding.LinearLayoutUsuarioNoRegistrado.visibility= View.VISIBLE
                                 binding.textViewCorreo.text = correoUsuario
@@ -136,6 +131,7 @@ class Login : AppCompatActivity() {
             }
             .addOnFailureListener {
                 hideProgressDialog()
+                mostrarBotonIncioSesion()
                 Toast.makeText(this, "${nombreUsuario}, Error iniciando", Toast.LENGTH_LONG).show()
             }
 
@@ -143,6 +139,9 @@ class Login : AppCompatActivity() {
     }
 
     private fun listeners() {
+        binding.buttonInicioSesionGoogle.setOnClickListener{
+            inicioGoogle()
+        }
         binding.buttonRegistrarUsuario.setOnClickListener {
             val intent = Intent(this, CrearNuevaEmpresa::class.java)
             intent.putExtra("idGoogle", idGoogle.toString())
@@ -214,5 +213,51 @@ class Login : AppCompatActivity() {
         progressDialog = null
     }
 
+    fun mostrarAlertDialog(){
+
+        try {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_alert_inicio_sesion, null)
+
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Bienvenido")
+            alertDialogBuilder.setCancelable(false)
+            alertDialogBuilder.setView(dialogView)
+            alertDialogBuilder.setPositiveButton("Aceptar") { _, _ ->
+                nuevoUsuario=true
+                inicioGoogle()
+            }
+            alertDialogBuilder.setNegativeButton("No, Gracías") { _, _ ->
+                mostrarBotonIncioSesion()
+            }
+
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }catch ( e: Exception){
+        }
+
+    }
+
+    private fun mostrarBotonIncioSesion() {
+        binding?.buttonInicioSesionGoogle?.isVisible =true
+    }
+    private fun ocultarBotonIncioSesion() {
+        binding?.buttonInicioSesionGoogle?.isVisible =false
+    }
+    private fun inicioGoogle() {
+        // El usuario no ha iniciado sesión o ha cerrado sesión
+        // Iniciar el flujo de inicio de sesión
+
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.GoogleBuilder().build()
+        )
+
+        startActivityForResult(
+            AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build(),
+            RC_SIGN_IN
+        )
+    }
 
 }

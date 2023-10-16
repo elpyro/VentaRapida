@@ -111,6 +111,8 @@ class VentaViewModel : ViewModel() {
             val firebaseDatabase = FirebaseDatabase.getInstance()
             val productReference =
                 firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
+
+        if(MainActivity.verPublicidad){
             productReference.keepSynced(true)
             productReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -119,7 +121,7 @@ class VentaViewModel : ViewModel() {
                     for (productoSnapshot in snapshot.children) {
                         val producto = productoSnapshot.getValue(ModeloProducto::class.java)
 
-                        if (MainActivity.mostrarAgotadosCatalogo==false) {
+                        if (!MainActivity.mostrarAgotadosCatalogo) {
                             if (producto?.cantidad?.toInt()!! > 0) productos.add(producto!!)
                         }
 
@@ -133,6 +135,31 @@ class VentaViewModel : ViewModel() {
                     Log.e("ProductViewModel", "Error al cargar productos", error.toException())
                 }
             })
+        }else{
+            productReference.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val productos = mutableListOf<ModeloProducto>()
+
+                    for (productoSnapshot in snapshot.children) {
+                        val producto = productoSnapshot.getValue(ModeloProducto::class.java)
+
+                        if (!MainActivity.mostrarAgotadosCatalogo) {
+                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto!!)
+                        }
+
+                        if (MainActivity.mostrarAgotadosCatalogo) productos.add(producto!!)
+                    }
+
+                    productosLiveData.value = productos
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("ProductViewModel", "Error al cargar productos", error.toException())
+                }
+            })
+        }
+
+
 
         return productosLiveData
     }

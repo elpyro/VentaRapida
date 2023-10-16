@@ -32,6 +32,7 @@ import java.util.*
 class Compra : Fragment() {
 
 
+    private var primeraCarga: Boolean =true
     private var binding: FragmentCompraBinding? = null
     private lateinit var viewModel: CompraViewModel
     private lateinit var vista:View
@@ -184,15 +185,23 @@ class Compra : Fragment() {
         viewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
             val productosOrdenados = productos.sortedBy { it.nombre }
-            adapter = CompraAdaptador(productosOrdenados, viewModel)
+
+            lista = productos as ArrayList<ModeloProducto>?
+
+            if(primeraCarga){
+                adapter = CompraAdaptador(productosOrdenados!!, viewModel)
+                binding!!.recyclerViewProductosVenta.adapter = adapter
+                primeraCarga=false
+            }else{
+                adapter!!.updateData(productosOrdenados ?: emptyList())
+            }
 
             adapter!!.setOnLongClickItem { item, position ->
                 abriDetalle(item,vista, position)
             }
 
 
-            lista = productos as ArrayList<ModeloProducto>?
-            binding!!.recyclerViewProductosVenta.adapter = adapter
+
 
             //si el valor esta filtrado buscarlo
             val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
@@ -251,14 +260,14 @@ class Compra : Fragment() {
                 ?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true
         }
         val productosOrdenados = filtro?.sortedBy { it.nombre }
-        val adaptador = productosOrdenados?.let { CompraAdaptador(it,viewModel) }
-        binding?.recyclerViewProductosVenta?.adapter =adaptador
+        adapter = productosOrdenados?.let { CompraAdaptador(it,viewModel) }
+        binding?.recyclerViewProductosVenta?.adapter =adapter
 
-        adaptador!!.setOnLongClickItem { item, position ->
+        adapter!!.setOnLongClickItem { item, position ->
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)
-            val arrayList: ArrayList<ModeloProducto> = productosOrdenados.toCollection(ArrayList())
+            val arrayList: ArrayList<ModeloProducto> = productosOrdenados!!.toCollection(ArrayList())
             bundle.putSerializable("listaProductos", arrayList)
             Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
         }
@@ -266,6 +275,7 @@ class Compra : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.detenerEscuchadores()
         binding = null
     }
 

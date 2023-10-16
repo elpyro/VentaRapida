@@ -1,5 +1,6 @@
 package com.castellanoseloy.ventarapida.ui.registros.pestanas
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,7 +20,7 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.google.android.gms.ads.AdRequest
 
 class ListaCompras : Fragment() {
-
+    private var progressDialog: ProgressDialog? = null
     private var binding: FragmentFacturaVentasBinding? = null
     private lateinit var vista:View
     var productosFiltrados:List<ModeloFactura> = emptyList()
@@ -38,19 +39,30 @@ class ListaCompras : Fragment() {
 
 
         listeners()
-        cargarLista()
+
 
         if(MainActivity.verPublicidad)  initLoadAds()
         return binding!!.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cargarLista()
     }
     private fun initLoadAds() {
         binding?.banner?.visibility=View.VISIBLE
         val adRequest = AdRequest.Builder().build()
         binding?.banner?.loadAd(adRequest)
     }
+    fun processDialogo() {
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog?.setMessage("Cargando...") // Mensaje que se mostrará
+        progressDialog?.setCancelable(false) // Para evitar que se cierre al tocar fuera de él
+        progressDialog?.show()
+    }
     private fun cargarLista() {
+        processDialogo()
         val tareaFacturas = FirebaseFacturaOCompra.buscarFacturasOCompra("Compra")
-
         tareaFacturas.addOnSuccessListener { facturas ->
             listaFacturas=facturas
             productosFiltrados = listaFacturas
@@ -61,6 +73,7 @@ class ListaCompras : Fragment() {
                 abriDetalle(item)
             }
             binding?.swipeRefreshLayout?.isRefreshing=false
+            progressDialog?.dismiss()
         }
 
     }

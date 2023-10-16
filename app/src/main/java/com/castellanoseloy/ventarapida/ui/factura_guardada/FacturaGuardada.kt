@@ -52,9 +52,10 @@ class FacturaGuardada : Fragment() {
 
         viewModel = ViewModelProvider(this).get(FacturaGuardadaViewModel::class.java)
 
+        viewModel.processDialogo(requireContext())
         viewModel.cargarDatosFactura(modeloFactura)
-
         viewModel.buscarProductos(modeloFactura.id_pedido)
+
         observadores()
         listeners()
         return binding!!.root
@@ -264,6 +265,7 @@ class FacturaGuardada : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        viewModel.detenerEscuchadores()
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
     }

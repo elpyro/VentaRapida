@@ -1,6 +1,7 @@
 package com.castellanoseloy.ventarapida.ui.compra_guardada
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -37,6 +38,7 @@ class CompraGuardada : Fragment() {
     private lateinit var modeloFactura: ModeloFactura
     var listaDeProductos: List<ModeloFactura> = emptyList<ModeloFactura>()
     private var banderaElimandoFactura: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,13 +50,14 @@ class CompraGuardada : Fragment() {
         val bundle = arguments
         modeloFactura = (bundle?.getSerializable("modelo") as? ModeloFactura)!!
         listaDeProductos = (bundle?.getSerializable("lista") as? ArrayList<ModeloFactura>)!!
-        val posicionProducto = bundle?.getInt("position")
+
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding?.recyclerViewProductosSeleccionados?.layoutManager = gridLayoutManager
 
         viewModel = ViewModelProvider(this).get(CompraGuardadaViewModel::class.java)
 
+        viewModel.processDialogo(requireContext())
         viewModel.cargarDatosFactura(modeloFactura)
         viewModel.buscarProductos(modeloFactura.id_pedido)
 
@@ -66,7 +69,6 @@ class CompraGuardada : Fragment() {
 
         return binding!!.root
     }
-
 
     private fun observadores() {
         viewModel.datosFactura.observe(viewLifecycleOwner) { detalleFactura ->
@@ -225,10 +227,7 @@ class CompraGuardada : Fragment() {
             Utilidades.esperarUnSegundo()
 
             lifecycleScope.launch {
-
                 viewModel.eliminarCompra(requireContext())
-
-
             }
 
             Toast.makeText(requireContext(),modeloFactura.nombre+"\nFactura Eliminada",Toast.LENGTH_LONG).show()
@@ -253,6 +252,7 @@ class CompraGuardada : Fragment() {
         binding = null
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
+        viewModel.detenerEscuchadores()
     }
 
 }

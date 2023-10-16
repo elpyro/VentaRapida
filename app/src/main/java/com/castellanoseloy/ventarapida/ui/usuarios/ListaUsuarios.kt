@@ -31,7 +31,6 @@ class ListaUsuarios : Fragment() {
     private var binding: FragmentListaUsuariosBinding? = null
     private lateinit var vista: View
     private var lista: ArrayList<ModeloUsuario>? = null
-
     private lateinit var adaptador: UsuariosAdaptador
 
 
