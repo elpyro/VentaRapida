@@ -120,8 +120,7 @@ class ReporteVendedor : Fragment() {
                      requireContext(),
                      fechaInicio,
                      fechaFin,
-                     MainActivity.datosUsuario.id,
-                     binding!!)
+                     MainActivity.datosUsuario.id)
             }
         }
 

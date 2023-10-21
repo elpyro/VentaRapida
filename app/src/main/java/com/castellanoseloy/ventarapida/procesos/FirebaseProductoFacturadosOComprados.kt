@@ -138,10 +138,10 @@ object FirebaseProductoFacturadosOComprados {
 
 
 
-    fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long, idVendedor:String): Task<List<ModeloProductoFacturado>> {
+    fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long, idVendedor:String, tabla:String): Task<List<ModeloProductoFacturado>> {
 
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-        val reference: DatabaseReference = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados")
+        val reference: DatabaseReference = database.getReference(MainActivity.datosEmpresa.id).child(tabla)
 
         val tcs = TaskCompletionSource<List<ModeloProductoFacturado>>()
         reference.keepSynced(true)
@@ -195,5 +195,6 @@ object FirebaseProductoFacturadosOComprados {
 
         return tcs.task
     }
+
 
 }

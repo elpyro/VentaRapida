@@ -26,9 +26,12 @@ import com.itextpdf.text.pdf.PdfWriter
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+//import com.github.mikephil.charting.charts.PieChart
+//import com.github.mikephil.charting.data.PieData
+//import com.github.mikephil.charting.data.PieDataSet
+//import com.github.mikephil.charting.data.PieEntry
 
-
-class CrearPdfMayorGanancia {
+class CrearPdfSurtidoPorProducto {
 
     private val FONT_TITLE = Font(Font.FontFamily.TIMES_ROMAN, 20f, Font.BOLD)
     private val FONT_SUBTITLE = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.BOLD)
@@ -36,12 +39,14 @@ class CrearPdfMayorGanancia {
     private val FONT_CELL = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.NORMAL)
     private val FONT_COLUMN = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.NORMAL)
 
-    fun mayorGanancia(
+    fun surtidoPorProducto(
         context: Context,
         fechaInicio: String,
         fechaFin: String,
-        listaMayorGanancia: Map<ReportesViewModel.ProductoLlave, Pair<Double, Int>>,
-    ) {
+        listaMasSurtidos: Map<ReportesViewModel.ProductoLlave, Pair<Double, Int>>,
+
+
+        ) {
 
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
         val outputStream = FileOutputStream(file)
@@ -55,12 +60,12 @@ class CrearPdfMayorGanancia {
         metadata(document)
         cabezera(document, context,fechaInicio,fechaFin)
 
-        val tablaGanancias = crearTabla(listaMayorGanancia)
-        val totalGanacias = tablaGanancias.ganancia
+        val tablaGanancias = crearTabla(listaMasSurtidos)
+        val totalSurtido = tablaGanancias.costos
 
 
         document.add(Paragraph("\n"))
-        val parrafoTotal = Paragraph("Ganancía: " + totalGanacias.toString().formatoMonenda(), FONT_TITLE)
+        val parrafoTotal = Paragraph("Surtido: " + totalSurtido.toString().formatoMonenda(), FONT_TITLE)
         parrafoTotal.alignment = Element.ALIGN_RIGHT
         document.add(Paragraph(parrafoTotal))
 
@@ -135,7 +140,7 @@ class CrearPdfMayorGanancia {
             cell.isUseAscender = true
 
             val titulo: Paragraph?
-            titulo = Paragraph("Mayor Ganancía", FONT_TITLE)
+            titulo = Paragraph("Productos Más Surtidos", FONT_TITLE)
             titulo.alignment = Element.ALIGN_CENTER
 
             val temp = Paragraph(titulo)
@@ -227,12 +232,12 @@ class CrearPdfMayorGanancia {
         document.add(table)
     }
 
-    data class TablaInventario(val tabla: PdfPTable, val ganancia: Double, val ventas:Double, val costos:Double)
+    data class TablaInventario(val tabla: PdfPTable, val costos:Double)
 
-    private fun crearTabla(listaMasVendidos: Map<ReportesViewModel.ProductoLlave, Pair<Double, Int>>): TablaInventario {
+    private fun crearTabla(listaMasSurtidos: Map<ReportesViewModel.ProductoLlave, Pair<Double, Int>>): TablaInventario {
         val table1 = PdfPTable(3)
         table1.widthPercentage = 100f
-        table1.setWidths(floatArrayOf(8f,3f,4f))
+        table1.setWidths(floatArrayOf(8f,2f,4f))
         table1.headerRows = 1
         table1.defaultCell.verticalAlignment = Element.ALIGN_CENTER
         table1.defaultCell.horizontalAlignment = Element.ALIGN_CENTER
@@ -250,21 +255,21 @@ class CrearPdfMayorGanancia {
             cell.setPadding(4f)
             table1.addCell(cell)
 
-            cell = PdfPCell(Phrase("Ganancía", FONT_COLUMN))
+            cell = PdfPCell(Phrase("Costo", FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)
             table1.addCell(cell)
+
+
         }
 
         var alternate = false
         val lt_gray = BaseColor(221, 221, 221) //#DDDDDD
         var cell_color: BaseColor?
-        val size = listaMasVendidos.size
-        var totalGanancias=0.0
-        var totalVentas=0.0
+
         var totalCostos=0.0
-        for ((producto, ganancia) in listaMasVendidos) {
+        for ((producto, ganancia) in listaMasSurtidos) {
             cell_color = if (alternate) lt_gray else BaseColor.WHITE
 
 
@@ -281,10 +286,15 @@ class CrearPdfMayorGanancia {
             setCellFormat(cell, cell_color, ganancia.first.toString().formatoMonenda()!!)
             table1.addCell(cell)
 
-            totalGanancias += ganancia.first
+            var total= ganancia.first
+
+
+
+            totalCostos += total
+
             alternate = !alternate
         }
-        return TablaInventario(table1, totalGanancias, totalVentas,totalCostos)
+        return TablaInventario(table1, totalCostos)
     }
 
     private fun setCellFormat(cell: PdfPCell, backgroundColor: BaseColor, text: String) {

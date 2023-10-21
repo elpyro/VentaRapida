@@ -12,12 +12,14 @@ import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOCompr
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
 import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra.guardarDetalleFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos.editarProductoTransaccion
 import java.util.UUID
 
@@ -25,10 +27,23 @@ import java.util.UUID
 class PromtFacturaGuardada() {
 
 
-    fun editarProducto( tipo:String, item: ModeloProductoFacturado, context: Context){
+    private lateinit var tablaReferencia: String
+    private lateinit var tipoRecibido: String
+    private lateinit var contextoRecibido: Context
+    private lateinit var itemRecibido: ModeloProductoFacturado
+    private var imageView_foto: ImageView? = null
+    private var editTextPrecio: EditText? = null
+    private var editTextCantidad: EditText? = null
+    private var editTextProducto: EditText? = null
+
+    fun editarProducto(tipo:String, item: ModeloProductoFacturado, context: Context){
+        itemRecibido=item
+        contextoRecibido=context
+        tipoRecibido=tipo
+
         val dialogBuilder = AlertDialog.Builder(context)
 
-        var tablaReferencia=""
+        tablaReferencia=""
         if (tipo.equals("compra")) tablaReferencia="ProductosComprados"
         if (tipo.equals("venta"))  tablaReferencia="ProductosFacturados"
 
@@ -38,108 +53,115 @@ class PromtFacturaGuardada() {
         val dialogView = inflater.inflate(R.layout.promt_factura, null)
         dialogBuilder.setView(dialogView)
 
-        val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
-        val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
-        val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
+        editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
+        editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
+        editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
+        imageView_foto= dialogView.findViewById<ImageView>(R.id.imageView_foto)
 
         // Seleccionar tode el contenido del EditText al recibir foco
-        editTextProducto.setSelectAllOnFocus(true)
-        editTextCantidad.setSelectAllOnFocus(true)
-        editTextPrecio.setSelectAllOnFocus(true)
+        editTextProducto!!.setSelectAllOnFocus(true)
+        editTextCantidad!!.setSelectAllOnFocus(true)
+        editTextPrecio!!.setSelectAllOnFocus(true)
 
-        editTextProducto.setText( item.producto)
-        editTextCantidad.setText(item.cantidad)
-        if (tipo.equals("venta")) editTextPrecio.setText(item.venta)
-        if (tipo.equals("compra")) editTextPrecio.setText(item.costo)
+        Utilidades.cargarImagen(item.imagenUrl, imageView_foto!!)
+        editTextProducto!!.setText( item.producto)
+        editTextCantidad!!.setText(item.cantidad)
+        if (tipo.equals("venta")) editTextPrecio!!.setText(item.venta)
+        if (tipo.equals("compra")) editTextPrecio!!.setText(item.costo)
 
         // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
-
-            val nuevoNombre=editTextProducto.text.toString().takeIf { it.isNotEmpty() } ?: "Item"
-            val nuevaCantidad = editTextCantidad.text.toString().takeIf { it.isNotEmpty() } ?: "0"
-            val nuevoPrecio = (editTextPrecio.text.toString()).takeIf { it.isNotEmpty() } ?: "0"
-
-            val cantidadAnterior = item.cantidad
-
-            item.producto=nuevoNombre
-            item.cantidad=nuevaCantidad
-            item.productoEditado="true"
-
-            if (tipo.equals("venta"))   item.venta=nuevoPrecio
-            if (tipo.equals("compra"))  item.costo=nuevoPrecio
-
-            val diferenciaCantidad = nuevaCantidad.toInt() - cantidadAnterior.toInt()
-
-            var descuento= 0.0
-            if(!item.porcentajeDescuento.isEmpty())descuento=item.porcentajeDescuento.toDouble()
-            if(descuento!=0.0){
-                val precioNuevoDescuento=(nuevoPrecio.toDouble() /descuento)
-                val precioNuevoDescuento2=precioNuevoDescuento-nuevoPrecio.toDouble()
-                item.precioDescuentos=precioNuevoDescuento2.toString()
-            }else{
-                item.precioDescuentos=nuevoPrecio.toString()
-            }
-
-
-            if(diferenciaCantidad!=0){
-                //hacer una cola para restar o sumar las cantidades del inventario
-                val productosSeleccionados: MutableMap<ModeloProducto, Int> = mutableMapOf()
-                val nuevoProducto = ModeloProducto(id = item.id_producto)
-                //multiplicamos *-1  para que en vez de restar sume en la base de datos
-                productosSeleccionados[nuevoProducto] = diferenciaCantidad
-                val listaProductosEditar = arrayListOf<ModeloProductoFacturado>()
-
-                productosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
-                    //calculamos el precio descuento para tener la referencia para los reportes
-                    if (cantidadSeleccionada!=0){
-
-                        val productoFacturado = ModeloProductoFacturado(
-                            id_producto_pedido = UUID.randomUUID().toString(),
-                            id_producto = producto.id,
-                            id_vendedor = MainActivity.datosUsuario.id,
-                            vendedor = MainActivity.datosUsuario.nombre,
-                            producto = producto.nombre,
-                            precioDescuentos= item.precioDescuentos,
-                            cantidad = cantidadSeleccionada.toString(),
-                            costo = producto.p_compra,
-                            venta = producto.p_diamante,
-                            imagenUrl =producto.url
-                        )
-
-                        listaProductosEditar.add(productoFacturado)
-
-                        editarProductoTransaccion(context,tipo,diferenciaCantidad,producto.id)
-
-                    }
-
-                }
-            }
-            val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
-            listaProductosFacturados.add(item)
-            if(nuevaCantidad.toInt()!=0){
-                //si es edicion no crea aqui la cola de transaccion
-                FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados,"edicion",context)
-
-            }else{
-                FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados,context,tipo)
-                Toast.makeText(context, cantidadAnterior +"x "+item.producto+" Eliminados", Toast.LENGTH_LONG).show()
-            }
-
-
-
+            val nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
+            modificar(nuevaCantidad)
         }
 
-// Configurar el botón "Cancelar"
         dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
             // No hacer nada
         }
 
-// Mostrar el diálogo
+        dialogBuilder.setNeutralButton("Eliminar"){ dialogInterface, i ->
+            modificar("0")
+        }
+
+
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
+
+
+
     }
 
+    fun modificar(nuevaCantidad:String){
+        val nuevoNombre=editTextProducto?.text.toString().takeIf { it.isNotEmpty() } ?: "Item"
+        val nuevoPrecio = (editTextPrecio?.text.toString()).takeIf { it.isNotEmpty() } ?: "0"
 
+        val cantidadAnterior = itemRecibido.cantidad
+
+        itemRecibido.producto=nuevoNombre
+        itemRecibido.cantidad=nuevaCantidad
+        itemRecibido.productoEditado="true"
+
+        if (tipoRecibido.equals("venta"))   itemRecibido.venta=nuevoPrecio
+        if (tipoRecibido.equals("compra"))  itemRecibido.costo=nuevoPrecio
+
+        val diferenciaCantidad = nuevaCantidad.toInt() - cantidadAnterior.toInt()
+
+        var descuento= 0.0
+        if(!itemRecibido.porcentajeDescuento.isEmpty())descuento=itemRecibido.porcentajeDescuento.toDouble()
+        if(descuento!=0.0){
+            val precioNuevoDescuento=(nuevoPrecio.toDouble() /descuento)
+            val precioNuevoDescuento2=precioNuevoDescuento-nuevoPrecio.toDouble()
+            itemRecibido.precioDescuentos=precioNuevoDescuento2.toString()
+        }else{
+            itemRecibido.precioDescuentos=nuevoPrecio.toString()
+        }
+
+
+        if(diferenciaCantidad!=0){
+            //hacer una cola para restar o sumar las cantidades del inventario
+            val productosSeleccionados: MutableMap<ModeloProducto, Int> = mutableMapOf()
+            val nuevoProducto = ModeloProducto(id = itemRecibido.id_producto)
+            //multiplicamos *-1  para que en vez de restar sume en la base de datos
+            productosSeleccionados[nuevoProducto] = diferenciaCantidad
+            val listaProductosEditar = arrayListOf<ModeloProductoFacturado>()
+
+            productosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
+                //calculamos el precio descuento para tener la referencia para los reportes
+                if (cantidadSeleccionada!=0){
+
+                    val productoFacturado = ModeloProductoFacturado(
+                        id_producto_pedido = UUID.randomUUID().toString(),
+                        id_producto = producto.id,
+                        id_vendedor = MainActivity.datosUsuario.id,
+                        vendedor = MainActivity.datosUsuario.nombre,
+                        producto = producto.nombre,
+                        precioDescuentos= itemRecibido.precioDescuentos,
+                        cantidad = cantidadSeleccionada.toString(),
+                        costo = producto.p_compra,
+                        venta = producto.p_diamante,
+                        imagenUrl =producto.url
+                    )
+
+                    listaProductosEditar.add(productoFacturado)
+
+                    editarProductoTransaccion(contextoRecibido,tipoRecibido,diferenciaCantidad,producto.id)
+
+                }
+
+            }
+        }
+        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
+        listaProductosFacturados.add(itemRecibido)
+        if(nuevaCantidad.toInt()!=0){
+            //si es edicion no crea aqui la cola de transaccion
+            FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados,"edicion",contextoRecibido)
+
+        }else{
+            FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados,contextoRecibido,tipoRecibido)
+            Toast.makeText(contextoRecibido, cantidadAnterior +"x "+itemRecibido.producto+" Eliminados", Toast.LENGTH_LONG).show()
+        }
+
+    }
 
 
     fun promtEditarDatosCliente(datosFactura: ModeloFactura, context: FragmentActivity,vista : View) {

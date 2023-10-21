@@ -9,8 +9,13 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.core.content.FileProvider
 import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.R
+import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
 import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -88,6 +93,30 @@ object Utilidades {
         }
     }
 
+    fun cargarImagen(productUrl: String, imagenProducto: ImageView) {
+        // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
+        if (!productUrl.isEmpty() && imagenProducto.tag != productUrl) {
+            imagenProducto.tag = productUrl
+            Picasso.get()
+                .load(productUrl)
+                .networkPolicy(NetworkPolicy.OFFLINE) // Configurar la política de caché y persistencia
+                .into(imagenProducto, object : com.squareup.picasso.Callback {
+                    override fun onSuccess() {
+                        // La imagen se cargó exitosamente desde la caché o persistencia
+                    }
+
+                    override fun onError(e: Exception) {
+                        // Ocurrió un error al cargar la imagen desde la caché o persistencia
+                        // Intentar cargar la imagen desde la red
+                        Picasso.get().load(productUrl).into(imagenProducto)
+                    }
+                })
+        } else if (productUrl.isEmpty()) {
+            // Si la URL está vacía, mostrar una imagen por defecto o limpiar la vista
+            // dependiendo del diseño que se quiera obtener
+            imagenProducto.setImageResource(R.drawable.ic_menu_camera)
+        }
+    }
 
     fun obtenerFechaActual(): String {
         val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES")) // Especifica la configuración regional adecuada

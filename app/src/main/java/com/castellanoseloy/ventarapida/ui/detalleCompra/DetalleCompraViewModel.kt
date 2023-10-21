@@ -2,6 +2,7 @@ package com.castellanoseloy.ventarapida.ui.detalleCompra
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.castellanoseloy.ventarapida.MainActivity
@@ -113,5 +114,13 @@ class DetalleCompraViewModel : ViewModel() {
         intent.putExtra("listaProductos", productosSeleccionados )
         context.startActivity(intent)
 
+    }
+
+    fun eliminarProducto(item: ModeloProducto) {
+        MainActivity.compraProductosSeleccionados.remove(item)
+        Toast.makeText(context,"Se ha eliminado: ${item.nombre}", Toast.LENGTH_LONG).show()
+        val crearTono= CrearTono()
+        crearTono.crearTono(context)
+        totalFactura()
     }
 }

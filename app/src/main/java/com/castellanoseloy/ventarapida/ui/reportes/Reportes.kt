@@ -222,7 +222,22 @@ class Reportes : Fragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     viewModel.ReporteGananciaPorVendedor(requireContext(),fechaInicio,fechaFin,listaIdUsuarios[posicionSpinnerVendedor],binding!!)
                 }
+            }
 
+            if(binding?.spinnerTipoReporte?.selectedItemPosition==5){
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReporteSurtido(requireContext(),fechaInicio,fechaFin)
+                }
+            }
+
+            if(binding?.spinnerTipoReporte?.selectedItemPosition==6){
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReporteSurtidoPorProducto(requireContext(), fechaInicio, fechaFin)
+                }
             }
         }
     }

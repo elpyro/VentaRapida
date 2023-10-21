@@ -56,7 +56,7 @@ class ReporteVendedorViewModel : ViewModel() {
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
-            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor
+            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor,"ProductosFacturados"
         )
             .addOnSuccessListener { productos ->
 
@@ -80,15 +80,14 @@ class ReporteVendedorViewModel : ViewModel() {
         context: Context,
         fechaInicio: String,
         fechaFin: String,
-        idVendedor: String,
-        binding: FragmentReporteVendedorBinding
+        idVendedor: String
     ) {
 
         val nombreVendedor=MainActivity.datosUsuario.nombre
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
-            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor
+            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor,"ProductosFacturados"
         )
             .addOnSuccessListener { productos ->
                 val crearPdf= CrearPdfVentasPorVendedor()

@@ -16,5 +16,7 @@
         <item>Ventas Por Vendedor</item>
         <item>Mayor Ganancía</item>
         <item>Ganancia por Vendedor</item>
+        <item>Surtido</item>
+        <item>Surtido por producto</item>
     </string-array>
 </resources>

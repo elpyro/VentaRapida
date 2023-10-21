@@ -17,5 +17,5 @@
     <color name="rojo">#FF0000</color>
     <color name="amarillo">#DAD184</color>
     <color name="verde">#50D81E</color>
-
+    <color name="colorPrimary">#699EE0</color>
 </resources>

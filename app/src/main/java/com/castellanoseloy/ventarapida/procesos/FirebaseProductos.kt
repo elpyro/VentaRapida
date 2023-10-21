@@ -74,6 +74,27 @@ object FirebaseProductos {
             transaccionesEjecutadas.add(idTransaccion)
         }
     }
+    fun buscarProductoPorId(idProducto: String): Task<ModeloProducto?> {
+        val database = FirebaseDatabase.getInstance()
+        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(idProducto)
+
+        val taskCompletionSource = TaskCompletionSource<ModeloProducto?>()
+
+        tablaRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val producto = snapshot.getValue(ModeloProducto::class.java)
+                taskCompletionSource.setResult(producto)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("MiApp", "Error al buscar producto por ID: ${error.message}")
+                taskCompletionSource.setException(error.toException())
+            }
+        })
+
+        return taskCompletionSource.task
+    }
+
 
 
     fun buscarProductos(mayorCero: Boolean): Task<MutableList<ModeloProducto>> {

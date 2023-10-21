@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
@@ -22,6 +23,7 @@ import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
@@ -56,14 +58,10 @@ class DetalleCompra : Fragment() {
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
-        adaptador = DetalleCompraAdaptador(MainActivity.compraProductosSeleccionados )
 
 
-        adaptador.setOnClickItem() { item, cantidad, position ->
-            editarItem(item, cantidad)
-        }
+        actualizarRecycerView()
 
-        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
 
         viewModel.context = requireContext()
         viewModel.totalFactura()
@@ -87,12 +85,14 @@ class DetalleCompra : Fragment() {
         val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
         val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
         val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
+        val imageView_foto= dialogView.findViewById<ImageView>(R.id.imageView_foto)
 
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto.setSelectAllOnFocus(true)
         editTextCantidad.setSelectAllOnFocus(true)
         editTextPrecio.setSelectAllOnFocus(true)
 
+        Utilidades.cargarImagen(item.url, imageView_foto)
         editTextProducto.setText( item.nombre)
         editTextCantidad.setText(cantidad.toString())
         editTextPrecio.setText(item.p_compra)
@@ -108,7 +108,7 @@ class DetalleCompra : Fragment() {
             adaptador.notifyDataSetChanged()
 
             if(precioAnterior!=nuevoPrecio){
-                dialogoCambiarPreciosDB(nuevoPrecio, item)
+                dialogoCambiarPreciosDB(nuevoPrecio,precioAnterior, nuevaCantidad, item)
             }
 
         }
@@ -118,26 +118,82 @@ class DetalleCompra : Fragment() {
             // No hacer nada
         }
 
+        dialogBuilder.setNeutralButton("Eliminar") { dialogInterface, i ->
+            viewModel.eliminarProducto(  item)
+            actualizarRecycerView()
+        }
+
 // Mostrar el diálogo
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
     }
 
-    private fun dialogoCambiarPreciosDB(nuevoPrecio: String, item: ModeloProducto) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Mantente actualizado")
-        builder.setMessage("Desea actualizar el precio de compra para todos los ${item.nombre}")
-        builder.setPositiveButton("Sí") { dialog, which ->
-
-            val updates = hashMapOf<String, Any>(
-                "id" to item.id,
-                "p_compra" to nuevoPrecio,
-            )
-            FirebaseProductos.guardarProducto(updates)
-            Toast.makeText(requireContext(), "${item.nombre} ha sido actualizado", Toast.LENGTH_LONG).show()
+    private fun actualizarRecycerView() {
+        adaptador = DetalleCompraAdaptador(MainActivity.compraProductosSeleccionados )
+        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
+        adaptador.setOnClickItem() { item, cantidad, position ->
+            editarItem(item, cantidad)
         }
-        builder.setNegativeButton("No", null)
-        builder.show()
+    }
+
+    private fun dialogoCambiarPreciosDB(
+        nuevoPrecio: String,
+        precioAnterior: String,
+        nuevaCantidad: String,
+        itemAnterior: ModeloProducto
+    ) {
+
+        FirebaseProductos.buscarProductoPorId(itemAnterior.id)
+            .addOnCompleteListener {
+                if(it.isSuccessful){
+                    var itemActualizado = it.result
+
+                    if(!itemActualizado?.p_compra.equals(nuevoPrecio)) {
+
+                        val itemValorActual =
+                            itemActualizado?.p_compra!!.toDouble() * itemActualizado?.cantidad!!.toInt()
+                        val itemValorCompra = nuevoPrecio.toDouble() * nuevaCantidad.toInt()
+                        val valorInventariado = itemValorActual + itemValorCompra
+                        val totalProductoInventariado =
+                            itemActualizado.cantidad.toInt() + nuevaCantidad.toInt()
+
+                        val promedio = valorInventariado / totalProductoInventariado
+                        val promedioFormateado = String.format("%.2f", promedio)
+
+                        val builder = AlertDialog.Builder(requireContext())
+                        builder.setTitle("Mantente actualizado")
+                        builder.setMessage("Desea actualizar el precio de compra de ${itemActualizado.p_compra.formatoMonenda()} a el nuevo precio ${nuevoPrecio.formatoMonenda()} para todos los ${itemActualizado.nombre}")
+                        builder.setPositiveButton("Sí") { dialog, which ->
+                            actualizarPrecio(nuevoPrecio,itemActualizado)
+                        }
+
+                        builder.setNegativeButton("No", null)
+
+                        builder.setNeutralButton("Promediar (${
+                            promedioFormateado.formatoMonenda()
+                            })"
+                        ) { dialog, which ->
+                            actualizarPrecio(promedioFormateado,itemActualizado)
+                        }
+                        builder.show()
+                    }
+                }
+            }
+
+
+    }
+
+    private fun actualizarPrecio(nuevoPrecio: String, item:ModeloProducto) {
+        val updates = hashMapOf<String, Any>(
+            "id" to item.id,
+            "p_compra" to nuevoPrecio,
+        )
+        FirebaseProductos.guardarProducto(updates)
+        Toast.makeText(
+            requireContext(),
+            "${item.nombre} ha sido actualizado",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun listeners() {

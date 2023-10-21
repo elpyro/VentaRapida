@@ -2,6 +2,7 @@ package com.castellanoseloy.ventarapida.ui.detalleVenta
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 
 
 import androidx.lifecycle.MutableLiveData
@@ -16,6 +17,7 @@ import com.castellanoseloy.ventarapida.procesos.CrearTono
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.castellanoseloy.ventarapida.procesos.Preferencias
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 
 
@@ -81,14 +83,13 @@ class DetalleVentaViewModel : ViewModel() {
 
     fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Double, cantidad:Int, nombre:String) {
         val productoEncontrado = ventaProductosSeleccionados.keys.find { it.id == producto.id }
-        if (productoEncontrado != null) {
 
+        if (productoEncontrado != null) {
             ventaProductosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_diamante = nuevoPrecio.toString()
             productoEncontrado.nombre = nombre
             if (productoEncontrado.editado!= null)productoEncontrado.editado ="true"
             ventaProductosSeleccionados[productoEncontrado] = cantidad
-
         }
 
         val crearTono= CrearTono()
@@ -100,8 +101,6 @@ class DetalleVentaViewModel : ViewModel() {
         ventaProductosSeleccionados.clear()
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context, ventaProductosSeleccionados,"venta_seleccionada")
-
-
     }
 
 
@@ -136,5 +135,13 @@ class DetalleVentaViewModel : ViewModel() {
             context.startActivity(intent)
 
         }
+
+    fun eliminarProducto(item: ModeloProducto) {
+        ventaProductosSeleccionados.remove(item)
+        Toast.makeText(context,"Se ha eliminado: ${item.nombre}",Toast.LENGTH_LONG).show()
+        val crearTono= CrearTono()
+        crearTono.crearTono(context)
+        totalFactura()
+    }
 
 }

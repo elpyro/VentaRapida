@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
@@ -85,31 +86,7 @@ class CompraGuardadaAdaptador(
             val total= factura.cantidad.toInt() * factura.costo.toDouble()
             total_producto.text= total.toString().formatoMonenda()
 
-            // Limpiar la imagen anterior
-//            Picasso.get().cancelRequest(imagenProducto)
-
-            // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
-            if (!factura.imagenUrl.isEmpty() && imagenProducto.tag != factura.imagenUrl) {
-                imagenProducto.tag = factura.imagenUrl
-                Picasso.get()
-                    .load(factura.imagenUrl)
-                    .networkPolicy(NetworkPolicy.OFFLINE) // Configurar la política de caché y persistencia
-                    .into(imagenProducto, object : com.squareup.picasso.Callback {
-                        override fun onSuccess() {
-                            // La imagen se cargó exitosamente desde la caché o persistencia
-                        }
-
-                        override fun onError(e: Exception) {
-                            // Ocurrió un error al cargar la imagen desde la caché o persistencia
-                            // Intentar cargar la imagen desde la red
-                            Picasso.get().load(factura.imagenUrl).into(imagenProducto)
-                        }
-                    })
-            } else if (factura.imagenUrl.isEmpty()) {
-                // Si la URL está vacía, mostrar una imagen por defecto o limpiar la vista
-                // dependiendo del diseño que se quiera obtener
-                imagenProducto.setImageResource(R.drawable.ic_menu_camera)
-            }
+            Utilidades.cargarImagen(factura.imagenUrl, imagenProducto)
         }
 
     }

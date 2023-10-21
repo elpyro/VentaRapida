@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.procesos.DecimalDigitsInputFilter
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria
 import com.castellanoseloy.ventarapida.procesos.Utilidades
@@ -54,8 +55,6 @@ class DetalleProducto : Fragment() {
         setHasOptionsMenu(true)
         // Inflar el layout del fragmento usando el binding
         binding = FragmentDetalleProductoBinding.inflate(inflater, container, false)
-
-
 
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments

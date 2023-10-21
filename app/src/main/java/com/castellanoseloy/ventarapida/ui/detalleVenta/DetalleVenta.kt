@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
@@ -28,16 +27,14 @@ import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -71,15 +68,11 @@ class DetalleVenta : Fragment() {
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
-        adaptador = DetalleVentaAdaptador(ventaProductosSeleccionados )
+
 
         idPedido = UUID.randomUUID().toString()
 
-        adaptador.setOnClickItem() { item, cantidad, position ->
-            editarItem(item, cantidad)
-        }
-
-        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
+        actualizarRecycerView()
 
         viewModel.context = requireContext()
         viewModel.totalFactura()
@@ -94,6 +87,14 @@ class DetalleVenta : Fragment() {
 
     }
 
+    private fun actualizarRecycerView() {
+        adaptador = DetalleVentaAdaptador(ventaProductosSeleccionados )
+        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
+        adaptador.setOnClickItem() { item, cantidad, position ->
+            editarItem(item, cantidad)
+        }
+
+    }
 
 
     private fun listeners() {
@@ -424,6 +425,7 @@ class DetalleVenta : Fragment() {
         editTextCantidad.setSelectAllOnFocus(true)
         editTextPrecio.setSelectAllOnFocus(true)
 
+        Utilidades.cargarImagen(item.url, imageView_foto)
         editTextProducto.setText( item.nombre)
         editTextCantidad.setText(cantidad.toString())
         editTextPrecio.setText(item.p_diamante)
@@ -436,6 +438,7 @@ class DetalleVenta : Fragment() {
             val nuevoPrecio = editTextPrecio.text.toString()
 
             viewModel.actualizarProducto(item, nuevoPrecio.toDouble(),nuevaCantidad.toInt(), nuevoNombre)
+
             adaptador.notifyDataSetChanged()
         }
 
@@ -444,10 +447,17 @@ class DetalleVenta : Fragment() {
             // No hacer nada
         }
 
+        dialogBuilder.setNeutralButton("Eliminar") { dialogInterface, i ->
+            viewModel.eliminarProducto(  item)
+            actualizarRecycerView()
+        }
+
 // Mostrar el diálogo
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

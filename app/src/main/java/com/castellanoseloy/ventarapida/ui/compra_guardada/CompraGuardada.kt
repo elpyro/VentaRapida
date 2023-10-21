@@ -45,12 +45,10 @@ class CompraGuardada : Fragment() {
     ): View? {
         binding = FragmentCompraGuardadaBinding.inflate(inflater, container, false)
 
-
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
         modeloFactura = (bundle?.getSerializable("modelo") as? ModeloFactura)!!
         listaDeProductos = (bundle?.getSerializable("lista") as? ArrayList<ModeloFactura>)!!
-
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding?.recyclerViewProductosSeleccionados?.layoutManager = gridLayoutManager

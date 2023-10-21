@@ -18,6 +18,8 @@ import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfCatalogo
 import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfGanancias
 import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfMasVendidos
 import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfMayorGanancia
+import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfSurtido
+import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfSurtidoPorProducto
 import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfVentasPorVendedor
 import kotlinx.coroutines.runBlocking
 
@@ -78,7 +80,7 @@ class ReportesViewModel : ViewModel() {
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
-            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor
+            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor,"ProductosFacturados"
         )
             .addOnSuccessListener { productos ->
                 if(productos.isNotEmpty()){
@@ -99,7 +101,7 @@ class ReportesViewModel : ViewModel() {
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
-            ), Utilidades.convertirFechaAUnix(fechaFin), "false"
+            ), Utilidades.convertirFechaAUnix(fechaFin), "false","ProductosFacturados"
         )
             .addOnSuccessListener { productos ->
                 if(productos.isNotEmpty()){
@@ -122,7 +124,7 @@ class ReportesViewModel : ViewModel() {
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
-            ), Utilidades.convertirFechaAUnix(fechaFin), "false"
+            ), Utilidades.convertirFechaAUnix(fechaFin), "false","ProductosFacturados"
         )
             .addOnSuccessListener { productos ->
                 if(productos.isNotEmpty()){
@@ -143,11 +145,10 @@ class ReportesViewModel : ViewModel() {
 
     fun ReporteGanancia(context: Context, fechaInicio: String, fechaFin: String) {
 
-
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
-            ), Utilidades.convertirFechaAUnix(fechaFin), "false"
+            ), Utilidades.convertirFechaAUnix(fechaFin), "false","ProductosFacturados"
         )
             .addOnSuccessListener { productos ->
                 if(productos.isNotEmpty()){
@@ -163,7 +164,53 @@ class ReportesViewModel : ViewModel() {
                     _reporteCompletado.value = Unit
                 }
             }
+    }
 
+    fun ReporteSurtido(context: Context, fechaInicio: String, fechaFin: String) {
+
+        FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
+            Utilidades.convertirFechaAUnix(
+                fechaInicio
+            ), Utilidades.convertirFechaAUnix(fechaFin), "false","ProductosComprados"
+        )
+            .addOnSuccessListener { productos ->
+                if(productos.isNotEmpty()){
+                    val crearPdf= CrearPdfSurtido()
+                    crearPdf.surtido(context, fechaInicio, fechaFin, productos as ArrayList<ModeloProductoFacturado>,"Todos")
+
+                    _reporteCompletado.value = Unit
+
+                    val intent = Intent(context, VistaPDFReporte::class.java)
+                    context.startActivity(intent)
+                }else{
+                    Toast.makeText(context,"No hay registros disponibles",Toast.LENGTH_LONG).show()
+                    _reporteCompletado.value = Unit
+                }
+            }
+    }
+
+    fun ReporteSurtidoPorProducto(context: Context, fechaInicio: String, fechaFin: String) {
+        FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
+            Utilidades.convertirFechaAUnix(
+                fechaInicio
+            ), Utilidades.convertirFechaAUnix(fechaFin), "false","ProductosComprados"
+        )
+            .addOnSuccessListener { productos ->
+                if(productos.isNotEmpty()){
+                    var listaMasSurtidos= crearListaCostosConCantidad(productos)
+
+                    val listaOrdenada = listaMasSurtidos.toList().sortedByDescending { (_, value) -> value.second }.toMap()
+                    val crearPdf= CrearPdfSurtidoPorProducto()
+                    crearPdf.surtidoPorProducto(context, fechaInicio, fechaFin,listaOrdenada)
+
+                    _reporteCompletado.value = Unit
+                    val intent = Intent(context, VistaPDFReporte::class.java)
+                    context.startActivity(intent)
+                }else{
+                    Toast.makeText(context,"No hay registros disponibles",Toast.LENGTH_LONG).show()
+                    _reporteCompletado.value = Unit
+                }
+            }
     }
 
     fun ReporteGananciaPorVendedor(
@@ -177,7 +224,7 @@ class ReportesViewModel : ViewModel() {
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
-            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor
+            ), Utilidades.convertirFechaAUnix(fechaFin), idVendedor,"ProductosFacturados"
         )
             .addOnSuccessListener { productos ->
 
@@ -226,6 +273,30 @@ class ReportesViewModel : ViewModel() {
         // Retornar la lista de ventas por producto ordenada
         return ventasOrdenadas.toMap()
     }
+    data class ProductoKeyMasSurtidos(val idProducto: String, val costo: String)
+
+
+    fun crearListaCostosConCantidad(productos: List<ModeloProductoFacturado>?): Map<ProductoLlave, Pair<Double, Int>> {
+        val costosPorProducto = mutableMapOf<ProductoLlave, Pair<Double, Int>>()
+
+        for (producto in productos!!) {
+            val idProducto = producto.id_producto
+            val nombreProducto = producto.producto
+            val costo = producto.costo.toDouble()
+            val cantidad = producto.cantidad.toInt()
+            val productoLlave = ProductoLlave(idProducto, nombreProducto)
+
+            if (costosPorProducto.containsKey(productoLlave)) {
+                val (costoActual, cantidadActual) = costosPorProducto[productoLlave] ?: Pair(0.0, 0)
+                costosPorProducto[productoLlave] = Pair(costoActual + (costo*cantidad), cantidadActual + cantidad)
+            } else {
+                costosPorProducto[productoLlave] = Pair(costo*cantidad, cantidad)
+            }
+        }
+
+        return costosPorProducto
+    }
+
     data class ProductoLlave(
         val idProducto: String,
         val nombreProducto: String
