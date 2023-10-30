@@ -66,12 +66,13 @@ class DetalleVenta : Fragment() {
 
         setHasOptionsMenu(true)
 
-        val gridLayoutManager = GridLayoutManager(requireContext(), 1)
-        binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
+
 
 
         idPedido = UUID.randomUUID().toString()
 
+        val gridLayoutManager = GridLayoutManager(requireContext(), 1)
+        binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
         actualizarRecycerView()
 
         viewModel.context = requireContext()
@@ -88,6 +89,7 @@ class DetalleVenta : Fragment() {
     }
 
     private fun actualizarRecycerView() {
+
         adaptador = DetalleVentaAdaptador(ventaProductosSeleccionados )
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
         adaptador.setOnClickItem() { item, cantidad, position ->
@@ -153,22 +155,6 @@ class DetalleVenta : Fragment() {
         })
 
 
-        binding!!.searchViewBuscarSeleccionados.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    filtrarProductos(newText)
-                }
-                return true
-            }
-        })
-        //desbloquea searchview al seleccionarlo
-        binding?.searchViewBuscarSeleccionados?.setOnClickListener {
-            binding?.searchViewBuscarSeleccionados?.isIconified=false
-        }
 
         binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -370,20 +356,6 @@ class DetalleVenta : Fragment() {
     }
 
 
-
-    fun filtrarProductos(nombreFiltrado: String) {
-
-        val productosFiltrados = ventaProductosSeleccionados.filter { it.key.nombre.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }.toMutableMap()
-        adaptador = DetalleVentaAdaptador(productosFiltrados)
-        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
-
-
-        adaptador.setOnClickItem() { item, cantidad, position ->
-            editarItem(item, cantidad)
-        }
-
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
 
@@ -439,7 +411,7 @@ class DetalleVenta : Fragment() {
 
             viewModel.actualizarProducto(item, nuevoPrecio.toDouble(),nuevaCantidad.toInt(), nuevoNombre)
 
-            adaptador.notifyDataSetChanged()
+            actualizarRecycerView()
         }
 
 // Configurar el botón "Cancelar"

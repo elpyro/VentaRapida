@@ -77,7 +77,7 @@ class DetalleCompra : Fragment() {
     fun editarItem(item: ModeloProducto, cantidad: Int) {
         val dialogBuilder = AlertDialog.Builder(context)
 
-// Inflar el layout para el diálogo
+        // Inflar el layout para el diálogo
         val inflater = requireActivity().layoutInflater
         val dialogView = inflater.inflate(R.layout.promt_factura, null)
         dialogBuilder.setView(dialogView)
@@ -108,7 +108,7 @@ class DetalleCompra : Fragment() {
             adaptador.notifyDataSetChanged()
 
             if(precioAnterior!=nuevoPrecio){
-                dialogoCambiarPreciosDB(nuevoPrecio,precioAnterior, nuevaCantidad, item)
+                dialogoCambiarPreciosDB(nuevoPrecio, nuevaCantidad, item)
             }
 
         }
@@ -138,7 +138,6 @@ class DetalleCompra : Fragment() {
 
     private fun dialogoCambiarPreciosDB(
         nuevoPrecio: String,
-        precioAnterior: String,
         nuevaCantidad: String,
         itemAnterior: ModeloProducto
     ) {
@@ -209,23 +208,6 @@ class DetalleCompra : Fragment() {
             }
         })
 
-
-        binding!!.searchViewBuscarSeleccionados.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    filtrarProductos(newText)
-                }
-                return true
-            }
-        })
-        //desbloquea searchview al seleccionarlo
-        binding?.searchViewBuscarSeleccionados?.setOnClickListener {
-            binding?.searchViewBuscarSeleccionados?.isIconified=false
-        }
 
         binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -394,20 +376,6 @@ class DetalleCompra : Fragment() {
         return Pair(listaProductosComprados, listaDescontarInventario)
     }
 
-
-
-    fun filtrarProductos(nombreFiltrado: String) {
-
-        val productosFiltrados = MainActivity.compraProductosSeleccionados.filter { it.key.nombre.eliminarAcentosTildes().contains(nombreFiltrado.eliminarAcentosTildes(), ignoreCase = true) }.toMutableMap()
-        adaptador = DetalleCompraAdaptador(productosFiltrados)
-        binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
-
-
-        adaptador!!.setOnClickItem() { item, cantidad, position ->
-            editarItem(item, cantidad)
-        }
-
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

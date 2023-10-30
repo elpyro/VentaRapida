@@ -2,6 +2,7 @@ package com.castellanoseloy.ventarapida.ui.detalleVenta
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 
 
@@ -83,7 +84,7 @@ class DetalleVentaViewModel : ViewModel() {
 
     fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Double, cantidad:Int, nombre:String) {
         val productoEncontrado = ventaProductosSeleccionados.keys.find { it.id == producto.id }
-
+        Log.d("ListaCompra", "editando $cantidad de $producto ")
         if (productoEncontrado != null) {
             ventaProductosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_diamante = nuevoPrecio.toString()

@@ -1,6 +1,7 @@
 package com.castellanoseloy.ventarapida.ui.detalleVenta
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +28,7 @@ class DetalleVentaAdaptador(
         // Inflar el diseño del item_producto para crear la vista del ViewHolder
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_producto_seleccionado, parent, false)
-
+        Log.d("ListaCompra", "tamaño de la lista: ${products.size}")
         return ProductViewHolder(view)
     }
 
@@ -43,6 +44,7 @@ class DetalleVentaAdaptador(
         holder.bind(producto, cantidad)
 
         holder.cardView.setOnClickListener {
+            Log.d("ListaCompra", "invocaste al: $cantidad de $producto")
             onClickItem?.invoke(producto, cantidad!!, position)
         }
         }
@@ -72,7 +74,7 @@ class DetalleVentaAdaptador(
 
         @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto, cantidadSeleccion: Int?) {
-
+            Log.d("ListaCompra", "mostrando $cantidadSeleccion de $product")
             producto.text = product.nombre
 
             // Verificar si la cantidad es nula y si no lo es, establecer el texto de la vista de cantidad
