@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.detalleProducto
 
 import android.content.Context
@@ -8,12 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.castellanoseloy.ventarapida.MainActivity
-
-
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.GuardarImagenEnDispositivo
 import com.castellanoseloy.ventarapida.servicios.ServiciosSubirFoto
-
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,8 +23,6 @@ import com.google.firebase.storage.ktx.storage
 
 
 class DetalleProductoViewModel : ViewModel() {
-
-
 
     // Lista de productos
     val listaProductos = mutableListOf<ModeloProducto>()
@@ -110,8 +107,6 @@ class DetalleProductoViewModel : ViewModel() {
         val idProducto= detalleProducto.value?.get(0)?.id
 
         // Obtener la imagen del ImageView como Bitmap
-
-
         // Crear una referencia a la ubicación donde se subirá la imagen en Firebase Storage
         val storageRef = Firebase.storage.reference.child(idProducto + ".jpg")
 

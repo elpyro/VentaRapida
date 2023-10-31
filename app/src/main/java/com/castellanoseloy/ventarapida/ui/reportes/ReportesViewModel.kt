@@ -76,7 +76,7 @@ class ReportesViewModel : ViewModel() {
          binding: FragmentReportesBinding
      ) {
 
-        val nombreVendedor=binding?.spinnerVendedor?.selectedItem.toString()
+        val nombreVendedor= binding.spinnerVendedor.selectedItem.toString()
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
@@ -105,7 +105,7 @@ class ReportesViewModel : ViewModel() {
         )
             .addOnSuccessListener { productos ->
                 if(productos.isNotEmpty()){
-                    var listaMasVendidos= crearListaMasVendidos(productos)
+                    val listaMasVendidos= crearListaMasVendidos(productos)
 
                     val crearPdf= CrearPdfMasVendidos()
                     crearPdf.masVendidos(context, fechaInicio, fechaFin,listaMasVendidos)
@@ -128,7 +128,7 @@ class ReportesViewModel : ViewModel() {
         )
             .addOnSuccessListener { productos ->
                 if(productos.isNotEmpty()){
-                var listaMasVendidos= crearListaMayorGanancia(productos)
+                val listaMasVendidos= crearListaMayorGanancia(productos)
 
                     val crearPdf= CrearPdfMayorGanancia()
                     crearPdf.mayorGanancia(context, fechaInicio, fechaFin,listaMasVendidos)
@@ -197,7 +197,7 @@ class ReportesViewModel : ViewModel() {
         )
             .addOnSuccessListener { productos ->
                 if(productos.isNotEmpty()){
-                    var listaMasSurtidos= crearListaCostosConCantidad(productos)
+                    val listaMasSurtidos= crearListaCostosConCantidad(productos)
 
                     val listaOrdenada = listaMasSurtidos.toList().sortedByDescending { (_, value) -> value.second }.toMap()
                     val crearPdf= CrearPdfSurtidoPorProducto()
@@ -220,7 +220,7 @@ class ReportesViewModel : ViewModel() {
         idVendedor: String,
         binding: FragmentReportesBinding
     ) {
-        val nombreVendedor=binding?.spinnerVendedor?.selectedItem.toString()
+        val nombreVendedor= binding.spinnerVendedor.selectedItem.toString()
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio
@@ -273,8 +273,6 @@ class ReportesViewModel : ViewModel() {
         // Retornar la lista de ventas por producto ordenada
         return ventasOrdenadas.toMap()
     }
-    data class ProductoKeyMasSurtidos(val idProducto: String, val costo: String)
-
 
     fun crearListaCostosConCantidad(productos: List<ModeloProductoFacturado>?): Map<ProductoLlave, Pair<Double, Int>> {
         val costosPorProducto = mutableMapOf<ProductoLlave, Pair<Double, Int>>()

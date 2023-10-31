@@ -16,7 +16,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -73,10 +73,11 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="2dp"
-                        android:layout_weight="1.5">
+                        android:layout_weight="1.5"
+                        tools:ignore="NestedWeights">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:visibility="gone"
@@ -116,9 +117,6 @@
 
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/editTextCorreo"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_margin="8dp"
                     android:text="Tu correo de ingreso es:"
                     android:layout_gravity="center"
@@ -130,9 +128,6 @@
                     android:id="@+id/hintCorreo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/editTextCorreo"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_margin="8dp"
                     android:text="@string/gmail"
                     android:layout_gravity="center"
@@ -182,11 +177,12 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
-            app:lottie_autoPlay="true"
             android:scaleType="centerCrop"
+            app:lottie_autoPlay="true"
             app:lottie_fileName="animacion_sincro.json"
             app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true" />
+            app:lottie_loop="true"
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:layout_width="match_parent"

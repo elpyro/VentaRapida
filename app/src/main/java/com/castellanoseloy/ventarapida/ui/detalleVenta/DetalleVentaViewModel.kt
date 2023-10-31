@@ -1,29 +1,23 @@
 package com.castellanoseloy.ventarapida.ui.detalleVenta
 
+
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.castellanoseloy.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
 import com.castellanoseloy.ventarapida.VistaPDFFacturaOCompra
 import com.castellanoseloy.ventarapida.datos.ModeloClientes
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
-import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.CrearTono
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.castellanoseloy.ventarapida.procesos.Preferencias
-import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
-
-
-import java.util.*
-import kotlin.collections.HashMap
 
 
 class DetalleVentaViewModel : ViewModel() {

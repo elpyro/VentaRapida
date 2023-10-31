@@ -25,11 +25,10 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.castellanoseloy.ventarapida.ui.promts.PromtFacturaGuardada
 
+@Suppress("DEPRECATION")
 class FacturaGuardada : Fragment() {
 
-    private var primeraCarga=false
     private lateinit var viewModel: FacturaGuardadaViewModel
-
     private var binding: FragmentFacturaGuardadaBinding? = null
     private lateinit var vista:View
     private lateinit var adaptador: FacturaGuardadaAdaptador
@@ -38,7 +37,7 @@ class FacturaGuardada : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding= FragmentFacturaGuardadaBinding.inflate(inflater, container, false)
 
         setHasOptionsMenu(true)
@@ -83,7 +82,7 @@ class FacturaGuardada : Fragment() {
         }
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
-            if (banderaElimandoFactura==true) return@observe
+            if (banderaElimandoFactura) return@observe
 
                 binding?.textViewTotal?.text="Total: $it"
 
@@ -100,7 +99,7 @@ class FacturaGuardada : Fragment() {
         viewModel.datosProductosFacturados.observe(viewLifecycleOwner) { productosFacturados ->
             adaptador = FacturaGuardadaAdaptador(productosFacturados as MutableList<ModeloProductoFacturado>)
             binding?.recyclerViewProductosFacturados?.adapter = adaptador
-            adaptador!!.setOnClickItem() { item ->
+            adaptador.setOnClickItem() { item ->
 
                 if (!MainActivity.datosUsuario.configuracion.editarFacturas){
                     Toast.makeText(requireContext(),"No posee permiso para editar",Toast.LENGTH_LONG).show()
@@ -179,18 +178,20 @@ class FacturaGuardada : Fragment() {
         binding?.recyclerViewProductosFacturados?.adapter = adaptador
 
 
-        adaptador!!.setOnClickItem() { item ->
+        adaptador.setOnClickItem() { item ->
             val promtEditarItem=PromtFacturaGuardada()
             promtEditarItem.editarProducto("venta",item,requireActivity())
         }
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_factura_o_compra_guardada, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -230,7 +231,7 @@ class FacturaGuardada : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
         builder.setMessage("¿Estás seguro de que deseas eliminar esta factura y DEVOLVER los productos?")
-        builder.setPositiveButton("Eliminar") { dialog, which ->
+        builder.setPositiveButton("Eliminar") { _, _ ->
 
             banderaElimandoFactura=true
 

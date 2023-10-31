@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.reportes
 
 
@@ -33,15 +35,15 @@ class Reportes : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentReportesBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[ReportesViewModel::class.java]
 
         listener()
         escuchadores()
-        binding?.textViewDesde?.setText(Utilidades.obtenerFechaActual())
+        binding?.textViewDesde?.text = Utilidades.obtenerFechaActual()
         buscarTodosUsuariosPorEmpresa().addOnSuccessListener { listaUsuarios->
-                if (!listaUsuarios.isEmpty()) crearSpinner(listaUsuarios)
+                if (listaUsuarios.isNotEmpty()) crearSpinner(listaUsuarios)
         }
         if(MainActivity.verPublicidad)  initLoadAds()
 
@@ -61,8 +63,8 @@ class Reportes : Fragment() {
 
     private fun crearSpinner(listaUsuarios: MutableList<ModeloUsuario>?) {
         listaIdUsuarios = listaUsuarios?.map { it.id }!!
-        val listaNombresUsuarios = listaUsuarios?.map { it.nombre }
-        val lista: MutableList<String> = listaNombresUsuarios?.toMutableList() ?: mutableListOf()
+        val listaNombresUsuarios = listaUsuarios.map { it.nombre }
+        val lista: MutableList<String> = listaNombresUsuarios.toMutableList()
 
         // Crear un adaptador utilizando la lista de nombres de usuarios
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, lista)
@@ -138,7 +140,7 @@ class Reportes : Fragment() {
 
                 val datepickerDialogo = DatePickerDialog(
                     requireContext(),
-                    { view, year, month, dayOfMonth ->
+                    { _, year, month, dayOfMonth ->
                         val formattedMonth = month + 1
                         val formattedDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
                         val formattedDate = "$formattedDayOfMonth/$formattedMonth/$year"
@@ -158,7 +160,7 @@ class Reportes : Fragment() {
 
                 val datepickerDialogo = DatePickerDialog(
                     requireContext(),
-                    { view, year, month, dayOfMonth ->
+                    { _, year, month, dayOfMonth ->
                         val formattedMonth = month + 1
                         val formattedDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
                         val formattedDate = "$formattedDayOfMonth/$formattedMonth/$year"

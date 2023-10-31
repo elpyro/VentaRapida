@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.agregarProductoFactura
 
 import android.Manifest
@@ -22,20 +24,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.R
-
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.castellanoseloy.ventarapida.procesos.Utilidades.separarNumerosDelString
 import com.castellanoseloy.ventarapida.databinding.FragmentAgregarProductoFacturaBinding
-
 
 import java.util.*
 
 class AgregarProductoFactura : Fragment() {
-
-
 
     private var binding: FragmentAgregarProductoFacturaBinding? = null
     private lateinit var viewModel: AgregarProductoFacturaViewModel
@@ -52,7 +49,7 @@ class AgregarProductoFactura : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         binding = FragmentAgregarProductoFacturaBinding.inflate(inflater, container, false)
 
@@ -62,12 +59,13 @@ class AgregarProductoFactura : Fragment() {
         return binding!!.root
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_total, menu)
         menuItem = menu.findItem(R.id.action_total)
 
 
-        viewModel.totalCarritoLiveData.observe(viewLifecycleOwner) { it ->
+        viewModel.totalCarritoLiveData.observe(viewLifecycleOwner) {
             val title = SpannableString("Total: $it")
             title.setSpan(
                 AbsoluteSizeSpan(20, true), // Tamaño de texto en sp
@@ -81,6 +79,7 @@ class AgregarProductoFactura : Fragment() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -100,7 +99,7 @@ class AgregarProductoFactura : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(modeloFactura!!.nombre)
         builder.setMessage("¿Estás seguro de agregar ${productosSeleccionadosAgregar.size} productos a la factura?")
-        builder.setPositiveButton("Agregar") { dialog, which ->
+        builder.setPositiveButton("Agregar") { _, _ ->
 
             MainActivity.progressDialog?.show()
 
@@ -192,21 +191,8 @@ class AgregarProductoFactura : Fragment() {
             val productosOrdenados = productos.sortedBy { it.nombre }
             adapter = AgregarProductoFacturaAdaptador(productosOrdenados, viewModel)
 
-            adapter!!.setOnLongClickItem { item, position ->
-                abriDetalle(item,vista, position)
-            }
-
             lista = productos as ArrayList<ModeloProducto>?
             binding!!.recyclerViewProductosVenta.adapter = adapter
-        }
-    }
-    private fun abriDetalle(modeloProducto: ModeloProducto, view: View?, position:Int) {
-        val bundle = Bundle()
-        bundle.putInt("position", position)
-        bundle.putSerializable("modelo", modeloProducto)
-        bundle.putSerializable("listaProductos", lista)
-        if (view != null) {
-            Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
         }
     }
 
@@ -218,7 +204,7 @@ class AgregarProductoFactura : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
-        builder.setPositiveButton("Eliminar") { dialog, which ->
+        builder.setPositiveButton("Eliminar") { _, _ ->
             viewModel.eliminarCarrito()
             binding?.recyclerViewProductosVenta?.adapter=adapter
         }
@@ -226,6 +212,7 @@ class AgregarProductoFactura : Fragment() {
         builder.show()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -233,20 +220,14 @@ class AgregarProductoFactura : Fragment() {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val query = results?.get(0)
             if (query != null) {
-                //Separamos los ultimos numeros de el string obtenido por voz
-                // para saber si hay un numero y agregar el numero a la seleccion del producto
-                val numerosSeparados= separarNumerosDelString(query.trim())
-
-                if (numerosSeparados.second!=null){
-                    cantidadPorVoz= numerosSeparados.second!!.toInt()
-                }
-                binding?.searchViewProductosVenta?.setQuery(numerosSeparados.first.trim(), true)
+                binding?.searchViewProductosVenta?.isIconified=false
+                binding?.searchViewProductosVenta?.setQuery(query, true)
             }
 
         }
     }
 
-    var cantidadPorVoz=0
+
     private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
@@ -257,19 +238,6 @@ class AgregarProductoFactura : Fragment() {
         val adaptador = productosOrdenados?.let { AgregarProductoFacturaAdaptador(it,viewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adaptador
 
-        if (productosOrdenados?.size==1 && cantidadPorVoz!=0){
-            viewModel.actualizarCantidadProducto(productosOrdenados!![0], cantidadPorVoz)
-            cantidadPorVoz=0
-        }
-
-        adaptador!!.setOnLongClickItem { item, position ->
-            val bundle = Bundle()
-            bundle.putSerializable("modelo", item)
-            bundle.putInt("position", position)
-            val arrayList: ArrayList<ModeloProducto> = productosOrdenados.toCollection(ArrayList())
-            bundle.putSerializable("listaProductos", arrayList)
-            Navigation.findNavController(vista!!).navigate(R.id.detalleProducto,bundle)
-        }
     }
 
     override fun onDestroyView() {

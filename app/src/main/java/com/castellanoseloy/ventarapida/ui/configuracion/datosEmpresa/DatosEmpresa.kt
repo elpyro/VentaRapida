@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.configuracion.datosEmpresa
 
 import android.app.Activity
@@ -40,8 +42,6 @@ class DatosEmpresa : Fragment() {
     private var binding: FragmentDatosEmpresaBinding? = null
     private lateinit var vista: View
 
-    private lateinit var viewModel: DatosEmpresaViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,7 +54,7 @@ class DatosEmpresa : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         vista=view
-        viewModel = ViewModelProvider(this)[DatosEmpresaViewModel::class.java]
+
         setHasOptionsMenu(true)
         if(MainActivity.datosEmpresa.id!="")cargarDatos()
 
@@ -69,16 +69,18 @@ class DatosEmpresa : Fragment() {
         binding?.editTextTelefono2?.setText(MainActivity.datosEmpresa.telefono2)
         binding?.editTextDireccion?.setText(MainActivity.datosEmpresa.direccion)
         binding?.editTextGarantia?.setText(MainActivity.datosEmpresa.garantia)
-        if (!MainActivity.datosEmpresa.url.isEmpty()){
+        if (MainActivity.datosEmpresa.url.isNotEmpty()){
             Picasso.get().load(MainActivity.datosEmpresa.url).into(binding?.imageViewFotoEmpresa)
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_guardar_y_foto, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -137,7 +139,7 @@ class DatosEmpresa : Fragment() {
 
                 MainActivity.editText_nombreEmpresa.text = MainActivity.datosEmpresa.nombre
 
-                if (!MainActivity.datosEmpresa.url.isEmpty()){
+                if (MainActivity.datosEmpresa.url.isNotEmpty()){
                     Picasso.get().load(MainActivity.datosEmpresa.url).into(MainActivity.logotipo)
                     MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
                 }

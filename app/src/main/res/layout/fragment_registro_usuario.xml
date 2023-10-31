@@ -170,42 +170,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <Switch
             android:id="@+id/switch_precios_compra"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mostrar Precios Compra en Catálogo" />
+            android:layout_marginTop="10dp"
+            android:text="Mostrar Precios Compra en Catálogo"
+            android:textColor="@color/white"
+            tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
 <LinearLayout
     android:id="@+id/linearLayout_opcionesVendedor"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-        <Switch
-            android:id="@+id/switch_reporteGanancia"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mostrar Reporte de Ganancia" />
 
-        <Switch
-            android:id="@+id/switch_editarFacturas"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Editar/Eliminar Facturas Completadas" />
+    <Switch
+        android:id="@+id/switch_reporteGanancia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:minHeight="48dp"
+        android:text="Mostrar Reporte de Ganancia"
+        android:textColor="@color/white" />
 
-        <Switch
-            android:id="@+id/switch_agregarInformacion"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Agregar Información Adicional a Factura" />
+    <Switch
+        android:id="@+id/switch_editarFacturas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:minHeight="48dp"
+        android:text="Editar/Eliminar Facturas Completadas"
+        android:textColor="@color/white" />
+
+    <Switch
+        android:id="@+id/switch_agregarInformacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:minHeight="48dp"
+        android:text="Agregar Información Adicional a Factura"
+        android:textColor="@color/white" />
 </LinearLayout>
     </LinearLayout>
 

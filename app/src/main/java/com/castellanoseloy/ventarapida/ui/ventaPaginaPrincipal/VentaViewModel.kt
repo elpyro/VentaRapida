@@ -122,7 +122,7 @@ class VentaViewModel : ViewModel() {
                         val producto = productoSnapshot.getValue(ModeloProducto::class.java)
 
                         if (!MainActivity.mostrarAgotadosCatalogo) {
-                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto!!)
+                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
                         }
 
                         if (MainActivity.mostrarAgotadosCatalogo) productos.add(producto!!)
@@ -144,7 +144,7 @@ class VentaViewModel : ViewModel() {
                         val producto = productoSnapshot.getValue(ModeloProducto::class.java)
 
                         if (!MainActivity.mostrarAgotadosCatalogo) {
-                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto!!)
+                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
                         }
 
                         if (MainActivity.mostrarAgotadosCatalogo) productos.add(producto!!)

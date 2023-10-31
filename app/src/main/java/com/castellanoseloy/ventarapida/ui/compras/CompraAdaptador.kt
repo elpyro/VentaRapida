@@ -44,7 +44,7 @@ class CompraAdaptador(
         holder.bind(products[position])
 
         // Configurar el evento de click largo en el cardview del producto
-        holder.cardview.setOnLongClickListener { motionEvent ->
+        holder.cardview.setOnLongClickListener {
             onLongClickItem?.invoke(products[position], position)
             true // Devuelve true para indicar que el evento ha sido consumido
         }
@@ -77,6 +77,7 @@ class CompraAdaptador(
     }
 
     // ViewHolder para la vista de cada elemento de la lista de productos
+        @Suppress("DEPRECATION")
         inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val producto: TextView = itemView.findViewById(R.id.textView_nombre)
         private val precio: TextView = itemView.findViewById(R.id.textView_precio)
@@ -91,17 +92,17 @@ class CompraAdaptador(
 
             cargarProducto(product)
 
-            cardview.setOnClickListener { motionEvent ->
+            cardview.setOnClickListener {
                 viewModel.agregarProductoSeleccionado(products[adapterPosition])
                 cargarProducto(product)
             }
             // Configurar el evento de click en el botón restar cantidad del producto
-            botonRestar.setOnClickListener { motionEvent ->
+            botonRestar.setOnClickListener {
                 viewModel.restarProductoSeleccionado(products[position])
                cargarProducto(product)
             }
 
-            seleccion.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            seleccion.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
                 if(seleccion.hasFocus()) {
                     this.existenciaSinCambios = product.cantidad
                     seleccion.addTextChangedListener(textWatcher)
@@ -176,7 +177,7 @@ class CompraAdaptador(
             //  Picasso.get().cancelRequest(imagenProducto)
 
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
-            if (!product.url.isEmpty() && imagenProducto.tag != product.url) {
+            if (product.url.isNotEmpty() && imagenProducto.tag != product.url) {
                 imagenProducto.tag = product.url
                 Picasso.get()
                     .load(product.url)

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.factura_guardada
 
 import android.app.ProgressDialog

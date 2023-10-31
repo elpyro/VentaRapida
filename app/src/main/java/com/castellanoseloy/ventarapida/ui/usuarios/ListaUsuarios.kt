@@ -19,9 +19,7 @@ import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
-import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
 import java.util.ArrayList
 
 
@@ -90,7 +88,7 @@ class ListaUsuarios : Fragment() {
 
             listenerAdaptador()
 
-            val busqueda = binding?.searchViewBuscarCliente?.getQuery().toString()
+            val busqueda = binding?.searchViewBuscarCliente?.query.toString()
             if(busqueda!=""){
                 filtro(busqueda)
             }
@@ -122,10 +120,10 @@ class ListaUsuarios : Fragment() {
 
     private fun verificarPlan(): String {
         var plan="No disponible"
-        if(MainActivity.datosEmpresa.plan.equals("Empresarial")) plan="Plan Empresarial (30 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan.equals("Premium")) plan="Plan Premium (10 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan.equals("Basico")) plan="Plan Básico (3 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan.equals("Gratuito")) plan="Prueba gratuita (30 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan == "Empresarial") plan="Plan Empresarial (30 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan == "Premium") plan="Plan Premium (10 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan == "Basico") plan="Plan Básico (3 usuarios activos)"
+        if(MainActivity.datosEmpresa.plan == "Gratuito") plan="Prueba gratuita (30 usuarios activos)"
         return plan
     }
 

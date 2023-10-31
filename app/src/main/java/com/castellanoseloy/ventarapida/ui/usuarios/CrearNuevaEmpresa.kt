@@ -11,6 +11,7 @@ import com.castellanoseloy.ventarapida.procesos.FirebaseDatosEmpresa.guardarDato
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Suscripcion
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
+import java.util.Locale
 import java.util.UUID
 
 class CrearNuevaEmpresa : AppCompatActivity() {
@@ -32,67 +33,67 @@ class CrearNuevaEmpresa : AppCompatActivity() {
         val correo = intent.getStringExtra("correo")
         val nombre = intent.getStringExtra("nombre")
 
-        binding?.editTextUsuario?.setText(nombre)
-        binding?.hintCorreo?.text=correo
+        binding.editTextUsuario.setText(nombre)
+        binding.hintCorreo.text =correo
 
         listeners()
     }
 
     private fun listeners() {
-      binding?.buttonRegister?.setOnClickListener {
-          if(binding?.editTextEmpresa?.text.toString()==""){
-              binding.editTextEmpresa.setError("Obligatorio")
-              return@setOnClickListener
-          }
-          if(binding?.editTextUsuario?.text.toString()==""){
-              binding.editTextUsuario.setError("Obligatorio")
-              return@setOnClickListener
-          }
+        binding.buttonRegister.setOnClickListener {
+            if(binding.editTextEmpresa.text.toString()==""){
+                binding.editTextEmpresa.error = "Obligatorio"
+                return@setOnClickListener
+            }
+            if(binding.editTextUsuario.text.toString()==""){
+                binding.editTextUsuario.error = "Obligatorio"
+                return@setOnClickListener
+            }
 
-          val proximo_pago= suscripcion.calcularFechaFinSuscripcion()
+            val proximo_pago= suscripcion.calcularFechaFinSuscripcion()
 
-          val idEmpresa=UUID.randomUUID().toString()
-          val updates = hashMapOf(
-              "id" to idEmpresa,
-              "nombre" to binding?.editTextEmpresa?.text.toString(),
-              "premiun" to "true",
-              "documento" to "",
-              "pagina" to "",
-              "telefono1" to "",
-              "telefono2" to "",
-              "direccion" to "",
-              "garantia" to "",
-              "correo" to "",
-              "url" to "",
-              "ultimo_pago" to obtenerFechaActual(),
-              "plan" to "Gratuito",
-              "idDuenoCuenta" to idGoogle.toString(),
-              "proximo_pago" to proximo_pago.toString(),
-              "mostrarPreciosCompra" to "false"
-              )
+            val idEmpresa=UUID.randomUUID().toString()
+            val updates = hashMapOf(
+                "id" to idEmpresa,
+                "nombre" to binding.editTextEmpresa.text.toString(),
+                "premiun" to "true",
+                "documento" to "",
+                "pagina" to "",
+                "telefono1" to "",
+                "telefono2" to "",
+                "direccion" to "",
+                "garantia" to "",
+                "correo" to "",
+                "url" to "",
+                "ultimo_pago" to obtenerFechaActual(),
+                "plan" to "Gratuito",
+                "idDuenoCuenta" to idGoogle.toString(),
+                "proximo_pago" to proximo_pago.toString(),
+                "mostrarPreciosCompra" to "false"
+            )
 
-          guardarDatosEmpresa(updates)
+            guardarDatosEmpresa(updates)
 
-          val updatesUsuario = hashMapOf<String, Any>(
-              "id" to  idGoogle.toString(),
-              "nombre" to  binding?.editTextUsuario?.text.toString(),
-              "correo" to  binding?.hintCorreo?.text.toString().toLowerCase(),
-              "idEmpresa" to  idEmpresa,
-              "empresa" to   binding?.editTextEmpresa?.text.toString(),
-              "configuracion" to ModeloConfiguracionUsuario(),
-              "perfil" to "Administrador"
-          )
+            val updatesUsuario = hashMapOf<String, Any>(
+                "id" to  idGoogle.toString(),
+                "nombre" to  binding.editTextUsuario.text.toString(),
+                "correo" to binding.hintCorreo.text.toString().lowercase(Locale.getDefault()),
+                "idEmpresa" to  idEmpresa,
+                "empresa" to   binding.editTextEmpresa.text.toString(),
+                "configuracion" to ModeloConfiguracionUsuario(),
+                "perfil" to "Administrador"
+            )
 
 
-          FirebaseUsuarios.guardarUsuario(updatesUsuario)
+            FirebaseUsuarios.guardarUsuario(updatesUsuario)
 
-          finish()
+            finish()
 
-          val intent = Intent(this, Login::class.java)
-          intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-          startActivity(intent)
+            val intent = Intent(this, Login::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
 
-      }
+        }
     }
 
 

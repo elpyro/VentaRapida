@@ -25,6 +25,7 @@ import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 
 
+@Suppress("DEPRECATION")
 class InformacionProducto : Fragment() {
 
     private var modeloProducto: ModeloProducto? = null
@@ -34,7 +35,7 @@ class InformacionProducto : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentInformacionProductoBinding.inflate(inflater, container, false)
 
         val bundle = arguments
@@ -43,22 +44,22 @@ class InformacionProducto : Fragment() {
         cargarProducto(modeloProducto)
 
         setHasOptionsMenu(true)
-        return binding!!.root
+        return binding.root
     }
 
     private fun cargarProducto(modeloProducto: ModeloProducto?) {
 
-        binding.textViewNombre.setText(modeloProducto?.nombre)
+        binding.textViewNombre.text = modeloProducto?.nombre
         if(modeloProducto?.comentario?.isEmpty() == false){
             binding.textViewComentario.visibility=View.VISIBLE
-            binding.textViewComentario.setText(modeloProducto?.comentario)
+            binding.textViewComentario.text = modeloProducto.comentario
         }
 
-        binding.textViewPrecio.setText(modeloProducto?.p_diamante?.formatoMonenda())
+        binding.textViewPrecio.text = modeloProducto?.p_diamante?.formatoMonenda()
         Picasso.get()
             .load(modeloProducto?.url)
             .networkPolicy(NetworkPolicy.OFFLINE)
-            .into(binding?.photoView, object : Callback {
+            .into(binding.photoView, object : Callback {
                 override fun onSuccess() {
                     // La imagen se cargó exitosamente desde la caché
                 }
@@ -68,7 +69,7 @@ class InformacionProducto : Fragment() {
                     // intentar cargarla desde la red
                     Picasso.get()
                         .load(modeloProducto?.url)
-                        .into(binding?.photoView, object : Callback {
+                        .into(binding.photoView, object : Callback {
                             override fun onSuccess() {
                                 // La imagen se cargó exitosamente desde la red
                             }
@@ -85,12 +86,14 @@ class InformacionProducto : Fragment() {
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_vistas_pdf, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_compartir -> {

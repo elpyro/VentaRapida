@@ -104,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="@drawable/bordes_boton"
-                        android:text="@string/PDF" />
+                        android:text="@string/VerPDF" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

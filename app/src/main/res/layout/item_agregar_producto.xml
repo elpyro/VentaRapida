@@ -53,7 +53,10 @@
                     <EditText
                         android:id="@+id/editText_seleccionProducto"
                         android:layout_width="55dp"
-                        android:layout_height="35dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="right"
+                        android:layout_weight="0"
+                        android:autoSizeTextType="uniform"
                         android:background="@color/azul_intermedio"
                         android:ems="10"
                         android:gravity="center"
@@ -61,10 +64,7 @@
                         android:inputType="number"
                         android:textColor="@color/white"
                         android:textSize="25sp"
-                        android:textStyle="bold"
-                        android:layout_gravity="right"
-                        android:autoSizeTextType="uniform"
-                        android:layout_weight="0"/>
+                        android:textStyle="bold" />
 
 
                     <ImageButton

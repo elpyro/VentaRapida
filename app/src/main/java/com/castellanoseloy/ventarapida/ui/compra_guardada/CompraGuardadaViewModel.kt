@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.compra_guardada
 
 import android.app.ProgressDialog
@@ -14,7 +16,6 @@ import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
-
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -110,8 +111,6 @@ class CompraGuardadaViewModel : ViewModel() {
             "venta"
         )
 
-        arrayListProductosFacturados.forEach { producto ->
-
             arrayListProductosFacturados.forEach { producto ->
 
                 val idTransaccion = UUID.randomUUID().toString()
@@ -137,7 +136,7 @@ class CompraGuardadaViewModel : ViewModel() {
 
             }
 
-        }
+
         db.close()
         //ejecutamos la transaccion
         FirebaseProductos.transaccionesCambiarCantidad(context, listaRestarInventario)

@@ -1,45 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="@drawable/fondo"
     app:layoutDescription="@xml/fragment_home_scene">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_productosVenta"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingStart="10dp"
-        android:paddingTop="68dp"
-        android:paddingBottom="90dp"
-        tools:ignore="RtlSymmetry"
-        tools:layout_editor_absoluteX="31dp"
-        tools:layout_editor_absoluteY="224dp" />
-
-    <ImageView
-        android:id="@+id/imageView_bannerSuperior"
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:scaleType="fitEnd"
-        android:src="@drawable/barrasuperior"
-        android:contentDescription="@string/banner" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="15dp"
-        android:paddingEnd="30dp"
-        android:paddingStart="40dp"
+        android:layout_height="79dp"
+        android:background="@drawable/barrasuperior"
+        android:baselineAligned="true"
         android:orientation="horizontal"
-        android:baselineAligned="true"  >
+        android:paddingStart="40dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="30dp">
+
 
         <RelativeLayout
             android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1">
 
@@ -47,8 +30,8 @@
                 android:id="@+id/imageView_eliminarCarrito"
                 android:layout_width="80dp"
                 android:layout_height="50dp"
-                android:src="@drawable/baseline_shopping_cart_24"
-                android:contentDescription="@string/carrito" />
+                android:contentDescription="@string/carrito"
+                android:src="@drawable/baseline_shopping_cart_24" />
 
             <TextView
                 android:id="@+id/textView_listaSeleccion"
@@ -64,15 +47,14 @@
                 tools:ignore="HardcodedText,TextSizeCheck" />
 
 
-
         </RelativeLayout>
 
         <SearchView
             android:id="@+id/searchView_productosVenta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
             android:layout_marginStart="20dp"
+            android:layout_weight="4"
             android:background="@drawable/searchview_background"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="76dp" />
@@ -80,11 +62,24 @@
 
         <ImageView
             android:id="@+id/imageView_microfono"
-            android:layout_marginStart="20dp"
             android:layout_width="30dp"
             android:layout_height="50dp"
-            android:src="@drawable/baseline_mic_24"
-            android:contentDescription="@string/microfono" />
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/microfono"
+            android:src="@drawable/baseline_mic_24" />
     </LinearLayout>
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_productosVenta"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        tools:ignore="RtlSymmetry"
+        tools:layout_editor_absoluteX="31dp"
+        tools:layout_editor_absoluteY="224dp" />
+
+
+
+
+
+</LinearLayout>

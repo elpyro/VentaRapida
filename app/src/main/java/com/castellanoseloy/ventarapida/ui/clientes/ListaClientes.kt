@@ -1,6 +1,5 @@
 package com.castellanoseloy.ventarapida.ui.clientes
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentListaClientesBinding
-
 import com.castellanoseloy.ventarapida.datos.ModeloClientes
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.procesos.FirebaseClientes
@@ -28,20 +26,21 @@ import com.castellanoseloy.ventarapida.ui.promts.PromtFacturaGuardada
 import java.util.ArrayList
 
 
+@Suppress("DEPRECATION")
 class ListaClientes : Fragment() {
 
     private var binding: FragmentListaClientesBinding? = null
     private lateinit var vista: View
     private lateinit var adaptador: ClientesAdaptador
-    private lateinit var viewModel: ListaClientesViewModel
+
     private var lista: ArrayList<ModeloClientes>? = null
     var compartirModeloFactura: ModeloFactura? = null
+    @Suppress("DEPRECATION")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentListaClientesBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[ListaClientesViewModel::class.java]
 
         val modeloFactura = arguments?.getSerializable("modeloFactura") as? ModeloFactura
         if (modeloFactura != null) {
@@ -63,14 +62,13 @@ class ListaClientes : Fragment() {
 
             listenerAdaptador()
 
-            val busqueda = binding?.searchViewBuscarCliente?.getQuery().toString()
+            val busqueda = binding?.searchViewBuscarCliente?.query.toString()
             if(busqueda!=""){
                 filtro(busqueda)
             }
         }
 
         listeners()
-
 
         return binding!!.root
     }
@@ -106,11 +104,13 @@ class ListaClientes : Fragment() {
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_nuevo_cliente, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 

@@ -79,18 +79,18 @@ class DetalleCompraAdaptador(
 
             // Verificar si la cantidad es nula y si no lo es, establecer el texto de la vista de cantidad
 
-            cantidadSeleccion?.let { seleccion.setText(it.toString()) }
+            cantidadSeleccion?.let { seleccion.text = it.toString() }
 
 
             //sumamos la existencia los prodocutos seleccionados
             try {
                 existencia.text ="X"+ (product.cantidad.toInt() + cantidadSeleccion!!.toInt())
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
 
 
             //se edita que el campo sea el de compra
-            precio.let { precio.setText(product.p_compra.formatoMonenda()) }
+            precio.let { precio.text = product.p_compra.formatoMonenda() }
             val total= cantidadSeleccion?.times(product.p_compra.toDouble())
 
             total_producto.text=total.toString().formatoMonenda()
@@ -99,7 +99,7 @@ class DetalleCompraAdaptador(
             // Picasso.get().cancelRequest(imagenProducto)
 
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
-            if (!product.url.isEmpty() && imagenProducto.tag != product.url) {
+            if (product.url.isNotEmpty() && imagenProducto.tag != product.url) {
                 imagenProducto.tag = product.url
                 Picasso.get()
                     .load(product.url)

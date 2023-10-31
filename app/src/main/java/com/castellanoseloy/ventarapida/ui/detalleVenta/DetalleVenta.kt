@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.detalleVenta
 
 import android.app.AlertDialog
@@ -9,7 +11,6 @@ import android.text.TextWatcher
 import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -28,19 +29,15 @@ import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.Utilidades
-import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class DetalleVenta : Fragment() {
-
 
     private lateinit var viewModel: DetalleVentaViewModel
     var binding: FragmentDetalleVentaBinding? = null
@@ -54,7 +51,6 @@ class DetalleVenta : Fragment() {
     ): View {
         binding = FragmentDetalleVentaBinding.inflate(inflater, container, false)
 
-
         return binding!!.root // Retorna la vista inflada
     }
 
@@ -65,9 +61,6 @@ class DetalleVenta : Fragment() {
         viewModel = ViewModelProvider(this).get(DetalleVentaViewModel::class.java)
 
         setHasOptionsMenu(true)
-
-
-
 
         idPedido = UUID.randomUUID().toString()
 
@@ -198,11 +191,13 @@ class DetalleVenta : Fragment() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_detalle_factura_o_compra, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -310,7 +305,6 @@ class DetalleVenta : Fragment() {
         val horaActual = datosPedido["hora"].toString()
         val fechaActual = datosPedido["fecha"].toString()
         val descuento = datosPedido["descuento"].toString()
-        val envio = datosPedido["envio"].toString()
 
         ventaProductosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
             if (cantidadSeleccionada != 0) {

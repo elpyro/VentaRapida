@@ -1,5 +1,4 @@
 import android.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,22 +17,21 @@ import com.castellanoseloy.ventarapida.datos.ModeloClientes
 import com.castellanoseloy.ventarapida.procesos.FirebaseClientes.eliminarCliente
 import com.castellanoseloy.ventarapida.procesos.FirebaseClientes.guardarCliente
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
-import com.castellanoseloy.ventarapida.ui.clientes.ClienteAgregarModificarViewModel
 import java.util.UUID
 
+@Suppress("DEPRECATION")
 class ClienteAgregarModificar : Fragment() {
 
     private var binding: FragmentClienteAgregarModificarBinding? = null
     private lateinit var vista: View
     private var idCliente=""
-    private lateinit var viewModel: ClienteAgregarModificarViewModel
     private var clienteNuevo=true
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentClienteAgregarModificarBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[ClienteAgregarModificarViewModel::class.java]
+
         setHasOptionsMenu(true)
 
         val bundle = arguments
@@ -48,7 +46,6 @@ class ClienteAgregarModificar : Fragment() {
             clienteNuevo=false
         }else{
             idCliente= UUID.randomUUID().toString()
-
         }
 
 
@@ -56,10 +53,10 @@ class ClienteAgregarModificar : Fragment() {
     }
 
     private fun cargarDatos(modeloCliente: ModeloClientes) {
-        var nombre=binding?.editTextCliente
-        var telefono=binding?.editTextTelefono
-        var documento=binding?.editTextDocumento
-        var direccion=binding?.editTextDireccion
+        val nombre=binding?.editTextCliente
+        val telefono=binding?.editTextTelefono
+        val documento=binding?.editTextDocumento
+        val direccion=binding?.editTextDireccion
 
         nombre?.setText(modeloCliente.nombre)
         telefono?.setText(modeloCliente.telefono)
@@ -72,15 +69,17 @@ class ClienteAgregarModificar : Fragment() {
         vista=view
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menuproducto, menu)
         val item = menu.findItem(R.id.action_camara)
-        var item_eliminar = menu.findItem(R.id.action_eliminar)
+        val item_eliminar = menu.findItem(R.id.action_eliminar)
         item.isVisible = false
-        if (clienteNuevo)item_eliminar.setVisible(false)
+        if (clienteNuevo) item_eliminar.isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -89,7 +88,7 @@ class ClienteAgregarModificar : Fragment() {
                 ocultarTeclado(requireContext(),vista)
 
                 if (binding!!.editTextCliente.text.toString().isEmpty()){
-                    binding!!.editTextCliente.setError("Obligatorio")
+                    binding!!.editTextCliente.error = "Obligatorio"
                     return true
                 }
                 MainActivity.progressDialog?.show()
@@ -117,7 +116,7 @@ class ClienteAgregarModificar : Fragment() {
                     val builder = AlertDialog.Builder(requireContext())
                     builder.setTitle("Eliminar producto")
                     builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
-                    builder.setPositiveButton("Eliminar") { dialog, which ->
+                    builder.setPositiveButton("Eliminar") { _, _ ->
                         eliminarCliente(idCliente)
 
                                 Toast.makeText(requireContext(),"Cliente Eliminado", Toast.LENGTH_LONG).show()

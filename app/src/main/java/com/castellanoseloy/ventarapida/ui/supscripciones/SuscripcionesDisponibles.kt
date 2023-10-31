@@ -1,13 +1,15 @@
 package com.castellanoseloy.ventarapida.ui.supscripciones
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,9 +20,8 @@ import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
-import com.castellanoseloy.ventarapida.Login
 import com.castellanoseloy.ventarapida.MainActivity
-import com.castellanoseloy.ventarapida.databinding.ActivityLoginBinding
+import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentSuscripcionesDisponiblesBinding
 import com.castellanoseloy.ventarapida.procesos.FirebaseDatosEmpresa
 import com.castellanoseloy.ventarapida.procesos.Utilidades.calcularDiasRestantes
@@ -42,7 +43,7 @@ class SuscripcionesDisponibles : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSuscripcionesDisponiblesBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[SuscripcionesDisponiblesViewModel::class.java]
 
@@ -55,7 +56,7 @@ class SuscripcionesDisponibles : Fragment() {
 
         conectar()
 
-        return binding!!.root
+        return binding.root
     }
 
     private val purchasesUpdatedListener = PurchasesUpdatedListener { billingResult, purchases ->
@@ -91,9 +92,27 @@ class SuscripcionesDisponibles : Fragment() {
     }
 
     private fun listeners() {
+
+
+        binding.mainItem.setOnClickListener {
+            toggleSecondaryItems(binding.secondaryItems, binding.expandIcon)
+        }
+
+        binding.mainItem2.setOnClickListener {
+            toggleSecondaryItems(binding.secondaryItems2, binding.expandIcon2)
+        }
+
+        binding.mainItem3.setOnClickListener {
+            toggleSecondaryItems(binding.secondaryItems3, binding.expandIcon3)
+        }
+        binding.mainItem4.setOnClickListener {
+            toggleSecondaryItems(binding.secondaryItems4, binding.expandIcon4)
+        }
+
+
         val planActual=MainActivity.datosEmpresa.plan
 
-        binding.buttonPlanGratuito.setOnClickListener{
+        binding.buttonPlanBasico.setOnClickListener{
             nuevoPlan="Basico"
             val cambioPlan= viewModel.verificarPlan(nuevoPlan,planActual,diasRestantes)
             if(cambioPlan){
@@ -123,12 +142,30 @@ class SuscripcionesDisponibles : Fragment() {
         }
     }
 
+    fun toggleSecondaryItems(
+        secondaryItems: View,
+        expandIcon: ImageView,
+
+        ) {
+        val fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.animacion_in)
+        val fadeOut = AnimationUtils.loadAnimation(requireContext(), R.anim.animacion_out)
+
+        if (secondaryItems.visibility == View.GONE) {
+            secondaryItems.visibility = View.VISIBLE
+            secondaryItems.startAnimation(fadeIn)
+            expandIcon.setImageResource(R.drawable.baseline_keyboard_double_arrow_up_24)
+        } else {
+            secondaryItems.visibility = View.GONE
+            secondaryItems.startAnimation(fadeOut)
+            expandIcon.setImageResource(R.drawable.baseline_keyboard_double_arrow_down_24)
+        }
+    }
     private fun mostrarDialogAlert() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
 
         alertDialogBuilder.setCancelable(false)
         alertDialogBuilder.setTitle("Cambio de plan")
-        alertDialogBuilder.setMessage("No puedes cambiar de plan con mas de 3 días disponibles")
+        alertDialogBuilder.setMessage("No puedes cambiar a otro plan con mas de 1 día disponible")
         alertDialogBuilder.setPositiveButton("Aceptar") { _, _ ->
 
         }
@@ -200,8 +237,8 @@ class SuscripcionesDisponibles : Fragment() {
         val productDetailsParamsList = listOf(
             BillingFlowParams.ProductDetailsParams.newBuilder()
                 // retrieve a value for "productDetails" by calling queryProductDetailsAsync()
-                .setProductDetails(productDetails!!)
-                .setOfferToken(productDetails?.subscriptionOfferDetails?.get(0)?.offerToken!! )
+                .setProductDetails(productDetails)
+                .setOfferToken(productDetails.subscriptionOfferDetails?.get(0)?.offerToken!! )
                 .build()
         )
 
@@ -216,10 +253,10 @@ class SuscripcionesDisponibles : Fragment() {
 
     private fun datosPlan() {
 
-        binding.textViewCurrentPlan.setText("Plan Actual: ${MainActivity.datosEmpresa.plan}")
+        binding.textViewCurrentPlan.text = "Plan Actual: ${MainActivity.datosEmpresa.plan}"
 
-        if(!MainActivity.datosEmpresa.proximo_pago.equals("")){
-            binding.textViewExpirationDate.setText("Fecha de Vencimiento: ${convertirFechaLegible(MainActivity.datosEmpresa.proximo_pago)}")
+        if(MainActivity.datosEmpresa.proximo_pago != ""){
+            binding.textViewExpirationDate.text = "Fecha de Vencimiento: ${convertirFechaLegible(MainActivity.datosEmpresa.proximo_pago)}"
 
             diasRestantes= calcularDiasRestantes(convertirCadenaAFecha(MainActivity.datosEmpresa.proximo_pago)!!)
 

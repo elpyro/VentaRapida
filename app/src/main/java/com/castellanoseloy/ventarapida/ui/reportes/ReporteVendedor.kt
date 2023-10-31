@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.reportes
 
 import android.app.DatePickerDialog
@@ -19,21 +21,20 @@ import java.util.Calendar
 class ReporteVendedor : Fragment() {
 
     private var binding: FragmentReporteVendedorBinding? = null
-    var posicionSpinnerVendedor=0
-    lateinit var listaIdUsuarios:List<String>
+
     private lateinit var viewModel: ReporteVendedorViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentReporteVendedorBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[ReporteVendedorViewModel::class.java]
 
         //mostrar ganancias si esta permitido
         if(MainActivity.datosUsuario.configuracion.mostrarReporteGanancia) binding?.buttonGanancia?.visibility=View.VISIBLE
 
-        binding?.textViewDesde?.setText(Utilidades.obtenerFechaActual())
+        binding?.textViewDesde?.text = Utilidades.obtenerFechaActual()
 
         listener()
         escuchadores()
@@ -75,7 +76,7 @@ class ReporteVendedor : Fragment() {
 
             val datepickerDialogo = DatePickerDialog(
                 requireContext(),
-                { view, year, month, dayOfMonth ->
+                { _, year, month, dayOfMonth ->
                     val formattedMonth = month + 1
                     val formattedDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
                     val formattedDate = "$formattedDayOfMonth/$formattedMonth/$year"
@@ -95,7 +96,7 @@ class ReporteVendedor : Fragment() {
 
             val datepickerDialogo = DatePickerDialog(
                 requireContext(),
-                { view, year, month, dayOfMonth ->
+                { _, year, month, dayOfMonth ->
                     val formattedMonth = month + 1
                     val formattedDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
                     val formattedDate = "$formattedDayOfMonth/$formattedMonth/$year"

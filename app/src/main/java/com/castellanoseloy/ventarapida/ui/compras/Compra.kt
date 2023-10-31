@@ -29,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 
 import java.util.*
 
+@Suppress("DEPRECATION")
 class Compra : Fragment() {
 
 
@@ -51,12 +52,13 @@ class Compra : Fragment() {
 
         return binding!!.root
     }
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_total, menu)
         menuItem  = menu.findItem(R.id.action_total)
 
 
-        viewModel.totalCarritoLiveData.observe(viewLifecycleOwner){ it->
+        viewModel.totalCarritoLiveData.observe(viewLifecycleOwner){
             val title = SpannableString("Total: $it")
             title.setSpan(
                 AbsoluteSizeSpan(20, true), // Tamaño de texto en sp
@@ -76,6 +78,7 @@ class Compra : Fragment() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -104,12 +107,12 @@ class Compra : Fragment() {
         listeners()
         viewModel.calcularTotal()
 
-        crearSnackBarr("Manten presionado para editar un item")
+        crearSnackBarr()
 
     }
-    private fun crearSnackBarr(s: String) {
+    private fun crearSnackBarr() {
         val rootView = vista
-        val snackbar = Snackbar.make(rootView, s, Snackbar.LENGTH_SHORT)
+        val snackbar = Snackbar.make(rootView, "Manten presionado para editar un item", Snackbar.LENGTH_SHORT)
         val snackbarView = snackbar.view
         snackbar.setTextColor(Color.BLACK)
         snackbarView.setBackgroundResource(R.color.amarillo)
@@ -189,11 +192,11 @@ class Compra : Fragment() {
             lista = productos as ArrayList<ModeloProducto>?
 
             if(primeraCarga){
-                adapter = CompraAdaptador(productosOrdenados!!, viewModel)
+                adapter = CompraAdaptador(productosOrdenados, viewModel)
                 binding!!.recyclerViewProductosVenta.adapter = adapter
                 primeraCarga=false
             }else{
-                adapter!!.updateData(productosOrdenados ?: emptyList())
+                adapter!!.updateData(productosOrdenados)
             }
 
             adapter!!.setOnLongClickItem { item, position ->
@@ -204,7 +207,7 @@ class Compra : Fragment() {
 
 
             //si el valor esta filtrado buscarlo
-            val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
+            val busqueda = binding?.searchViewProductosVenta?.query.toString()
             if(busqueda!=""){
                 filtro(busqueda)
             }
@@ -220,7 +223,7 @@ class Compra : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
-        builder.setPositiveButton("Eliminar") { dialog, which ->
+        builder.setPositiveButton("Eliminar") { _, _ ->
             viewModel.eliminarCarrito()
             binding?.recyclerViewProductosVenta?.adapter=adapter
         }
@@ -236,6 +239,7 @@ class Compra : Fragment() {
         Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -255,9 +259,8 @@ class Compra : Fragment() {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
             objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(
-                Locale.getDefault()))
-                    || objeto.proveedor?.eliminarAcentosTildes()?.lowercase(Locale.getDefault())
-                ?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true
+                Locale.getDefault())) || objeto.proveedor.eliminarAcentosTildes().lowercase(Locale.getDefault())
+                .contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault()))
         }
         val productosOrdenados = filtro?.sortedBy { it.nombre }
         adapter = productosOrdenados?.let { CompraAdaptador(it,viewModel) }

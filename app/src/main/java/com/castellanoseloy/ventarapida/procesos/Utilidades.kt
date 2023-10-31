@@ -48,23 +48,7 @@ object Utilidades {
 
         return FileProvider.getUriForFile(context, "com.castellanoseloy.ventarapida.fileprovider", imageFile)
     }
-    fun String.eliminarPuntosComasLetras(): String {
-        return this.replace(Regex("[^\\d.]"), "")
-            .replace(".", "")
-            .replace(",", "")
-    }
 
-    fun String.eliminarPuntos(): String {
-        return this.replace(".", "")
-    }
-
-    fun fechaActual():String{
-        val fechaActual = Date()
-        // Crear un formato de fecha personalizado
-        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        // Formatear la fecha actual en el formato deseado
-        return  formatoFecha.format(fechaActual)
-    }
     fun esperarUnSegundo(){
         try {
             Thread.sleep(1000)
@@ -78,20 +62,7 @@ object Utilidades {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    fun separarNumerosDelString(string: String): Pair<String, String?> {
-        // Expresión regular para detectar números al final del string
-        val regex = "(\\d+)$"
-        val matchResult = Regex(regex).find(string)
-        if (matchResult != null) {
-            // Si hay números al final del string, separarlos del resto del string
-            val numeros = matchResult.value
-            val resto = string.removeSuffix(numeros)
-            return Pair(resto, numeros)
-        } else {
-            // Si no hay números al final del string, devolver el string completo y null
-            return Pair(string.trim(), null)
-        }
-    }
+
 
     fun cargarImagen(productUrl: String, imagenProducto: ImageView) {
         // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior

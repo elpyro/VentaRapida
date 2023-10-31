@@ -21,24 +21,7 @@ class Configuracion : PreferenceFragmentCompat() {
             informacionAdicional = findPreference("informacion_adicional")
             informacionAdicional?.isVisible = false
         }
-//        // Obtén la preferencia "mostrar_precio_compra"
-//        val mostrarPrecioCompraPreference = findPreference<SwitchPreference>("mostrar_precio_compra_preference")
-//
-//        // Establece el valor predeterminado en función del valor de verPreciosMayoristas
-//        val verPreciosMayoristas = MainActivity.datosEmpresa.mostrarPreciosCompra.toBoolean()
-//        mostrarPrecioCompraPreference?.setDefaultValue(verPreciosMayoristas)
-//
-//        mostrarPrecioCompraPreference?.setOnPreferenceChangeListener { preference, newValue ->
-//            val isChecked = newValue as Boolean
-//            //Toast.makeText(requireContext(),"Error al obtener la URL de descarga de la imagen subida.",Toast.LENGTH_LONG).show()
-//            val updates = hashMapOf(
-//                "id" to MainActivity.datosEmpresa.id,
-//                "mostrarPreciosCompra" to isChecked.toString()
-//            )
-//            // Guarda los cambios en Firebase o donde corresponda
-//            guardarDatosEmpresa(updates)
-//            true
-//        }
+
     }
 
 

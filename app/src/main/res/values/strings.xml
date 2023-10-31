@@ -7,9 +7,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+
     <string name="banner">banner</string>
     <string name="banner_cuadrado">banner_cuadrado</string>
     <string name="total">Total</string>
@@ -62,20 +60,7 @@
     <string name="compartir">Compartir</string>
     <string name="PDF">Pdf</string>
     <string name="pdf">PDF</string>
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
 
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="configuracion">Configuración</string>
     <string name="datosempresa">Datos de Empresa</string>
     <string name="sonido">Sonido</string>
@@ -110,48 +95,7 @@
     <string name="registrarUsuario">Registrar Usuario</string>
     <string name="title_activity_login">Login</string>
     <string name="title_activity_nuevo_usuario">NuevoUsuario</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
     <string name="Bienvenido">Bienvenido</string>
     <string name="NuevoUsuario">Nuevo Usuario</string>
     <string name="Catalogo">Catálogo</string>
@@ -170,15 +114,14 @@
     <string name="precioCompra">Compra</string>
     <string name="InformacionPublicidad4">Comparte tus facturas y reportes con la impresora o redes sociales en PDF</string>
     <string name="PlanEmpresarial">Plan Empresarial</string>
-    <string name="descripcionPlanEmpresarial">Conecta 30 asuarios al mismo tiempo, sin publicidad</string>
+    <string name="descripcionPlanEmpresarial">-Conecta 30 usuarios al mismo tiempo. \n-Sin publicidad</string>
     <string name="comentario">Descripción</string>
     <string name="proveedorDeSurtido">Proveedor de surtido</string>
     <string name="Agregar_inventario">Agregar a inventario</string>
     <string name="busquedas">Proveedor, Producto</string>
-    <string name="descripcionPlanPremium">Conecta 6 usuarios al mismo tiempo, sin publicidad</string>
+    <string name="descripcionPlanPremium">-Conecta 6 usuarios al mismo tiempo. \n-Sin publicidad</string>
     <string name="PlanPremium">Plan Premium</string>
-    <string name="descripcionPlanBasico">Conecta 3 usuarios al mismo tiempo, sin publicidad</string>
-    <string name="PlanBásico">Plan Basico</string>
+    <string name="descripcionPlanBasico">-Conecta 3 usuarios al mismo tiempo.  \n-Sin publicidad</string>
     <string name="PlanBasico">Plan Básico</string>
     <string name="ReporteVentas">Reporte de ventas</string>
     <string name="MostrarAgotados">Mostrar Agotados en Catalogo</string>
@@ -187,16 +130,16 @@
     <string name="informacionAdicional">Información Adicional(Factura)</string>
     <string name="Publicidad3">Control de Inventario y Facturación \nMulti-Usuarios</string>
     <string name="PlanGratuito">Plan Gratuito</string>
-    <string name="descripcionGratuito">Conecta 1 usuario gratis con publicidad</string>
+    <string name="descripcionGratuito">-Conecta 1 usuario gratis \n-Con publicidad</string>
     <string name="title_activity_instersticial">Instersticial</string>
 
-
-    <string name="interstitial_ad_sample">Interstitial Ad Sample</string>
-    <string name="start_level">Level 1</string>
-    <string name="next_level">Next Level</string>
     <!-- -
         This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
         For more information, see https://support.google.com/admob/answer/3052638
     <!- -->
     <string name="interstitial_ad_unit_id">ca-app-pub-5390342068041092/6706005035</string>
+
+    <string name="descripcionPlanPago">"<b><font color='#FF9000'>      Gestión de Inventario:</font></b>  \nAdministración completa del inventario, incluyendo la adición, venta y edición de productos y control de existencias. \n<b><font color='#FF9000'>      Facturación Profesional:</font></b> \nGenera facturas profesionales para tus clientes con todos los detalles de la venta y datos de tú empresa. \n<b><font color='#FF9000'>      Reportes de Desempeño:</font></b>\nObtén información valiosa sobre las ventas, ganancias, productos más vendidos y compras. Los administradores pueden acceder a un conjunto completo de informes detallados.\n<b><font color='#FF9000'>      Generación de Reportes en PDF</font></b> \nConvierte tus informes y facturas en archivos PDF que puedes compartir fácilmente con tu equipo o socios comerciales.\n<b><font color='#FF9000'>      Catálogos de Productos:</font></b>\nCrea y gestiona catálogos de productos para mostrar a tus clientes, lo que facilita la presentación y venta de productos. \n<b><font color='#FF9000'>      Ventas por Vendedor:</font></b>\nRealiza un seguimiento del desempeño individual de tus vendedores y obtén información sobre quién está logrando las mejores ventas. \n<b><font color='#FF9000'>      Perfiles Personalizados:</font></b>\nCrea perfiles de administradores y vendedores a partir de cuentas de Gmail. \n- Administradores: pueden personalizar roles, asignar permisos y acceder a informes completos, además de comprar, vender y editar inventarios.\n- Vendedores: pueden realizar ventas sin editar el inventario; los administradores le pueden asignar permisos especiales."</string>
+    <string name="PlanesDisponibles">Planes Disponibles:</string>
+    <string name="descripcionPlanGratis">"<b><font color='#FF9000'>      Gestión de Inventario:</font></b>  \nAdministración completa del inventario, incluyendo la adición, venta y edición de productos y control de existencias. \n<b><font color='#FF9000'>      Facturación Profesional:</font></b> \nGenera facturas profesionales para tus clientes con todos los detalles de la venta y datos de tú empresa. \n<b><font color='#FF9000'>      Reportes de Desempeño:</font></b>\nObtén información valiosa sobre las ventas, ganancias, productos más vendidos y compras. Los administradores pueden acceder a un conjunto completo de informes detallados.\n<b><font color='#FF9000'>      Generación de Reportes en PDF</font></b> \nConvierte tus informes y facturas en archivos PDF que puedes compartir fácilmente con tu equipo o socios comerciales.\n<b><font color='#FF9000'>      Catálogos de Productos:</font></b>\nCrea y gestiona catálogos de productos para mostrar a tus clientes, lo que facilita la presentación y venta de productos. \n<b><font color='#FF9000'>      Ventas por Vendedor:</font></b>\nRealiza un seguimiento del desempeño individual de tus vendedores y obtén información sobre quién está logrando las mejores ventas.\n<b><font color='#FF9000'>      Perfil Administrador Activo:</font></b>\nPuedes usar todas las funciones con un unico usuario, el creador de la cuenta."  </string>
 </resources>

@@ -12,8 +12,6 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
 
 import java.text.SimpleDateFormat
 

@@ -2,7 +2,6 @@ package com.castellanoseloy.ventarapida.ui.usuarios
 
 
 import android.content.Intent
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,21 +12,17 @@ import com.castellanoseloy.ventarapida.MainActivity
 import com.firebase.ui.auth.AuthUI
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleUsuarioBinding
 import com.castellanoseloy.ventarapida.Login
-import com.google.android.gms.tasks.Task
-
-
 
 class DetalleSesion : Fragment() {
 
     private var binding: FragmentDetalleUsuarioBinding? = null
     private lateinit var vista: View
-    private lateinit var viewModel: DetalleSesionViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentDetalleUsuarioBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[DetalleSesionViewModel::class.java]
 
 
         return binding!!.root
@@ -47,7 +42,7 @@ class DetalleSesion : Fragment() {
             binding?.buttonRegister?.setOnClickListener {
 
                 AuthUI.getInstance().signOut(requireContext())
-                    .addOnCompleteListener { task: Task<Void?>? ->
+                    .addOnCompleteListener {
 
                         MainActivity.ventaProductosSeleccionados.clear()
                         MainActivity.compraProductosSeleccionados.clear()

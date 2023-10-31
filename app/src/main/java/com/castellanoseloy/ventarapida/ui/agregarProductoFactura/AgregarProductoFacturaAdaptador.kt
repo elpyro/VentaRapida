@@ -15,6 +15,7 @@ import com.castellanoseloy.ventarapida.R
 
 
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.squareup.picasso.Picasso
@@ -42,7 +43,7 @@ class AgregarProductoFacturaAdaptador(
         holder.bind(products[position])
 
         // Configurar el evento de click largo en el cardview del producto
-        holder.cardview.setOnLongClickListener { motionEvent ->
+        holder.cardview.setOnLongClickListener {
             onLongClickItem?.invoke(products[position], position)
             true // Devuelve true para indicar que el evento ha sido consumido
         }
@@ -63,12 +64,7 @@ class AgregarProductoFacturaAdaptador(
     // Callback para el evento de click largo en un item de la lista
     private var onLongClickItem: ((ModeloProducto, Int) -> Unit)? = null
 
-    // Configurar el callback para el evento de click largo en un item de la lista
-    fun setOnLongClickItem(callback: (ModeloProducto, Int) -> Unit) {
-        this.onLongClickItem = callback
-    }
-
-    // ViewHolder para la vista de cada elemento de la lista de productos
+        @Suppress("DEPRECATION")
         inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val producto: TextView = itemView.findViewById(R.id.textView_nombre)
         private val precio: TextView = itemView.findViewById(R.id.textView_precio)
@@ -83,17 +79,17 @@ class AgregarProductoFacturaAdaptador(
 
             cargarProducto(product)
 
-            cardview.setOnClickListener { motionEvent ->
+            cardview.setOnClickListener {
                 viewModel.agregarProductoSeleccionado(products[adapterPosition])
                 cargarProducto(product)
             }
             // Configurar el evento de click en el botón restar cantidad del producto
-            botonRestar.setOnClickListener { motionEvent ->
+            botonRestar.setOnClickListener {
                 viewModel.restarProductoSeleccionado(products[position])
                cargarProducto(product)
             }
 
-            seleccion.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            seleccion.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
                 if(seleccion.hasFocus()) {
                     this.existenciaSinCambios = product.cantidad
                     seleccion.addTextChangedListener(textWatcher)
@@ -147,18 +143,7 @@ class AgregarProductoFacturaAdaptador(
 
             existencia.text =product.cantidad
 
-            // Limpiar la imagen anterior
-            Picasso.get().cancelRequest(imagenProducto)
-
-            // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
-            if (!product.url.isEmpty() && imagenProducto.tag != product.url) {
-                imagenProducto.tag = product.url
-                Picasso.get().load(product.url).into(imagenProducto)
-            } else if (product.url.isEmpty()) {
-                // Si la URL está vacía, mostrar una imagen por defecto o limpiar la vista
-                // dependiendo del diseño que se quiera obtener
-                imagenProducto.setImageResource(R.drawable.ic_menu_camera)
-            }
+            Utilidades.cargarImagen(product.url,imagenProducto)
 
             if (AgregarProductoFactura.productosSeleccionadosAgregar.isNotEmpty() &&   AgregarProductoFactura.productosSeleccionadosAgregar.any { it.key.id == products[position].id }) {
                 val cantidad = AgregarProductoFactura.productosSeleccionadosAgregar.filterKeys { it.id == products[position].id }.values.sum()

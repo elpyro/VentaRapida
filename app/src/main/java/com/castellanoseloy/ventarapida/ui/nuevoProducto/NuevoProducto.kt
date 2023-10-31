@@ -41,7 +41,6 @@ class NuevoProducto : Fragment() {
 
         binding = FragmentNuevoProductoBinding.inflate(inflater, container, false)
 
-
         binding?.imageViewFoto?.setOnClickListener{
             cargarImagen()
         }
@@ -69,20 +68,18 @@ class NuevoProducto : Fragment() {
 
         viewModel = ViewModelProvider(this).get(NuevoProductoViewModel::class.java)
 
-        viewModel.mensajeToast.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-        }
-
         setHasOptionsMenu(true)
 
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_guardar_y_foto, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -171,13 +168,13 @@ class NuevoProducto : Fragment() {
 
         //subir imagen
         if (binding?.imageViewFoto!!.drawable is BitmapDrawable) {
-            NuevoProductoViewModel.subirImagenFirebase(requireContext(), binding?.imageViewFoto!!, idProducto)
+            viewModel.subirImagenFirebase(requireContext(), binding?.imageViewFoto!!, idProducto)
                 .addOnFailureListener {
                     Toast.makeText(requireContext(),"Error al obtener la URL de descarga de la imagen subida.",Toast.LENGTH_LONG).show()
                 }
             }
         var cantidadDisponible="0"
-        if(!binding!!.editTextCantidad.text.toString().trim().isEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
+        if(binding!!.editTextCantidad.text.toString().trim().isNotEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
         //subir datos
             val updates = hashMapOf<String, Any>(
                 "id" to idProducto,
@@ -191,7 +188,7 @@ class NuevoProducto : Fragment() {
 
         guardarProducto(updates)
 
-                Toast.makeText(requireContext(),"Producto Guardado",Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(),"Producto Guardado",Toast.LENGTH_LONG).show()
 
         //limpiando campos
         binding?.editTextProducto?.setText("")

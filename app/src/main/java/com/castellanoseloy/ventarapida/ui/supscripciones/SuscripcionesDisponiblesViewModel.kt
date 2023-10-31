@@ -17,7 +17,7 @@ class SuscripcionesDisponiblesViewModel : ViewModel() {
         if(fechaActual >= proximoPago){
             calendar.time = fechaActual
         }else{
-            calendar.time = proximoPago
+            calendar.time = proximoPago!!
         }
 
         calendar.add(Calendar.MONTH, 1) // Agregar un mes a la fecha de inicio
@@ -29,7 +29,7 @@ class SuscripcionesDisponiblesViewModel : ViewModel() {
 
         var planAceptado=true
         if(nuevoPlan != planActual){
-            if(diasRestantes.second > 3.0){//no se pueden hacer cambio de plan cuando quedan mas de 5 dias disponibles
+            if(diasRestantes.second > 1.0){//no se pueden hacer cambio de plan cuando quedan mas de 1 dias disponibles
                 planAceptado=false
             }
         }

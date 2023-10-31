@@ -1,7 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.usuarios
 
 import android.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,6 +23,7 @@ import com.castellanoseloy.ventarapida.datos.ModeloConfiguracionUsuario
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios.eliminarUsuarioPorId
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios.guardarUsuario
+import java.util.Locale
 import java.util.UUID
 
 
@@ -30,18 +32,14 @@ class RegistroUsuario : Fragment() {
     private var nombreUsuario: String? =null
     private var binding: FragmentRegistroUsuarioBinding? = null
         private lateinit var vista: View
-
-        private lateinit var    viewModel: RegistroUsuarioViewModel
         private var idUsuario=""
         private var clienteNuevo=true
 
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
-        ): View? {
+        ): View {
             binding = FragmentRegistroUsuarioBinding.inflate(inflater, container, false)
-            viewModel = ViewModelProvider(this)[RegistroUsuarioViewModel::class.java]
-
 
             setHasOptionsMenu(true)
 
@@ -56,7 +54,7 @@ class RegistroUsuario : Fragment() {
                 clienteNuevo=false
             }else{
                 idUsuario= UUID.randomUUID().toString()
-                binding?.TextviewTitulo?.setText("Crea un nuevo usuario")
+                binding?.TextviewTitulo?.text = "Crea un nuevo usuario"
             }
 
             listeners()
@@ -82,7 +80,7 @@ class RegistroUsuario : Fragment() {
     }
 
     private fun eliminarCuenta() {
-       var usuarioPrincipal=verificarUsuarioPrincipal()
+       val usuarioPrincipal=verificarUsuarioPrincipal()
         if(usuarioPrincipal){
             Toast.makeText(requireContext(),"No se puede eliminar la cuenta del usuario principal",Toast.LENGTH_LONG).show()
         }else{
@@ -110,9 +108,8 @@ class RegistroUsuario : Fragment() {
 
 
     private fun cargarDatos(modeloUsuario: ModeloUsuario) {
-        var nombre=binding?.editTextUsuario
-        var editTextCorreo=binding?.editTextCorreo
-        var textViewCorreo=binding?.hintCorreo
+        val nombre=binding?.editTextUsuario
+        val editTextCorreo=binding?.editTextCorreo
 
         nombre?.setText(modeloUsuario.nombre)
         editTextCorreo?.setText(modeloUsuario.correo.replace("@gmail.com", ""))
@@ -202,7 +199,7 @@ class RegistroUsuario : Fragment() {
         if(binding?.radioButtonInactivo?.isChecked==true) perfil="Inactivo"
 
         
-        if(!perfil.equals("Administrador")){
+        if(perfil != "Administrador"){
             val usaurioPrincipal=verificarUsuarioPrincipal()
             if (usaurioPrincipal) {
                 Toast.makeText(requireContext(),"No se puede degradar el usuario principal",Toast.LENGTH_LONG).show()
@@ -210,13 +207,13 @@ class RegistroUsuario : Fragment() {
             }
         }
 
-        var correo= binding?.editTextCorreo?.text.toString() +"@gmail.com"
+        val correo= binding?.editTextCorreo?.text.toString() +"@gmail.com"
 
-        var permisosUsuario=otorgarPermisos(perfil)
+        val permisosUsuario=otorgarPermisos(perfil)
         val updates = hashMapOf<String, Any>(
             "id" to idUsuario,
             "nombre" to  binding?.editTextUsuario?.text.toString(),
-            "correo" to  correo.toLowerCase(),
+            "correo" to  correo.toLowerCase(Locale.ROOT),
             "idEmpresa" to  MainActivity.datosEmpresa.id,
             "empresa" to  MainActivity.datosEmpresa.nombre,
             "perfil" to perfil,
@@ -231,36 +228,34 @@ class RegistroUsuario : Fragment() {
     }
 
     private fun otorgarPermisos(perfil: String): ModeloConfiguracionUsuario {
-       var mostrarPercios=true
-       var editarFacturar=true
-       var mostrarReporte=true
-       var agregerInformacion=true
+        var mostrarPercios = true
+        var editarFacturar = true
+        var mostrarReporte = true
+        var agregerInformacion = true
 
-       if(perfil.equals("Administrador")) mostrarPercios= binding?.switchPreciosCompra?.isChecked!!
+        if (perfil == "Administrador") mostrarPercios = binding?.switchPreciosCompra?.isChecked!!
 
-        if(perfil.equals("Vendedor")){
-             mostrarPercios= binding?.switchPreciosCompra?.isChecked!!
-             editarFacturar= binding?.switchEditarFacturas?.isChecked!!
-             mostrarReporte= binding?.switchReporteGanancia?.isChecked!!
-             agregerInformacion= binding?.switchAgregarInformacion?.isChecked!!
+        if (perfil == "Vendedor") {
+            mostrarPercios = binding?.switchPreciosCompra?.isChecked!!
+            editarFacturar = binding?.switchEditarFacturas?.isChecked!!
+            mostrarReporte = binding?.switchReporteGanancia?.isChecked!!
+            agregerInformacion = binding?.switchAgregarInformacion?.isChecked!!
         }
 
-        if(perfil.equals("Inactivo")){
-             mostrarPercios=false
-             editarFacturar=false
-             mostrarReporte=false
-             agregerInformacion=false
+        if (perfil == "Inactivo") {
+            mostrarPercios = false
+            editarFacturar = false
+            mostrarReporte = false
+            agregerInformacion = false
 
         }
 
-        val configuracionUsuario = ModeloConfiguracionUsuario(
+        return ModeloConfiguracionUsuario(
             mostrarPreciosCompra = mostrarPercios,
             editarFacturas = editarFacturar,
             mostrarReporteGanancia = mostrarReporte,
             agregarInformacionAdicional = agregerInformacion
         )
-
-        return configuracionUsuario
 
     }
 

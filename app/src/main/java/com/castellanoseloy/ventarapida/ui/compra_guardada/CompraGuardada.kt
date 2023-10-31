@@ -1,7 +1,6 @@
 package com.castellanoseloy.ventarapida.ui.compra_guardada
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -28,6 +27,7 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.castellanoseloy.ventarapida.ui.promts.PromtFacturaGuardada
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
 class CompraGuardada : Fragment() {
 
     private lateinit var viewModel: CompraGuardadaViewModel
@@ -42,13 +42,13 @@ class CompraGuardada : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentCompraGuardadaBinding.inflate(inflater, container, false)
 
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
         modeloFactura = (bundle?.getSerializable("modelo") as? ModeloFactura)!!
-        listaDeProductos = (bundle?.getSerializable("lista") as? ArrayList<ModeloFactura>)!!
+        listaDeProductos = (bundle.getSerializable("lista") as? ArrayList<ModeloFactura>)!!
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding?.recyclerViewProductosSeleccionados?.layoutManager = gridLayoutManager
@@ -101,7 +101,7 @@ class CompraGuardada : Fragment() {
             adaptador =
                 CompraGuardadaAdaptador(productosComprados as MutableList<ModeloProductoFacturado>)
             binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
-            adaptador!!.setOnClickItem() { item ->
+            adaptador.setOnClickItem() { item ->
 
                 val promtEditarItem = PromtFacturaGuardada()
                 promtEditarItem.editarProducto("compra", item, requireActivity())
@@ -169,20 +169,22 @@ class CompraGuardada : Fragment() {
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
 
 
-        adaptador!!.setOnClickItem() { item ->
+        adaptador.setOnClickItem() { item ->
             val promtEditarItem = PromtFacturaGuardada()
             promtEditarItem.editarProducto("compra", item, requireActivity())
         }
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_factura_o_compra_guardada, menu)
         //Todo pendiente agregar el boton ation_agregar_producto
-        var menuItem: MenuItem = menu.findItem(R.id.action_agregar_producto).setVisible(false)
+        menu.findItem(R.id.action_agregar_producto).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 

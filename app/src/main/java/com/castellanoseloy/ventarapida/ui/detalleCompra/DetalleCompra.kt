@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.detalleCompra
 
 import android.app.AlertDialog
@@ -8,7 +10,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,7 +23,6 @@ import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.Utilidades
-import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
@@ -62,7 +62,6 @@ class DetalleCompra : Fragment() {
 
         actualizarRecycerView()
 
-
         viewModel.context = requireContext()
         viewModel.totalFactura()
 
@@ -99,13 +98,13 @@ class DetalleCompra : Fragment() {
         val precioAnterior = editTextPrecio.text.toString()
 
 // Configurar el botón "Aceptar"
-        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
+        dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
             val nuevoNombre=editTextProducto.text.toString()
             val nuevaCantidad = editTextCantidad.text.toString()
             val nuevoPrecio = editTextPrecio.text.toString()
 
             viewModel.actualizarProducto(item, nuevoPrecio.toDouble(),nuevaCantidad.toInt(), nuevoNombre)
-            adaptador.notifyDataSetChanged()
+            actualizarRecycerView()
 
             if(precioAnterior!=nuevoPrecio){
                 dialogoCambiarPreciosDB(nuevoPrecio, nuevaCantidad, item)
@@ -114,11 +113,11 @@ class DetalleCompra : Fragment() {
         }
 
 // Configurar el botón "Cancelar"
-        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
+        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             // No hacer nada
         }
 
-        dialogBuilder.setNeutralButton("Eliminar") { dialogInterface, i ->
+        dialogBuilder.setNeutralButton("Eliminar") { _, _ ->
             viewModel.eliminarProducto(  item)
             actualizarRecycerView()
         }
@@ -131,7 +130,7 @@ class DetalleCompra : Fragment() {
     private fun actualizarRecycerView() {
         adaptador = DetalleCompraAdaptador(MainActivity.compraProductosSeleccionados )
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
-        adaptador.setOnClickItem() { item, cantidad, position ->
+        adaptador.setOnClickItem() { item, cantidad, _ ->
             editarItem(item, cantidad)
         }
     }
@@ -145,12 +144,12 @@ class DetalleCompra : Fragment() {
         FirebaseProductos.buscarProductoPorId(itemAnterior.id)
             .addOnCompleteListener {
                 if(it.isSuccessful){
-                    var itemActualizado = it.result
+                    val itemActualizado = it.result
 
                     if(!itemActualizado?.p_compra.equals(nuevoPrecio)) {
 
                         val itemValorActual =
-                            itemActualizado?.p_compra!!.toDouble() * itemActualizado?.cantidad!!.toInt()
+                            itemActualizado?.p_compra!!.toDouble() * itemActualizado.cantidad.toInt()
                         val itemValorCompra = nuevoPrecio.toDouble() * nuevaCantidad.toInt()
                         val valorInventariado = itemValorActual + itemValorCompra
                         val totalProductoInventariado =
@@ -162,7 +161,7 @@ class DetalleCompra : Fragment() {
                         val builder = AlertDialog.Builder(requireContext())
                         builder.setTitle("Mantente actualizado")
                         builder.setMessage("Desea actualizar el precio de compra de ${itemActualizado.p_compra.formatoMonenda()} a el nuevo precio ${nuevoPrecio.formatoMonenda()} para todos los ${itemActualizado.nombre}")
-                        builder.setPositiveButton("Sí") { dialog, which ->
+                        builder.setPositiveButton("Sí") { _, _ ->
                             actualizarPrecio(nuevoPrecio,itemActualizado)
                         }
 
@@ -171,7 +170,7 @@ class DetalleCompra : Fragment() {
                         builder.setNeutralButton("Promediar (${
                             promedioFormateado.formatoMonenda()
                             })"
-                        ) { dialog, which ->
+                        ) { _, _ ->
                             actualizarPrecio(promedioFormateado,itemActualizado)
                         }
                         builder.show()
@@ -239,11 +238,13 @@ class DetalleCompra : Fragment() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_detalle_factura_o_compra, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -258,7 +259,7 @@ class DetalleCompra : Fragment() {
                     return true
                 }
 
-                if(MainActivity.compraProductosSeleccionados.size<1){
+                if(MainActivity.compraProductosSeleccionados.isEmpty()){
                     Toast.makeText(context,"No hay productos seleccionados", Toast.LENGTH_LONG).show()
                     return true
                 }
@@ -267,7 +268,7 @@ class DetalleCompra : Fragment() {
                 MainActivity.progressDialog?.show()
 
                 val datosPedido= obtenerDatosPedido()
-                var listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
+                val listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
 
                 viewModel.subirDatos(datosPedido,listaConvertida.first)
 
@@ -289,7 +290,7 @@ class DetalleCompra : Fragment() {
             R.id.action_ver_pdf ->{
 
                 val datosPedido=obtenerDatosPedido()
-                var listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
+                val listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
                 viewModel.abrirPDFConPreferencias(listaConvertida.first,datosPedido)
 
 

@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.VistaPDFReporte
-import com.castellanoseloy.ventarapida.databinding.FragmentReporteVendedorBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados

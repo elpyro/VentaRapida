@@ -63,10 +63,6 @@ class UsuariosAdaptador(
     // Callback para el evento de click largo en un item de la lista
     private var onLongClickItem: ((ModeloUsuario) -> Unit)? = null
 
-    fun setOnLongClickItem(callback: (ModeloUsuario) -> Unit) {
-        this.onLongClickItem = callback
-    }
-
     // Este método devuelve el número de elementos en la lista de productos
     override fun getItemCount(): Int {
         return listaUsuarios.size

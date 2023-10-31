@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.registros.pestanas
 
 import android.app.ProgressDialog
@@ -66,7 +68,7 @@ class FacturaVentas : Fragment() {
             adaptador = FacturaVentasAdaptador(listaFacturas)
             binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
-            adaptador!!.setOnClickItem() { item ->
+            adaptador.setOnClickItem() { item ->
                 abriDetalle(item)
             }
             binding?.swipeRefreshLayout?.isRefreshing=false
@@ -128,7 +130,7 @@ class FacturaVentas : Fragment() {
         binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
 
-        adaptador!!.setOnClickItem() { item ->
+        adaptador.setOnClickItem() { item ->
           abriDetalle(item)
         }
 

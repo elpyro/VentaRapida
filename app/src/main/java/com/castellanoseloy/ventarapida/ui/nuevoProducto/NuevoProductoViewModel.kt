@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.castellanoseloy.ventarapida.ui.nuevoProducto
 
 import android.content.Context
@@ -5,10 +7,8 @@ import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
 import androidx.core.app.JobIntentService
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.castellanoseloy.ventarapida.MainActivity
-
 import com.castellanoseloy.ventarapida.procesos.GuardarImagenEnDispositivo
 import com.castellanoseloy.ventarapida.servicios.ServiciosSubirFoto
 import com.google.android.gms.tasks.Task
@@ -18,15 +18,7 @@ import com.google.firebase.storage.ktx.storage
 
 class NuevoProductoViewModel : ViewModel() {
 
-    val mensajeToast = MutableLiveData<String>()
-
-
-    // Crear una función para guardar los datos del servicio pendiente en una preferencia
-
-    companion object {
-
-
-        fun subirImagenFirebase(context: Context, imageViewFoto: ImageView?, idProducto: String): Task<Void> {
+    fun subirImagenFirebase(context: Context, imageViewFoto: ImageView?, idProducto: String): Task<Void> {
 
             // Obtener la imagen del ImageView como Bitmap
             val bitmap = (imageViewFoto?.drawable as BitmapDrawable).bitmap
@@ -56,6 +48,5 @@ class NuevoProductoViewModel : ViewModel() {
 
 
             return TaskCompletionSource<Void>().task // Devuelve una tarea vacía
-        }
     }
 }

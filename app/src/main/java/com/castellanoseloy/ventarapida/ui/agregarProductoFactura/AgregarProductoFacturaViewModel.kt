@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
-
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
@@ -21,7 +20,7 @@ import java.util.*
 
 class AgregarProductoFacturaViewModel : ViewModel() {
 
-    lateinit var context: Context // propiedad para almacenar el contexto
+    lateinit var context: Context
     val productosLiveData = MutableLiveData<List<ModeloProducto>>()
     val totalSeleccionLiveData= MutableLiveData<String>()
 
@@ -136,16 +135,16 @@ class AgregarProductoFacturaViewModel : ViewModel() {
             //calculamos el precio descuento para tener la referencia para los reportes
             if (cantidadSeleccionada!=0){
 
-                val porcentajeDescuento = modeloFactura!!.descuento.toDouble() / 100
+                val porcentajeDescuento = modeloFactura.descuento.toDouble() / 100
                 var precioDescuento:Double=producto.p_diamante.toDouble()
                 precioDescuento *= (1 - porcentajeDescuento)
-                precioDescuento += modeloFactura!!.envio.toDouble()
+                precioDescuento += modeloFactura.envio.toDouble()
 
                 val id_producto_pedido = UUID.randomUUID().toString()
                 val productoFacturado = ModeloProductoFacturado(
                     id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
-                    id_pedido = modeloFactura!!.id_pedido,
+                    id_pedido = modeloFactura.id_pedido,
                     id_vendedor = MainActivity.datosUsuario.id,
                     vendedor = MainActivity.datosUsuario.nombre,
                     producto = producto.nombre,
@@ -153,10 +152,10 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     costo = producto.p_compra,
                     venta = producto.p_diamante,
                     precioDescuentos = precioDescuento.toString(),
-                    fecha = modeloFactura!!.fecha,
-                    hora =modeloFactura!!.hora,
+                    fecha = modeloFactura.fecha,
+                    hora = modeloFactura.hora,
                     imagenUrl =producto.url,
-                    fechaBusquedas =  modeloFactura!!.fechaBusquedas
+                    fechaBusquedas =  modeloFactura.fechaBusquedas
                 )
                 listaProductosFacturados.add(productoFacturado)
 

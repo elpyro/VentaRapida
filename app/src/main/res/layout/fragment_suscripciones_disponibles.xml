@@ -38,9 +38,23 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:theme="@style/ColorFuenteEnFondoGris"
-        android:layout_gravity="center"
-        android:layout_marginBottom="24dp"/>
+        android:layout_gravity="center" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="8dp"
+        android:background="@color/gris"></View>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:text="@string/PlanesDisponibles"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:theme="@style/ColorFuenteEnFondoGris" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -54,38 +68,133 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/azul_trasparente"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="8dp"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_margin="8dp"
                     android:gravity="end"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textView_total"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="center"
                         android:text="@string/PlanEmpresarial"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
 
                     <TextView
-                        android:id="@+id/textView_descripcion_empresarial"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/descripcionPlanEmpresarial"
+                        android:text="Valor:"
                         android:textSize="16sp"
+                        android:gravity="center"
+                        android:textColor="@color/naranja"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="50 dolares mensuales"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="8dp"
+                        android:background="@color/gris"></View>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Beneficios:"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textColor="@color/naranja"
+                        android:textStyle="bold"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/descripcionPlanEmpresarial"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fillViewport="true">
+
+                        <LinearLayout
+                            android:id="@+id/expansion_panel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <!-- Elemento principal -->
+                            <LinearLayout
+                                android:id="@+id/main_item"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:padding="16dp">
+
+                                <!-- Icono de expansión (puedes usar una flecha) -->
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/baseline_keyboard_double_arrow_down_24"
+                                    android:id="@+id/expand_icon" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="Más Características"
+                                    android:gravity="center"
+                                    android:textSize="16sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                            <!-- Elementos secundarios ocultos (GONE por defecto) -->
+                            <LinearLayout
+                                android:id="@+id/secondary_items"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+
+                                <TextView
+                                    android:id="@+id/textView_descripcion_empresarial"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/descripcionPlanPago"
+                                    android:textSize="14sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
+
+
 
                     <Button
                         android:id="@+id/buttonPlan_empresarial"
@@ -93,7 +202,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse por 50 dolares"
+                        android:text="Sucribete por 30 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 
@@ -105,38 +214,133 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/azul_trasparente"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="8dp"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_margin="8dp"
                     android:gravity="end"
                     android:orientation="vertical">
 
                     <TextView
-
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="center"
                         android:text="@string/PlanPremium"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
 
                     <TextView
-                        android:id="@+id/textView_descripcion_premium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/descripcionPlanPremium"
+                        android:text="Valor:"
                         android:textSize="16sp"
+                        android:gravity="center"
+                        android:textColor="@color/naranja"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="20 dolares mensuales"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="8dp"
+                        android:background="@color/gris"></View>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Beneficios:"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textColor="@color/naranja"
+                        android:textStyle="bold"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/descripcionPlanPremium"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fillViewport="true">
+
+                        <LinearLayout
+                            android:id="@+id/expansion_panel2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <!-- Elemento principal -->
+                            <LinearLayout
+                                android:id="@+id/main_item2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:padding="16dp">
+
+                                <!-- Icono de expansión (puedes usar una flecha) -->
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/baseline_keyboard_double_arrow_down_24"
+                                    android:id="@+id/expand_icon2" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="Más Características"
+                                    android:gravity="center"
+                                    android:textSize="16sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                            <!-- Elementos secundarios ocultos (GONE por defecto) -->
+                            <LinearLayout
+                                android:id="@+id/secondary_items2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+
+                                <TextView
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/descripcionPlanPago"
+                                    android:textSize="14sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
+
+
 
                     <Button
                         android:id="@+id/buttonPlan_premium"
@@ -144,23 +348,22 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse por 20 dolares"
+                        android:text="Sucribete por 20 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
+
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/azul_trasparente"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="8dp"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_margin="8dp"
                     android:gravity="end"
                     android:orientation="vertical">
 
@@ -170,28 +373,126 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center"
                         android:text="@string/PlanBasico"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
 
                     <TextView
-
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/descripcionPlanBasico"
+                        android:text="Valor:"
                         android:textSize="16sp"
+                        android:gravity="center"
+                        android:textColor="@color/naranja"
+                        android:textStyle="bold"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="12 dolares mensuales"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="8dp"
+                        android:background="@color/gris"></View>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Beneficios:"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textColor="@color/naranja"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/descripcionPlanBasico"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fillViewport="true">
+
+                        <LinearLayout
+                            android:id="@+id/expansion_panel3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <!-- Elemento principal -->
+                            <LinearLayout
+                                android:id="@+id/main_item3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:padding="16dp">
+
+                                <!-- Icono de expansión (puedes usar una flecha) -->
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/baseline_keyboard_double_arrow_down_24"
+                                    android:id="@+id/expand_icon3" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="Más Características"
+                                    android:gravity="center"
+                                    android:textSize="16sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                            <!-- Elementos secundarios ocultos (GONE por defecto) -->
+                            <LinearLayout
+                                android:id="@+id/secondary_items3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+
+                                <TextView
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/descripcionPlanPago"
+                                    android:textSize="14sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
+
+
+
                     <Button
-                        android:id="@+id/buttonPlan_Gratuito"
+                        android:id="@+id/buttonPlanBasico"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Suscribirse por 12 dolares"
+                        android:text="Sucribete por 12 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 
@@ -201,14 +502,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/azul_trasparente"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="8dp"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_margin="8dp"
                     android:gravity="end"
                     android:orientation="vertical">
 
@@ -218,25 +517,121 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center"
                         android:text="@string/PlanGratuito"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
 
                     <TextView
-
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/descripcionGratuito"
+                        android:text="Valor:"
                         android:textSize="16sp"
+                        android:gravity="center"
+                        android:textColor="@color/naranja"
+                        android:textStyle="bold"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="Gratís"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="8dp"
+                        android:background="@color/gris"></View>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Beneficios:"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textColor="@color/naranja"
                         android:textStyle="bold"
                         android:theme="@style/ColorFuenteEnFondoGris" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/descripcionGratuito"
+                        android:textSize="16sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fillViewport="true">
+
+                        <LinearLayout
+                            android:id="@+id/expansion_panel4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <!-- Elemento principal -->
+                            <LinearLayout
+                                android:id="@+id/main_item4"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:padding="16dp">
+
+                                <!-- Icono de expansión (puedes usar una flecha) -->
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/baseline_keyboard_double_arrow_down_24"
+                                    android:id="@+id/expand_icon4" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="Más Características"
+                                    android:gravity="center"
+                                    android:textSize="16sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                            <!-- Elementos secundarios ocultos (GONE por defecto) -->
+                            <LinearLayout
+                                android:id="@+id/secondary_items4"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+
+                                <TextView
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/descripcionPlanGratis"
+                                    android:textSize="14sp"
+                                    android:theme="@style/ColorFuenteEnFondoGris" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
 

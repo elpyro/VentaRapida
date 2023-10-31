@@ -20,10 +20,8 @@ import androidx.navigation.fragment.findNavController
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
-import com.castellanoseloy.ventarapida.procesos.DecimalDigitsInputFilter
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria
-import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
 import com.castellanoseloy.ventarapida.procesos.VerificarInternet
@@ -177,8 +175,8 @@ class DetalleProducto : Fragment() {
         binding?.editTextCantidad?.setText(producto.cantidad)
         cantidadAntigua= producto.cantidad
         binding?.editTextProveedor?.setText(producto.proveedor)
-        if(producto.comentario!=null)binding!!.editTextComentario.setText(producto.comentario.toString())
-       if (!producto.url.isEmpty()){
+        binding!!.editTextComentario.setText(producto.comentario)
+       if (producto.url.isNotEmpty()){
            Picasso.get().load(producto.url).into(binding?.imageViewFoto)
        }
 
@@ -217,7 +215,7 @@ class DetalleProducto : Fragment() {
         // Actualizamos el fragmento con los detalles del siguiente producto
         cargarProducto(siguienteModeloProducto)
         verificarPosiciones()
-        Utilidades.ocultarTeclado(requireContext(), vista!!)
+        ocultarTeclado(requireContext(), vista!!)
     }
 
     private fun cargarSiguienteProducto() {
@@ -235,7 +233,7 @@ class DetalleProducto : Fragment() {
         // Actualizamos el fragmento con los detalles del siguiente producto
         cargarProducto(siguienteModeloProducto)
         verificarPosiciones()
-        Utilidades.ocultarTeclado(requireContext(), vista!!)
+        ocultarTeclado(requireContext(), vista!!)
     }
 
 
@@ -245,11 +243,13 @@ class DetalleProducto : Fragment() {
         viewModel.setIdProducto(modeloProducto!!.id)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menuproducto, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
@@ -278,13 +278,13 @@ class DetalleProducto : Fragment() {
 
 
     private fun eliminar() {
-        Utilidades.ocultarTeclado(requireContext(), vista!!)
+        ocultarTeclado(requireContext(), vista!!)
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar producto")
         builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
-        builder.setPositiveButton("Eliminar") { dialog, which ->
+        builder.setPositiveButton("Eliminar") { _, _ ->
             viewModel.eliminarProducto(id_producto)
             findNavController().popBackStack()
         }
@@ -322,7 +322,7 @@ class DetalleProducto : Fragment() {
          }
 
          var cantidadDisponible="0"
-         if(!binding!!.editTextCantidad.text.toString().trim().isEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
+         if(binding!!.editTextCantidad.text.toString().trim().isNotEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
          if(cantidadAntigua != cantidadDisponible) actualizarCantidadTransaccion(cantidadDisponible)
 
         val updates = hashMapOf<String, Any>(

@@ -24,7 +24,7 @@ import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos.editarProduc
 import java.util.UUID
 
 
-class PromtFacturaGuardada() {
+class PromtFacturaGuardada {
 
 
     private lateinit var tablaReferencia: String
@@ -44,8 +44,8 @@ class PromtFacturaGuardada() {
         val dialogBuilder = AlertDialog.Builder(context)
 
         tablaReferencia=""
-        if (tipo.equals("compra")) tablaReferencia="ProductosComprados"
-        if (tipo.equals("venta"))  tablaReferencia="ProductosFacturados"
+        if (tipo == "compra") tablaReferencia="ProductosComprados"
+        if (tipo == "venta")  tablaReferencia="ProductosFacturados"
 
 // Inflar el layout para el diálogo
         // Inflar el layout para el diálogo
@@ -53,10 +53,10 @@ class PromtFacturaGuardada() {
         val dialogView = inflater.inflate(R.layout.promt_factura, null)
         dialogBuilder.setView(dialogView)
 
-        editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
-        editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
-        editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
-        imageView_foto= dialogView.findViewById<ImageView>(R.id.imageView_foto)
+        editTextProducto = dialogView.findViewById(R.id.promt_producto)
+        editTextCantidad = dialogView.findViewById(R.id.promt_cantidad)
+        editTextPrecio = dialogView.findViewById(R.id.promt_precio)
+        imageView_foto= dialogView.findViewById(R.id.imageView_foto)
 
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto!!.setSelectAllOnFocus(true)
@@ -66,20 +66,20 @@ class PromtFacturaGuardada() {
         Utilidades.cargarImagen(item.imagenUrl, imageView_foto!!)
         editTextProducto!!.setText( item.producto)
         editTextCantidad!!.setText(item.cantidad)
-        if (tipo.equals("venta")) editTextPrecio!!.setText(item.venta)
-        if (tipo.equals("compra")) editTextPrecio!!.setText(item.costo)
+        if (tipo == "venta") editTextPrecio!!.setText(item.venta)
+        if (tipo == "compra") editTextPrecio!!.setText(item.costo)
 
         // Configurar el botón "Aceptar"
-        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
+        dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
             val nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
             modificar(nuevaCantidad)
         }
 
-        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
+        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             // No hacer nada
         }
 
-        dialogBuilder.setNeutralButton("Eliminar"){ dialogInterface, i ->
+        dialogBuilder.setNeutralButton("Eliminar"){ _, _ ->
             modificar("0")
         }
 
@@ -101,19 +101,19 @@ class PromtFacturaGuardada() {
         itemRecibido.cantidad=nuevaCantidad
         itemRecibido.productoEditado="true"
 
-        if (tipoRecibido.equals("venta"))   itemRecibido.venta=nuevoPrecio
-        if (tipoRecibido.equals("compra"))  itemRecibido.costo=nuevoPrecio
+        if (tipoRecibido == "venta")   itemRecibido.venta=nuevoPrecio
+        if (tipoRecibido == "compra")  itemRecibido.costo=nuevoPrecio
 
         val diferenciaCantidad = nuevaCantidad.toInt() - cantidadAnterior.toInt()
 
         var descuento= 0.0
-        if(!itemRecibido.porcentajeDescuento.isEmpty())descuento=itemRecibido.porcentajeDescuento.toDouble()
+        if(itemRecibido.porcentajeDescuento.isNotEmpty())descuento=itemRecibido.porcentajeDescuento.toDouble()
         if(descuento!=0.0){
             val precioNuevoDescuento=(nuevoPrecio.toDouble() /descuento)
             val precioNuevoDescuento2=precioNuevoDescuento-nuevoPrecio.toDouble()
             itemRecibido.precioDescuentos=precioNuevoDescuento2.toString()
         }else{
-            itemRecibido.precioDescuentos=nuevoPrecio.toString()
+            itemRecibido.precioDescuentos=nuevoPrecio
         }
 
 
@@ -197,7 +197,7 @@ class PromtFacturaGuardada() {
 
 
 // Configurar el botón "Aceptar"
-        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
+        dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
 
             val nuevoNombre=editTextCliente.text.toString()
             val nuevoTelefono = editTextTelefono.text.toString()
@@ -215,7 +215,7 @@ class PromtFacturaGuardada() {
           }
 
 // Configurar el botón "Cancelar"
-        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
+        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             // No hacer nada
         }
 
@@ -250,7 +250,7 @@ class PromtFacturaGuardada() {
         editTextEnvio.setText(datosFactura.envio)
 
 // Configurar el botón "Aceptar"
-        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
+        dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
 
 
             val nuevoDescuento=editTextDescuento.text.toString().ifBlank { "0" }
@@ -269,7 +269,7 @@ class PromtFacturaGuardada() {
         }
 
 // Configurar el botón "Cancelar"
-        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
+        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             // No hacer nada
         }
 
@@ -295,7 +295,7 @@ class PromtFacturaGuardada() {
         editTextCliente.setText( datosFactura.nombre)
 
 // Configurar el botón "Aceptar"
-        dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
+        dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
 
             val nuevoNombre=editTextCliente.text.toString()
 
@@ -307,7 +307,7 @@ class PromtFacturaGuardada() {
         }
 
 // Configurar el botón "Cancelar"
-        dialogBuilder.setNegativeButton("Cancelar") { dialogInterface, i ->
+        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             // No hacer nada
         }
 
