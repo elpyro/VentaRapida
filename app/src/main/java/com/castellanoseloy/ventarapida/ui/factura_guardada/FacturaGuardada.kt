@@ -82,7 +82,7 @@ class FacturaGuardada : Fragment() {
         }
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
-            if (banderaElimandoFactura) return@observe
+            if (!banderaElimandoFactura){
 
                 binding?.textViewTotal?.text="Total: $it"
 
@@ -91,6 +91,9 @@ class FacturaGuardada : Fragment() {
                     "total" to it
                 )
                 FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Factura",updates)
+            }
+
+
 
         }
         viewModel.subTotal.observe(viewLifecycleOwner){

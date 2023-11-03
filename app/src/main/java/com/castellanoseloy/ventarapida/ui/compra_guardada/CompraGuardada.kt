@@ -86,15 +86,17 @@ class CompraGuardada : Fragment() {
 
         viewModel.totalFactura.observe(viewLifecycleOwner) {
 
-            if (banderaElimandoFactura == true) return@observe
+            if (!banderaElimandoFactura){
+                binding?.textViewTotal?.text = "Total: ${it.formatoMonenda()}"
 
-            binding?.textViewTotal?.text = "Total: ${it.formatoMonenda()}"
+                val updates = hashMapOf<String, Any>(
+                    "id_pedido" to modeloFactura.id_pedido,
+                    "total" to it.formatoMonenda(),
+                )
+                FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Compra", updates)
+            }
 
-            val updates = hashMapOf<String, Any>(
-                "id_pedido" to modeloFactura.id_pedido,
-                "total" to it.formatoMonenda(),
-            )
-            FirebaseFacturaOCompra.guardarDetalleFacturaOCompra("Compra", updates)
+
         }
 
         viewModel.datosProductosComprados.observe(viewLifecycleOwner) { productosComprados ->

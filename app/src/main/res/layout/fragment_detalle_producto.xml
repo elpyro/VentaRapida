@@ -44,11 +44,11 @@
 
                     <ImageView
                         android:id="@+id/imageView_botonIzquierda"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_weight="1"
                         android:layout_gravity="center"
-                        android:src="@drawable/left_circle"
+                        android:src="@drawable/baseline_arrow_circle_left_24"
                         tools:ignore="ContentDescription" />
 
                     <ImageView
@@ -62,11 +62,11 @@
 
                     <ImageView
                         android:id="@+id/imageView_botonDerecha"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_weight="1"
                         android:layout_gravity="center"
-                        android:src="@drawable/right_circle"
+                        android:src="@drawable/baseline_arrow_circle_right_24"
                         tools:ignore="ContentDescription" />
 
                 </LinearLayout>

@@ -13,9 +13,9 @@
     <string-array name="reportes">
         <item>Ganancias</item>
         <item>Más Vendidos</item>
-        <item>Ventas Por Vendedor</item>
         <item>Mayor Ganancía</item>
-        <item>Ganancia por Vendedor</item>
+        <item>Ventas Por Vendedor</item>
+        <item>Ganancia Por Vendedor</item>
         <item>Surtido</item>
         <item>Surtido por producto</item>
     </string-array>

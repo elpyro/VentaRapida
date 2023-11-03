@@ -256,8 +256,8 @@ class ReportesViewModel : ViewModel() {
             val idProducto = producto.id_producto
             val nombreProducto = producto.producto
             val costo = producto.costo
-            val venta = producto.venta
-            val productoKey = ProductoKey(idProducto, nombreProducto, costo, venta)
+            val precioConDescuento = producto.precioDescuentos
+            val productoKey = ProductoKey(idProducto, nombreProducto, costo, precioConDescuento)
 
             if (ventasPorProducto.containsKey(productoKey)) {
                 val cantidadActual = ventasPorProducto[productoKey] ?: 0
@@ -307,7 +307,7 @@ class ReportesViewModel : ViewModel() {
             val idProducto = producto.id_producto
             val nombreProducto = producto.producto
 
-            val ganancia = (producto.venta.toDouble() - producto.costo.toDouble()) * producto.cantidad.toInt()
+            val ganancia = (producto.precioDescuentos.toDouble() - producto.costo.toDouble()) * producto.cantidad.toInt()
             val productoLlave = ProductoLlave(idProducto, nombreProducto)
 
             if (gananciasPorProducto.containsKey(productoLlave)) {

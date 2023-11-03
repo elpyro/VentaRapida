@@ -82,8 +82,6 @@ class Reportes : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 // Aquí puedes obtener la posición seleccionada
                 posicionSpinnerVendedor = position
-                // Puedes realizar cualquier acción adicional que necesites con la posición seleccionada
-                // ...
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -94,7 +92,7 @@ class Reportes : Fragment() {
         binding?.spinnerTipoReporte?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 // Aquí puedes obtener la posición seleccionada
-                    if(position==2 || position==4){
+                    if(position==3 || position==4){
                         binding?.spinnerVendedor?.visibility=View.VISIBLE
                     }else{
                         binding?.spinnerVendedor?.visibility=View.GONE
@@ -195,8 +193,16 @@ class Reportes : Fragment() {
                     viewModel.ReporteMasVendidos(requireContext(), fechaInicio, fechaFin)
                 }
             }
-
             if(binding?.spinnerTipoReporte?.selectedItemPosition==2){
+                progressDialog.show()
+                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.ReporteMayorGanancia(requireContext(), fechaInicio, fechaFin)
+                }
+            }
+
+
+            if(binding?.spinnerTipoReporte?.selectedItemPosition==3){
                 progressDialog.show()
                 // Ejecutar la creación del PDF en un hilo secundario usando coroutines
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -210,13 +216,7 @@ class Reportes : Fragment() {
                 }
             }
 
-            if(binding?.spinnerTipoReporte?.selectedItemPosition==3){
-                progressDialog.show()
-                // Ejecutar la creación del PDF en un hilo secundario usando coroutines
-                lifecycleScope.launch(Dispatchers.IO) {
-                    viewModel.ReporteMayorGanancia(requireContext(), fechaInicio, fechaFin)
-                }
-            }
+
 
             if(binding?.spinnerTipoReporte?.selectedItemPosition==4){
                 progressDialog.show()

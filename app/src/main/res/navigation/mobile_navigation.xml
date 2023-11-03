@@ -26,8 +26,7 @@
         tools:layout="@layout/fragment_detalle_venta" />
     <fragment
         android:id="@+id/nav_registros"
-        android:name="com.castellanoseloy.ventarapida.ui.registros.Registros"
-        android:label="fragment_registros"
+        android:label="@string/Registros"
         tools:layout="@layout/fragment_registros" />
     <fragment
         android:id="@+id/ventas"
@@ -96,8 +95,7 @@
         tools:layout="@layout/fragment_detalle_usuario" />
     <fragment
         android:id="@+id/usuarioNoRegistrado"
-        android:name="com.castellanoseloy.ventarapida.ui.usuarios.UsuarioNoRegistrado"
-        android:label="fragment_usuario_no_registrado"
+        android:label="Registra tu usuario"
         tools:layout="@layout/fragment_usuario_no_registrado" />
     <fragment
         android:id="@+id/listaUsuarios"

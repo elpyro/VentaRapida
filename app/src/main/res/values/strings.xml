@@ -79,7 +79,7 @@
     <string name="NuevoCliente">Nuevo Cliente</string>
     <string name="Reportes">Reportes\n</string>
     <string name="Inventario">Inventario</string>
-    <string name="SeleccioneInforme">Seleccione tipo de informe</string>
+    <string name="SeleccioneInforme">Seleccione Tipo de Informe</string>
     <string name="VerPDF">Ver PDF</string>
     <string name="Usuario">Usuario</string>
     <string name="administrador">Administrador</string>
