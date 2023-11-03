@@ -50,7 +50,8 @@
                     android:hint="@string/_0"
                     android:textSize="20sp"
                     android:inputType="numberDecimal"
-                    tools:ignore="TouchTargetSizeCheck" />
+                    tools:ignore="TouchTargetSizeCheck"
+                    android:importantForAutofill="no" />
             </LinearLayout>
 
 
@@ -79,7 +80,8 @@
                     android:textSize="20sp"
                     style="@style/ColorFuenteEnFondoGris"
                     android:inputType="numberDecimal"
-                    tools:ignore="TouchTargetSizeCheck" />
+                    tools:ignore="TouchTargetSizeCheck"
+                    android:importantForAutofill="no" />
             </LinearLayout>
 
         </LinearLayout>

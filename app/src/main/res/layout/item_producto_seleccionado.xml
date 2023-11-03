@@ -63,7 +63,7 @@
                         android:background="@color/azul_intermedio"
                         android:scaleType="fitEnd"
                         android:text="@string/disponible"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                 </RelativeLayout>
 

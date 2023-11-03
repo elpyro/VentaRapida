@@ -286,7 +286,8 @@
                                 android:gravity="center"
                                 android:hint="@string/_0"
                                 android:inputType="numberDecimal"
-                                tools:ignore="TouchTargetSizeCheck" />
+                                tools:ignore="TouchTargetSizeCheck"
+                                android:autofillHints="" />
                         </LinearLayout>
 
 
@@ -313,7 +314,8 @@
                                 android:hint="@string/_0"
                                 style="@style/ColorFuenteEnFondoGris"
                                 android:inputType="numberDecimal"
-                                tools:ignore="TouchTargetSizeCheck" />
+                                tools:ignore="TouchTargetSizeCheck"
+                                android:autofillHints="" />
                         </LinearLayout>
 
                     </LinearLayout>

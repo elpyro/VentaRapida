@@ -7,13 +7,13 @@
         android:title="@string/guardar"
         android:orderInCategory="100"
         android:icon="@drawable/car_ui_icon_save"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_camara"
         android:title="@string/foto"
         android:orderInCategory="200"
         android:icon="@drawable/baseline_camera_alt_24"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
 </menu>

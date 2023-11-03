@@ -111,14 +111,14 @@
     <string name="precioCompra">Compra</string>
     <string name="InformacionPublicidad4">Comparte tus facturas y reportes con la impresora o redes sociales en PDF</string>
     <string name="PlanEmpresarial">Plan Empresarial</string>
-    <string name="descripcionPlanEmpresarial">-Conecta 30 usuarios al mismo tiempo. \n-Sin publicidad</string>
+    <string name="descripcionPlanEmpresarial">-Conecta 30 usuarios al inventario. \n-Sin publicidad</string>
     <string name="comentario">Descripción</string>
     <string name="proveedorDeSurtido">Proveedor de surtido</string>
     <string name="Agregar_inventario">Agregar a inventario</string>
     <string name="busquedas">Proveedor, Producto</string>
-    <string name="descripcionPlanPremium">-Conecta 6 usuarios al mismo tiempo. \n-Sin publicidad</string>
+    <string name="descripcionPlanPremium">-Conecta 6 usuarios al inventario. \n-Sin publicidad</string>
     <string name="PlanPremium">Plan Premium</string>
-    <string name="descripcionPlanBasico">-Conecta 3 usuarios al mismo tiempo.  \n-Sin publicidad</string>
+    <string name="descripcionPlanBasico">-Conecta 3 usuarios al inventario.  \n-Sin publicidad</string>
     <string name="PlanBasico">Plan Básico</string>
     <string name="ReporteVentas">Reporte de ventas</string>
     <string name="MostrarAgotados">Mostrar Agotados en Catalogo</string>
@@ -127,7 +127,7 @@
     <string name="informacionAdicional">Información Adicional(Factura)</string>
     <string name="Publicidad3">Control de Inventario y Facturación \nMulti-Usuarios</string>
     <string name="PlanGratuito">Plan Gratuito</string>
-    <string name="descripcionGratuito">-Conecta 1 usuario gratis \n-Con publicidad</string>
+    <string name="descripcionGratuito">-Conecta 1 usuario al inventario gratis \n-Con publicidad</string>
     <string name="title_activity_instersticial">Instersticial</string>
 
     <!-- -
@@ -138,5 +138,5 @@
 
     <string name="descripcionPlanPago">"<b><font color='#FF9000'>      Gestión de Inventario:</font></b>  \nAdministración completa del inventario, incluyendo la adición, venta y edición de productos y control de existencias. \n<b><font color='#FF9000'>      Facturación Profesional:</font></b> \nGenera facturas profesionales para tus clientes con todos los detalles de la venta y datos de tú empresa. \n<b><font color='#FF9000'>      Reportes de Desempeño:</font></b>\nObtén información valiosa sobre las ventas, ganancias, productos más vendidos y compras. Los administradores pueden acceder a un conjunto completo de informes detallados.\n<b><font color='#FF9000'>      Generación de Reportes en PDF</font></b> \nConvierte tus informes y facturas en archivos PDF que puedes compartir fácilmente con tu equipo o socios comerciales.\n<b><font color='#FF9000'>      Catálogos de Productos:</font></b>\nCrea y gestiona catálogos de productos para mostrar a tus clientes, lo que facilita la presentación y venta de productos. \n<b><font color='#FF9000'>      Ventas por Vendedor:</font></b>\nRealiza un seguimiento del desempeño individual de tus vendedores y obtén información sobre quién está logrando las mejores ventas. \n<b><font color='#FF9000'>      Perfiles Personalizados:</font></b>\nCrea perfiles de administradores y vendedores a partir de cuentas de Gmail. \n- Administradores: pueden personalizar roles, asignar permisos y acceder a informes completos, además de comprar, vender y editar inventarios.\n- Vendedores: pueden realizar ventas sin editar el inventario; los administradores le pueden asignar permisos especiales."</string>
     <string name="PlanesDisponibles">Planes Disponibles:</string>
-    <string name="descripcionPlanGratis">"<b><font color='#FF9000'>      Gestión de Inventario:</font></b>  \nAdministración completa del inventario, incluyendo la adición, venta y edición de productos y control de existencias. \n<b><font color='#FF9000'>      Facturación Profesional:</font></b> \nGenera facturas profesionales para tus clientes con todos los detalles de la venta y datos de tú empresa. \n<b><font color='#FF9000'>      Reportes de Desempeño:</font></b>\nObtén información valiosa sobre las ventas, ganancias, productos más vendidos y compras. Los administradores pueden acceder a un conjunto completo de informes detallados.\n<b><font color='#FF9000'>      Generación de Reportes en PDF</font></b> \nConvierte tus informes y facturas en archivos PDF que puedes compartir fácilmente con tu equipo o socios comerciales.\n<b><font color='#FF9000'>      Catálogos de Productos:</font></b>\nCrea y gestiona catálogos de productos para mostrar a tus clientes, lo que facilita la presentación y venta de productos. \n<b><font color='#FF9000'>      Ventas por Vendedor:</font></b>\nRealiza un seguimiento del desempeño individual de tus vendedores y obtén información sobre quién está logrando las mejores ventas.\n<b><font color='#FF9000'>      Perfil Administrador Activo:</font></b>\nPuedes usar todas las funciones con un unico usuario, el creador de la cuenta."  </string>
+    <string name="descripcionPlanGratis">"<b><font color='#FF9000'>      Gestión de Inventario:</font></b>  \nAdministración completa del inventario, incluyendo la adición, venta y edición de productos y control de existencias. \n<b><font color='#FF9000'>      Facturación Profesional:</font></b> \nGenera facturas profesionales para tus clientes con todos los detalles de la venta y datos de tú empresa. \n<b><font color='#FF9000'>      Reportes de Desempeño:</font></b>\nObtén información valiosa sobre las ventas, ganancias, productos más vendidos y compras. Los administradores pueden acceder a un conjunto completo de informes detallados.\n<b><font color='#FF9000'>      Generación de Reportes en PDF</font></b> \nConvierte tus informes y facturas en archivos PDF que puedes compartir fácilmente con tu equipo o socios comerciales.\n<b><font color='#FF9000'>      Catálogos de Productos:</font></b>\nCrea y gestiona catálogos de productos para mostrar a tus clientes, lo que facilita la presentación y venta de productos. \n<b><font color='#FF9000'>      Perfil Administrador Activo:</font></b>\nPuedes usar todas las funciones con un unico usuario, el creador de la cuenta."  </string>
 </resources>

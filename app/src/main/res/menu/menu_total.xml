@@ -6,12 +6,12 @@
         android:id="@+id/action_total"
         android:title=""
         android:orderInCategory="100"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:visible="false"
         android:id="@+id/action_premium"
         android:title="@string/Plan_vencido"
         android:orderInCategory="100"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

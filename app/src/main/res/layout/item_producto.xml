@@ -63,7 +63,8 @@
                         android:textStyle="bold"
                         android:layout_gravity="right"
                         android:autoSizeTextType="uniform"
-                        android:layout_weight="0"/>
+                        android:layout_weight="0"
+                        android:importantForAutofill="no" />
 
                     <View
                         android:layout_width="wrap_content"

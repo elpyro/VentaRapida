@@ -103,7 +103,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="50 dolares mensuales"
+                        android:text="40 dolares mensuales"
                         android:textSize="16sp"
                         android:theme="@style/ColorFuenteEnFondoGris" />
 
@@ -203,7 +203,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/gradient_button"
-                        android:text="Sucribete por 30 dolares"
+                        android:text="Sucribete por 40 dolares"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 

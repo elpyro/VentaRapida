@@ -86,7 +86,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:background="@drawable/bordes_boton"
-                    android:text="Ventas" />
+                    android:text="Ventas"
+                    style="?android:attr/buttonBarButtonStyle" />
 
                 <Button
                     android:visibility="gone"
@@ -96,7 +97,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:background="@drawable/bordes_boton"
-                    android:text="Ganancias" />
+                    android:text="Ganancias"
+                    style="?android:attr/buttonBarButtonStyle" />
                 </LinearLayout>
             </LinearLayout>
 
