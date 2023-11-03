@@ -6,6 +6,5 @@
         android:id="@+id/action_nuevo_usuario"
         android:title="@string/NuevoUsuario"
         android:orderInCategory="100"
-
         app:showAsAction="always" />
 </menu>

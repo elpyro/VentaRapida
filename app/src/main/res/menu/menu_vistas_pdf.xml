@@ -11,7 +11,7 @@
 
     <item
         android:id="@+id/action_whatsapp"
-        android:title="@string/compartir"
+        android:title="@string/compartirWhastapp"
         android:orderInCategory="200"
         android:visible="false"
         android:icon="@drawable/whatsapp"
