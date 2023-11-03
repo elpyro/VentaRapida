@@ -54,8 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_google"
-                android:text="Iniciar sesion con Google"
-                />
+                android:text="Iniciar sesion con Google" />
         </LinearLayout>
 
         <LinearLayout
