@@ -135,10 +135,11 @@
     <string name="PlanesDisponibles">Planes Disponibles:</string>
     <string name="descripcionPlanGratis">"<b><font color='#FF9000'>      Gestión de Inventario:</font></b>  \nAdministración completa del inventario, incluyendo la adición, venta y edición de productos y control de existencias. \n<b><font color='#FF9000'>      Facturación Profesional:</font></b> \nGenera facturas profesionales para tus clientes con todos los detalles de la venta y datos de tú empresa. \n<b><font color='#FF9000'>      Reportes de Desempeño:</font></b>\nObtén información valiosa sobre las ventas, ganancias, productos más vendidos y compras. Los administradores pueden acceder a un conjunto completo de informes detallados.\n<b><font color='#FF9000'>      Generación de Reportes en PDF</font></b> \nConvierte tus informes y facturas en archivos PDF que puedes compartir fácilmente con tu equipo o socios comerciales.\n<b><font color='#FF9000'>      Catálogos de Productos:</font></b>\nCrea y gestiona catálogos de productos para mostrar a tus clientes, lo que facilita la presentación y venta de productos. \n<b><font color='#FF9000'>      Perfil Administrador Activo:</font></b>\nPuedes usar todas las funciones con un unico usuario, el creador de la cuenta."  </string>
     <string name="compartirWhastapp">Compartir a WhastsApp</string>
-    <string name="ExplicacionBienvenida"><![CDATA[Crear tu primer producto, para  surtirlo y comerciarlo: \n\nIngresa a: Menú \nLuego a: Surtir mi inventario \nY finalmente en: Nuevo producto]]></string>
+    <string name="ExplicacionBienvenida"><![CDATA[Crear tu primer producto. \nIngresa a: \n\n 1- Menú \n2- Surtir mi inventario \n3- Nuevo producto]]></string>
     <string name="surtirMiInventario">Surtir mi Inventario</string>
     <string name="ExplicacionPanelInventario">Aquí podras: \n- Crear o editar productos. \n- Surtir tu negocio para que quede el registro</string>
     <string name="GuardaCliente">Guarda tu primer cliente</string>
     <string name="Explicacion_registros">Aquí podras ver tus registros cuando los tengas</string>
     <string name="Genial">Genial, empecemos...</string>
+    <string name="ExplicacionBienvenida2">Surte y comercializa con 1 o más usuarios</string>
 </resources>

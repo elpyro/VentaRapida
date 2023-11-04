@@ -146,5 +146,15 @@
             app:lottie_imageAssetsFolder="assets"
             app:lottie_loop="true"
             tools:ignore="ImageContrastCheck" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ExplicacionBienvenida2"
+            android:textSize="18sp"
+            android:layout_margin="8dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>
