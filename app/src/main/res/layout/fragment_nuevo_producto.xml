@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:text="Puede usar SURTIR MI NEGOCIO para agregar cantidades" />
+                    android:text="Puede usar SURTIR MI INVENTARIO para agregar cantidades" />
                 <LinearLayout
                     android:id="@+id/linearLayout_foto"
                     android:layout_width="match_parent"

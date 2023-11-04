@@ -33,7 +33,7 @@
         <item
             android:id="@+id/compra"
             android:icon="@drawable/baseline_add_business_24"
-            android:title="@string/compra" />
+            android:title="@string/surtirMiInventario" />
 
                 <item
                     android:id="@+id/listaCompras"

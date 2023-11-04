@@ -15,7 +15,7 @@ class PageNumeration : PdfPageEventHelper() {
         val font = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED)
 
         // Agregar texto adicional alineado a la izquierda
-        val additionalText = "${MainActivity.datosEmpresa.pagina} / ${MainActivity.datosEmpresa.direccion}"
+        val additionalText = "${MainActivity.datosEmpresa.pagina}  ${MainActivity.datosEmpresa.direccion}"
         val additionalContent = writer.directContent
         val additionalFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED)
         val additionalX = document.left() + 20f

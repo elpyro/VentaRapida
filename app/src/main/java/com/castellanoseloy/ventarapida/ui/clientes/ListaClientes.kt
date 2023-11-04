@@ -56,19 +56,29 @@ class ListaClientes : Fragment() {
         val tareaClientes = FirebaseClientes.buscarTodosClientes()
 
         tareaClientes.addOnSuccessListener { Clientes ->
-            lista= Clientes as ArrayList<ModeloClientes>?
-            adaptador = ClientesAdaptador(lista!!)
-            binding?.recyclerViewClientes?.adapter = adaptador
+            if(Clientes.isNotEmpty()){
+                binding?.LinearLayoutClientes?.visibility=View.VISIBLE
+                binding?.buttonPrimerCliente?.visibility=View.GONE
+                lista= Clientes as ArrayList<ModeloClientes>?
+                adaptador = ClientesAdaptador(lista!!)
+                binding?.recyclerViewClientes?.adapter = adaptador
 
-            listenerAdaptador()
+                listenerAdaptador()
 
-            val busqueda = binding?.searchViewBuscarCliente?.query.toString()
-            if(busqueda!=""){
-                filtro(busqueda)
+                val busqueda = binding?.searchViewBuscarCliente?.query.toString()
+                if(busqueda!=""){
+                    filtro(busqueda)
+                }
+                listeners()
+            }else{
+                binding?.LinearLayoutClientes?.visibility=View.GONE
+                binding?.buttonPrimerCliente?.visibility=View.VISIBLE
+                binding?.buttonPrimerCliente?.setOnClickListener {  Navigation.findNavController(vista).navigate(R.id.clienteAgregarModificar) }
             }
+
         }
 
-        listeners()
+
 
         return binding!!.root
     }
@@ -150,6 +160,7 @@ class ListaClientes : Fragment() {
         binding?.searchViewBuscarCliente?.setOnClickListener {
             binding?.searchViewBuscarCliente?.isIconified=false
         }
+
     }
 
     private fun filtro(textoParaFiltrar: String) {

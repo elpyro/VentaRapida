@@ -126,9 +126,9 @@ class Venta : Fragment() {
 
         observadores()
         actualizarLista()
-        listeners()
-        productViewModel.calcularTotal()
 
+        productViewModel.calcularTotal()
+        listeners()
     }
 
     private fun listeners() {
@@ -198,6 +198,7 @@ class Venta : Fragment() {
             if(filtro!!.size>0){
                 progressDialog.show()
                 lifecycleScope.launch(Dispatchers.IO) {
+
                     crearCatalogo()
                 }
             }else{
@@ -226,34 +227,41 @@ class Venta : Fragment() {
         productViewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
             binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
         }
-
-
     }
 
     fun actualizarLista(){
-        Log.d("pruebas", "Se ha  llamado la lista")
+
         productViewModel.obtenerProductos().observe(viewLifecycleOwner) { productos ->
-            val productosOrdenados = productos?.sortedBy { it.nombre }
-            lista = productos as ArrayList<ModeloProducto>?
-            filtro=lista
-            if(primeraCarga){
-                adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
-                binding!!.recyclerViewProductosVenta.adapter = adapter
-                primeraCarga=false
-            }else{
-                adapter!!.updateData(productosOrdenados ?: emptyList())
-            }
-            adapter!!.setOnLongClickItem { item, position ->
-                abriDetalle(item,vista)
+                if (productos.isNotEmpty()) {
+                    binding?.LinearLayoutPantallaPrincipal?.visibility=View.VISIBLE
+                    binding?.LinearLayoutPantallaBienvenida?.visibility=View.GONE
+                        val productosOrdenados = productos?.sortedBy { it.nombre }
+                        lista = productos as ArrayList<ModeloProducto>?
+                        filtro = lista
+                        if (primeraCarga) {
+                            adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
+                            binding!!.recyclerViewProductosVenta.adapter = adapter
+                            primeraCarga = false
+                        } else {
+                            adapter!!.updateData(productosOrdenados ?: emptyList())
+                        }
+                        adapter!!.setOnLongClickItem { item, position ->
+                            abriDetalle(item, vista)
+                        }
+
+                        //si el valor esta filtrado buscarlo
+                        val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
+                        if (busqueda != "") {
+                            filtro(busqueda)
+                        }
+                        binding?.swipeRefreshLayout?.isRefreshing = false
+
+                } else {
+                    binding?.LinearLayoutPantallaBienvenida?.visibility=View.VISIBLE
+                    binding?.LinearLayoutPantallaPrincipal?.visibility=View.GONE
+                }
             }
 
-            //si el valor esta filtrado buscarlo
-            val busqueda = binding?.searchViewProductosVenta?.getQuery().toString()
-            if(busqueda!=""){
-                filtro(busqueda)
-            }
-            binding?.swipeRefreshLayout?.isRefreshing=false
-        }
 
     }
 

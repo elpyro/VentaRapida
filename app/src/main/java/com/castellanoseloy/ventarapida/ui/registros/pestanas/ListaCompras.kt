@@ -66,15 +66,22 @@ class ListaCompras : Fragment() {
         processDialogo()
         val tareaFacturas = FirebaseFacturaOCompra.buscarFacturasOCompra("Compra")
         tareaFacturas.addOnSuccessListener { facturas ->
-            listaFacturas=facturas
-            productosFiltrados = listaFacturas
-            adaptador = FacturaVentasAdaptador(listaFacturas)
-            binding?.recyclerViewFacturaVentas?.adapter = adaptador
+            if(facturas.isNotEmpty()){
+                binding?.linearLayoutRegistros?.visibility=View.VISIBLE
+                binding?.linearLayoutExplicacionRegistros?.visibility=View.GONE
+                listaFacturas=facturas
+                productosFiltrados = listaFacturas
+                adaptador = FacturaVentasAdaptador(listaFacturas)
+                binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
-            adaptador.setOnClickItem() { item ->
-                abriDetalle(item)
+                adaptador.setOnClickItem() { item ->
+                    abriDetalle(item)
+                }
+                binding?.swipeRefreshLayout?.isRefreshing=false
+            }else{
+                binding?.linearLayoutRegistros?.visibility=View.GONE
+                binding?.linearLayoutExplicacionRegistros?.visibility=View.VISIBLE
             }
-            binding?.swipeRefreshLayout?.isRefreshing=false
             progressDialog?.dismiss()
         }
 

@@ -2,6 +2,9 @@ package com.castellanoseloy.ventarapida.procesos
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.text.Editable
@@ -10,12 +13,18 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.itextpdf.text.Element
+import com.itextpdf.text.Image
+import com.itextpdf.text.pdf.PdfPCell
+import com.itextpdf.text.pdf.PdfPTable
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -230,4 +239,70 @@ object Utilidades {
         // Verifica si el resultado tiene ".0" al final de la cadena y si es así, lo reemplaza por ""
         return resultWithoutDecimals.replace(".0$", "")
     }
+
+     fun generarLogoCell(context: Context, logotipo: Drawable): PdfPCell {
+        val logoTable = PdfPTable(1)
+        logoTable.widthPercentage = 100f
+        logoTable.defaultCell.border = PdfPCell.NO_BORDER
+        logoTable.horizontalAlignment = Element.ALIGN_RIGHT
+        logoTable.defaultCell.verticalAlignment = Element.ALIGN_RIGHT
+
+        val logoCell: PdfPCell
+
+        val logoDrawable = logotipo
+
+        if (logoDrawable != null && logoDrawable is BitmapDrawable) {
+            // Logo obtenido con éxito
+            val bmp = logoDrawable.bitmap
+            val stream = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val logo = Image.getInstance(stream.toByteArray())
+            logo.widthPercentage = 70f
+            logo.scaleToFit(155f, 70f)
+
+            logoCell = PdfPCell(logo)
+            logoCell.horizontalAlignment = Element.ALIGN_CENTER
+            logoCell.verticalAlignment = Element.ALIGN_CENTER
+            logoCell.border = PdfPCell.NO_BORDER
+            logoTable.addCell(logoCell)
+        } else {
+            // No se pudo obtener el logotipo, se usa una imagen predeterminada
+            val defaultDrawable = ContextCompat.getDrawable(context, R.drawable.logo2_compra_rapidita)
+
+            if (defaultDrawable is BitmapDrawable) {
+                val bmp = defaultDrawable.bitmap
+                val stream = ByteArrayOutputStream()
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val logo = Image.getInstance(stream.toByteArray())
+                logo.widthPercentage = 70f
+                logo.scaleToFit(155f, 70f)
+
+                logoCell = PdfPCell(logo)
+            } else {
+                // Convertir el VectorDrawable a Bitmap
+                val width = defaultDrawable?.intrinsicWidth
+                val height = defaultDrawable?.intrinsicHeight
+                val bitmap = Bitmap.createBitmap(width!!, height!!, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bitmap)
+                defaultDrawable?.setBounds(0, 0, canvas.width, canvas.height)
+                defaultDrawable?.draw(canvas)
+
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val logo = Image.getInstance(stream.toByteArray())
+                logo.widthPercentage = 70f
+                logo.scaleToFit(155f, 70f)
+
+                logoCell = PdfPCell(logo)
+            }
+
+            logoCell.horizontalAlignment = Element.ALIGN_CENTER
+            logoCell.verticalAlignment = Element.ALIGN_CENTER
+            logoCell.border = PdfPCell.NO_BORDER
+            logoTable.addCell(logoCell)
+        }
+
+        return logoCell
+    }
+
 }

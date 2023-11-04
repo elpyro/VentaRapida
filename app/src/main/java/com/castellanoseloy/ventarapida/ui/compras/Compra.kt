@@ -104,11 +104,14 @@ class Compra : Fragment() {
 
         observadores()
         actualizarLista()
+
+
+    }
+
+    fun inicializar(){
         listeners()
         viewModel.calcularTotal()
-
         crearSnackBarr()
-
     }
     private fun crearSnackBarr() {
         val rootView = vista
@@ -127,6 +130,7 @@ class Compra : Fragment() {
         binding?.buttonNuevoProducto?.setOnClickListener{
             Navigation.findNavController(vista).navigate(R.id.nav_nuevoProdcuto)
         }
+
 
         binding?.imageViewEliminarCarrito?.setOnClickListener {
             mensajeEliminar()
@@ -187,31 +191,40 @@ class Compra : Fragment() {
     fun actualizarLista(){
         viewModel.getProductos().observe(viewLifecycleOwner) { productos ->
 
-            val productosOrdenados = productos.sortedBy { it.nombre }
+            if(productos.isNotEmpty()) {
+                binding?.LinearLayoutExplicacionSurtido?.visibility=View.GONE
+                binding?.LinearLayoutSurtir?.visibility=View.VISIBLE
 
-            lista = productos as ArrayList<ModeloProducto>?
+                val productosOrdenados = productos.sortedBy { it.nombre }
+                lista = productos as ArrayList<ModeloProducto>?
 
-            if(primeraCarga){
-                adapter = CompraAdaptador(productosOrdenados, viewModel)
-                binding!!.recyclerViewProductosVenta.adapter = adapter
-                primeraCarga=false
+                if (primeraCarga) {
+                    adapter = CompraAdaptador(productosOrdenados, viewModel)
+                    binding!!.recyclerViewProductosVenta.adapter = adapter
+                    primeraCarga = false
+                } else {
+                    adapter!!.updateData(productosOrdenados)
+                }
+
+                adapter!!.setOnLongClickItem { item, position ->
+                    abriDetalle(item, vista, position)
+                }
+
+
+                //si el valor esta filtrado buscarlo
+                val busqueda = binding?.searchViewProductosVenta?.query.toString()
+                if (busqueda != "") {
+                    filtro(busqueda)
+                }
+                binding?.swipeRefreshLayout?.isRefreshing = false
+                inicializar()
             }else{
-                adapter!!.updateData(productosOrdenados)
+                binding?.LinearLayoutExplicacionSurtido?.visibility=View.VISIBLE
+                binding?.LinearLayoutSurtir?.visibility=View.GONE
+                binding?.buttonNuevoProductoExplicacion?.setOnClickListener{
+                    Navigation.findNavController(vista).navigate(R.id.nav_nuevoProdcuto)
+                }
             }
-
-            adapter!!.setOnLongClickItem { item, position ->
-                abriDetalle(item,vista, position)
-            }
-
-
-
-
-            //si el valor esta filtrado buscarlo
-            val busqueda = binding?.searchViewProductosVenta?.query.toString()
-            if(busqueda!=""){
-                filtro(busqueda)
-            }
-            binding?.swipeRefreshLayout?.isRefreshing=false
         }
     }
 

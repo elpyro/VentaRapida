@@ -63,16 +63,24 @@ class FacturaVentas : Fragment() {
         processDialogo()
         val tareaFacturas = buscarFacturasOCompra("Factura")
         tareaFacturas.addOnSuccessListener { facturas ->
-            listaFacturas=facturas
+            if(facturas.isNotEmpty()) {
+                binding?.linearLayoutRegistros?.visibility = View.VISIBLE
+                binding?.linearLayoutExplicacionRegistros?.visibility = View.GONE
+                listaFacturas = facturas
 
-            adaptador = FacturaVentasAdaptador(listaFacturas)
-            binding?.recyclerViewFacturaVentas?.adapter = adaptador
+                adaptador = FacturaVentasAdaptador(listaFacturas)
+                binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
-            adaptador.setOnClickItem() { item ->
-                abriDetalle(item)
+                adaptador.setOnClickItem() { item ->
+                    abriDetalle(item)
+                }
+                binding?.swipeRefreshLayout?.isRefreshing = false
+            }else{
+                binding?.linearLayoutRegistros?.visibility=View.GONE
+                binding?.linearLayoutExplicacionRegistros?.visibility=View.VISIBLE
             }
-            binding?.swipeRefreshLayout?.isRefreshing=false
             progressDialog?.dismiss()
+
         }
     }
 

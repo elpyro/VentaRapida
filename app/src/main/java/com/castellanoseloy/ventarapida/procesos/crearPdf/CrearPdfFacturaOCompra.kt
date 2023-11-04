@@ -11,6 +11,7 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.PageNumeration
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Document
@@ -153,59 +154,25 @@ class CrearPdfFacturaOCompra {
                 logoTable.horizontalAlignment = Element.ALIGN_RIGHT
                 logoTable.defaultCell.verticalAlignment = Element.ALIGN_RIGHT
 
+                val logoDrawable = MainActivity.logotipo.drawable
+
+                logoTable.addCell(Utilidades.generarLogoCell(context,logoDrawable))
 
 
-                var logo: Image
-
-                try {
-                    if (MainActivity.logotipo.drawable != null) {
-                        val bmp = (MainActivity.logotipo.drawable as BitmapDrawable).bitmap
-                        val stream = ByteArrayOutputStream()
-                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                        logo = Image.getInstance(stream.toByteArray())
-                        logo.widthPercentage = 70f
-                        logo.scaleToFit(155f, 70f)
-                    } else {
-                        val defaultDrawable = ContextCompat.getDrawable(context, R.drawable.ic_menu_camera)
-                        val bitmap = if (defaultDrawable is BitmapDrawable) {
-                            defaultDrawable.bitmap
-                        } else {
-                            // Convertir el VectorDrawable a Bitmap
-                            val width = defaultDrawable?.intrinsicWidth
-                            val height = defaultDrawable?.intrinsicHeight
-                            val bitmap = Bitmap.createBitmap(width!!, height!!, Bitmap.Config.ARGB_8888)
-                            val canvas = Canvas(bitmap)
-                            defaultDrawable?.setBounds(0, 0, canvas.width, canvas.height)
-                            defaultDrawable?.draw(canvas)
-                            bitmap
-                        }
-
-                        val stream = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                        logo = Image.getInstance(stream.toByteArray())
-                        logo.widthPercentage = 70f
-                        logo.scaleToFit(155f, 70f)
-                    }
-                } catch (e: Exception) {
-                    // Manejar la excepción (por ejemplo, mostrar un mensaje de error)
-                    e.printStackTrace()
-                    // Asignar una imagen de reemplazo o realizar alguna otra acción adecuada
-                    logo = Image.getInstance(1, 1, 1, 1, byteArrayOf())
-
-                }
-
-
-                var logoCell = PdfPCell(logo)
+                var logoCell = PdfPCell(Phrase(MainActivity.datosEmpresa.nombre, FONT_SUBTITLE))
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
                 logoCell.verticalAlignment = Element.ALIGN_CENTER
                 logoCell.border = PdfPCell.NO_BORDER
                 logoTable.addCell(logoCell)
 
-                logoCell = PdfPCell( Phrase( MainActivity.datosEmpresa.nombre, FONT_SUBTITLE ))
-                logoCell.horizontalAlignment = Element.ALIGN_CENTER
-                logoCell.verticalAlignment = Element.ALIGN_CENTER
-                logoCell.border = PdfPCell.NO_BORDER
-                logoTable.addCell(logoCell)
+
+                cell = PdfPCell(logoTable)
+                cell.horizontalAlignment = Element.ALIGN_RIGHT
+                cell.verticalAlignment = Element.ALIGN_CENTER
+                cell.isUseAscender = true
+                cell.border = PdfPCell.NO_BORDER
+                cell.setPadding(2f)
+                table.addCell(cell)
 
                 logoCell = PdfPCell( Phrase( "Vendedor: "+modeloFactura.nombre_vendedor, DATOSEMPRESAFUENTE ))
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
