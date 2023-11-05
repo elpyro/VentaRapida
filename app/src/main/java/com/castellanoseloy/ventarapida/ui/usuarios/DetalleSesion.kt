@@ -1,6 +1,7 @@
 package com.castellanoseloy.ventarapida.ui.usuarios
 
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,10 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.Navigation
 import com.castellanoseloy.ventarapida.MainActivity
 import com.firebase.ui.auth.AuthUI
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleUsuarioBinding
 import com.castellanoseloy.ventarapida.Login
+import com.castellanoseloy.ventarapida.R
+import com.castellanoseloy.ventarapida.procesos.Preferencias
+import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
 
 class DetalleSesion : Fragment() {
 
@@ -40,32 +45,62 @@ class DetalleSesion : Fragment() {
     private fun listeners() {
 
             binding?.buttonRegister?.setOnClickListener {
-
-                AuthUI.getInstance().signOut(requireContext())
-                    .addOnCompleteListener {
-
-                        MainActivity.ventaProductosSeleccionados.clear()
-                        MainActivity.compraProductosSeleccionados.clear()
-
-                        Toast.makeText(context, "Sesion Cerrada", Toast.LENGTH_LONG).show()
-                        val intent = Intent(requireActivity(), Login::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
-
-                    }
-
-                }
+                verificarDatosPendientesPorCargar()
+            }
 
             }
 
+    private fun verificarDatosPendientesPorCargar() {
+        val transaccionesPendientes=
+            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
+
+
+        if(transaccionesPendientes.isEmpty()){
+                cerrarSesion()
+        }else{
+            val alertDialogBuilder = AlertDialog.Builder(requireContext())
+            alertDialogBuilder.setTitle("Sincroniza tu dispositivo")
+            alertDialogBuilder.setCancelable(false)
+            alertDialogBuilder.setMessage("Para evitar perdida de datos antes de cambiar de usuario asegurate de sincronizar correctamente tu dispositivo")
+
+            alertDialogBuilder.setPositiveButton("Aceptar") { _, _ ->
+
+            }
+
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
+
+
+
+    }
+
+    private fun cerrarSesion() {
+        MainActivity.ventaProductosSeleccionados.clear()
+        MainActivity.compraProductosSeleccionados.clear()
+
+        val preferencias= Preferencias()
+        preferencias.guardarPreferenciaListaSeleccionada(requireContext(),
+            MainActivity.compraProductosSeleccionados,"compra_seleccionada"
+        )
+
+        AuthUI.getInstance().signOut(requireContext())
+            .addOnCompleteListener {
+
+                Toast.makeText(context, "Sesion Cerrada", Toast.LENGTH_LONG).show()
+                val intent = Intent(requireActivity(), Login::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+            }
+    }
 
     private fun cargarDatosUsario() {
-
         binding?.TextviewNombreUsuario?.text=MainActivity.datosUsuario.nombre
         binding?.textViewCorreo?.text="Correo: "+MainActivity.datosUsuario.correo
         binding?.textViewEmpresa?.text="Empresa: "+MainActivity.datosEmpresa.nombre
         binding?.textViewPerfil?.text="Perfil: "+MainActivity.datosUsuario.perfil
     }
+
 
 
 

@@ -112,7 +112,7 @@ class FacturaGuardadaViewModel : ViewModel() {
         val arrayListProductosFacturados = ArrayList(datosProductosFacturados.value ?: emptyList())
         val listaSumarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
-        FirebaseFacturaOCompra.eliminarFacturaOCompra("Factura",datosFactura.value!!.id_pedido)
+        if(datosFactura.value!!.id_pedido.isNotEmpty()) FirebaseFacturaOCompra.eliminarFacturaOCompra("Factura",datosFactura.value!!.id_pedido)
 
         //se marca como compra para que sume al inventario
         FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(

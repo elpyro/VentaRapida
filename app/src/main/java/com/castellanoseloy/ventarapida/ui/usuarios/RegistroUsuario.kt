@@ -89,7 +89,7 @@ class RegistroUsuario : Fragment() {
             alertDialogBuilder.setTitle("Eliminar")
             alertDialogBuilder.setMessage("¿Estás seguro de que quieres eliminar la cuenta de $nombreUsuario?")
             alertDialogBuilder.setPositiveButton("Sí") { dialogInterface, _ ->
-                eliminarUsuarioPorId(idUsuario).addOnCompleteListener{
+                if(idUsuario.isNotEmpty()) eliminarUsuarioPorId(idUsuario).addOnCompleteListener{
                     Toast.makeText(requireContext(),"Usuario eliminado",Toast.LENGTH_LONG).show()
                     findNavController().popBackStack()
                 }

@@ -17,7 +17,7 @@ import java.util.UUID
 class CrearNuevaEmpresa : AppCompatActivity() {
     private var idGoogle: String? = null
     private lateinit var binding: ActivityCrearNuevaEmpresaBinding
-    private var suscripcion=Suscripcion()
+    private var suscripcion= Suscripcion()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

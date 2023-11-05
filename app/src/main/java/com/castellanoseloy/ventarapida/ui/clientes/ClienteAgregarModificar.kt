@@ -117,7 +117,7 @@ class ClienteAgregarModificar : Fragment() {
                     builder.setTitle("Eliminar producto")
                     builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
                     builder.setPositiveButton("Eliminar") { _, _ ->
-                        eliminarCliente(idCliente)
+                        if(idCliente.isNotEmpty()) eliminarCliente(idCliente)
 
                                 Toast.makeText(requireContext(),"Cliente Eliminado", Toast.LENGTH_LONG).show()
                                 findNavController().popBackStack()

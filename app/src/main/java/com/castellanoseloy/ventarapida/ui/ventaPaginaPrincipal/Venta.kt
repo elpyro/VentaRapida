@@ -126,7 +126,7 @@ class Venta : Fragment() {
 
         observadores()
         actualizarLista()
-
+        Log.d("pruebas","id empresa ${MainActivity.datosEmpresa.id}")
         productViewModel.calcularTotal()
         listeners()
     }

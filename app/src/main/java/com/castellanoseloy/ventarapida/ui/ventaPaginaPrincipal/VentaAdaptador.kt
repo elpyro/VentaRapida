@@ -165,12 +165,19 @@ class VentaAdaptador(
 
         private fun cargarProducto(product: ModeloProducto) {
 
+            if(product.p_diamante.isEmpty() && product.p_compra.isEmpty()) {
+                return
+            }
             producto.text = product.nombre
             compra.text= product.p_compra.formatoMonenda()
             precio.text = product.p_diamante.formatoMonenda()
 
-            val rentabilidadPorncentaje = String.format("%.1f", ( (product.p_diamante.toDouble()-product.p_compra.toDouble())/product.p_compra.toDouble() ) * 100)
-            rentabilidad.text = "$rentabilidadPorncentaje%"
+
+                val rentabilidadPorncentaje = String.format(
+                    "%.1f",
+                    ((product.p_diamante.toDouble() - product.p_compra.toDouble()) / product.p_compra.toDouble()) * 100
+                )
+                rentabilidad.text = "$rentabilidadPorncentaje%"
 
             if(MainActivity.datosUsuario.configuracion.mostrarPreciosCompra){
                 layout_precios_compra.visibility=View.VISIBLE

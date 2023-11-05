@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.Menu
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -30,11 +29,12 @@ import com.castellanoseloy.ventarapida.procesos.FirebaseDatosEmpresa
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Preferencias
-import com.castellanoseloy.ventarapida.procesos.Suscripcion
 import com.castellanoseloy.ventarapida.procesos.Utilidades.convertirCadenaAFecha
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.ActivityMainBinding
+import com.castellanoseloy.ventarapida.procesos.Suscripcion
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.ads.AdRequest
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var  drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var appBarConfiguration: AppBarConfiguration
-    private var suscripcion=Suscripcion()
+    private var suscripcion= Suscripcion()
     private var doubleBackToExitPressedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,17 +126,7 @@ class MainActivity : AppCompatActivity() {
 
         //colocar logotipo en el menu lateral
         if (!datosEmpresa.url.isEmpty()) {
-            Picasso.get()
-                .load(datosEmpresa.url)
-                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Intenta cargar desde caché, no almacena en caché
-                .into(logotipo, object : Callback {
-                    override fun onSuccess() {
-                        // La imagen se cargó correctamente desde la caché o se descargó y almacenó en caché
-                        logotipo.setImageDrawable(logotipo.drawable)
-                    }
-
-                    override fun onError(e: Exception?) { }
-                })
+            Utilidades.cargarImagen(datosEmpresa.url, logotipo)
         }
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)

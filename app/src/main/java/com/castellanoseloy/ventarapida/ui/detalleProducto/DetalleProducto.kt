@@ -285,7 +285,7 @@ class DetalleProducto : Fragment() {
         builder.setTitle("Eliminar producto")
         builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
         builder.setPositiveButton("Eliminar") { _, _ ->
-            viewModel.eliminarProducto(id_producto)
+            if(id_producto.isNotEmpty()) viewModel.eliminarProducto(id_producto) else Toast.makeText(requireContext(),"No se puede elimnar el producto null",Toast.LENGTH_LONG).show()
             findNavController().popBackStack()
         }
         builder.setNegativeButton("Cancelar", null)

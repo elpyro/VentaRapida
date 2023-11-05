@@ -164,17 +164,15 @@ class CompraAdaptador(
             }
         }
         private fun cargarProducto(product: ModeloProducto) {
+            if(product.p_diamante.isEmpty() && product.p_compra.isEmpty()) {
+                return
+            }
 
             producto.text = product.nombre
 
             precio.text = product.p_compra.formatoMonenda()
 
             existencia.text ="X${product.cantidad}"
-
-
-
-            // Limpiar la imagen anterior
-            //  Picasso.get().cancelRequest(imagenProducto)
 
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
             if (product.url.isNotEmpty() && imagenProducto.tag != product.url) {
