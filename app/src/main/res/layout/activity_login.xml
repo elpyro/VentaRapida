@@ -6,125 +6,218 @@
     android:layout_height="match_parent"
     tools:context=".Login"
     android:orientation="vertical"
+    android:gravity="center"
+    android:layout_gravity="center"
     android:background="@drawable/fondo">
 
-
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
-
+        android:layout_gravity="center">
         <LinearLayout
-            android:id="@+id/LinearLayout_bienvenido"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_centerInParent="true">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/CompraRapidita"
-                android:textSize="38sp"
-                android:theme="@style/ColorFuenteEnFondoGris" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            android:src="@drawable/logo2_compra_rapidita"
-            android:importantForAccessibility="no" />
+                <LinearLayout
+                    android:id="@+id/LinearLayout_bienvenido"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginTop="180dp"
+                        android:text="@string/CompraRapidita"
+                        android:textSize="38sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+                        android:src="@drawable/logo2_compra_rapidita"
+                        android:importantForAccessibility="no" />
 
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/Publicidad3"
-                android:textSize="20sp"
-                android:theme="@style/ColorFuenteEnFondoGris" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/Publicidad3"
+                        android:textSize="20sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
 
-            <Button
-                android:visibility="gone"
-                android:layout_gravity="center"
-                android:layout_marginTop="30dp"
-                android:id="@+id/button_inicioSesionGoogle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_google"
-                android:text="Iniciar sesion con Google" />
+                    <Button
+                        android:visibility="gone"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="30dp"
+                        android:id="@+id/button_inicioSesionGoogle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_google"
+                        android:text="Iniciar sesion con Google" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LinearLayout_usuarioNoRegistrado"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp"
+                        android:src="@drawable/logo2_compra_rapidita"
+                        android:importantForAccessibility="no" />
+
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/usuarioNoResgistrado"
+                        android:textSize="26sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+
+                    <TextView
+                        android:id="@+id/textView_correo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:text=""
+                        android:textSize="14sp"
+                        android:theme="@style/ColorFuenteEnFondoGris" />
+
+                    <TextView
+                        android:id="@+id/textView_nombre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text=""
+                        android:textSize="14sp"
+                        android:theme="@style/ColorFuenteEnFondoGris"
+                        android:visibility="gone" />
+
+
+                    <Button
+                        android:id="@+id/button_RegistrarUsuario"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/bordes_boton"
+                        android:text="@string/creaTuInventario" />
+
+                    <Button
+                        android:id="@+id/button_cerrarSesion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/bordes_boton"
+                        android:text="@string/cambiarCuenta" />
+
+                    <LinearLayout
+                        android:id="@+id/main_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:orientation="horizontal"
+                        android:padding="8dp">
+
+                        <!-- Icono de expansión (puedes usar una flecha) -->
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/baseline_keyboard_double_arrow_down_24" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Con CATAPLUS puedes:"
+                            android:textSize="16sp"
+                            android:theme="@style/ColorFuenteEnFondoGris" />
+
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/baseline_keyboard_double_arrow_down_24" />
+
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="@string/InformacionPublicidad"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="animacion3.json"
+                        app:lottie_imageAssetsFolder="assets"
+                        app:lottie_loop="true" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/InformacionPublicidad2"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="10dp"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/InformacionPublicidad4"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/InformacionPublicidad3"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/LinearLayout_usuarioNoRegistrado"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_centerInParent="true">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_gravity="center"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="animacion3.json"
-                app:lottie_imageAssetsFolder="assets"
-                app:lottie_loop="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/usuarioNoResgistrado"
-                android:textSize="26sp"
-                android:layout_gravity="center"
-                android:theme="@style/ColorFuenteEnFondoGris" />
+    </ScrollView>
 
 
-            <TextView
-                android:id="@+id/textView_correo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:gravity="center"
-                android:textSize="14sp"
-                android:layout_marginBottom="10dp"
-                android:layout_gravity="center"
-                android:theme="@style/ColorFuenteEnFondoGris" />
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/textView_nombre"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:gravity="center"
-                android:textSize="14sp"
-                android:layout_gravity="center"
-                android:theme="@style/ColorFuenteEnFondoGris" />
-
-
-            <Button
-                android:id="@+id/button_RegistrarUsuario"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bordes_boton"
-                android:text="@string/registrarUsuario" />
-
-            <Button
-                android:id="@+id/button_cerrarSesion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                android:background="@drawable/bordes_boton"
-                android:text="@string/cambiarCuenta" />
-
-
-
-        </LinearLayout>
-    </RelativeLayout>
 </LinearLayout>

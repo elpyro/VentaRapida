@@ -37,7 +37,7 @@ class FacturaVentas : Fragment() {
         binding= FragmentFacturaVentasBinding.inflate(inflater, container, false)
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
-        binding!!.recyclerViewFacturaVentas.layoutManager = gridLayoutManager
+        binding?.recyclerViewFacturaVentas?.layoutManager = gridLayoutManager
 
         listeners()
 
@@ -108,7 +108,7 @@ class FacturaVentas : Fragment() {
             }
         })
 
-        binding!!.searchViewBuscarFactura.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.searchViewBuscarFactura?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }

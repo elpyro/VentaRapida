@@ -74,7 +74,7 @@ class ListaUsuarios : Fragment() {
         vista=view
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
-        binding!!.recyclerViewClientes.layoutManager = gridLayoutManager
+        binding?.recyclerViewClientes?.layoutManager = gridLayoutManager
         cargarUsuarios()
     }
 
@@ -146,7 +146,7 @@ class ListaUsuarios : Fragment() {
             }
         })
 
-        binding!!.searchViewBuscarCliente.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.searchViewBuscarCliente?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }

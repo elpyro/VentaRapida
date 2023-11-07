@@ -105,7 +105,7 @@ class Compra : Fragment() {
         observadores()
         actualizarLista()
 
-
+        inicializar()
     }
 
     fun inicializar(){
@@ -161,7 +161,7 @@ class Compra : Fragment() {
             }
         })
 
-        binding!!.searchViewProductosVenta.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.searchViewProductosVenta?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -217,7 +217,7 @@ class Compra : Fragment() {
                     filtro(busqueda)
                 }
                 binding?.swipeRefreshLayout?.isRefreshing = false
-                inicializar()
+
             }else{
                 binding?.LinearLayoutExplicacionSurtido?.visibility=View.VISIBLE
                 binding?.LinearLayoutSurtir?.visibility=View.GONE
@@ -279,7 +279,7 @@ class Compra : Fragment() {
         adapter = productosOrdenados?.let { CompraAdaptador(it,viewModel) }
         binding?.recyclerViewProductosVenta?.adapter =adapter
 
-        adapter!!.setOnLongClickItem { item, position ->
+        adapter?.setOnLongClickItem { item, position ->
             val bundle = Bundle()
             bundle.putSerializable("modelo", item)
             bundle.putInt("position", position)

@@ -103,7 +103,7 @@
                         android:layout_margin="4dp"
                         android:background="@drawable/edittext_background"
                         android:gravity="center"
-                        android:hint="@string/producto"
+                        android:hint="@string/NombreProducto"
                         android:inputType="textCapSentences"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
@@ -128,7 +128,7 @@
                             android:layout_margin="4dp"
                             android:background="@drawable/edittext_background"
                             android:gravity="center"
-                            android:hint="@string/precioCompra"
+                            android:hint="@string/preciodeCompra"
                             android:inputType="numberDecimal"
                             android:textColor="@color/black"
                             android:textSize="16sp"
@@ -149,7 +149,7 @@
                             android:layout_margin="4dp"
                             android:background="@drawable/edittext_background"
                             android:gravity="center"
-                            android:hint="@string/venta"
+                            android:hint="@string/precioventa"
                             android:inputType="numberDecimal"
                             android:textColor="@color/black"
                             android:textSize="16sp" />

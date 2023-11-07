@@ -175,7 +175,7 @@ class DetalleProducto : Fragment() {
         binding?.editTextCantidad?.setText(producto.cantidad)
         cantidadAntigua= producto.cantidad
         binding?.editTextProveedor?.setText(producto.proveedor)
-        binding!!.editTextComentario.setText(producto.comentario)
+        binding?.editTextComentario?.setText(producto.comentario)
        if (producto.url.isNotEmpty()){
            Picasso.get().load(producto.url).into(binding?.imageViewFoto)
        }

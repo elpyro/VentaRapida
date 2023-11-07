@@ -59,7 +59,16 @@ class NuevoProducto : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        marcarCamposObligatorios()
         return binding!!.root // Retorna la vista inflada
+    }
+
+    private fun marcarCamposObligatorios() {
+        binding!!.editTextProducto.error = "Obligatorio"
+
+        binding!!.editTextPCompra.error = "Obligatorio"
+
+        binding!!.editTextPVenta.error = "Obligatorio"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

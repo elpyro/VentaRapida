@@ -65,7 +65,7 @@ class DetalleVenta : Fragment() {
         idPedido = UUID.randomUUID().toString()
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
-        binding!!.recyclerViewProductosSeleccionados.layoutManager = gridLayoutManager
+        binding?.recyclerViewProductosSeleccionados?.layoutManager = gridLayoutManager
         actualizarRecycerView()
 
         viewModel.context = requireContext()
@@ -109,7 +109,7 @@ class DetalleVenta : Fragment() {
             }
         })
 
-        binding!!.editTextEnvio.addTextChangedListener(object : TextWatcher {
+        binding?.editTextEnvio?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 // Actualiza el valor de envio con el valor del EditText
                 if (binding!!.editTextEnvio.text.toString().isNotEmpty()) {
@@ -128,7 +128,7 @@ class DetalleVenta : Fragment() {
             }
         })
 
-        binding!!.editDescuento.addTextChangedListener(object : TextWatcher {
+        binding?.editDescuento?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 // Actualiza el valor de envio con el valor del EditText
                 if (binding!!.editDescuento.text.toString().isNotEmpty()) {

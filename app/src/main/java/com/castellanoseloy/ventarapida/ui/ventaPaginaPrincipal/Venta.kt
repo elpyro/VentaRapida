@@ -119,7 +119,7 @@ class Venta : Fragment() {
 
         setHasOptionsMenu(true)
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
-        binding!!.recyclerViewProductosVenta.layoutManager = gridLayoutManager
+        binding?.recyclerViewProductosVenta?.layoutManager = gridLayoutManager
 
         productViewModel = ViewModelProvider(this).get(VentaViewModel::class.java)
         productViewModel.context = requireContext()
@@ -169,7 +169,7 @@ class Venta : Fragment() {
             }
         })
 
-        binding!!.searchViewProductosVenta.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.searchViewProductosVenta?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -240,7 +240,7 @@ class Venta : Fragment() {
                         filtro = lista
                         if (primeraCarga) {
                             adapter = VentaAdaptador(productosOrdenados!!, productViewModel)
-                            binding!!.recyclerViewProductosVenta.adapter = adapter
+                            binding?.recyclerViewProductosVenta?.adapter = adapter
                             primeraCarga = false
                         } else {
                             adapter!!.updateData(productosOrdenados ?: emptyList())

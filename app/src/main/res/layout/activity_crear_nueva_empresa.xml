@@ -17,11 +17,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:orientation="vertical"
         android:padding="16dp">
-
-
-
 
         <TextView
             android:layout_width="match_parent"
@@ -30,6 +28,7 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
+
             android:textColor="@color/white"
             android:layout_marginBottom="16dp" />
 
@@ -106,7 +105,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edittext_background"
                         android:gravity="center"
-                        android:hint="@string/Administrador"
+                        android:hint="@string/AdministradorDeCuenta"
                         android:inputType="textCapSentences|textMultiLine"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
@@ -148,75 +147,6 @@
             android:background="@drawable/bordes_boton"
             android:layout_margin="8dp"
             android:text="@string/AdministraTuNegocio" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/InformacionPublicidad"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textColor="@color/white" />
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            app:lottie_autoPlay="true"
-            android:scaleType="centerCrop"
-            app:lottie_fileName="animacion1.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/InformacionPublicidad2"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textColor="@color/white" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="animacion_sincro.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true"
-            tools:ignore="ImageContrastCheck" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/InformacionPublicidad4"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textColor="@color/white" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            app:lottie_autoPlay="true"
-            android:scaleType="centerCrop"
-            app:lottie_fileName="animacion_compartir.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/InformacionPublicidad3"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textColor="@color/white" />
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="animacion_ahorro.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true" />
 
 
     </LinearLayout>

@@ -163,7 +163,7 @@ class AgregarProductoFactura : Fragment() {
             }
         })
 
-        binding!!.searchViewProductosVenta.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.searchViewProductosVenta?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }

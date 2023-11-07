@@ -144,7 +144,7 @@ class ListaClientes : Fragment() {
             }
         })
 
-        binding!!.searchViewBuscarCliente.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.searchViewBuscarCliente?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
