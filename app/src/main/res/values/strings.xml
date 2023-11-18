@@ -148,4 +148,8 @@
     <string name="creaTuInventario">Crea tú inventario</string>
     <string name="publicidad5">Con CATAPLUS puedes:</string>
     <string name="AdministradorDeCuenta">Nombre del administrador principal</string>
+    <string name="Recaudos">Recaudos</string>
+    <string name="SolicitarRecaudo">Solicitar Recaudo</string>
+    <string name="ExplicacionRecaudo">Solicita a tus vendedores el dinero de las ventas por dias, restando los gastos del día.</string>
+    <string name="vendedores">Vendedores</string>
 </resources>

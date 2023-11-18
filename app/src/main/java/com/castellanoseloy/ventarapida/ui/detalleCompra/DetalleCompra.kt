@@ -97,7 +97,7 @@ class DetalleCompra : Fragment() {
         editTextPrecio.setText(item.p_compra)
         val precioAnterior = editTextPrecio.text.toString()
 
-// Configurar el botón "Aceptar"
+        // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
             val nuevoNombre=editTextProducto.text.toString()
             val nuevaCantidad = editTextCantidad.text.toString()

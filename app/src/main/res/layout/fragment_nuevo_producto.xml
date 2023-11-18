@@ -54,6 +54,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:visibility="gone"
                     android:id="@+id/input_editText_cantidad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

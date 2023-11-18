@@ -130,7 +130,10 @@ class AgregarProductoFacturaViewModel : ViewModel() {
         //convertirmos los productos seleccionados en un ModeloProductoFacturado
         val listaProductosFacturados = mutableListOf<ModeloProductoFacturado>()
         val listaDescontarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
-
+        var recaudo="Pendiente"
+        if(MainActivity.datosUsuario.perfil.equals("Administrador")) {
+            recaudo = "No aplica"
+        }
         AgregarProductoFactura.productosSeleccionadosAgregar.forEach{ (producto, cantidadSeleccionada)->
             //calculamos el precio descuento para tener la referencia para los reportes
             if (cantidadSeleccionada!=0){
@@ -155,7 +158,8 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     fecha = modeloFactura.fecha,
                     hora = modeloFactura.hora,
                     imagenUrl =producto.url,
-                    fechaBusquedas =  modeloFactura.fechaBusquedas
+                    fechaBusquedas =  modeloFactura.fechaBusquedas,
+                    estadoRecaudo = recaudo
                 )
                 listaProductosFacturados.add(productoFacturado)
 

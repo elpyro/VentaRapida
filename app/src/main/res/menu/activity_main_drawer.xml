@@ -74,6 +74,12 @@
     </group>
 
     <item
+        android:id="@+id/recaudos"
+        android:icon="@drawable/ic_recaudo"
+        android:title="@string/Recaudos" />
+
+
+    <item
         android:id="@+id/suscripcionesDisponibles"
         android:icon="@drawable/baseline_credit_card_24"
         android:title="@string/Supcripciones" />

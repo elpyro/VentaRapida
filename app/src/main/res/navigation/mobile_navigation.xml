@@ -117,5 +117,10 @@
         android:name="com.castellanoseloy.ventarapida.ui.informacionProducto.InformacionProducto"
         android:label="@string/informacion_producto"
         tools:layout="@layout/fragment_informacion_producto" />
+    <fragment
+        android:id="@+id/recaudos"
+        android:name="com.castellanoseloy.ventarapida.ui.recaudos.Recaudos"
+        android:label="@string/Recaudos"
+        tools:layout="@layout/fragment_recaudos" />
 
 </navigation>

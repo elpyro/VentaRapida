@@ -41,6 +41,7 @@ class AgregarProductoFactura : Fragment() {
     private var adapter: AgregarProductoFacturaAdaptador? = null
     var modeloFactura: ModeloFactura? = null
     val REQUEST_CODE_VOICE_SEARCH = 1001
+
     companion object {
         var productosSeleccionadosAgregar = mutableMapOf<ModeloProducto, Int>()
     }
@@ -83,10 +84,11 @@ class AgregarProductoFactura : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
-            R.id.action_total ->{
+            R.id.action_total -> {
                 agregarFactura()
                 return true
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -106,7 +108,11 @@ class AgregarProductoFactura : Fragment() {
             viewModel.subirDatos(requireContext(), modeloFactura!!)
 
             MainActivity.progressDialog?.dismiss()
-            Toast.makeText(requireContext(), "${productosSeleccionadosAgregar.size} Productos Agregados", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireContext(),
+                "${productosSeleccionadosAgregar.size} Productos Agregados",
+                Toast.LENGTH_LONG
+            ).show()
             findNavController().popBackStack()
         }
         builder.setNegativeButton("Cancelar", null)
@@ -114,10 +120,9 @@ class AgregarProductoFactura : Fragment() {
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vista=view
+        vista = view
         viewModel = ViewModelProvider(this).get(AgregarProductoFacturaViewModel::class.java)
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
@@ -140,9 +145,16 @@ class AgregarProductoFactura : Fragment() {
 
         binding?.imageViewMicrofono?.setOnClickListener {
 
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                intent.putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                )
                 startActivityForResult(intent, REQUEST_CODE_VOICE_SEARCH)
             } else {
                 // Si el permiso no ha sido concedido, solicitarlo al usuario
@@ -152,7 +164,8 @@ class AgregarProductoFactura : Fragment() {
         }
 
 
-        binding?.recyclerViewProductosVenta?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.recyclerViewProductosVenta?.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
@@ -163,7 +176,8 @@ class AgregarProductoFactura : Fragment() {
             }
         })
 
-        binding?.searchViewProductosVenta?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.searchViewProductosVenta?.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -177,13 +191,13 @@ class AgregarProductoFactura : Fragment() {
         })
         //desbloquea searchview al seleccionarlo
         binding?.searchViewProductosVenta?.setOnClickListener {
-            binding?.searchViewProductosVenta?.isIconified=false
+            binding?.searchViewProductosVenta?.isIconified = false
         }
     }
 
     private fun observadores() {
         viewModel.totalSeleccionLiveData.observe(viewLifecycleOwner) { productosSeleccionados ->
-            binding?.textViewListaSeleccion?.text=productosSeleccionados.toString()
+            binding?.textViewListaSeleccion?.text = productosSeleccionados.toString()
         }
 
         viewModel.getProductos().observe(viewLifecycleOwner) { productos ->
@@ -206,7 +220,7 @@ class AgregarProductoFactura : Fragment() {
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
         builder.setPositiveButton("Eliminar") { _, _ ->
             viewModel.eliminarCarrito()
-            binding?.recyclerViewProductosVenta?.adapter=adapter
+            binding?.recyclerViewProductosVenta?.adapter = adapter
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
@@ -220,7 +234,7 @@ class AgregarProductoFactura : Fragment() {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val query = results?.get(0)
             if (query != null) {
-                binding?.searchViewProductosVenta?.isIconified=false
+                binding?.searchViewProductosVenta?.isIconified = false
                 binding?.searchViewProductosVenta?.setQuery(query, true)
             }
 
@@ -231,12 +245,15 @@ class AgregarProductoFactura : Fragment() {
     private fun filtro(textoParaFiltrar: String) {
 
         val filtro = lista?.filter { objeto: ModeloProducto ->
-            objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(
-                Locale.getDefault()))
+            objeto.nombre.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(
+                textoParaFiltrar.eliminarAcentosTildes().lowercase(
+                    Locale.getDefault()
+                )
+            )
         }
         val productosOrdenados = filtro?.sortedBy { it.nombre }
-        val adaptador = productosOrdenados?.let { AgregarProductoFacturaAdaptador(it,viewModel) }
-        binding?.recyclerViewProductosVenta?.adapter =adaptador
+        val adaptador = productosOrdenados?.let { AgregarProductoFacturaAdaptador(it, viewModel) }
+        binding?.recyclerViewProductosVenta?.adapter = adaptador
 
     }
 

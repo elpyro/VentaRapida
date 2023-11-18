@@ -19,5 +19,9 @@ data class ModeloProductoFacturado(
     val fecha:String="",
     val hora:String="",
     val imagenUrl:String="",
-    val fechaBusquedas: Long = 0
+    val estadoRecaudo:String="",
+    val recaudador:String="",
+    val recaudadoFecha:String="",
+    val fechaBusquedas: Long = 0,
+
     ): Serializable

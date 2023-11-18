@@ -305,7 +305,10 @@ class DetalleVenta : Fragment() {
         val horaActual = datosPedido["hora"].toString()
         val fechaActual = datosPedido["fecha"].toString()
         val descuento = datosPedido["descuento"].toString()
-
+        var recaudo="Pendiente"
+        if(MainActivity.datosUsuario.perfil.equals("Administrador")) {
+            recaudo = "No aplica"
+        }
         ventaProductosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
             if (cantidadSeleccionada != 0) {
 
@@ -331,7 +334,8 @@ class DetalleVenta : Fragment() {
                     fecha = fechaActual,
                     hora = horaActual,
                     imagenUrl = producto.url,
-                    fechaBusquedas = obtenerFechaUnix()
+                    fechaBusquedas = obtenerFechaUnix(),
+                    estadoRecaudo = recaudo
                 )
                 listaProductosFacturados.add(productoFacturado)
 

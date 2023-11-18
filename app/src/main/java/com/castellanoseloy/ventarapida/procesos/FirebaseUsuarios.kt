@@ -1,6 +1,7 @@
 package com.castellanoseloy.ventarapida.procesos
 
 
+import android.util.Log
 import com.castellanoseloy.ventarapida.MainActivity
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.google.android.gms.tasks.Task
@@ -35,51 +36,67 @@ object FirebaseUsuarios {
         val usuariosRef = database.getReference(TABLA_REFERENCIA)
         usuariosRef.keepSynced(true)
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloUsuario>>()
-        usuariosRef.orderByChild("correo").equalTo(correo.toLowerCase()).addListenerForSingleValueEvent(object :
-            ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val usuarios = mutableListOf<ModeloUsuario>()
+        usuariosRef.orderByChild("correo").equalTo(correo.toLowerCase())
+            .addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val usuarios = mutableListOf<ModeloUsuario>()
 
-                for (snapshot in dataSnapshot.children) {
-                    val usuario = snapshot.getValue(ModeloUsuario::class.java)
-                    usuario?.let { usuarios.add(it) }
+                    for (snapshot in dataSnapshot.children) {
+                        val usuario = snapshot.getValue(ModeloUsuario::class.java)
+                        usuario?.let { usuarios.add(it) }
+                    }
+
+                    taskCompletionSource.setResult(usuarios)
                 }
 
-                taskCompletionSource.setResult(usuarios)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // error
-                taskCompletionSource.setException(databaseError.toException())
-            }
-        })
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // error
+                    taskCompletionSource.setException(databaseError.toException())
+                }
+            })
         return taskCompletionSource.task
     }
 
-    fun buscarTodosUsuariosPorEmpresa(): Task<MutableList<ModeloUsuario>> {
+    fun buscarTodosUsuariosPorEmpresa(perfil: String = "Todos"): Task<MutableList<ModeloUsuario>> {//perfiles: todos, vendedor, administrador, inactivo
+        Log.d("Perfiles", "Buscando Perfiles $perfil")
         val database = FirebaseDatabase.getInstance()
         val usuariosRef = database.getReference(TABLA_REFERENCIA)
         usuariosRef.keepSynced(true)
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloUsuario>>()
-        usuariosRef.orderByChild("idEmpresa").equalTo(MainActivity.datosEmpresa.id).addListenerForSingleValueEvent(object :
-            ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val usuarios = mutableListOf<ModeloUsuario>()
+        usuariosRef.orderByChild("idEmpresa").equalTo(MainActivity.datosEmpresa.id)
+            .addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val usuarios = mutableListOf<ModeloUsuario>()
 
-                for (snapshot in dataSnapshot.children) {
-                    val usuario = snapshot.getValue(ModeloUsuario::class.java)
-                    usuario?.let { usuarios.add(it) }
+
+                    for (snapshot in dataSnapshot.children) {
+                        val usuario = snapshot.getValue(ModeloUsuario::class.java)
+                        if (usuario != null) {
+                            // Filtrar por perfil
+                            if (perfil.equals("Todos") ||
+                                (perfil.equals("Vendedor")&& usuario.perfil.equals("Vendedor") ) ||
+                                (perfil.equals("Admistrador")&& usuario.perfil.equals("Administrador")) ||
+                                (perfil.equals("Inactivo") && usuario.perfil.equals("Inactivo"))
+                            ) {
+                                usuarios.add(usuario)
+                            }
+                        }
+
+
+                    }
+
+                    taskCompletionSource.setResult(usuarios)
                 }
 
-                taskCompletionSource.setResult(usuarios)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // error
-                taskCompletionSource.setException(databaseError.toException())
-            }
-        })
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // error
+                    taskCompletionSource.setException(databaseError.toException())
+                }
+            })
         return taskCompletionSource.task
     }
+
 
 }
