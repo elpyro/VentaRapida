@@ -44,7 +44,7 @@ class CrearPdfInventario {
         //ordenar alfabetico
         listaProductos.sortBy { it.nombre }
 
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "Cataplus.pdf")
         val outputStream = FileOutputStream(file)
 
         // Crea el documento PDF
@@ -76,7 +76,7 @@ class CrearPdfInventario {
     }
 
     private fun metadata(document: Document) {
-        document.addTitle("Compra Rapida")
+        document.addTitle("Cataplus")
         document.addSubject("Reporte")
         document.addAuthor("Eloy Castellanos")
         document.addCreator("Eloy Castellanos")

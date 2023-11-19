@@ -98,7 +98,7 @@ class VistaPDFReporte : AppCompatActivity() {
     }
 
     private fun compartirPDF() {
-        val fileName = "reporte.pdf"
+        val fileName = "Cataplus.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
 
         val file = File(filePath)
@@ -114,7 +114,7 @@ class VistaPDFReporte : AppCompatActivity() {
 
     private fun visualizarPDF() {
 
-        val fileName = "reporte.pdf"
+        val fileName = "Cataplus.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
         val pdfView = findViewById<PDFView>(R.id.pdfView)
 

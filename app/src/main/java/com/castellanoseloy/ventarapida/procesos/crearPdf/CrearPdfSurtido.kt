@@ -46,7 +46,7 @@ class CrearPdfSurtido {
 
         //ya se ha organizado el orden en buscarProductosPorFecha
 
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "Cataplus.pdf")
         val outputStream = FileOutputStream(file)
 
         // Crea el documento PDF
@@ -78,7 +78,7 @@ class CrearPdfSurtido {
     }
 
     private fun metadata(document: Document) {
-        document.addTitle("Compra Rapida")
+        document.addTitle("Cataplus")
         document.addSubject("Reporte")
         document.addAuthor("Eloy Castellanos")
         document.addCreator("Eloy Castellanos")

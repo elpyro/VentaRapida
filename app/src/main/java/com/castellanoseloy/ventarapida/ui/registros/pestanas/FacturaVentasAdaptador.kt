@@ -6,24 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
+import com.castellanoseloy.ventarapida.procesos.RegistrosDiffCallback
 import java.text.SimpleDateFormat
 
 import java.util.*
 
 
 class FacturaVentasAdaptador(
-    val listaFacturas: MutableList<ModeloFactura>,
+    var listaFacturas: MutableList<ModeloFactura>,
 ) : RecyclerView.Adapter<FacturaVentasAdaptador.FacturaViewHolder>() {
 
-    val formatoFecha = SimpleDateFormat("dd/MM/yyyy")
 
-    val sortedFacturas = listaFacturas.sortedWith(
-        compareByDescending<ModeloFactura> { formatoFecha.parse(it.fecha) }
-            .thenByDescending { it.hora }
-    )
 
 
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
@@ -39,7 +36,7 @@ class FacturaVentasAdaptador(
     override fun onBindViewHolder(holder: FacturaViewHolder, position: Int) {
 
         // Obtener la clave del elemento que corresponde a la posición
-        val Factura =sortedFacturas[position]
+        val Factura =listaFacturas[position]
 
 
         // Vincular los datos del producto con la vista del ViewHolder
@@ -50,6 +47,11 @@ class FacturaVentasAdaptador(
         }
         }
 
+    fun updateData(newList: MutableList<ModeloFactura>) {
+        val diffResult = DiffUtil.calculateDiff(RegistrosDiffCallback(listaFacturas, newList))
+        listaFacturas = ArrayList(newList) // Convierte a ArrayList
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     private var onClickItem: ((ModeloFactura) -> Unit)? = null
 

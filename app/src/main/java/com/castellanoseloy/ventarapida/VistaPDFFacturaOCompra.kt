@@ -18,7 +18,7 @@ import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
-import com.castellanoseloy.ventarapida.R
+import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfReciboIngreso
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
 import java.io.File
@@ -42,11 +42,13 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
         val id = intent.getStringExtra("id")
         val tablaReferencia = intent.getStringExtra("tablaReferencia")
+        val reciboIngreso = intent.getBooleanExtra("reciboIngreso",false)
         datosFactura = intent.getSerializableExtra("datosFactura") as? ModeloFactura
         val listaProductos = intent.getSerializableExtra("listaProductos") as? ArrayList<ModeloProductoFacturado>
 
         if (id != "enProceso") {
-            cargarDesdeFirebase(id, tablaReferencia)
+
+            cargarDesdeFirebase(id, tablaReferencia,reciboIngreso)
         }
         if (id == "enProceso") {
             cargarDesdePreferencia(tablaReferencia, datosFactura!!, listaProductos)
@@ -82,7 +84,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
     }
 
     private fun compartirPDF() {
-        val fileName = "reporte.pdf"
+        val fileName = "Cataplus.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
 
         val file = File(filePath)
@@ -98,7 +100,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
         var numeroTelefonoFormateado=numeroTelefono.replace("[\\s+]".toRegex(), "")
         Log.d("Informacion", "El numero de telefono whastsapp es: $numeroTelefonoFormateado")
 
-        val fileName = "reporte.pdf"
+        val fileName = "Cataplus.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
 
         val file = File(filePath)
@@ -161,7 +163,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
     }
 
-    private fun cargarDesdeFirebase(id: String?, tablaReferencia: String?) {
+    private fun cargarDesdeFirebase(id: String?, tablaReferencia: String?, reciboIngreso: Boolean? = false) {
 
         val tareaFacturas = FirebaseFacturaOCompra.buscarFacturaOCompraPorId(tablaReferencia!!, id!!)
 
@@ -172,7 +174,6 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
         tareaFacturas.addOnSuccessListener { factura ->
 
-
             if (factura?.telefono!=""){
                 menuWhatsaap.isVisible = true
                 telefono=factura?.telefono.toString()
@@ -180,12 +181,18 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
             tareaProductos.addOnSuccessListener { listaProductos->
             try{
-                val crearPdf= CrearPdfFacturaOCompra()
-                crearPdf.facturaOCompra(this, factura!!, tablaReferencia,listaProductos as ArrayList<ModeloProductoFacturado>)
-
-                visualizarPDF()
+                if(reciboIngreso == true){
+                    val crearPdf= CrearPdfReciboIngreso()
+                    crearPdf.facturaOCompra(this, factura!!, tablaReferencia,listaProductos as ArrayList<ModeloProductoFacturado>)
+                    visualizarPDF()
+                }else{
+                    val crearPdf= CrearPdfFacturaOCompra()
+                    crearPdf.facturaOCompra(this, factura!!, tablaReferencia,listaProductos as ArrayList<ModeloProductoFacturado>)
+                    visualizarPDF()
+                }
             }catch (e: Exception ){
                 MainActivity.progressDialog?.dismiss()
+                Log.e("PDF","Error creando pdf $e")
                 Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
         }
             }
@@ -195,7 +202,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
     private fun visualizarPDF() {
 
-        val fileName = "reporte.pdf"
+        val fileName = "Cataplus.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
         val pdfView = findViewById<PDFView>(R.id.pdfView)
 

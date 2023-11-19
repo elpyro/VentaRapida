@@ -183,6 +183,7 @@ class CompraGuardada : Fragment() {
         inflater.inflate(R.menu.menu_factura_o_compra_guardada, menu)
         //Todo pendiente agregar el boton ation_agregar_producto
         menu.findItem(R.id.action_agregar_producto).isVisible = false
+        menu.findItem(R.id.action_recibo_ingreso_pdf).isVisible = true
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -197,6 +198,15 @@ class CompraGuardada : Fragment() {
 
             R.id.action_eliminar -> {
                 dialogoEliminar()
+                return true
+            }
+
+            R.id.action_recibo_ingreso_pdf->{
+                val intent = Intent(activity, VistaPDFFacturaOCompra::class.java)
+                intent.putExtra("id", modeloFactura.id_pedido)
+                intent.putExtra("tablaReferencia", "Compra")
+                intent.putExtra("reciboIngreso", true)
+                startActivity(intent)
                 return true
             }
 
@@ -240,6 +250,8 @@ class CompraGuardada : Fragment() {
         builder.setNegativeButton("Cancelar", null)
         builder.show()
     }
+
+
 
     private fun abrirAgregarProducto() {
         val bundle = Bundle()

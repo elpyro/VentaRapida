@@ -73,10 +73,10 @@
             android:title="@string/Reportes" />
     </group>
 
-    <item
-        android:id="@+id/recaudos"
-        android:icon="@drawable/ic_recaudo"
-        android:title="@string/Recaudos" />
+<!--    <item-->
+<!--        android:id="@+id/recaudos"-->
+<!--        android:icon="@drawable/ic_recaudo"-->
+<!--        android:title="@string/Recaudos" />-->
 
 
     <item

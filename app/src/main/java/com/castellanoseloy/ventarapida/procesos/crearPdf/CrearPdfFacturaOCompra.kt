@@ -47,7 +47,7 @@ class CrearPdfFacturaOCompra {
         //ordenar alfabetico
         listaProductos.sortBy { it.producto }
 
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "reporte.pdf")
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "Cataplus.pdf")
         val outputStream = FileOutputStream(file)
 
         // Crea el documento PDF
@@ -71,7 +71,7 @@ class CrearPdfFacturaOCompra {
     }
 
     private fun metadata(document: Document) {
-        document.addTitle("Compra Rapida")
+        document.addTitle("Cataplus")
         document.addSubject("Factura")
         document.addAuthor("Eloy Castellanos")
         document.addCreator("Eloy Castellanos")
@@ -165,16 +165,9 @@ class CrearPdfFacturaOCompra {
                 logoCell.border = PdfPCell.NO_BORDER
                 logoTable.addCell(logoCell)
 
-
-                cell = PdfPCell(logoTable)
-                cell.horizontalAlignment = Element.ALIGN_RIGHT
-                cell.verticalAlignment = Element.ALIGN_CENTER
-                cell.isUseAscender = true
-                cell.border = PdfPCell.NO_BORDER
-                cell.setPadding(2f)
-                table.addCell(cell)
-
-                logoCell = PdfPCell( Phrase( "Vendedor: "+modeloFactura.nombre_vendedor, DATOSEMPRESAFUENTE ))
+                var usuario="Vendedor"
+                if(tipo.equals("Compra"))usuario="Surtidor"
+                logoCell = PdfPCell( Phrase( "$usuario: "+modeloFactura.nombre_vendedor, DATOSEMPRESAFUENTE ))
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
                 logoCell.verticalAlignment = Element.ALIGN_CENTER
                 logoCell.border = PdfPCell.NO_BORDER
@@ -187,6 +180,9 @@ class CrearPdfFacturaOCompra {
                 cell.border = PdfPCell.NO_BORDER
                 cell.setPadding(2f)
                 table.addCell(cell)
+
+
+
             }
             document.add(table)
         }

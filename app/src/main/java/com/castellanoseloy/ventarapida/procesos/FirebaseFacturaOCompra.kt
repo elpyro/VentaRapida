@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import android.os.Handler
 import com.castellanoseloy.ventarapida.procesos.Utilidades.verificarPermisosAdministrador
+import java.text.SimpleDateFormat
 
 object FirebaseFacturaOCompra {
 
@@ -60,7 +61,12 @@ object FirebaseFacturaOCompra {
 
                                 }
                             }
-                            taskCompletionSource.setResult(facturas)
+                            val formatoFecha = SimpleDateFormat("dd/MM/yyyy")
+                            var sortedFacturas = facturas.sortedWith(
+                                compareByDescending<ModeloFactura> { formatoFecha.parse(it.fecha) }
+                                    .thenByDescending { it.hora }
+                            )
+                            taskCompletionSource.setResult(sortedFacturas as MutableList<ModeloFactura>)
                         }
 
                         override fun onCancelled(error: DatabaseError) {
