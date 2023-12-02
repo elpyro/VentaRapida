@@ -4,7 +4,7 @@ import android.content.Intent
 import android.net.Uri
 
 import androidx.core.app.JobIntentService
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.Quatruple
 import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.google.firebase.database.FirebaseDatabase
@@ -72,7 +72,7 @@ class ServiciosSubirFoto : JobIntentService() {
                         }
                     }else{
                         val database = FirebaseDatabase.getInstance()
-                        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia!!).child(idImagen)
+                        val registroRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia!!).child(idImagen)
 
 
                         registroRef.updateChildren(updates).

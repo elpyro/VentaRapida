@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
@@ -103,7 +103,7 @@ class AgregarProductoFacturaViewModel : ViewModel() {
     fun getProductos(): LiveData<List<ModeloProducto>> {
 
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        val productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
+        val productReference = firebaseDatabase.getReference(DatosPersitidos.datosEmpresa.id).child("Productos")
         productReference.keepSynced(true)
         productReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -131,7 +131,7 @@ class AgregarProductoFacturaViewModel : ViewModel() {
         val listaProductosFacturados = mutableListOf<ModeloProductoFacturado>()
         val listaDescontarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
         var recaudo="Pendiente"
-        if(MainActivity.datosUsuario.perfil.equals("Administrador")) {
+        if(DatosPersitidos.datosUsuario.perfil.equals("Administrador")) {
             recaudo = "No aplica"
         }
         AgregarProductoFactura.productosSeleccionadosAgregar.forEach{ (producto, cantidadSeleccionada)->
@@ -141,15 +141,14 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                 val porcentajeDescuento = modeloFactura.descuento.toDouble() / 100
                 var precioDescuento:Double=producto.p_diamante.toDouble()
                 precioDescuento *= (1 - porcentajeDescuento)
-                precioDescuento += modeloFactura.envio.toDouble()
 
                 val id_producto_pedido = UUID.randomUUID().toString()
                 val productoFacturado = ModeloProductoFacturado(
                     id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = modeloFactura.id_pedido,
-                    id_vendedor = MainActivity.datosUsuario.id,
-                    vendedor = MainActivity.datosUsuario.nombre,
+                    id_vendedor = DatosPersitidos.datosUsuario.id,
+                    vendedor = DatosPersitidos.datosUsuario.nombre,
                     producto = producto.nombre,
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,

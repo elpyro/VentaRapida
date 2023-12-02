@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.VistaPDFReporte
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
@@ -82,7 +82,7 @@ class ReporteVendedorViewModel : ViewModel() {
         idVendedor: String
     ) {
 
-        val nombreVendedor=MainActivity.datosUsuario.nombre
+        val nombreVendedor=DatosPersitidos.datosUsuario.nombre
         FirebaseProductoFacturadosOComprados.buscarProductosPorFecha(
             Utilidades.convertirFechaAUnix(
                 fechaInicio

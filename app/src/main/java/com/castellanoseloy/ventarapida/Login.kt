@@ -21,6 +21,7 @@ import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.castellanoseloy.ventarapida.ui.usuarios.CrearNuevaEmpresa
 import com.castellanoseloy.ventarapida.databinding.ActivityLoginBinding
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -51,6 +52,11 @@ class Login : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
 
+
+        // Iniciar el servicio
+        val intent = Intent(this, DatosPersitidos::class.java)
+        startService(intent)
+        
         listeners()
         autenticacionGoogle()
 
@@ -103,7 +109,7 @@ class Login : AppCompatActivity() {
         ocultarBotonIncioSesion()
 
 
-        MainActivity.datosUsuario = ModeloUsuario()
+        DatosPersitidos.datosUsuario = ModeloUsuario()
         FirebaseUsuarios.buscarUsuariosPorCorreo(correoUsuario!!)
             .addOnSuccessListener { usuario ->
                 if (usuario.size > 0) {
@@ -163,7 +169,7 @@ class Login : AppCompatActivity() {
 
     var bandera=false
     private fun usuarioRegistrado(usuario: MutableList<ModeloUsuario>) {
-        MainActivity.datosUsuario = usuario[0]
+        DatosPersitidos.datosUsuario = usuario[0]
 
         FirebaseDatosEmpresa.obtenerDatosEmpresa(
             usuario[0].idEmpresa,
@@ -172,7 +178,7 @@ class Login : AppCompatActivity() {
                     // verificarDatos nuevamente
 
                     if(bandera){
-                        MainActivity.datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
+                        DatosPersitidos.datosEmpresa = snapshot.getValue(ModeloDatosEmpresa::class.java)!!
                         abrirPantallaPrincipal()
                     }else{
                         esperarUnSegundo()

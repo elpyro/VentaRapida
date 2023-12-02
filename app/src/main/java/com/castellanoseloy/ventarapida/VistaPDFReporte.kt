@@ -9,8 +9,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.castellanoseloy.ventarapida.MainActivity.Companion.interstitial
-import com.castellanoseloy.ventarapida.R
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.interstitial
+
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
 import com.google.android.gms.ads.AdRequest
@@ -33,7 +34,7 @@ class VistaPDFReporte : AppCompatActivity() {
         progressDialogVerPDF?.setCancelable(false)
         progressDialogVerPDF?.show()
 
-        if(MainActivity.verPublicidad){
+        if(DatosPersitidos.verPublicidad){
             mostarPublicida()
         }else{
             visualizarPDF()
@@ -129,9 +130,13 @@ class VistaPDFReporte : AppCompatActivity() {
             .load()
 
         //ocultamos los prgress que esten activos
-        MainActivity.progressDialog?.dismiss()
+        DatosPersitidos.progressDialog?.dismiss()
         progressDialogVerPDF?.dismiss()
     }
 
+    override fun onPause() {
+        super.onPause()
+        finish()
+    }
 
 }

@@ -12,7 +12,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.VistaPDFFacturaOCompra
 import com.castellanoseloy.ventarapida.databinding.FragmentFacturaGuardadaBinding
@@ -104,7 +104,7 @@ class FacturaGuardada : Fragment() {
             binding?.recyclerViewProductosFacturados?.adapter = adaptador
             adaptador.setOnClickItem() { item ->
 
-                if (!MainActivity.datosUsuario.configuracion.editarFacturas){
+                if (!DatosPersitidos.datosUsuario.configuracion.editarFacturas){
                     Toast.makeText(requireContext(),"No posee permiso para editar",Toast.LENGTH_LONG).show()
                 }else{
                     val promtEditarItem=PromtFacturaGuardada()
@@ -135,7 +135,7 @@ class FacturaGuardada : Fragment() {
 
         }
         binding?.cardViewTotales?.setOnClickListener {
-            if(!MainActivity.datosUsuario.configuracion.editarFacturas){
+            if(!DatosPersitidos.datosUsuario.configuracion.editarFacturas){
                 Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -199,7 +199,7 @@ class FacturaGuardada : Fragment() {
         when (item.itemId) {
 
             R.id.action_agregar_producto->{
-                if(MainActivity.datosUsuario.configuracion.editarFacturas){
+                if(DatosPersitidos.datosUsuario.configuracion.editarFacturas){
                 abrirAgregarProducto()
                 }else{
                     Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
@@ -209,7 +209,7 @@ class FacturaGuardada : Fragment() {
 
             R.id.action_eliminar -> {
                 ocultarTeclado(requireContext(),vista)
-                if(MainActivity.datosUsuario.configuracion.editarFacturas){
+                if(DatosPersitidos.datosUsuario.configuracion.editarFacturas){
                     dialogoEliminar()
                 }else{
                     Toast.makeText(requireContext(),"No posee permisos para realizar esta acción", Toast.LENGTH_LONG).show()
@@ -240,7 +240,7 @@ class FacturaGuardada : Fragment() {
 
 
 
-            MainActivity.progressDialog?.show()
+            DatosPersitidos.progressDialog?.show()
 
             Utilidades.esperarUnSegundo()
             Utilidades.esperarUnSegundo()

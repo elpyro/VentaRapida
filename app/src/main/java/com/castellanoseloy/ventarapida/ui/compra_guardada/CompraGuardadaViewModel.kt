@@ -8,7 +8,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.baseDatos.MyDatabaseHelper
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
@@ -42,7 +42,7 @@ class CompraGuardadaViewModel : ViewModel() {
 
     private fun obtenerFactura(idPedido: String) {
 
-        detalleFactura = database.getReference(MainActivity.datosEmpresa.id).child("Compra").orderByChild("id_pedido").equalTo(idPedido)
+        detalleFactura = database.getReference(DatosPersitidos.datosEmpresa.id).child("Compra").orderByChild("id_pedido").equalTo(idPedido)
 
         escuchadorDetalleFactura= detalleFactura.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -63,7 +63,7 @@ class CompraGuardadaViewModel : ViewModel() {
     fun buscarProductos(idPedido: String) {
         Log.d("Escuchadores", "Se ha llamado el escuchador de SURTIDO GUARDADO")
 
-        productosRef = database.getReference(MainActivity.datosEmpresa.id).child("ProductosComprados").orderByChild("id_pedido").equalTo(idPedido)
+        productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child("ProductosComprados").orderByChild("id_pedido").equalTo(idPedido)
 
         escuchadorProdutos=productosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

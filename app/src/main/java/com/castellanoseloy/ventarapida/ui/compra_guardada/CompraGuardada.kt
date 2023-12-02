@@ -13,7 +13,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.VistaPDFFacturaOCompra
 import com.castellanoseloy.ventarapida.databinding.FragmentCompraGuardadaBinding
@@ -232,7 +232,7 @@ class CompraGuardada : Fragment() {
         builder.setPositiveButton("Eliminar") { dialog, which ->
 
             banderaElimandoFactura=true
-            MainActivity.progressDialog?.show()
+            DatosPersitidos.progressDialog?.show()
 
 
             Utilidades.esperarUnSegundo()

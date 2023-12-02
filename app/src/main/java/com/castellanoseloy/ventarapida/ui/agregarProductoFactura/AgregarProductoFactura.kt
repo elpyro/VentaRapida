@@ -22,7 +22,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
@@ -103,11 +103,11 @@ class AgregarProductoFactura : Fragment() {
         builder.setMessage("¿Estás seguro de agregar ${productosSeleccionadosAgregar.size} productos a la factura?")
         builder.setPositiveButton("Agregar") { _, _ ->
 
-            MainActivity.progressDialog?.show()
+            DatosPersitidos.progressDialog?.show()
 
             viewModel.subirDatos(requireContext(), modeloFactura!!)
 
-            MainActivity.progressDialog?.dismiss()
+            DatosPersitidos.progressDialog?.dismiss()
             Toast.makeText(
                 requireContext(),
                 "${productosSeleccionadosAgregar.size} Productos Agregados",

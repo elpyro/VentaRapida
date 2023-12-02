@@ -19,7 +19,7 @@ import android.widget.Toast
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 
 import com.castellanoseloy.ventarapida.databinding.FragmentDatosEmpresaBinding
@@ -56,21 +56,21 @@ class DatosEmpresa : Fragment() {
         vista=view
 
         setHasOptionsMenu(true)
-        if(MainActivity.datosEmpresa.id!="")cargarDatos()
+        if(DatosPersitidos.datosEmpresa.id!="")cargarDatos()
 
     }
 
     private fun cargarDatos() {
-        binding?.editTextEmpresa?.setText(MainActivity.datosEmpresa.nombre)
-        binding?.editTextId?.setText(MainActivity.datosEmpresa.documento)
-        binding?.editTextPagina?.setText(MainActivity.datosEmpresa.pagina)
-        binding?.editTextCorreo?.setText(MainActivity.datosEmpresa.correo)
-        binding?.editTextTelefono1?.setText(MainActivity.datosEmpresa.telefono1)
-        binding?.editTextTelefono2?.setText(MainActivity.datosEmpresa.telefono2)
-        binding?.editTextDireccion?.setText(MainActivity.datosEmpresa.direccion)
-        binding?.editTextGarantia?.setText(MainActivity.datosEmpresa.garantia)
-        if (MainActivity.datosEmpresa.url.isNotEmpty()){
-            Picasso.get().load(MainActivity.datosEmpresa.url).into(binding?.imageViewFotoEmpresa)
+        binding?.editTextEmpresa?.setText(DatosPersitidos.datosEmpresa.nombre)
+        binding?.editTextId?.setText(DatosPersitidos.datosEmpresa.documento)
+        binding?.editTextPagina?.setText(DatosPersitidos.datosEmpresa.pagina)
+        binding?.editTextCorreo?.setText(DatosPersitidos.datosEmpresa.correo)
+        binding?.editTextTelefono1?.setText(DatosPersitidos.datosEmpresa.telefono1)
+        binding?.editTextTelefono2?.setText(DatosPersitidos.datosEmpresa.telefono2)
+        binding?.editTextDireccion?.setText(DatosPersitidos.datosEmpresa.direccion)
+        binding?.editTextGarantia?.setText(DatosPersitidos.datosEmpresa.garantia)
+        if (DatosPersitidos.datosEmpresa.url.isNotEmpty()){
+            Picasso.get().load(DatosPersitidos.datosEmpresa.url).into(binding?.imageViewFotoEmpresa)
         }
     }
 
@@ -103,7 +103,7 @@ class DatosEmpresa : Fragment() {
 
     private fun guardarDatos() {
         ocultarTeclado(requireContext(),vista)
-        val empresaID =MainActivity.datosEmpresa.id
+        val empresaID =DatosPersitidos.datosEmpresa.id
 
         val updates = hashMapOf(
             "id" to empresaID,
@@ -135,13 +135,13 @@ class DatosEmpresa : Fragment() {
                     direccion = binding?.editTextDireccion?.text.toString(),
                     garantia = binding?.editTextGarantia?.text.toString()
                 )
-                MainActivity.datosEmpresa=empresa
+                DatosPersitidos.datosEmpresa=empresa
 
-                MainActivity.editText_nombreEmpresa.text = MainActivity.datosEmpresa.nombre
+                DatosPersitidos.editText_nombreEmpresa.text = DatosPersitidos.datosEmpresa.nombre
 
-                if (MainActivity.datosEmpresa.url.isNotEmpty()){
-                    Picasso.get().load(MainActivity.datosEmpresa.url).into(MainActivity.logotipo)
-                    MainActivity.logotipo.setImageDrawable(MainActivity.logotipo.drawable)
+                if (DatosPersitidos.datosEmpresa.url.isNotEmpty()){
+                    Picasso.get().load(DatosPersitidos.datosEmpresa.url).into(DatosPersitidos.logotipo)
+                    DatosPersitidos.logotipo.setImageDrawable(DatosPersitidos.logotipo.drawable)
                 }
 
                 Toast.makeText(requireContext(),"Datos Actualizados",Toast.LENGTH_LONG).show()
@@ -181,7 +181,7 @@ class DatosEmpresa : Fragment() {
             JobIntentService.enqueueWork(
                 requireContext(),
                 ServiciosSubirFoto::class.java,
-                MainActivity.JOB_ID,
+                DatosPersitidos.JOB_ID,
                 intent)
         }
 

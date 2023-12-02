@@ -4,6 +4,9 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -23,18 +26,28 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 
 import com.castellanoseloy.ventarapida.datos.ModeloDatosEmpresa
-import com.castellanoseloy.ventarapida.datos.ModeloProducto
-import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.castellanoseloy.ventarapida.procesos.FirebaseDatosEmpresa
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.castellanoseloy.ventarapida.procesos.Utilidades.convertirCadenaAFecha
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
-import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.ActivityMainBinding
+import com.castellanoseloy.ventarapida.datos.VersionModel
 import com.castellanoseloy.ventarapida.procesos.Suscripcion
 import com.castellanoseloy.ventarapida.procesos.Utilidades
+import com.castellanoseloy.ventarapida.procesos.VersionControlProvider
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.compraProductosSeleccionados
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.datosEmpresa
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.datosUsuario
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.editText_nombreEmpresa
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.interstitial
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.logotipo
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.planVencido
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.progressDialog
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.ventaProductosSeleccionados
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.verPublicidad
 
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.ads.AdRequest
@@ -47,41 +60,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.squareup.picasso.Callback
-import com.squareup.picasso.MemoryPolicy
-import com.squareup.picasso.Picasso
 
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
-        var interstitial: InterstitialAd? = null
-        var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
-        var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
 
-        var verPublicidad: Boolean = false
-
-        //Elementos de las preferencias para usarlos en la aplicacion
-        var tono = true
-        var mostrarAgotadosCatalogo= true
-        var datosEmpresa: ModeloDatosEmpresa = ModeloDatosEmpresa()
-        var datosUsuario: ModeloUsuario = ModeloUsuario()
-        var planVencido:Boolean? =false
-
-        lateinit var logotipo: ImageView
-        lateinit var editText_nombreEmpresa: TextView
-        lateinit var binding: ActivityMainBinding
-        lateinit var preferencia_informacion_superior:String
-        lateinit var preferencia_informacion_inferior:String
-        lateinit var edit_text_preference_codigo_area:String
-        var progressDialog: ProgressDialog? = null
-
-        fun init(context: Context) {
-            logotipo = ImageView(context)
-            editText_nombreEmpresa= TextView(context)
-        }
-    }
     lateinit var  navController: NavController
     lateinit var  drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
@@ -89,13 +72,18 @@ class MainActivity : AppCompatActivity() {
     private var suscripcion= Suscripcion()
     private var doubleBackToExitPressedOnce = false
 
+    fun init(context: Context) {
+        DatosPersitidos.logotipo = ImageView(context)
+        DatosPersitidos.editText_nombreEmpresa = TextView(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         verificarPlan()
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        DatosPersitidos.binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(DatosPersitidos.binding.root)
 
         //cargar las preferencias primero para evitar errores de carga
         val preferenciasServicios= Preferencias()
@@ -111,11 +99,10 @@ class MainActivity : AppCompatActivity() {
 
         cargarDatos()
 
+        setSupportActionBar(DatosPersitidos.binding.appBarMain.toolbar)
 
-        setSupportActionBar(binding.appBarMain.toolbar)
-
-        drawerLayout = binding.drawerLayout
-        navView = binding.navView
+        drawerLayout = DatosPersitidos.binding.drawerLayout
+        navView = DatosPersitidos.binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
 
         val navHeader = navView.getHeaderView(0)
@@ -323,12 +310,13 @@ class MainActivity : AppCompatActivity() {
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
 
         if(transaccionesPendientes.size<1){
-            binding.appBarMain.fabSincronizar.visibility= View.GONE
-        }else{
-            binding.appBarMain.fabSincronizar.visibility=View.VISIBLE
+            DatosPersitidos.binding.appBarMain.fabSincronizar.visibility= View.GONE
 
-            binding.appBarMain.fabSincronizar.setOnClickListener { view ->
-                Toast.makeText(context,"Sincronizando "+transaccionesPendientes.size.toString()+" produtos",Toast.LENGTH_LONG).show()
+        }else{
+            DatosPersitidos.binding.appBarMain.fabSincronizar.visibility=View.VISIBLE
+
+            DatosPersitidos.binding.appBarMain.fabSincronizar.setOnClickListener { view ->
+                Toast.makeText(context,"Sincronizando "+transaccionesPendientes.size.toString()+" productos",Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -343,6 +331,61 @@ class MainActivity : AppCompatActivity() {
 
         cargarEmpresa()
 
+    }
+
+    private fun verificarVersionActualizada() {
+        val version=obtenerInformacionDeVersion(this)
+
+        val versionControlProvider = VersionControlProvider()
+
+// Llamar al método getVersionActual
+        versionControlProvider.getVersionActual().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Obtener la instantánea de datos exitosa
+                val dataSnapshot = task.result
+
+                // Verificar si la instantánea de datos no es nula y contiene datos
+                if (dataSnapshot != null && dataSnapshot.exists()) {
+                    // Acceder a los datos específicos según la estructura de tu base de datos en tiempo real
+                    val versionActual = dataSnapshot.getValue(VersionModel::class.java)
+                    if(version?.second!! < versionActual?.versionCode!!) solicitarActualizacion(versionActual)
+                }
+            } else {
+                // Manejar el error si la tarea no fue exitosa
+                val exception = task.exception
+                Log.e("Firebase", "Error al obtener la versión actual: ${exception?.message}")
+            }
+        }
+
+
+    }
+
+    private fun solicitarActualizacion(versionActual: VersionModel) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+
+        alertDialogBuilder.setCancelable(versionActual.cancelable!!)
+        alertDialogBuilder.setTitle("Nueva actualización disponible")
+        alertDialogBuilder.setMessage("Se requiere realizar actualización. \n${versionActual.descripcion}")
+        alertDialogBuilder.setPositiveButton("Ir a playstore") { _, _ ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://cataplus.page.link/ZCg5"))
+            startActivity(intent)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    fun obtenerInformacionDeVersion(contexto: Context): Pair<String, Int>? {
+        return try {
+            val pInfo: PackageInfo = contexto.packageManager.getPackageInfo(contexto.packageName, 0)
+            val versionName = pInfo.versionName
+            val versionCode = pInfo.versionCode
+            Log.d("vesion","El nombre de la version es: $versionName y el vesion code: $versionCode")
+            Pair(versionName, versionCode)
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            null
+        }
     }
 
     private fun cargarEmpresa() {
@@ -377,6 +420,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        //obtener version actual si no hay actualizaciones pendientes
+        val transaccionesPendientes=
+            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
+        if(transaccionesPendientes.isEmpty()) verificarVersionActualizada()
 
         if(datosUsuario.perfil.isNullOrEmpty()){
             finish()

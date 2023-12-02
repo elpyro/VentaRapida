@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
-import com.castellanoseloy.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.ventaProductosSeleccionados
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.CrearTono
 
@@ -107,12 +107,12 @@ class VentaViewModel : ViewModel() {
         }
 
     fun obtenerProductos(): LiveData<List<ModeloProducto>> {
-        Log.d("Preferencia", "Mostrar productos agotados "+ MainActivity.mostrarAgotadosCatalogo.toString())
+        Log.d("Preferencia", "Mostrar productos agotados "+ DatosPersitidos.mostrarAgotadosCatalogo.toString())
             val firebaseDatabase = FirebaseDatabase.getInstance()
             val productReference =
-                firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
+                firebaseDatabase.getReference(DatosPersitidos.datosEmpresa.id).child("Productos")
 
-        if(MainActivity.verPublicidad){
+        if(DatosPersitidos.verPublicidad){
             productReference.keepSynced(true)
             productReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -121,11 +121,11 @@ class VentaViewModel : ViewModel() {
                     for (productoSnapshot in snapshot.children) {
                         val producto = productoSnapshot.getValue(ModeloProducto::class.java)
 
-                        if (!MainActivity.mostrarAgotadosCatalogo) {
+                        if (!DatosPersitidos.mostrarAgotadosCatalogo) {
                             if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
                         }
 
-                        if (MainActivity.mostrarAgotadosCatalogo) productos.add(producto!!)
+                        if (DatosPersitidos.mostrarAgotadosCatalogo) productos.add(producto!!)
                     }
 
                     productosLiveData.value = productos
@@ -143,11 +143,11 @@ class VentaViewModel : ViewModel() {
                     for (productoSnapshot in snapshot.children) {
                         val producto = productoSnapshot.getValue(ModeloProducto::class.java)
 
-                        if (!MainActivity.mostrarAgotadosCatalogo) {
+                        if (!DatosPersitidos.mostrarAgotadosCatalogo) {
                             if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
                         }
 
-                        if (MainActivity.mostrarAgotadosCatalogo) productos.add(producto!!)
+                        if (DatosPersitidos.mostrarAgotadosCatalogo) productos.add(producto!!)
                     }
 
                     productosLiveData.value = productos

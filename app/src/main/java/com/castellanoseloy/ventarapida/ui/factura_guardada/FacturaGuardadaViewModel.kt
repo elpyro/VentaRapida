@@ -8,7 +8,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.baseDatos.MyDatabaseHelper
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
@@ -44,7 +44,7 @@ class FacturaGuardadaViewModel : ViewModel() {
 
     private fun obtenerFactura(idPedido: String) {
         val database = FirebaseDatabase.getInstance()
-        detalleFactura = database.getReference(MainActivity.datosEmpresa.id).child("Factura").orderByChild("id_pedido").equalTo(idPedido)
+        detalleFactura = database.getReference(DatosPersitidos.datosEmpresa.id).child("Factura").orderByChild("id_pedido").equalTo(idPedido)
 
         escuchadorDetalleFactura=detalleFactura.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -64,7 +64,7 @@ class FacturaGuardadaViewModel : ViewModel() {
 
      fun buscarProductos(idPedido: String) {
         val database = FirebaseDatabase.getInstance()
-        productosRef = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados").orderByChild("id_pedido").equalTo(idPedido)
+        productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child("ProductosFacturados").orderByChild("id_pedido").equalTo(idPedido)
 
         escuchadorProdutos= productosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

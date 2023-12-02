@@ -3,7 +3,7 @@ package com.castellanoseloy.ventarapida.procesos
 
 import android.content.Context
 
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.baseDatos.MyDatabaseHelper
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos.crearTransaccionBD
@@ -28,7 +28,7 @@ object FirebaseProductoFacturadosOComprados {
         context: Context
     ) {
         val database = FirebaseDatabase.getInstance()
-        val referencia = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
+        val referencia = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia)
         referencia.keepSynced(true)
 
         val dbHelper = MyDatabaseHelper(context)
@@ -61,7 +61,7 @@ object FirebaseProductoFacturadosOComprados {
         tipo: String
     ) {
         val database = FirebaseDatabase.getInstance()
-        val referencia = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
+        val referencia = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia)
         referencia.keepSynced(true)
 
         var contador = 0
@@ -74,7 +74,7 @@ object FirebaseProductoFacturadosOComprados {
         }
 
         if (contador == listaProductosFacturados.size) {
-            MainActivity.progressDialog?.dismiss()
+            DatosPersitidos.progressDialog?.dismiss()
         }
 
 
@@ -83,7 +83,7 @@ object FirebaseProductoFacturadosOComprados {
 
     fun actualizarPrecioDescuento(idPedido:String, descuento:Double){
         val database = FirebaseDatabase.getInstance()
-        val refProductosFacturados = database.getReference(MainActivity.datosEmpresa.id).child("ProductosFacturados")
+        val refProductosFacturados = database.getReference(DatosPersitidos.datosEmpresa.id).child("ProductosFacturados")
         refProductosFacturados.keepSynced(true)
         val porcentajeDescuento = descuento / 100
 
@@ -114,7 +114,7 @@ object FirebaseProductoFacturadosOComprados {
     fun buscarProductosPorPedido(tablaReferencia: String, idPedido: String): Task<List<ModeloProductoFacturado>> {
         val taskCompletionSource = TaskCompletionSource<List<ModeloProductoFacturado>>()
         val database = FirebaseDatabase.getInstance()
-        val productosRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).orderByChild("id_pedido").equalTo(idPedido)
+        val productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia).orderByChild("id_pedido").equalTo(idPedido)
         productosRef.keepSynced(true)
         productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -141,7 +141,7 @@ object FirebaseProductoFacturadosOComprados {
     fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long, idVendedor:String, tabla:String): Task<List<ModeloProductoFacturado>> {
 
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-        val reference: DatabaseReference = database.getReference(MainActivity.datosEmpresa.id).child(tabla)
+        val reference: DatabaseReference = database.getReference(DatosPersitidos.datosEmpresa.id).child(tabla)
 
         val tcs = TaskCompletionSource<List<ModeloProductoFacturado>>()
         reference.keepSynced(true)

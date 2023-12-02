@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos.eliminarColaSubida
@@ -19,7 +20,7 @@ object FirebaseProductos {
 
     fun guardarProducto(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
+        val registroRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
         registroRef.keepSynced(true)
         registroRef.updateChildren(updates)
     }
@@ -28,11 +29,11 @@ object FirebaseProductos {
 
     fun transaccionesCambiarCantidad(context: Context?, solicitudes: List<ModeloTransaccionSumaRestaProducto>) {
 
-        val ocultarBoton=MainActivity( )
+        val ocultarBoton= MainActivity( )
         ocultarBoton.mostrarFabBottonTransacciones(context!!)
 
         val database = FirebaseDatabase.getInstance()
-        val productosRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
+        val productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA)
         productosRef.keepSynced(true)
         solicitudes.forEach { solicitud ->
             val idTransaccion = solicitud.idTransaccion
@@ -76,7 +77,7 @@ object FirebaseProductos {
     }
     fun buscarProductoPorId(idProducto: String): Task<ModeloProducto?> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(idProducto)
+        val tablaRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA).child(idProducto)
 
         val taskCompletionSource = TaskCompletionSource<ModeloProducto?>()
 
@@ -99,7 +100,7 @@ object FirebaseProductos {
 
     fun buscarProductos(mayorCero: Boolean): Task<MutableList<ModeloProducto>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
+        val tablaRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA)
 
         val productos = mutableListOf<ModeloProducto>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloProducto>>()

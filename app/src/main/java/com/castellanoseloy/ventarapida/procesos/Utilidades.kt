@@ -15,7 +15,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.itextpdf.text.Element
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit
 object Utilidades {
 
     fun verificarPermisosAdministrador(): Boolean{
-        return MainActivity.datosUsuario.perfil.equals("Administrador")
+        return DatosPersitidos.datosUsuario.perfil.equals("Administrador")
     }
     fun String.eliminarAcentosTildes(): String {
         val normalized = Normalizer.normalize(this, Normalizer.Form.NFD)

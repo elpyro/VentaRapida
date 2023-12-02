@@ -19,7 +19,7 @@ import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentSuscripcionesDisponiblesBinding
 import com.castellanoseloy.ventarapida.procesos.FirebaseDatosEmpresa
@@ -66,15 +66,15 @@ class SuscripcionesDisponibles : Fragment() {
 
                 val proximaFacturacion=viewModel.obtenerFechaVencimientoPlan().toString()
                 val updates = hashMapOf(
-                    "id" to MainActivity.datosEmpresa.id,
+                    "id" to DatosPersitidos.datosEmpresa.id,
                     "plan" to nuevoPlan,
                     "proximo_pago" to proximaFacturacion
                 )
 
                 FirebaseDatosEmpresa.guardarDatosEmpresa(updates).addOnCompleteListener {
-                    MainActivity.datosEmpresa.proximo_pago=proximaFacturacion
-                    MainActivity.datosEmpresa.plan=nuevoPlan
-                    MainActivity.planVencido=false
+                    DatosPersitidos.datosEmpresa.proximo_pago=proximaFacturacion
+                    DatosPersitidos.datosEmpresa.plan=nuevoPlan
+                    DatosPersitidos.planVencido=false
 
                     Toast.makeText(requireContext(),"Plan Actualizado",Toast.LENGTH_SHORT).show()
 
@@ -109,7 +109,7 @@ class SuscripcionesDisponibles : Fragment() {
         }
 
 
-        val planActual=MainActivity.datosEmpresa.plan
+        val planActual=DatosPersitidos.datosEmpresa.plan
 
         binding.buttonPlanBasico.setOnClickListener{
             nuevoPlan="Basico"
@@ -252,12 +252,12 @@ class SuscripcionesDisponibles : Fragment() {
 
     private fun datosPlan() {
 
-        binding.textViewCurrentPlan.text = "Plan Actual: ${MainActivity.datosEmpresa.plan}"
+        binding.textViewCurrentPlan.text = "Plan Actual: ${DatosPersitidos.datosEmpresa.plan}"
 
-        if(MainActivity.datosEmpresa.proximo_pago != ""){
-            binding.textViewExpirationDate.text = "Fecha de Vencimiento: ${convertirFechaLegible(MainActivity.datosEmpresa.proximo_pago)}"
+        if(DatosPersitidos.datosEmpresa.proximo_pago != ""){
+            binding.textViewExpirationDate.text = "Fecha de Vencimiento: ${convertirFechaLegible(DatosPersitidos.datosEmpresa.proximo_pago)}"
 
-            diasRestantes= calcularDiasRestantes(convertirCadenaAFecha(MainActivity.datosEmpresa.proximo_pago)!!)
+            diasRestantes= calcularDiasRestantes(convertirCadenaAFecha(DatosPersitidos.datosEmpresa.proximo_pago)!!)
 
             binding.textViewDiasRestantes.text = diasRestantes.first
         }

@@ -16,7 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentRegistroUsuarioBinding
 import com.castellanoseloy.ventarapida.datos.ModeloConfiguracionUsuario
@@ -214,8 +214,8 @@ class RegistroUsuario : Fragment() {
             "id" to idUsuario,
             "nombre" to  binding?.editTextUsuario?.text.toString(),
             "correo" to  correo.toLowerCase(Locale.ROOT),
-            "idEmpresa" to  MainActivity.datosEmpresa.id,
-            "empresa" to  MainActivity.datosEmpresa.nombre,
+            "idEmpresa" to  DatosPersitidos.datosEmpresa.id,
+            "empresa" to  DatosPersitidos.datosEmpresa.nombre,
             "perfil" to perfil,
             "configuracion" to permisosUsuario
         )
@@ -260,8 +260,8 @@ class RegistroUsuario : Fragment() {
     }
 
     private fun verificarUsuarioPrincipal(): Boolean {
-        if(MainActivity.datosEmpresa.idDuenoCuenta!=null){
-            return idUsuario == MainActivity.datosEmpresa.idDuenoCuenta
+        if(DatosPersitidos.datosEmpresa.idDuenoCuenta!=null){
+            return idUsuario == DatosPersitidos.datosEmpresa.idDuenoCuenta
         }
         return false
     }

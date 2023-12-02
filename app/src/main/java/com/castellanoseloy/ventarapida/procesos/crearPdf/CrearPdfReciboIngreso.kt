@@ -6,8 +6,8 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
 import androidx.core.content.ContextCompat
-import com.castellanoseloy.ventarapida.MainActivity
-import com.castellanoseloy.ventarapida.MainActivity.Companion.datosUsuario
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.datosUsuario
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
@@ -93,7 +93,7 @@ class CrearPdfReciboIngreso {
         titulo.alignment = Element.ALIGN_CENTER
 
 
-        if (MainActivity.datosEmpresa != null) {
+        if (DatosPersitidos.datosEmpresa != null) {
             val table = PdfPTable(3)
             table.widthPercentage = 100f
             table.setWidths(floatArrayOf(4f, 2f, 4f))
@@ -119,15 +119,15 @@ class CrearPdfReciboIngreso {
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
-                temp = Paragraph(MainActivity.datosEmpresa.nombre, DATOSEMPRESAFUENTE)
+                temp = Paragraph(DatosPersitidos.datosEmpresa.nombre, DATOSEMPRESAFUENTE)
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
-                temp = Paragraph(MainActivity.datosEmpresa.telefono1, DATOSEMPRESAFUENTE)
+                temp = Paragraph(DatosPersitidos.datosEmpresa.telefono1, DATOSEMPRESAFUENTE)
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
-                temp = Paragraph(MainActivity.datosEmpresa.telefono2, DATOSEMPRESAFUENTE)
+                temp = Paragraph(DatosPersitidos.datosEmpresa.telefono2, DATOSEMPRESAFUENTE)
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
@@ -158,12 +158,12 @@ class CrearPdfReciboIngreso {
                 logoTable.horizontalAlignment = Element.ALIGN_RIGHT
                 logoTable.defaultCell.verticalAlignment = Element.ALIGN_RIGHT
 
-                val logoDrawable = MainActivity.logotipo.drawable
+                val logoDrawable = DatosPersitidos.logotipo.drawable
 
                 logoTable.addCell(Utilidades.generarLogoCell(context, logoDrawable))
 
 
-                var logoCell = PdfPCell(Phrase(MainActivity.datosEmpresa.nombre, FONT_SUBTITLE))
+                var logoCell = PdfPCell(Phrase(DatosPersitidos.datosEmpresa.nombre, FONT_SUBTITLE))
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
                 logoCell.verticalAlignment = Element.ALIGN_CENTER
                 logoCell.border = PdfPCell.NO_BORDER

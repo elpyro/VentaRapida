@@ -1,7 +1,7 @@
 package com.castellanoseloy.ventarapida.procesos
 
 import android.util.Log
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloClientes
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -16,7 +16,7 @@ object FirebaseClientes {
 
     fun buscarTodosClientes(): Task<MutableList<ModeloClientes>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA)
+        val tablaRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA)
 
         val clientes = mutableListOf<ModeloClientes>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloClientes>>()
@@ -44,14 +44,14 @@ object FirebaseClientes {
 
     fun guardarCliente(updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
+        val registroRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
         registroRef.keepSynced(true)
         registroRef.updateChildren(updates)
     }
 
     fun eliminarCliente(id: String) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(TABLA_REFERENCIA).child(id)
+        val registroRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA).child(id)
         registroRef.keepSynced(true)
         registroRef.removeValue()
     }

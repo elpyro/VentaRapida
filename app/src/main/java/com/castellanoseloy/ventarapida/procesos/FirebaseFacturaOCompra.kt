@@ -1,7 +1,7 @@
 package com.castellanoseloy.ventarapida.procesos
 
 import android.util.Log
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -19,21 +19,21 @@ object FirebaseFacturaOCompra {
 
     fun guardarDetalleFacturaOCompra(tablaReferencia:String, updates: HashMap<String, Any>) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).child(updates["id_pedido"] as String)
+        val registroRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia).child(updates["id_pedido"] as String)
         registroRef.keepSynced(true)
         registroRef.updateChildren(updates)
     }
 
     fun eliminarFacturaOCompra(tablaReferencia: String, id_pedido: String) {
         val database = FirebaseDatabase.getInstance()
-        val registroRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia).child(id_pedido)
+        val registroRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia).child(id_pedido)
         registroRef.keepSynced(true)
         registroRef.removeValue()
     }
 
     fun buscarFacturasOCompra(tablaReferencia: String): Task<MutableList<ModeloFactura>> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
+        val tablaRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia)
 
         val facturas = mutableListOf<ModeloFactura>()
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloFactura>>()
@@ -52,7 +52,7 @@ object FirebaseFacturaOCompra {
                                         if(verificarPermisosAdministrador()){
                                             facturas.add(it)
                                         }else {
-                                            if (factura.id_vendedor.equals(MainActivity.datosUsuario.id)){
+                                            if (factura.id_vendedor.equals(DatosPersitidos.datosUsuario.id)){
                                                 facturas.add(it)
                                             }
                                         }
@@ -62,11 +62,16 @@ object FirebaseFacturaOCompra {
                                 }
                             }
                             val formatoFecha = SimpleDateFormat("dd/MM/yyyy")
+
                             var sortedFacturas = facturas.sortedWith(
                                 compareByDescending<ModeloFactura> { formatoFecha.parse(it.fecha) }
                                     .thenByDescending { it.hora }
                             )
-                            taskCompletionSource.setResult(sortedFacturas as MutableList<ModeloFactura>)
+
+                            val mutableFacturas = mutableListOf<ModeloFactura>()
+                            mutableFacturas.addAll(sortedFacturas)
+
+                            taskCompletionSource.setResult(mutableFacturas)
                         }
 
                         override fun onCancelled(error: DatabaseError) {
@@ -90,7 +95,7 @@ object FirebaseFacturaOCompra {
 
     fun buscarFacturaOCompraPorId(tablaReferencia: String, facturaId: String): Task<ModeloFactura?> {
         val database = FirebaseDatabase.getInstance()
-        val tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
+        val tablaRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia)
 
         val taskCompletionSource = TaskCompletionSource<ModeloFactura?>()
         tablaRef.keepSynced(true)

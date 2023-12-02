@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.procesos.Preferencias
 
@@ -17,7 +17,7 @@ class Configuracion : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        if (!MainActivity.datosUsuario.configuracion.agregarInformacionAdicional) {
+        if (!DatosPersitidos.datosUsuario.configuracion.agregarInformacionAdicional) {
             informacionAdicional = findPreference("informacion_adicional")
             informacionAdicional?.isVisible = false
         }

@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.CrearTono
 import com.castellanoseloy.ventarapida.procesos.Preferencias
@@ -30,12 +30,12 @@ class CompraViewModel : ViewModel() {
     var totalCarritoLiveData= MutableLiveData<String>()
     fun restarProductoSeleccionado( producto: ModeloProducto){
         val id_producto = producto.id
-        val productoEncontrado = MainActivity.compraProductosSeleccionados.keys.find { it.id == id_producto }
+        val productoEncontrado = DatosPersitidos.compraProductosSeleccionados.keys.find { it.id == id_producto }
         if (productoEncontrado != null) {
-            val nuevaCantidad = MainActivity.compraProductosSeleccionados[productoEncontrado]!! - 1
-            MainActivity.compraProductosSeleccionados.remove(productoEncontrado)
+            val nuevaCantidad = DatosPersitidos.compraProductosSeleccionados[productoEncontrado]!! - 1
+            DatosPersitidos.compraProductosSeleccionados.remove(productoEncontrado)
             if (nuevaCantidad > 0) {
-                MainActivity.compraProductosSeleccionados[producto] = nuevaCantidad
+                DatosPersitidos.compraProductosSeleccionados[producto] = nuevaCantidad
             }
         }
         calcularTotal()
@@ -44,17 +44,17 @@ class CompraViewModel : ViewModel() {
 
 
         val id_producto=producto.id
-        val productoEncontrado = MainActivity.compraProductosSeleccionados.keys.find { it.id == id_producto }
+        val productoEncontrado = DatosPersitidos.compraProductosSeleccionados.keys.find { it.id == id_producto }
         if (productoEncontrado != null) {
 
-            val nuevaCantidad = MainActivity.compraProductosSeleccionados[productoEncontrado]!! + 1
-            MainActivity.compraProductosSeleccionados.remove(productoEncontrado)
+            val nuevaCantidad = DatosPersitidos.compraProductosSeleccionados[productoEncontrado]!! + 1
+            DatosPersitidos.compraProductosSeleccionados.remove(productoEncontrado)
             if (nuevaCantidad > 0) {
-                MainActivity.compraProductosSeleccionados[producto] = nuevaCantidad
+                DatosPersitidos.compraProductosSeleccionados[producto] = nuevaCantidad
             }
 
         }else{
-            MainActivity.compraProductosSeleccionados[producto] = 1
+            DatosPersitidos.compraProductosSeleccionados[producto] = 1
         }
 
         val crearTono= CrearTono()
@@ -67,17 +67,17 @@ class CompraViewModel : ViewModel() {
 
         var total = 0.0
 
-        for ((producto, cantidad) in MainActivity.compraProductosSeleccionados) {
+        for ((producto, cantidad) in DatosPersitidos.compraProductosSeleccionados) {
             total += producto.p_compra.toDouble() * cantidad.toDouble()
         }
 
         totalCarritoLiveData.value =  total.toString().formatoMonenda()
 
-        totalSeleccionLiveData.value= MainActivity.compraProductosSeleccionados.size.toString()
+        totalSeleccionLiveData.value= DatosPersitidos.compraProductosSeleccionados.size.toString()
 
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context,
-            MainActivity.compraProductosSeleccionados,"compra_seleccionada"
+            DatosPersitidos.compraProductosSeleccionados,"compra_seleccionada"
         )
 
     }
@@ -85,16 +85,16 @@ class CompraViewModel : ViewModel() {
 
     fun actualizarCantidadProducto(producto: ModeloProducto, nuevaCantidad: Int) {
         val id_producto=producto.id
-        val productoEncontrado = MainActivity.compraProductosSeleccionados.keys.find { it.id == id_producto }
+        val productoEncontrado = DatosPersitidos.compraProductosSeleccionados.keys.find { it.id == id_producto }
         if (productoEncontrado != null) {
             if (nuevaCantidad > 0) {
-                MainActivity.compraProductosSeleccionados[productoEncontrado] = nuevaCantidad
+                DatosPersitidos.compraProductosSeleccionados[productoEncontrado] = nuevaCantidad
             } else {
-                MainActivity.compraProductosSeleccionados.remove(productoEncontrado)
+                DatosPersitidos.compraProductosSeleccionados.remove(productoEncontrado)
             }
 
         }else{
-            MainActivity.compraProductosSeleccionados[producto] = nuevaCantidad
+            DatosPersitidos.compraProductosSeleccionados[producto] = nuevaCantidad
         }
 
         val crearTono= CrearTono()
@@ -103,14 +103,14 @@ class CompraViewModel : ViewModel() {
     }
 
     fun eliminarCarrito(){
-        MainActivity.compraProductosSeleccionados.clear()
+        DatosPersitidos.compraProductosSeleccionados.clear()
         calcularTotal()
     }
 
     fun getProductos(): LiveData<List<ModeloProducto>> {
         Log.d("Escuchadores", "Se ha llamado el escuchador de PAGINA SURTIDO")
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        productReference = firebaseDatabase.getReference(MainActivity.datosEmpresa.id).child("Productos")
+        productReference = firebaseDatabase.getReference(DatosPersitidos.datosEmpresa.id).child("Productos")
 
         escuchadorProductos= productReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

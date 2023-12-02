@@ -3,9 +3,9 @@ package com.castellanoseloy.ventarapida.procesos
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.preference.PreferenceManager
-import com.castellanoseloy.ventarapida.MainActivity
-import com.castellanoseloy.ventarapida.MainActivity.Companion.mostrarAgotadosCatalogo
-import com.castellanoseloy.ventarapida.MainActivity.Companion.tono
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.mostrarAgotadosCatalogo
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.tono
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.servicios.ServiciosSubirFoto
 import com.google.gson.Gson
@@ -18,18 +18,18 @@ class Preferencias {
         // Obtener el valor de la preferencia
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        if (!MainActivity.datosUsuario.configuracion.agregarInformacionAdicional) {
-            MainActivity.preferencia_informacion_superior =""
-            MainActivity.preferencia_informacion_inferior =""
+        if (!DatosPersitidos.datosUsuario.configuracion.agregarInformacionAdicional) {
+            DatosPersitidos.preferencia_informacion_superior =""
+            DatosPersitidos.preferencia_informacion_inferior =""
         }else{
-            MainActivity.preferencia_informacion_superior =
+            DatosPersitidos.preferencia_informacion_superior =
                 sharedPreferences.getString("inf_superior", "")!!
-            MainActivity.preferencia_informacion_inferior =
+            DatosPersitidos.preferencia_informacion_inferior =
                 sharedPreferences.getString("inf_inferior", "")!!
         }
 
 
-        MainActivity.edit_text_preference_codigo_area =
+        DatosPersitidos.edit_text_preference_codigo_area =
             sharedPreferences.getString("edit_text_preference_codigo_area","+")!!
 
         tono = sharedPreferences.getBoolean("sonido", true)
@@ -74,7 +74,7 @@ class Preferencias {
 
                 mapString.forEach { (productoJson, cantidad) ->
                     val modeloProducto = parsearModeloProducto(productoJson)
-                    MainActivity.compraProductosSeleccionados[modeloProducto] = cantidad
+                    DatosPersitidos.compraProductosSeleccionados[modeloProducto] = cantidad
                 }
             }
         }
@@ -86,7 +86,7 @@ class Preferencias {
 
                 mapString.forEach { (productoJson, cantidad) ->
                     val modeloProducto = parsearModeloProducto(productoJson)
-                    MainActivity.ventaProductosSeleccionados[modeloProducto] = cantidad
+                    DatosPersitidos.ventaProductosSeleccionados[modeloProducto] = cantidad
                 }
             }
         }

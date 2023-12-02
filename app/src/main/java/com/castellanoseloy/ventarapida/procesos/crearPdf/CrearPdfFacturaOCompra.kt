@@ -6,7 +6,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
 import androidx.core.content.ContextCompat
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
@@ -89,7 +89,7 @@ class CrearPdfFacturaOCompra {
         titulo.alignment = Element.ALIGN_CENTER
 
 
-        if (MainActivity.datosEmpresa!=null) {
+        if (DatosPersitidos.datosEmpresa!=null) {
             val table = PdfPTable(3)
             table.widthPercentage = 100f
             table.setWidths(floatArrayOf(4f, 2f, 4f))
@@ -115,15 +115,15 @@ class CrearPdfFacturaOCompra {
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
-                temp = Paragraph(MainActivity.datosEmpresa.nombre,DATOSEMPRESAFUENTE)
+                temp = Paragraph(DatosPersitidos.datosEmpresa.nombre,DATOSEMPRESAFUENTE)
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
-                temp = Paragraph(MainActivity.datosEmpresa.telefono1 ,DATOSEMPRESAFUENTE)
+                temp = Paragraph(DatosPersitidos.datosEmpresa.telefono1 ,DATOSEMPRESAFUENTE)
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
-                temp = Paragraph(MainActivity.datosEmpresa.telefono2 ,DATOSEMPRESAFUENTE)
+                temp = Paragraph(DatosPersitidos.datosEmpresa.telefono2 ,DATOSEMPRESAFUENTE)
                 temp.alignment = Element.ALIGN_LEFT
                 cell.addElement(temp)
 
@@ -154,12 +154,12 @@ class CrearPdfFacturaOCompra {
                 logoTable.horizontalAlignment = Element.ALIGN_RIGHT
                 logoTable.defaultCell.verticalAlignment = Element.ALIGN_RIGHT
 
-                val logoDrawable = MainActivity.logotipo.drawable
+                val logoDrawable = DatosPersitidos.logotipo.drawable
 
                 logoTable.addCell(Utilidades.generarLogoCell(context,logoDrawable))
 
 
-                var logoCell = PdfPCell(Phrase(MainActivity.datosEmpresa.nombre, FONT_SUBTITLE))
+                var logoCell = PdfPCell(Phrase(DatosPersitidos.datosEmpresa.nombre, FONT_SUBTITLE))
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
                 logoCell.verticalAlignment = Element.ALIGN_CENTER
                 logoCell.border = PdfPCell.NO_BORDER
@@ -251,7 +251,7 @@ class CrearPdfFacturaOCompra {
 
             if(tipo=="Factura") {
 
-                var temp = Paragraph(MainActivity.preferencia_informacion_superior, FONT_CELL)
+                var temp = Paragraph(DatosPersitidos.preferencia_informacion_superior, FONT_CELL)
                 temp.alignment = Element.ALIGN_LEFT
                 temp.setLeading(0f, 1f)
                 cell.addElement(temp)
@@ -434,11 +434,11 @@ class CrearPdfFacturaOCompra {
             document.add(Paragraph(""))
             document.add(
                 Paragraph(
-                    MainActivity.preferencia_informacion_inferior,FONT_CELL)
+                    DatosPersitidos.preferencia_informacion_inferior,FONT_CELL)
             )
 
             document.add(Paragraph("\n"))
-            if(!MainActivity.datosEmpresa.garantia.isEmpty()) {
+            if(!DatosPersitidos.datosEmpresa.garantia.isEmpty()) {
                 document.add(
                     Paragraph(
                        "Terminos de garantía:")
@@ -447,7 +447,7 @@ class CrearPdfFacturaOCompra {
             document.add(Paragraph("\n"))
             document.add(
                 Paragraph(
-                    MainActivity.datosEmpresa.garantia,FONT_GARANTIA)
+                    DatosPersitidos.datosEmpresa.garantia,FONT_GARANTIA)
             )
         }
     }

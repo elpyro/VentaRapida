@@ -19,8 +19,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.Login
-import com.castellanoseloy.ventarapida.MainActivity
-import com.castellanoseloy.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.ventaProductosSeleccionados
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleVentaBinding
 import com.castellanoseloy.ventarapida.datos.ModeloClientes
@@ -72,7 +72,7 @@ class DetalleVenta : Fragment() {
         viewModel.totalFactura()
 
         //establece el codigo de area por defecto
-        binding?.editTextTelefono?.setText(MainActivity.edit_text_preference_codigo_area+" ")
+        binding?.editTextTelefono?.setText(DatosPersitidos.edit_text_preference_codigo_area+" ")
 
         observadores()
 
@@ -205,7 +205,7 @@ class DetalleVenta : Fragment() {
                 ocultarTeclado(requireContext(),vista)
                 //validando
                 //evalua si la sesion esta activa
-                if( MainActivity.datosUsuario.id.isNullOrEmpty()){
+                if( DatosPersitidos.datosUsuario.id.isNullOrEmpty()){
                     requireActivity().finish()
                     val intent = Intent(requireContext(), Login::class.java)
                     startActivity(intent)
@@ -233,7 +233,7 @@ class DetalleVenta : Fragment() {
     }
 
     private fun crearFacturaVenta() {
-        MainActivity.progressDialog?.show()
+        DatosPersitidos.progressDialog?.show()
 
         val datosPedido= obtenerDatosPedido()
 
@@ -285,8 +285,8 @@ class DetalleVenta : Fragment() {
             "envio" to envio,
             "fecha" to fechaActual,
             "hora" to horaActual,
-            "id_vendedor" to MainActivity.datosUsuario.id,
-            "nombre_vendedor" to MainActivity.datosUsuario.nombre,
+            "id_vendedor" to DatosPersitidos.datosUsuario.id,
+            "nombre_vendedor" to DatosPersitidos.datosUsuario.nombre,
             "total" to totalconEtiqueta,
             "fechaBusquedas" to obtenerFechaUnix()
         )
@@ -306,7 +306,7 @@ class DetalleVenta : Fragment() {
         val fechaActual = datosPedido["fecha"].toString()
         val descuento = datosPedido["descuento"].toString()
         var recaudo="Pendiente"
-        if(MainActivity.datosUsuario.perfil.equals("Administrador")) {
+        if(DatosPersitidos.datosUsuario.perfil.equals("Administrador")) {
             recaudo = "No aplica"
         }
         ventaProductosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
@@ -322,8 +322,8 @@ class DetalleVenta : Fragment() {
                     id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = idPedido,
-                    id_vendedor = MainActivity.datosUsuario.id,
-                    vendedor = MainActivity.datosUsuario.nombre,
+                    id_vendedor = DatosPersitidos.datosUsuario.id,
+                    vendedor = DatosPersitidos.datosUsuario.nombre,
                     producto = producto.nombre,
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,

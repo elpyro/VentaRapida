@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.Login
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleCompraBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
@@ -128,7 +128,7 @@ class DetalleCompra : Fragment() {
     }
 
     private fun actualizarRecycerView() {
-        adaptador = DetalleCompraAdaptador(MainActivity.compraProductosSeleccionados )
+        adaptador = DetalleCompraAdaptador(DatosPersitidos.compraProductosSeleccionados )
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
         adaptador.setOnClickItem() { item, cantidad, _ ->
             editarItem(item, cantidad)
@@ -252,23 +252,23 @@ class DetalleCompra : Fragment() {
                 Utilidades.ocultarTeclado(requireContext(), vista)
 
                 //evalua si la sesion esta activa
-                if( MainActivity.datosUsuario.id.isNullOrEmpty()){
+                if( DatosPersitidos.datosUsuario.id.isNullOrEmpty()){
                     requireActivity().finish()
                     val intent = Intent(requireContext(), Login::class.java)
                     startActivity(intent)
                     return true
                 }
 
-                if(MainActivity.compraProductosSeleccionados.isEmpty()){
+                if(DatosPersitidos.compraProductosSeleccionados.isEmpty()){
                     Toast.makeText(context,"No hay productos seleccionados", Toast.LENGTH_LONG).show()
                     return true
                 }
 
 
-                MainActivity.progressDialog?.show()
+                DatosPersitidos.progressDialog?.show()
 
                 val datosPedido= obtenerDatosPedido()
-                val listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
+                val listaConvertida=convertirLista(DatosPersitidos.compraProductosSeleccionados,datosPedido)
 
                 viewModel.subirDatos(datosPedido,listaConvertida.first)
 
@@ -290,7 +290,7 @@ class DetalleCompra : Fragment() {
             R.id.action_ver_pdf ->{
 
                 val datosPedido=obtenerDatosPedido()
-                val listaConvertida=convertirLista(MainActivity.compraProductosSeleccionados,datosPedido)
+                val listaConvertida=convertirLista(DatosPersitidos.compraProductosSeleccionados,datosPedido)
                 viewModel.abrirPDFConPreferencias(listaConvertida.first,datosPedido)
 
 
@@ -320,8 +320,8 @@ class DetalleCompra : Fragment() {
             "envio" to "0",
             "fecha" to fechaActual,
             "hora" to horaActual,
-            "id_vendedor" to MainActivity.datosUsuario.id,
-            "nombre_vendedor" to MainActivity.datosUsuario.nombre,
+            "id_vendedor" to DatosPersitidos.datosUsuario.id,
+            "nombre_vendedor" to DatosPersitidos.datosUsuario.nombre,
             "total" to totalconEtiqueta,
             "fechaBusquedas" to obtenerFechaUnix()
         )
@@ -350,8 +350,8 @@ class DetalleCompra : Fragment() {
                     id_producto_pedido =id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = idPedido,
-                    id_vendedor = MainActivity.datosUsuario.id,
-                    vendedor = MainActivity.datosUsuario.nombre,
+                    id_vendedor = DatosPersitidos.datosUsuario.id,
+                    vendedor = DatosPersitidos.datosUsuario.nombre,
                     producto = producto.nombre,
                     cantidad = cantidadSeleccionada.toString(),
                     costo = producto.p_compra,

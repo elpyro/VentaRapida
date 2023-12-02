@@ -2,7 +2,7 @@ package com.castellanoseloy.ventarapida.procesos
 
 
 import android.util.Log
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -64,7 +64,7 @@ object FirebaseUsuarios {
         val usuariosRef = database.getReference(TABLA_REFERENCIA)
         usuariosRef.keepSynced(true)
         val taskCompletionSource = TaskCompletionSource<MutableList<ModeloUsuario>>()
-        usuariosRef.orderByChild("idEmpresa").equalTo(MainActivity.datosEmpresa.id)
+        usuariosRef.orderByChild("idEmpresa").equalTo(DatosPersitidos.datosEmpresa.id)
             .addListenerForSingleValueEvent(object :
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

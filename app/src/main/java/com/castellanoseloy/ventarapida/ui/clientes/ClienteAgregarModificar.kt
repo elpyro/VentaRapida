@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentClienteAgregarModificarBinding
 
@@ -38,7 +38,7 @@ class ClienteAgregarModificar : Fragment() {
         val modeloCliente = bundle?.getSerializable("modelo") as? ModeloClientes
 
         //agregar codigo de area por defecto
-        binding?.editTextTelefono?.setText(MainActivity.edit_text_preference_codigo_area+" ")
+        binding?.editTextTelefono?.setText(DatosPersitidos.edit_text_preference_codigo_area+" ")
 
         if (modeloCliente!=null){
             cargarDatos(modeloCliente)
@@ -91,7 +91,7 @@ class ClienteAgregarModificar : Fragment() {
                     binding!!.editTextCliente.error = "Obligatorio"
                     return true
                 }
-                MainActivity.progressDialog?.show()
+                DatosPersitidos.progressDialog?.show()
                 val updates = hashMapOf<String, Any>(
                         "id" to idCliente,
                         "nombre" to  binding?.editTextCliente?.text.toString(),
@@ -102,7 +102,7 @@ class ClienteAgregarModificar : Fragment() {
 
                 guardarCliente(updates)
 
-                        MainActivity.progressDialog?.dismiss()
+                        DatosPersitidos.progressDialog?.dismiss()
                         findNavController().popBackStack()
 
                 return true

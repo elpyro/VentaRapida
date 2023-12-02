@@ -8,7 +8,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.procesos.GuardarImagenEnDispositivo
 import com.castellanoseloy.ventarapida.servicios.ServiciosSubirFoto
 import com.google.android.gms.tasks.Task
@@ -42,7 +42,7 @@ class NuevoProductoViewModel : ViewModel() {
             JobIntentService.enqueueWork(
                 context,
                 ServiciosSubirFoto::class.java,
-                MainActivity.JOB_ID,
+                DatosPersitidos.JOB_ID,
                 intent
             )
 

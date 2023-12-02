@@ -5,7 +5,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.VistaPDFFacturaOCompra
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
@@ -30,7 +30,7 @@ class DetalleCompraViewModel : ViewModel() {
 
         var total = 0.0
         var items=0
-        for ((producto, cantidad) in MainActivity.compraProductosSeleccionados) {
+        for ((producto, cantidad) in DatosPersitidos.compraProductosSeleccionados) {
             //multiplicar por -1 para sumar al inventario
             items +=  cantidad
             total += producto.p_compra.toDouble() * cantidad.toDouble()
@@ -40,13 +40,13 @@ class DetalleCompraViewModel : ViewModel() {
 
         totalFactura.value =  "Total: "+ total.toString().formatoMonenda()
 
-        referencias.value=  MainActivity.compraProductosSeleccionados.count { it.value != 0  }.toString()
+        referencias.value=  DatosPersitidos.compraProductosSeleccionados.count { it.value != 0  }.toString()
 
         itemsSeleccionados.value = items.toString()
 
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context,
-            MainActivity.compraProductosSeleccionados,"compra_seleccionada")
+            DatosPersitidos.compraProductosSeleccionados,"compra_seleccionada")
     }
 
 
@@ -63,13 +63,13 @@ class DetalleCompraViewModel : ViewModel() {
 
     fun actualizarProducto(producto: ModeloProducto, nuevoPrecio: Double, cantidad:Int, nombre:String) {
 
-        val productoEncontrado = MainActivity.compraProductosSeleccionados.keys.find { it.id == producto.id }
+        val productoEncontrado = DatosPersitidos.compraProductosSeleccionados.keys.find { it.id == producto.id }
         if (productoEncontrado != null) {
 
-            MainActivity.compraProductosSeleccionados.remove(productoEncontrado)
+            DatosPersitidos.compraProductosSeleccionados.remove(productoEncontrado)
             productoEncontrado.p_compra = nuevoPrecio.toString()
             productoEncontrado.nombre = nombre
-            MainActivity.compraProductosSeleccionados[productoEncontrado] = cantidad
+            DatosPersitidos.compraProductosSeleccionados[productoEncontrado] = cantidad
 
         }
 
@@ -79,10 +79,10 @@ class DetalleCompraViewModel : ViewModel() {
     }
 
     fun limpiarProductosSelecionados(context: Context) {
-        MainActivity.compraProductosSeleccionados.clear()
+        DatosPersitidos.compraProductosSeleccionados.clear()
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(context,
-            MainActivity.compraProductosSeleccionados,"compra_seleccionada")
+            DatosPersitidos.compraProductosSeleccionados,"compra_seleccionada")
     }
 
     fun abrirPDFConPreferencias(
@@ -117,7 +117,7 @@ class DetalleCompraViewModel : ViewModel() {
     }
 
     fun eliminarProducto(item: ModeloProducto) {
-        MainActivity.compraProductosSeleccionados.remove(item)
+        DatosPersitidos.compraProductosSeleccionados.remove(item)
         Toast.makeText(context,"Se ha eliminado: ${item.nombre}", Toast.LENGTH_LONG).show()
         val crearTono= CrearTono()
         crearTono.crearTono(context)

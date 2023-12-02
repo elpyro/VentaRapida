@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.databinding.FragmentReporteVendedorBinding
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +32,7 @@ class ReporteVendedor : Fragment() {
         viewModel = ViewModelProvider(this)[ReporteVendedorViewModel::class.java]
 
         //mostrar ganancias si esta permitido
-        if(MainActivity.datosUsuario.configuracion.mostrarReporteGanancia) binding?.buttonGanancia?.visibility=View.VISIBLE
+        if(DatosPersitidos.datosUsuario.configuracion.mostrarReporteGanancia) binding?.buttonGanancia?.visibility=View.VISIBLE
 
         binding?.textViewDesde?.text = Utilidades.obtenerFechaActual()
 
@@ -121,7 +121,7 @@ class ReporteVendedor : Fragment() {
                      requireContext(),
                      fechaInicio,
                      fechaFin,
-                     MainActivity.datosUsuario.id)
+                     DatosPersitidos.datosUsuario.id)
             }
         }
 
@@ -140,7 +140,7 @@ class ReporteVendedor : Fragment() {
                     requireContext(),
                     fechaInicio,
                     fechaFin,
-                    MainActivity.datosUsuario.id,MainActivity.datosUsuario.nombre)
+                    DatosPersitidos.datosUsuario.id,DatosPersitidos.datosUsuario.nombre)
             }
         }
     }

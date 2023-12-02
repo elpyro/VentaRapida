@@ -9,7 +9,7 @@ import androidx.core.app.JobIntentService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.GuardarImagenEnDispositivo
 import com.castellanoseloy.ventarapida.servicios.ServiciosSubirFoto
@@ -39,7 +39,7 @@ class DetalleProductoViewModel : ViewModel() {
     }
 
     private val database = FirebaseDatabase.getInstance()
-    private val productosRef = database.getReference(MainActivity.datosEmpresa.id).child("Productos")
+    private val productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child("Productos")
 
     // LiveData que contiene los detalles de un producto
     val detalleProducto = MutableLiveData<List<ModeloProducto>>()
@@ -92,7 +92,7 @@ class DetalleProductoViewModel : ViewModel() {
     fun eliminarProducto(id:String ): Task<Void> {
 
         val database2 = FirebaseDatabase.getInstance()
-        val registroRef = database2.getReference(MainActivity.datosEmpresa.id).child("Productos").child(id)
+        val registroRef = database2.getReference(DatosPersitidos.datosEmpresa.id).child("Productos").child(id)
         listaProductos.removeIf { it.id == id }
         val task = registroRef.removeValue().addOnSuccessListener {
             mensajeToast.value="Producto eliminado"
@@ -125,7 +125,7 @@ class DetalleProductoViewModel : ViewModel() {
         JobIntentService.enqueueWork(
             context,
             ServiciosSubirFoto::class.java,
-            MainActivity.JOB_ID,
+            DatosPersitidos.JOB_ID,
             intent
         )
 

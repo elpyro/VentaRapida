@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentFacturaVentasBinding
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
@@ -59,7 +59,7 @@ class FacturaVentas : Fragment() {
         listeners()
         observadores()
 
-        if(MainActivity.verPublicidad)  initLoadAds()
+        if(DatosPersitidos.verPublicidad)  initLoadAds()
 
         return binding!!.root
     }

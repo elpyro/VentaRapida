@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.Navigation
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.firebase.ui.auth.AuthUI
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleUsuarioBinding
 import com.castellanoseloy.ventarapida.Login
@@ -76,12 +76,12 @@ class DetalleSesion : Fragment() {
     }
 
     private fun cerrarSesion() {
-        MainActivity.ventaProductosSeleccionados.clear()
-        MainActivity.compraProductosSeleccionados.clear()
+        DatosPersitidos.ventaProductosSeleccionados.clear()
+        DatosPersitidos.compraProductosSeleccionados.clear()
 
         val preferencias= Preferencias()
         preferencias.guardarPreferenciaListaSeleccionada(requireContext(),
-            MainActivity.compraProductosSeleccionados,"compra_seleccionada"
+            DatosPersitidos.compraProductosSeleccionados,"compra_seleccionada"
         )
 
         AuthUI.getInstance().signOut(requireContext())
@@ -95,10 +95,10 @@ class DetalleSesion : Fragment() {
     }
 
     private fun cargarDatosUsario() {
-        binding?.TextviewNombreUsuario?.text=MainActivity.datosUsuario.nombre
-        binding?.textViewCorreo?.text="Correo: "+MainActivity.datosUsuario.correo
-        binding?.textViewEmpresa?.text="Empresa: "+MainActivity.datosEmpresa.nombre
-        binding?.textViewPerfil?.text="Perfil: "+MainActivity.datosUsuario.perfil
+        binding?.TextviewNombreUsuario?.text=DatosPersitidos.datosUsuario.nombre
+        binding?.textViewCorreo?.text="Correo: "+DatosPersitidos.datosUsuario.correo
+        binding?.textViewEmpresa?.text="Empresa: "+DatosPersitidos.datosEmpresa.nombre
+        binding?.textViewPerfil?.text="Perfil: "+DatosPersitidos.datosUsuario.perfil
     }
 
 

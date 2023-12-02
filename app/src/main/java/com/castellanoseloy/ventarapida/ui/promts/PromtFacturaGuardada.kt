@@ -15,7 +15,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra.guardarDetalleFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
@@ -132,8 +132,8 @@ class PromtFacturaGuardada {
                     val productoFacturado = ModeloProductoFacturado(
                         id_producto_pedido = UUID.randomUUID().toString(),
                         id_producto = producto.id,
-                        id_vendedor = MainActivity.datosUsuario.id,
-                        vendedor = MainActivity.datosUsuario.nombre,
+                        id_vendedor = DatosPersitidos.datosUsuario.id,
+                        vendedor = DatosPersitidos.datosUsuario.nombre,
                         producto = producto.nombre,
                         precioDescuentos= itemRecibido.precioDescuentos,
                         cantidad = cantidadSeleccionada.toString(),

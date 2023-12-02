@@ -19,6 +19,7 @@ import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfReciboIngreso
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
 import java.io.File
@@ -156,7 +157,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
             visualizarPDF()
         }catch (e: Exception ){
-            MainActivity.progressDialog?.dismiss()
+            DatosPersitidos.progressDialog?.dismiss()
             Log.e("PDF","Error creando pdf $e")
             Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
         }
@@ -191,7 +192,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
                     visualizarPDF()
                 }
             }catch (e: Exception ){
-                MainActivity.progressDialog?.dismiss()
+                DatosPersitidos.progressDialog?.dismiss()
                 Log.e("PDF","Error creando pdf $e")
                 Toast.makeText(this, "Error creando PDF", Toast.LENGTH_LONG).show()
         }
@@ -217,9 +218,13 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
             .load()
 
         //ocultamos los prgress que esten activos
-        MainActivity.progressDialog?.dismiss()
+        DatosPersitidos.progressDialog?.dismiss()
         progressDialogVerPDF?.dismiss()
     }
 
+    override fun onPause() {
+        super.onPause()
+        finish()
+    }
 
 }

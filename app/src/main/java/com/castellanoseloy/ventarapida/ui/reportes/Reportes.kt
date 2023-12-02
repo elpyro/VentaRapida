@@ -14,7 +14,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.databinding.FragmentReportesBinding
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios.buscarTodosUsuariosPorEmpresa
@@ -45,7 +45,7 @@ class Reportes : Fragment() {
         buscarTodosUsuariosPorEmpresa().addOnSuccessListener { listaUsuarios->
                 if (listaUsuarios.isNotEmpty()) crearSpinner(listaUsuarios)
         }
-        if(MainActivity.verPublicidad)  initLoadAds()
+        if(DatosPersitidos.verPublicidad)  initLoadAds()
 
         return binding!!.root
     }

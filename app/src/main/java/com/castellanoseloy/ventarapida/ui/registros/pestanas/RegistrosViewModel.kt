@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.Utilidades
@@ -27,7 +27,7 @@ class RegistrosViewModel : ViewModel() {
 
     fun iniciarEscucha(tablaReferencia: String) {
         val database = FirebaseDatabase.getInstance()
-        tablaRef = database.getReference(MainActivity.datosEmpresa.id).child(tablaReferencia)
+        tablaRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia)
 
         if(escuchador==null) {
             escuchador = tablaRef.addValueEventListener(object : ValueEventListener {
@@ -38,7 +38,7 @@ class RegistrosViewModel : ViewModel() {
                         val factura = facturaSnapshot.getValue(ModeloFactura::class.java)
                         factura?.let {
                             if (!factura.fecha.isNullOrEmpty()) {
-                                if (Utilidades.verificarPermisosAdministrador() || factura.id_vendedor == MainActivity.datosUsuario.id) {
+                                if (Utilidades.verificarPermisosAdministrador() || factura.id_vendedor == DatosPersitidos.datosUsuario.id) {
                                     facturas.add(it)
                                 }
                             }
@@ -50,7 +50,12 @@ class RegistrosViewModel : ViewModel() {
                         compareByDescending<ModeloFactura> { formatoFecha.parse(it.fecha) }
                             .thenByDescending { it.hora }
                     )
-                    _facturasLiveData.value = sortedFacturas as MutableList<ModeloFactura>
+
+
+                    val mutableFacturas = mutableListOf<ModeloFactura>()
+                    mutableFacturas.addAll(sortedFacturas)
+
+                    _facturasLiveData.value = mutableFacturas
                 }
 
                 override fun onCancelled(error: DatabaseError) {

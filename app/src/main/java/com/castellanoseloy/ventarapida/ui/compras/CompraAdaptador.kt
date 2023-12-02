@@ -12,7 +12,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.ProductDiffCallback
@@ -197,8 +197,8 @@ class CompraAdaptador(
                 imagenProducto.setImageResource(R.drawable.ic_menu_camera)
             }
 
-            if (MainActivity.compraProductosSeleccionados.isNotEmpty() &&   MainActivity.compraProductosSeleccionados.any { it.key.id == products[position].id }) {
-                val cantidad = MainActivity.compraProductosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
+            if (DatosPersitidos.compraProductosSeleccionados.isNotEmpty() &&   DatosPersitidos.compraProductosSeleccionados.any { it.key.id == products[position].id }) {
+                val cantidad = DatosPersitidos.compraProductosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
 
                 if (cantidad > 0) {
                     isUserEditing = false

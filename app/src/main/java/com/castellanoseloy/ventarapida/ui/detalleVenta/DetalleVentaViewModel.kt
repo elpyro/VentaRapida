@@ -7,7 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.castellanoseloy.ventarapida.MainActivity.Companion.ventaProductosSeleccionados
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.ventaProductosSeleccionados
 import com.castellanoseloy.ventarapida.VistaPDFFacturaOCompra
 import com.castellanoseloy.ventarapida.datos.ModeloClientes
 import com.castellanoseloy.ventarapida.datos.ModeloFactura

@@ -12,7 +12,7 @@ import android.widget.SearchView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.castellanoseloy.ventarapida.MainActivity
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentListaUsuariosBinding
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
@@ -40,7 +40,7 @@ class ListaUsuarios : Fragment() {
 
         setHasOptionsMenu(true)
 
-        if(MainActivity.verPublicidad)  initLoadAds()
+        if(DatosPersitidos.verPublicidad)  initLoadAds()
 
         return binding!!.root
     }
@@ -120,10 +120,10 @@ class ListaUsuarios : Fragment() {
 
     private fun verificarPlan(): String {
         var plan="No disponible"
-        if(MainActivity.datosEmpresa.plan == "Empresarial") plan="Plan Empresarial (30 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan == "Premium") plan="Plan Premium (10 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan == "Basico") plan="Plan Básico (3 usuarios activos)"
-        if(MainActivity.datosEmpresa.plan == "Gratuito") plan="Prueba gratuita (30 usuarios activos)"
+        if(DatosPersitidos.datosEmpresa.plan == "Empresarial") plan="Plan Empresarial (30 usuarios activos)"
+        if(DatosPersitidos.datosEmpresa.plan == "Premium") plan="Plan Premium (10 usuarios activos)"
+        if(DatosPersitidos.datosEmpresa.plan == "Basico") plan="Plan Básico (3 usuarios activos)"
+        if(DatosPersitidos.datosEmpresa.plan == "Gratuito") plan="Prueba gratuita (30 usuarios activos)"
         return plan
     }
 
