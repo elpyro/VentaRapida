@@ -4,13 +4,16 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.castellanoseloy.ventarapida.MainActivity
-import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos.eliminarColaSubida
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 object FirebaseProductos {
@@ -29,8 +32,11 @@ object FirebaseProductos {
 
     fun transaccionesCambiarCantidad(context: Context?, solicitudes: List<ModeloTransaccionSumaRestaProducto>) {
 
-        val ocultarBoton= MainActivity( )
-        ocultarBoton.mostrarFabBottonTransacciones(context!!)
+        GlobalScope.launch(Dispatchers.Main) {
+            val ocultarBoton= MainActivity( )
+            ocultarBoton.mostrarFabBottonTransacciones(context!!)
+        }
+
 
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA)
@@ -66,7 +72,10 @@ object FirebaseProductos {
                         Toast.makeText(context, "Error al actualizar la cantidad del producto", Toast.LENGTH_SHORT).show()
                     } else {
                         eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
-                        ocultarBoton.mostrarFabBottonTransacciones(context!!)
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val ocultarBoton= MainActivity( )
+                            ocultarBoton.mostrarFabBottonTransacciones(context!!)
+                        }
                     }
                 }
             })

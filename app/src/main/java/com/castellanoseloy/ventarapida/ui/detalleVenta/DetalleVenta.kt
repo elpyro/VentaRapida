@@ -12,6 +12,7 @@ import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.JobIntentService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
@@ -33,11 +34,16 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.castellanoseloy.ventarapida.servicios.ServicioGuadarFactura
+import com.castellanoseloy.ventarapida.servicios.ServicioListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class DetalleVenta : Fragment() {
+class DetalleVenta : Fragment(), ServicioListener {
 
     private lateinit var viewModel: DetalleVentaViewModel
     var binding: FragmentDetalleVentaBinding? = null
@@ -232,35 +238,50 @@ class DetalleVenta : Fragment() {
         }
     }
 
+
+
     private fun crearFacturaVenta() {
         DatosPersitidos.progressDialog?.show()
 
-        val datosPedido= obtenerDatosPedido()
 
-        //devolver los registros a subir a firebase, y la lista de productos a descontar de los inventarios
-        val listasConvertida=convertirLista(ventaProductosSeleccionados,datosPedido)
+        val datosPedido: HashMap<String, Any> = obtenerDatosPedido()
+        // Crear el Intent para iniciar el servicio
+        val intent = Intent(context, ServicioGuadarFactura::class.java)
+        intent.putExtra("datosPedido", datosPedido)
+        intent.putExtra("operacion","Venta")
 
-        viewModel.subirDatos(datosPedido ,listasConvertida.first )
 
-        FirebaseProductos.transaccionesCambiarCantidad(context, listasConvertida.second)
+        ServicioGuadarFactura.setServicioListener(object : ServicioListener {
+            override fun onServicioTerminado() {
+                abrirPDFConPreferencias()
+                cerrarYLimpiar()
+            }
+        })
 
-        abrirPDFConPreferencias()
-        cerrarYLimpiar()
+        // Iniciar el servicio en segundo plano utilizando JobIntentService
+        JobIntentService.enqueueWork(
+            requireContext(),
+            ServicioGuadarFactura::class.java,
+            DatosPersitidos.JOB_IDGUARDARFACTURA,
+            intent)
+
     }
 
     private fun cerrarYLimpiar() {
+        GlobalScope.launch(Dispatchers.Main) {
         viewModel.limpiar(requireContext())
         limpiar=true
         findNavController().popBackStack()
+        }
     }
 
 
-
-
     private fun abrirPDFConPreferencias() {
-        val datosPedido = obtenerDatosPedido()
-        val listaConvertida = convertirLista(ventaProductosSeleccionados, datosPedido)
-        viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
+        GlobalScope.launch(Dispatchers.Main) {
+            val datosPedido = obtenerDatosPedido()
+            val listaConvertida = convertirLista(ventaProductosSeleccionados, datosPedido)
+            viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
+        }
     }
 
 
@@ -432,6 +453,10 @@ class DetalleVenta : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         binding=null
+    }
+
+    override fun onServicioTerminado() {
+        TODO("Not yet implemented")
     }
 
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.JobIntentService
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,11 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaActual
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
+import com.castellanoseloy.ventarapida.servicios.ServicioGuadarFactura
+import com.castellanoseloy.ventarapida.servicios.ServicioListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 class DetalleCompra : Fragment() {
@@ -264,26 +270,8 @@ class DetalleCompra : Fragment() {
                     return true
                 }
 
+                realizarCompra()
 
-                DatosPersitidos.progressDialog?.show()
-
-                val datosPedido= obtenerDatosPedido()
-                val listaConvertida=convertirLista(DatosPersitidos.compraProductosSeleccionados,datosPedido)
-
-                viewModel.subirDatos(datosPedido,listaConvertida.first)
-
-
-                FirebaseProductos.transaccionesCambiarCantidad(context, listaConvertida.second)
-
-
-                viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
-
-                //limpiamos los productos seleccionados
-                viewModel.limpiarProductosSelecionados(requireContext())
-
-                Toast.makeText(requireContext(), "Los productos fueron agregados al inventario",Toast.LENGTH_LONG).show()
-
-                findNavController().popBackStack()
                 return true
             }
 
@@ -298,6 +286,52 @@ class DetalleCompra : Fragment() {
             }
 
             else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun realizarCompra() {
+        DatosPersitidos.progressDialog?.show()
+
+
+        val datosPedido: HashMap<String, Any> = obtenerDatosPedido()
+        // Crear el Intent para iniciar el servicio
+        val intent = Intent(context, ServicioGuadarFactura::class.java)
+        intent.putExtra("datosPedido", datosPedido)
+        intent.putExtra("operacion","Compra")
+
+        ServicioGuadarFactura.setServicioListener(object : ServicioListener {
+            override fun onServicioTerminado() {
+                mostrarPdf()
+            }
+        })
+
+        // Iniciar el servicio en segundo plano utilizando JobIntentService
+        JobIntentService.enqueueWork(
+            requireContext(),
+            ServicioGuadarFactura::class.java,
+            DatosPersitidos.JOB_IDGUARDARFACTURA,
+            intent)
+
+
+    }
+
+    private fun mostrarPdf() {
+        GlobalScope.launch(Dispatchers.Main) {
+            val datosPedido = obtenerDatosPedido()
+            val listaConvertida =
+                convertirLista(DatosPersitidos.compraProductosSeleccionados, datosPedido)
+            viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
+
+            //limpiamos los productos seleccionados
+            viewModel.limpiarProductosSelecionados(requireContext())
+
+            Toast.makeText(
+                requireContext(),
+                "Los productos fueron agregados al inventario",
+                Toast.LENGTH_LONG
+            ).show()
+
+            findNavController().popBackStack()
         }
     }
 

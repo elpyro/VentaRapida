@@ -56,35 +56,8 @@ class InformacionProducto : Fragment() {
         }
 
         binding.textViewPrecio.text = modeloProducto?.p_diamante?.formatoMonenda()
-        Picasso.get()
-            .load(modeloProducto?.url)
-            .networkPolicy(NetworkPolicy.OFFLINE)
-            .into(binding.photoView, object : Callback {
-                override fun onSuccess() {
-                    // La imagen se cargó exitosamente desde la caché
-                }
-
-                override fun onError(e: Exception) {
-                    // Ocurrió un error al cargar la imagen desde la caché,
-                    // intentar cargarla desde la red
-                    Picasso.get()
-                        .load(modeloProducto?.url)
-                        .into(binding.photoView, object : Callback {
-                            override fun onSuccess() {
-                                // La imagen se cargó exitosamente desde la red
-                            }
-
-                            override fun onError(e: Exception) {
-                                // Ocurrió un error al cargar la imagen desde la red,
-                                // aquí puedes manejar el error según tus necesidades
-                            }
-                        })
-                }
-            })
-
-
-
-    }
+        modeloProducto?.url?.let { Utilidades.cargarImagen(it,binding.photoView) }
+      }
 
     @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

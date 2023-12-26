@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.interstitial
 
@@ -41,6 +42,15 @@ class VistaPDFReporte : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if( DatosPersitidos.datosUsuario.id.isNullOrEmpty()){
+            finish()
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun mostarPublicida() {
@@ -132,11 +142,6 @@ class VistaPDFReporte : AppCompatActivity() {
         //ocultamos los prgress que esten activos
         DatosPersitidos.progressDialog?.dismiss()
         progressDialogVerPDF?.dismiss()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        finish()
     }
 
 }

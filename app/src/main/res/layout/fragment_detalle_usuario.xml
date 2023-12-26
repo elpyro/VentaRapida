@@ -7,13 +7,15 @@
     android:background="@drawable/fondo"
     tools:context=".ui.usuarios.DetalleSesion">
 
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -91,8 +93,24 @@
                     android:background="@drawable/bordes_boton"
                     android:text="@string/cerrar_session" />
 
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="120dp"
+                    android:background="@color/white" />
+                <Button
+                    android:id="@+id/buttonEliminarCuenta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bordes_boton"
+                    android:text="Eliminar Cuenta" />
+
+
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
-
 </FrameLayout>

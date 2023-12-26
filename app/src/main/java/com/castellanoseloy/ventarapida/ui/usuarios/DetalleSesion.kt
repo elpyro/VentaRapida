@@ -10,11 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.firebase.ui.auth.AuthUI
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleUsuarioBinding
 import com.castellanoseloy.ventarapida.Login
 import com.castellanoseloy.ventarapida.R
+import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
 
@@ -22,7 +24,7 @@ class DetalleSesion : Fragment() {
 
     private var binding: FragmentDetalleUsuarioBinding? = null
     private lateinit var vista: View
-
+    private var idUsuario=""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,8 +50,40 @@ class DetalleSesion : Fragment() {
                 verificarDatosPendientesPorCargar()
             }
 
+        binding?.buttonEliminarCuenta?.setOnClickListener {
+
+            eliminarCuenta()
+        }
             }
 
+    private fun eliminarCuenta() {
+
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Eliminar cuenta permanentemente")
+        alertDialogBuilder.setMessage("¿Estás seguro de que quieres eliminar su cuenta de ${DatosPersitidos.datosEmpresa.nombre}?")
+        alertDialogBuilder.setPositiveButton("Sí") { dialogInterface, _ ->
+            if(DatosPersitidos.datosUsuario.id.isNotEmpty()) FirebaseUsuarios.eliminarUsuarioPorId(DatosPersitidos.datosUsuario.id).addOnCompleteListener{
+                Toast.makeText(requireContext(),"Usuario eliminado",Toast.LENGTH_LONG).show()
+                cerrarSesion()
+            }
+
+        }
+        alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
+            // Acciones a realizar cuando se hace clic en "No"
+            dialogInterface.dismiss() // Cerrar el cuadro de diálogo
+        }
+
+        // Mostrar el cuadro de diálogo
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun verificarUsuarioPrincipal(): Boolean {
+        if(DatosPersitidos.datosEmpresa.idDuenoCuenta!=null){
+            return idUsuario == DatosPersitidos.datosEmpresa.idDuenoCuenta
+        }
+        return false
+    }
     private fun verificarDatosPendientesPorCargar() {
         val transaccionesPendientes=
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)

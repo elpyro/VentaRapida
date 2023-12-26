@@ -17,7 +17,8 @@ class DatosPersitidos : Service() {
 
     // Datos que deben persistir
     companion object {
-        const val JOB_ID = 1000 // Cambia este número por uno que no esté siendo utilizado en tu app
+        const val JOB_ID = 1200 // Cambia este número por uno que no esté siendo utilizado en tu app
+        const val JOB_IDGUARDARFACTURA= 1300
         var interstitial: InterstitialAd? = null
         var ventaProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
         var compraProductosSeleccionados = mutableMapOf<ModeloProducto, Int>()
