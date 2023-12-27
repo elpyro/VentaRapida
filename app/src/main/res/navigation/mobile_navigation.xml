@@ -37,7 +37,11 @@
         android:id="@+id/facturaGuardada"
         android:name="com.castellanoseloy.ventarapida.ui.factura_guardada.FacturaGuardada"
         android:label="@string/detalleFactura"
-        tools:layout="@layout/fragment_factura_guardada" />
+        tools:layout="@layout/fragment_factura_guardada" >
+        <action
+            android:id="@+id/action_facturaGuardada_to_historialProducto"
+            app:destination="@id/historialProducto" />
+    </fragment>
     <fragment
         android:id="@+id/agregarProductoFactura"
         android:name="com.castellanoseloy.ventarapida.ui.agregarProductoFactura.AgregarProductoFactura"
@@ -59,7 +63,11 @@
     <fragment
         android:id="@+id/compraGuardada"
         android:name="com.castellanoseloy.ventarapida.ui.compra_guardada.CompraGuardada"
-        android:label="Surtidos" />
+        android:label="Surtidos" >
+        <action
+            android:id="@+id/action_compraGuardada_to_historialProducto"
+            app:destination="@id/historialProducto" />
+    </fragment>
     <fragment
         android:id="@+id/configuracion"
         android:name="com.castellanoseloy.ventarapida.ui.configuracion.Configuracion"
@@ -122,5 +130,11 @@
         android:name="com.castellanoseloy.ventarapida.ui.recaudos.Recaudos"
         android:label="@string/Recaudos"
         tools:layout="@layout/fragment_recaudos" />
+    <fragment
+        android:id="@+id/historialProducto"
+        android:name="com.castellanoseloy.ventarapida.ui.registros.pestanas.HistorialProducto"
+        android:label="Historial del producto"
+        tools:layout="@layout/fragment_factura_ventas" >
+    </fragment>
 
 </navigation>

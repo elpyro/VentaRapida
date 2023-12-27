@@ -24,8 +24,8 @@ class ClienteAgregarModificar : Fragment() {
 
     private var binding: FragmentClienteAgregarModificarBinding? = null
     private lateinit var vista: View
-    private var idCliente=""
-    private var clienteNuevo=true
+    private var idCliente = ""
+    private var clienteNuevo = true
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,14 +38,14 @@ class ClienteAgregarModificar : Fragment() {
         val modeloCliente = bundle?.getSerializable("modelo") as? ModeloClientes
 
         //agregar codigo de area por defecto
-        binding?.editTextTelefono?.setText(DatosPersitidos.edit_text_preference_codigo_area+" ")
+        binding?.editTextTelefono?.setText(DatosPersitidos.edit_text_preference_codigo_area + " ")
 
-        if (modeloCliente!=null){
+        if (modeloCliente != null) {
             cargarDatos(modeloCliente)
-            idCliente= modeloCliente.id
-            clienteNuevo=false
-        }else{
-            idCliente= UUID.randomUUID().toString()
+            idCliente = modeloCliente.id
+            clienteNuevo = false
+        } else {
+            idCliente = UUID.randomUUID().toString()
         }
 
 
@@ -53,10 +53,10 @@ class ClienteAgregarModificar : Fragment() {
     }
 
     private fun cargarDatos(modeloCliente: ModeloClientes) {
-        val nombre=binding?.editTextCliente
-        val telefono=binding?.editTextTelefono
-        val documento=binding?.editTextDocumento
-        val direccion=binding?.editTextDireccion
+        val nombre = binding?.editTextCliente
+        val telefono = binding?.editTextTelefono
+        val documento = binding?.editTextDocumento
+        val direccion = binding?.editTextDireccion
 
         nombre?.setText(modeloCliente.nombre)
         telefono?.setText(modeloCliente.telefono)
@@ -66,7 +66,7 @@ class ClienteAgregarModificar : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vista=view
+        vista = view
     }
 
     @Deprecated("Deprecated in Java")
@@ -84,47 +84,48 @@ class ClienteAgregarModificar : Fragment() {
         when (item.itemId) {
 
 
-            R.id.action_guardar ->{
-                ocultarTeclado(requireContext(),vista)
+            R.id.action_guardar -> {
+                ocultarTeclado(requireContext(), vista)
 
-                if (binding!!.editTextCliente.text.toString().isEmpty()){
+                if (binding!!.editTextCliente.text.toString().isEmpty()) {
                     binding!!.editTextCliente.error = "Obligatorio"
                     return true
                 }
                 DatosPersitidos.progressDialog?.show()
                 val updates = hashMapOf<String, Any>(
-                        "id" to idCliente,
-                        "nombre" to  binding?.editTextCliente?.text.toString(),
-                        "documento" to  binding?.editTextDocumento?.text.toString(),
-                        "telefono" to  binding?.editTextTelefono?.text.toString(),
-                        "direccion" to binding?.editTextDireccion?.text.toString()
-                    )
+                    "id" to idCliente,
+                    "nombre" to binding?.editTextCliente?.text.toString(),
+                    "documento" to binding?.editTextDocumento?.text.toString(),
+                    "telefono" to binding?.editTextTelefono?.text.toString(),
+                    "direccion" to binding?.editTextDireccion?.text.toString()
+                )
 
                 guardarCliente(updates)
 
-                        DatosPersitidos.progressDialog?.dismiss()
-                        findNavController().popBackStack()
+                DatosPersitidos.progressDialog?.dismiss()
+                findNavController().popBackStack()
 
                 return true
             }
 
-            R.id.action_eliminar ->{
+            R.id.action_eliminar -> {
 
-                ocultarTeclado(requireContext(),vista)
+                ocultarTeclado(requireContext(), vista)
 
-                    // Crear el diálogo de confirmación
-                    val builder = AlertDialog.Builder(requireContext())
-                    builder.setTitle("Eliminar producto")
-                    builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
-                    builder.setPositiveButton("Eliminar") { _, _ ->
-                        if(idCliente.isNotEmpty()) eliminarCliente(idCliente)
+                // Crear el diálogo de confirmación
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("Eliminar producto")
+                builder.setIcon(R.drawable.logo2_compra_rapidita)
+                builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
+                builder.setPositiveButton("Eliminar") { _, _ ->
+                    if (idCliente.isNotEmpty()) eliminarCliente(idCliente)
 
-                                Toast.makeText(requireContext(),"Cliente Eliminado", Toast.LENGTH_LONG).show()
-                                findNavController().popBackStack()
+                    Toast.makeText(requireContext(), "Cliente Eliminado", Toast.LENGTH_LONG).show()
+                    findNavController().popBackStack()
 
-                    }
-                    builder.setNegativeButton("Cancelar", null)
-                    builder.show()
+                }
+                builder.setNegativeButton("Cancelar", null)
+                builder.show()
 
                 return true
             }
@@ -135,7 +136,7 @@ class ClienteAgregarModificar : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding=null
+        binding = null
     }
 
 }

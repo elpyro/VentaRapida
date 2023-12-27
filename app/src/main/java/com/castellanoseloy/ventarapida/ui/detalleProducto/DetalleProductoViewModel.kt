@@ -11,7 +11,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.GuardarImagenEnDispositivo
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.servicios.ServiciosSubirFoto
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
@@ -20,9 +22,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.util.HashMap
+import java.util.UUID
 
 
 class DetalleProductoViewModel : ViewModel() {
+
+    private lateinit var idPedido: String
+    private lateinit var fechaActual: String
+    private lateinit var horaActual: String
 
     // Lista de productos
     val listaProductos = mutableListOf<ModeloProducto>()
@@ -102,6 +110,35 @@ class DetalleProductoViewModel : ViewModel() {
 
     }
 
+
+    fun obtenerDatosPedido(): HashMap<String, Any> {
+
+        horaActual = Utilidades.obtenerHoraActual()
+        fechaActual = Utilidades.obtenerFechaActual()
+
+        idPedido= UUID.randomUUID().toString()
+
+        val total="0"
+        val nombre=  "Edición de inventario"
+        val totalconEtiqueta = total.replace("Total:", "Nuevo ").trim()
+        val datosPedido = hashMapOf<String, Any>(
+            "id_pedido" to idPedido,
+            "nombre" to nombre,
+            "telefono" to "",
+            "documento" to "",
+            "direccion" to "",
+            "descuento" to "0",
+            "envio" to "0",
+            "fecha" to fechaActual,
+            "hora" to horaActual,
+            "id_vendedor" to DatosPersitidos.datosUsuario.id,
+            "nombre_vendedor" to DatosPersitidos.datosUsuario.nombre,
+            "total" to totalconEtiqueta,
+            "fechaBusquedas" to Utilidades.obtenerFechaUnix()
+        )
+        return datosPedido
+    }
+
     fun subirImagenFirebase(context:Context,     bitmap: Bitmap?) {
 
         val idProducto= detalleProducto.value?.get(0)?.id
@@ -129,5 +166,27 @@ class DetalleProductoViewModel : ViewModel() {
             intent
         )
 
+    }
+
+    fun productoEditado(producto: ModeloProducto, nuevaCantidad: Int): MutableList<ModeloProductoFacturado> {
+        val productoFacturado = ModeloProductoFacturado(
+            id_producto_pedido =UUID.randomUUID().toString(),
+            id_producto = producto.id,
+            id_pedido = idPedido,
+            id_vendedor = DatosPersitidos.datosUsuario.id,
+            vendedor = DatosPersitidos.datosUsuario.nombre,
+            producto = producto.nombre,
+            cantidad = nuevaCantidad.toString(),
+            costo = producto.p_compra,
+            venta = producto.p_compra,
+            fecha = fechaActual,
+            hora =horaActual,
+            imagenUrl =producto.url,
+            productoEditado="Inventario Editado",
+            fechaBusquedas = Utilidades.obtenerFechaUnix()
+        )
+        val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
+        listaProductosFacturados.add(productoFacturado)
+        return listaProductosFacturados
     }
 }

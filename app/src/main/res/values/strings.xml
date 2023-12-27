@@ -153,5 +153,6 @@
     <string name="ExplicacionRecaudo">Solicita a tus vendedores el dinero de las ventas por dias, restando los gastos del día.</string>
     <string name="vendedores">Vendedores</string>
     <string name="ReciboIngreso">Recibo de ingreso</string>
+    <string name="Historial">Historial</string>
 
 </resources>

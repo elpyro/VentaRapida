@@ -272,6 +272,7 @@ class Venta : Fragment() {
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
         builder.setPositiveButton("Eliminar") { dialog, which ->
             productViewModel.eliminarCarrito()
@@ -319,6 +320,7 @@ class Venta : Fragment() {
 
     val progressDialog: ProgressDialog by lazy {
         ProgressDialog(requireContext()).apply {
+            setIcon(R.drawable.logo2_compra_rapidita)
             setMessage("Creando PDF de productos filtrados...")
             setCancelable(true)
         }

@@ -86,6 +86,7 @@ class RegistroUsuario : Fragment() {
         }else{
             // Crear un cuadro de diálogo con botones "Sí" y "No"
             val alertDialogBuilder = AlertDialog.Builder(requireContext())
+            alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
             alertDialogBuilder.setTitle("Eliminar")
             alertDialogBuilder.setMessage("¿Estás seguro de que quieres eliminar la cuenta de $nombreUsuario?")
             alertDialogBuilder.setPositiveButton("Sí") { dialogInterface, _ ->

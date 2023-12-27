@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.databinding.FragmentReportesBinding
 import com.castellanoseloy.ventarapida.datos.ModeloUsuario
@@ -247,6 +248,7 @@ class Reportes : Fragment() {
 
      val progressDialog: ProgressDialog by lazy {
         ProgressDialog(requireContext()).apply {
+            setIcon(R.drawable.logo2_compra_rapidita)
             setMessage("Creando PDF...")
             setCancelable(true)
         }

@@ -16,10 +16,15 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.datos.ModeloUsuario
+import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
+import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
+import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
@@ -35,8 +40,9 @@ import kotlin.math.absoluteValue
 @Suppress("DEPRECATION")
 class DetalleProducto : Fragment() {
 
+    private lateinit var productoDetalle: ModeloProducto
     private var bitmapFoto: Bitmap? = null
-    private var changeListenerActived: Boolean =false
+    private var changeListenerActived: Boolean = false
     private lateinit var cantidadAntigua: String
 
     //    private lateinit var toolbar: Toolbar
@@ -44,7 +50,7 @@ class DetalleProducto : Fragment() {
     private val viewModel: DetalleProductoViewModel by viewModels() // Inicialización de viewModel
     private lateinit var productosViewModel: DetalleProductoViewModel
     private var vista: View? = null
-    private lateinit var id_producto:String
+    private lateinit var id_producto: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +63,8 @@ class DetalleProducto : Fragment() {
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
         val modeloProducto = bundle?.getSerializable("modelo") as? ModeloProducto
-        val listaDeProductos = bundle?.getSerializable("listaProductos") as? ArrayList<ModeloProducto>
+        val listaDeProductos =
+            bundle?.getSerializable("listaProductos") as? ArrayList<ModeloProducto>
         val posicionProducto = bundle?.getInt("position")
 
         // Llama al método actualizarListaProductos para indicar la lista de productos
@@ -68,12 +75,12 @@ class DetalleProducto : Fragment() {
 
         // Observa los cambios en detalleProducto y actualiza la UI en consecuencia
         productosViewModel.detalleProducto.observe(viewLifecycleOwner) { detalleProducto ->
-            binding?.textViewInformacionAgregarCantidades?.visibility=View.GONE
-            changeListenerActived=false
+            binding?.textViewInformacionAgregarCantidades?.visibility = View.GONE
+            changeListenerActived = false
             if (detalleProducto.isNotEmpty()) {
-                val producto = detalleProducto[0]
-                actualizarCampos(producto)
-            }else{
+                productoDetalle = detalleProducto[0]
+                actualizarCampos(productoDetalle)
+            } else {
                 cargarSiguienteProducto()
             }
         }
@@ -81,7 +88,7 @@ class DetalleProducto : Fragment() {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
 
-        binding?.imageViewFoto?.setOnClickListener{
+        binding?.imageViewFoto?.setOnClickListener {
             cargarImagen()
         }
 
@@ -95,20 +102,23 @@ class DetalleProducto : Fragment() {
             cargarAnteriorProducto()
         }
 
+        binding?.buttonHistorial?.setOnClickListener {
+            mostrarHistorial()
+        }
+
         binding?.editTextCantidad?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (changeListenerActived){
-                    binding?.textViewInformacionAgregarCantidades?.visibility=View.VISIBLE
+                if (changeListenerActived) {
+                    binding?.textViewInformacionAgregarCantidades?.visibility = View.VISIBLE
                 }
-                changeListenerActived=true
+                changeListenerActived = true
 
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
-
 
 
         // Indica la posición del producto para abrir el producto seleccionado
@@ -119,6 +129,12 @@ class DetalleProducto : Fragment() {
         cargarProducto(modeloProducto)
 
         return binding!!.root // Retorna la vista inflada
+    }
+
+    private fun mostrarHistorial() {
+        val bundle = Bundle()
+        bundle.putString("idProducto", id_producto)
+        Navigation.findNavController(vista!!).navigate(R.id.historialProducto,bundle)
     }
 
     //Tomamos la foto resultante de la camara o la galeria y la colocamos en el imageview
@@ -139,7 +155,7 @@ class DetalleProducto : Fragment() {
         // Si la acción fue elegir una imagen de la galería
         if (requestCode == TomarFotoYGaleria.GALERIA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // Obtener la URI de la imagen seleccionada de la galería
-            val uri=  data?.data
+            val uri = data?.data
             // Recortar la imagen usando la biblioteca CropImage
             CropImage.activity(uri)
                 .setGuidelines(CropImageView.Guidelines.ON)
@@ -162,23 +178,27 @@ class DetalleProducto : Fragment() {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 // Mostrar un mensaje de error si la recortada no fue exitosa
                 val error = result.error
-                Toast.makeText(requireContext(), "Error al recortar la imagen: $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Error al recortar la imagen: $error",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
     private fun actualizarCampos(producto: ModeloProducto) {
-        id_producto=producto.id
+        id_producto = producto.id
         binding?.editTextProducto?.setText(producto.nombre)
         binding?.editTextPCompra?.setText(producto.p_compra)
         binding?.editTextPVenta?.setText(producto.p_diamante)
         binding?.editTextCantidad?.setText(producto.cantidad)
-        cantidadAntigua= producto.cantidad
+        cantidadAntigua = producto.cantidad
         binding?.editTextProveedor?.setText(producto.proveedor)
         binding?.editTextComentario?.setText(producto.comentario)
-       if (producto.url.isNotEmpty()){
-           Picasso.get().load(producto.url).into(binding?.imageViewFoto)
-       }
+        if (producto.url.isNotEmpty()) {
+            Picasso.get().load(producto.url).into(binding?.imageViewFoto)
+        }
 
     }
 
@@ -189,17 +209,18 @@ class DetalleProducto : Fragment() {
 
     private fun verificarPosiciones() {
         //Verifica la posicion del array para mostrar o ocultar los botones de siguiente o anterior
-        if ( viewModel.posicionActual == 0) {
+        if (viewModel.posicionActual == 0) {
             binding?.imageViewBotonIzquierda?.visibility = View.INVISIBLE
-        }else{
+        } else {
             binding?.imageViewBotonIzquierda?.visibility = View.VISIBLE
         }
-        if ( viewModel.posicionActual == viewModel.listaProductos.size-1) {
+        if (viewModel.posicionActual == viewModel.listaProductos.size - 1) {
             binding?.imageViewBotonDerecha?.visibility = View.INVISIBLE
-        }else{
+        } else {
             binding?.imageViewBotonDerecha?.visibility = View.VISIBLE
         }
     }
+
     private fun cargarAnteriorProducto() {
         // Descremente la posición actual en 1
         viewModel.posicionActual--
@@ -238,7 +259,12 @@ class DetalleProducto : Fragment() {
 
 
     private fun cargarProducto(modeloProducto: ModeloProducto?) {
-        binding?.imageViewFoto?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_menu_camera))
+        binding?.imageViewFoto?.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.ic_menu_camera
+            )
+        )
 
         viewModel.setIdProducto(modeloProducto!!.id)
     }
@@ -253,20 +279,21 @@ class DetalleProducto : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
-            R.id.action_guardar ->{
-                    guardar()
+            R.id.action_guardar -> {
+                guardar()
                 return true
             }
 
-            R.id.action_camara->{
-                    cargarImagen()
+            R.id.action_camara -> {
+                cargarImagen()
                 return true
             }
 
             R.id.action_eliminar -> {
-                 eliminar()
+                eliminar()
                 return true
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -282,48 +309,51 @@ class DetalleProducto : Fragment() {
 
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setTitle("Eliminar producto")
         builder.setMessage("¿Estás seguro de que deseas eliminar este producto?")
         builder.setPositiveButton("Eliminar") { _, _ ->
-            if(id_producto.isNotEmpty()) viewModel.eliminarProducto(id_producto) else Toast.makeText(requireContext(),"No se puede elimnar el producto null",Toast.LENGTH_LONG).show()
+            if (id_producto.isNotEmpty()) viewModel.eliminarProducto(id_producto) else Toast.makeText(
+                requireContext(),
+                "No se puede elimnar el producto null",
+                Toast.LENGTH_LONG
+            ).show()
             findNavController().popBackStack()
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
     }
 
-     @SuppressLint("SuspiciousIndentation")
-     fun guardar() {
-         val verificarConexion= VerificarInternet()
+    @SuppressLint("SuspiciousIndentation")
+    fun guardar() {
+        val verificarConexion = VerificarInternet()
+
+        ocultarTeclado(requireContext(), vista!!)
+
+        if (binding!!.editTextProducto.text.toString().isEmpty()) {
+            binding!!.editTextProducto.error = "Obligatorio"
+            return
+        }
+        if (binding!!.editTextPCompra.text.toString().trim().isEmpty()) {
+            binding!!.editTextPCompra.error = "Obligatorio"
+            return
+        }
+        if (binding!!.editTextPVenta.text.toString().trim().isEmpty()) {
+            binding!!.editTextPVenta.error = "Obligatorio"
+            return
+        }
 
 
-         ocultarTeclado(requireContext(), vista!!)
+        //veficicar si hay imagen cargada
+        if (bitmapFoto != null) {
+            viewModel.subirImagenFirebase(requireContext(), bitmapFoto)
+            bitmapFoto = null
+        }
 
-
-
-         if(binding!!.editTextProducto.text.toString().isEmpty()){
-             binding!!.editTextProducto.error = "Obligatorio"
-             return
-         }
-         if(binding!!.editTextPCompra.text.toString().trim().isEmpty()){
-             binding!!.editTextPCompra.error = "Obligatorio"
-             return
-         }
-         if(binding!!.editTextPVenta.text.toString().trim().isEmpty()){
-             binding!!.editTextPVenta.error = "Obligatorio"
-             return
-         }
-
-
-         //veficicar si hay imagen cargada
-         if (bitmapFoto!=null) {
-             viewModel.subirImagenFirebase(requireContext(),bitmapFoto)
-             bitmapFoto=null
-         }
-
-         var cantidadDisponible="0"
-         if(binding!!.editTextCantidad.text.toString().trim().isNotEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
-         if(cantidadAntigua != cantidadDisponible) actualizarCantidadTransaccion(cantidadDisponible)
+        var cantidadDisponible = "0"
+        if (binding!!.editTextCantidad.text.toString().trim().isNotEmpty()) cantidadDisponible =
+            binding!!.editTextCantidad.text.toString().trim()
+        if (cantidadAntigua != cantidadDisponible) actualizarCantidadTransaccion(cantidadDisponible)
 
         val updates = hashMapOf<String, Any>(
             "id" to id_producto.trim(),
@@ -334,38 +364,59 @@ class DetalleProducto : Fragment() {
             "proveedor" to binding!!.editTextProveedor.text.toString()
         )
 
-         guardarProducto(updates)
+        guardarProducto(updates)
 
-            Toast.makeText(requireContext(),"Producto Actualizado",Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), "Producto Actualizado", Toast.LENGTH_LONG).show()
 
-         if (!verificarConexion.verificarConexion(requireContext())){
-             Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
-         }
+        if (!verificarConexion.verificarConexion(requireContext())) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.disponbleEnlaNuebe),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun actualizarCantidadTransaccion(cantidadDisponible: String) {
-        val nuevaCantidad= cantidadDisponible.toInt()-cantidadAntigua.toInt()
-        cantidadAntigua=cantidadDisponible
-        val producto= this.binding!!.editTextProducto.text.toString().trim()
+        val nuevaCantidad = cantidadDisponible.toInt() - cantidadAntigua.toInt()
+        cantidadAntigua = cantidadDisponible
+        val producto = this.binding!!.editTextProducto.text.toString().trim()
         if (nuevaCantidad > 0) {
-            UtilidadesBaseDatos.editarProductoTransaccion(
-                requireContext(),
-                "compra",
-                nuevaCantidad,
-                id_producto
+
+            //crea un registro de compra
+            FirebaseFacturaOCompra.guardarDetalleFacturaOCompra(
+                "Compra",
+                viewModel.obtenerDatosPedido()
             )
+            FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
+                 "ProductosComprados",
+                viewModel.productoEditado(productoDetalle,nuevaCantidad),
+                "compra",
+                requireContext()
+            )
+
             crearSnackBarr("Se sumaran $nuevaCantidad $producto al inventario")
 
         } else if (nuevaCantidad < 0) {
-            UtilidadesBaseDatos.editarProductoTransaccion(
-                requireContext(),
+
+            //crea un registro de venta
+            FirebaseFacturaOCompra.guardarDetalleFacturaOCompra(
+                "Factura",
+                viewModel.obtenerDatosPedido()
+            )
+            FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
+                "ProductosFacturados",
+                viewModel.productoEditado(productoDetalle,nuevaCantidad.absoluteValue),
                 "venta",
-                nuevaCantidad*-1,
-                id_producto
+                requireContext()
             )
 
             crearSnackBarr("Se restaran ${nuevaCantidad.absoluteValue} $producto del inventario")
         }
+        val transaccionesPendientes=
+            UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(requireContext())
+        FirebaseProductos.transaccionesCambiarCantidad(requireContext(), transaccionesPendientes)
+
 
     }
 

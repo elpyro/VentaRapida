@@ -37,7 +37,6 @@ object FirebaseProductos {
             ocultarBoton.mostrarFabBottonTransacciones(context!!)
         }
 
-
         val database = FirebaseDatabase.getInstance()
         val productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA)
         productosRef.keepSynced(true)
@@ -127,7 +126,7 @@ object FirebaseProductos {
 
                                 factura?.let {
                                     if (it.cantidad.toInt() > 0) { // Filtrar productos con cantidad mayor a 0
-                                        productos.add(factura)
+                                        if(!factura.editado.equals("Inventario Editado")) productos.add(factura)
                                     }
                                 }
                             }else{

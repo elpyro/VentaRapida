@@ -8,6 +8,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.baseDatos.MyDatabaseHelper
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
@@ -144,6 +145,7 @@ class CompraGuardadaViewModel : ViewModel() {
 
     fun processDialogo(requireContext: Context) {
         progressDialog = ProgressDialog(requireContext)
+        progressDialog?.setIcon(R.drawable.logo2_compra_rapidita)
         progressDialog?.setMessage("Cargando...") // Mensaje que se mostrará
         progressDialog?.setCancelable(false) // Para evitar que se cierre al tocar fuera de él
         progressDialog?.show()

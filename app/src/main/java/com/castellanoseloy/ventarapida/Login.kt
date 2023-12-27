@@ -206,6 +206,7 @@ class Login : AppCompatActivity() {
     private fun showProgressDialog() {
         try{
             progressDialog = ProgressDialog(this@Login)
+            progressDialog?.setIcon(R.drawable.logo2_compra_rapidita)
             progressDialog?.setMessage("Verificando cuenta...")
             progressDialog?.setCancelable(true)
             progressDialog?.show()
@@ -225,6 +226,7 @@ class Login : AppCompatActivity() {
             val dialogView = layoutInflater.inflate(R.layout.dialog_alert_inicio_sesion, null)
 
             val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
             alertDialogBuilder.setTitle("Bienvenido")
             alertDialogBuilder.setCancelable(false)
             alertDialogBuilder.setView(dialogView)

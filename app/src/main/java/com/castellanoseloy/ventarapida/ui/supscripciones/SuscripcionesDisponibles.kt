@@ -161,7 +161,7 @@ class SuscripcionesDisponibles : Fragment() {
     }
     private fun mostrarDialogAlert() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
-
+        alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
         alertDialogBuilder.setCancelable(false)
         alertDialogBuilder.setTitle("Cambio de plan")
         alertDialogBuilder.setMessage("No puedes cambiar a otro plan con mas de 1 día disponible")

@@ -31,6 +31,7 @@ class VistaPDFReporte : AppCompatActivity() {
         setContentView(R.layout.activity_vista_pdf)
 
         progressDialogVerPDF = ProgressDialog(this)
+        progressDialogVerPDF?.setIcon(R.drawable.logo2_compra_rapidita)
         progressDialogVerPDF?.setMessage("Cargando...")
         progressDialogVerPDF?.setCancelable(false)
         progressDialogVerPDF?.show()
@@ -47,8 +48,8 @@ class VistaPDFReporte : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if( DatosPersitidos.datosUsuario.id.isNullOrEmpty()){
-            finish()
             val intent = Intent(this, Login::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         }
     }

@@ -59,6 +59,7 @@ class DetalleSesion : Fragment() {
     private fun eliminarCuenta() {
 
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
         alertDialogBuilder.setTitle("Eliminar cuenta permanentemente")
         alertDialogBuilder.setMessage("¿Estás seguro de que quieres eliminar su cuenta de ${DatosPersitidos.datosEmpresa.nombre}?")
         alertDialogBuilder.setPositiveButton("Sí") { dialogInterface, _ ->
@@ -93,6 +94,7 @@ class DetalleSesion : Fragment() {
                 cerrarSesion()
         }else{
             val alertDialogBuilder = AlertDialog.Builder(requireContext())
+            alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
             alertDialogBuilder.setTitle("Sincroniza tu dispositivo")
             alertDialogBuilder.setCancelable(false)
             alertDialogBuilder.setMessage("Para evitar perdida de datos antes de cambiar de usuario asegurate de sincronizar correctamente tu dispositivo")

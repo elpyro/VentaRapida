@@ -8,6 +8,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,6 +29,7 @@ import com.castellanoseloy.ventarapida.ui.promts.PromtFacturaGuardada
 @Suppress("DEPRECATION")
 class FacturaGuardada : Fragment() {
 
+    private var menuAgregar: MenuItem? = null
     private lateinit var viewModel: FacturaGuardadaViewModel
     private var binding: FragmentFacturaGuardadaBinding? = null
     private lateinit var vista:View
@@ -77,12 +79,18 @@ class FacturaGuardada : Fragment() {
                 binding?.textViewHora?.text=detalleFactura.hora
                 binding?.textViewId?.text=detalleFactura.id_pedido.substring(0, 5)
 
+                if(detalleFactura.nombre.equals("Edición de inventario")){
+                    binding?.ViewNopermitirEdicion?.visibility=View.VISIBLE
+                    menuAgregar?.isVisible=false
+                }
                 viewModel.calcularTotal()
             }
         }
 
         viewModel.totalFactura.observe(viewLifecycleOwner){
             if (!banderaElimandoFactura){
+
+                if(binding?.ViewNopermitirEdicion!!.isVisible) return@observe
 
                 binding?.textViewTotal?.text="Total: $it"
 
@@ -191,6 +199,7 @@ class FacturaGuardada : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_factura_o_compra_guardada, menu)
+        menuAgregar= menu.findItem(R.id.action_agregar_producto)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -229,10 +238,12 @@ class FacturaGuardada : Fragment() {
         }
     }
 
+
     private fun dialogoEliminar() {
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setMessage("¿Estás seguro de que deseas eliminar esta factura y DEVOLVER los productos?")
         builder.setPositiveButton("Eliminar") { _, _ ->
 

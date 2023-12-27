@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.crearPdf.CrearPdfFacturaOCompra
@@ -36,6 +37,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
         setContentView(R.layout.activity_vista_pdf)
 
         progressDialogVerPDF = ProgressDialog(this)
+        progressDialogVerPDF?.setIcon(R.drawable.logo2_compra_rapidita)
         progressDialogVerPDF?.setMessage("Guardando...")
         progressDialogVerPDF?.setCancelable(true)
         progressDialogVerPDF?.show()
@@ -222,9 +224,13 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
         progressDialogVerPDF?.dismiss()
     }
 
-    override fun onPause() {
-        super.onPause()
-        finish()
+    override fun onResume() {
+        super.onResume()
+        if( DatosPersitidos.datosUsuario.id.isNullOrEmpty()){
+            val intent = Intent(this, Login::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        }
     }
 
 }

@@ -213,6 +213,14 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
+                <Button
+                    android:id="@+id/button_historial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bordes_boton"
+                    android:text="@string/Historial" />
             </LinearLayout>
 
         </LinearLayout>

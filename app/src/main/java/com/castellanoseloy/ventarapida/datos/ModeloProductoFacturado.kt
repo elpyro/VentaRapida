@@ -23,5 +23,6 @@ data class ModeloProductoFacturado(
     val recaudador:String="",
     val recaudadoFecha:String="",
     val fechaBusquedas: Long = 0,
+    var tipoOperacion:String=""
 
     ): Serializable

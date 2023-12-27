@@ -8,6 +8,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -36,7 +37,7 @@ class CompraGuardada : Fragment() {
     private lateinit var vista: View
     private lateinit var adaptador: CompraGuardadaAdaptador
     private lateinit var modeloFactura: ModeloFactura
-    var listaDeProductos: List<ModeloFactura> = emptyList<ModeloFactura>()
+//    var listaDeProductos: List<ModeloFactura> = emptyList<ModeloFactura>()
     private var banderaElimandoFactura: Boolean = false
 
     override fun onCreateView(
@@ -48,7 +49,7 @@ class CompraGuardada : Fragment() {
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
         modeloFactura = (bundle?.getSerializable("modelo") as? ModeloFactura)!!
-        listaDeProductos = (bundle.getSerializable("lista") as? ArrayList<ModeloFactura>)!!
+//        listaDeProductos = (bundle.getSerializable("lista") as? ArrayList<ModeloFactura>)!!
 
         val gridLayoutManager = GridLayoutManager(requireContext(), 1)
         binding?.recyclerViewProductosSeleccionados?.layoutManager = gridLayoutManager
@@ -72,6 +73,7 @@ class CompraGuardada : Fragment() {
         viewModel.datosFactura.observe(viewLifecycleOwner) { detalleFactura ->
             //actualiza el contenido del modelo actual
             if (detalleFactura != null) {
+
                 modeloFactura = detalleFactura
                 //actualizamos los datos del fragmento
                 binding?.textViewCliente?.text = "Tienda: " + detalleFactura.nombre
@@ -80,6 +82,8 @@ class CompraGuardada : Fragment() {
                 binding?.textViewFecha?.text = detalleFactura.fecha
                 binding?.textViewHora?.text = detalleFactura.hora
                 binding?.textViewId?.text = detalleFactura.id_pedido.substring(0, 5)
+
+                if(detalleFactura.nombre.equals("Edición de inventario")) binding?.ViewNopermitirEdicion?.visibility=View.VISIBLE
             }
 
         }
@@ -87,6 +91,9 @@ class CompraGuardada : Fragment() {
         viewModel.totalFactura.observe(viewLifecycleOwner) {
 
             if (!banderaElimandoFactura){
+
+                if(binding?.ViewNopermitirEdicion!!.isVisible) return@observe
+
                 binding?.textViewTotal?.text = "Total: ${it.formatoMonenda()}"
 
                 val updates = hashMapOf<String, Any>(
@@ -228,6 +235,7 @@ class CompraGuardada : Fragment() {
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setMessage("¿Estás seguro de que deseas eliminar esta compra y DESCONTAR los productos?")
         builder.setPositiveButton("Eliminar") { dialog, which ->
 

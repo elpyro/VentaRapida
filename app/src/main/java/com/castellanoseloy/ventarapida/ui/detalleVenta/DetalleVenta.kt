@@ -401,7 +401,7 @@ class DetalleVenta : Fragment(), ServicioListener {
 
     fun editarItem(item: ModeloProducto, cantidad: Int) {
         val dialogBuilder = AlertDialog.Builder(context)
-
+        dialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
         val inflater = requireActivity().layoutInflater
         val dialogView = inflater.inflate(R.layout.promt_factura, null)
         dialogBuilder.setView(dialogView)

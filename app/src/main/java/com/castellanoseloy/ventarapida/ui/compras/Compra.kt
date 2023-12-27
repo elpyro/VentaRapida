@@ -235,6 +235,7 @@ class Compra : Fragment() {
         // Crear el diálogo de confirmación
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Eliminar selección")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setMessage("¿Estás seguro de que deseas eliminar los productos seleccionados?")
         builder.setPositiveButton("Eliminar") { _, _ ->
             viewModel.eliminarCarrito()

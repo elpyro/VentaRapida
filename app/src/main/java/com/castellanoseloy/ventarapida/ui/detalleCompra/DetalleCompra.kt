@@ -166,6 +166,7 @@ class DetalleCompra : Fragment() {
 
                         val builder = AlertDialog.Builder(requireContext())
                         builder.setTitle("Mantente actualizado")
+                        builder.setIcon(R.drawable.logo2_compra_rapidita)
                         builder.setMessage("Desea actualizar el precio de compra de ${itemActualizado.p_compra.formatoMonenda()} a el nuevo precio ${nuevoPrecio.formatoMonenda()} para todos los ${itemActualizado.nombre}")
                         builder.setPositiveButton("Sí") { _, _ ->
                             actualizarPrecio(nuevoPrecio,itemActualizado)

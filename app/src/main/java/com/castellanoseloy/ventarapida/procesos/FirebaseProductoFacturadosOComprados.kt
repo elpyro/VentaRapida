@@ -1,6 +1,5 @@
 package com.castellanoseloy.ventarapida.procesos
 
-
 import android.content.Context
 
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
@@ -135,7 +134,30 @@ object FirebaseProductoFacturadosOComprados {
     }
 
 
+    fun buscarProductosFacturadosPorId(tablaReferencia: String, idProducto: String): Task<List<ModeloProductoFacturado>> {
+        val taskCompletionSource = TaskCompletionSource<List<ModeloProductoFacturado>>()
+        val database = FirebaseDatabase.getInstance()
 
+        val productosRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(tablaReferencia).orderByChild("id_producto").equalTo(idProducto)
+        productosRef.keepSynced(true)
+        productosRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val datosFactura = mutableListOf<ModeloProductoFacturado>()
+                for (facturaSnapshot in dataSnapshot.children) {
+                    val factura = facturaSnapshot.getValue(ModeloProductoFacturado::class.java)
+                    factura!!.tipoOperacion =if(tablaReferencia.equals("ProductosComprados"))"Surtido" else "Vendido"
+                    factura?.let { datosFactura.add(it) }
+                }
+                taskCompletionSource.setResult(datosFactura)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                taskCompletionSource.setException(error.toException())
+            }
+        })
+
+        return taskCompletionSource.task
+    }
 
 
     fun buscarProductosPorFecha(fechaInicio: Long, fechaFin: Long, idVendedor:String, tabla:String): Task<List<ModeloProductoFacturado>> {
@@ -164,19 +186,16 @@ object FirebaseProductoFacturadosOComprados {
 
                                     // Verificar si la fecha está dentro del rango deseado
                                     if (fechaElemento in fechaInicio..fechaFin) {
-
-                                        productos.sortWith(compareBy<ModeloProductoFacturado> { it.fechaBusquedas }
-                                            .thenBy { it.id_pedido })
-
                                         //evalua si el producto es del vendedor especificado
                                         if(idVendedor=="false") {
-                                            productos.add(elemento!!)
+                                            if(!elemento!!.productoEditado.equals("Inventario Editado")) productos.add(elemento!!)
                                         }else if (idVendedor.equals(elemento?.id_vendedor)){
-                                            productos.add(elemento!!)
+                                            if(!elemento!!.productoEditado.equals("Inventario Editado")) productos.add(elemento!!)
                                         }
                                     }
                                 }
 
+                                productos.sortWith(compareBy<ModeloProductoFacturado> { it.fechaBusquedas }.thenBy { it.id_pedido })
                                 tcs.setResult(productos)
                             }
 

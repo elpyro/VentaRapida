@@ -79,7 +79,7 @@ object FirebaseFacturaOCompra {
                             taskCompletionSource.setException(error.toException())
                         }
                     })
-                }, 1500) // Esperar 1 segundo (1000 milisegundos) antes de realizar la segunda consulta
+                }, 1500) // Esperar 1.5 segundo (1500 milisegundos) antes de realizar la segunda consulta
             }
 
             override fun onCancelled(error: DatabaseError) {

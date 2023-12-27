@@ -249,6 +249,7 @@ class MainActivity : AppCompatActivity() {
 
     fun NotificacionPlanExedido (){
         val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
         alertDialogBuilder.setTitle("Limite de Usuarios Exedidos")
         alertDialogBuilder.setCancelable(false)
         alertDialogBuilder.setMessage("La cuenta ha exedido la cantidad de usuarios permitios, por favor contate al admistrador de la cuenta")
@@ -283,6 +284,7 @@ class MainActivity : AppCompatActivity() {
                 .setGroupVisible(R.id.panelVentas, false)
 
             val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
             alertDialogBuilder.setTitle("Plan Vencido")
             alertDialogBuilder.setCancelable(false)
             alertDialogBuilder.setMessage("El plan se ha vencido por favor renueve el plan para ultilizarlo con mas de 1 usuario")
@@ -362,7 +364,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun solicitarActualizacion(versionActual: VersionModel) {
         val alertDialogBuilder = AlertDialog.Builder(this)
-
+        alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
         alertDialogBuilder.setCancelable(versionActual.cancelable!!)
         alertDialogBuilder.setTitle("Nueva actualización disponible")
         alertDialogBuilder.setMessage("Se requiere realizar actualización. \n${versionActual.descripcion}")
@@ -409,6 +411,7 @@ class MainActivity : AppCompatActivity() {
 
     fun cargarDialogoProceso() {
         progressDialog = ProgressDialog(this)
+        progressDialog?.setIcon(R.drawable.logo2_compra_rapidita)
         progressDialog?.setMessage("Un momento...")
         progressDialog?.setCancelable(true)
     }
@@ -435,7 +438,7 @@ class MainActivity : AppCompatActivity() {
         if(datosUsuario.perfil=="Inactivo"){
 
             val alertDialogBuilder = AlertDialog.Builder(this)
-
+            alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
             alertDialogBuilder.setCancelable(false)
             alertDialogBuilder.setTitle("Usuario Inactivo")
             alertDialogBuilder.setMessage("Su usuario se encuentra Inactivo para ${datosEmpresa.nombre} pongase en contacto con el administrador")
