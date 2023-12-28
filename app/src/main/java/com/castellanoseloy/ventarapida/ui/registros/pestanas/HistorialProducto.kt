@@ -22,10 +22,11 @@ class HistorialProducto : Fragment() {
     private var listaProductosCompleta: List<ModeloProductoFacturado>? = null
     private var idProducto: String? = null
     private var primeraCarga: Boolean = true
+    private var progressDialog: ProgressDialog? = null
     private var searchText: String? = null
     private var binding: FragmentFacturaVentasBinding? = null
     private lateinit var vista:View
-    private var progressDialog: ProgressDialog? = null
+
     private lateinit var adaptador: HistorialProductoAdaptador
 
     private lateinit var viewModel: HistorialProductoViewModel
@@ -46,9 +47,10 @@ class HistorialProducto : Fragment() {
 
         viewModel.cargarRegistros(idProducto)
 
-        listeners()
-        observadores()
+        progressDialogo()
 
+        observadores()
+        listeners()
 //        if(DatosPersitidos.verPublicidad)  initLoadAds()
 
         return binding!!.root
@@ -59,18 +61,37 @@ class HistorialProducto : Fragment() {
 
     }
 
+    fun progressDialogo(){
+        if (progressDialog == null) {
+            progressDialog?.setIcon(R.drawable.logo2_compra_rapidita)
+            progressDialog = ProgressDialog(requireContext())
+            progressDialog?.setMessage("Cargando...") // Puedes personalizar el mensaje
+            progressDialog?.setCancelable(false)
+        }
+    }
+
     private fun observadores() {
         viewModel.historialProductos.observe(viewLifecycleOwner) { listaProductos ->
-                listaProductosCompleta= listaProductos
-                adaptador = HistorialProductoAdaptador(listaProductos as MutableList<ModeloProductoFacturado>)
-                binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
-            adaptador.setOnClickItem() { item ->
-                abriDetalleFactura(item)
+                  listaProductosCompleta = listaProductos
+                  adaptador =
+                      HistorialProductoAdaptador(listaProductos)
+                  binding?.recyclerViewFacturaVentas?.adapter = adaptador
+
+                  adaptador.setOnClickItem() { item ->
+                      abriDetalleFactura(item)
+                  }
+                  adaptador.setOnClickItemSurtido() { item ->
+                      abriDetalleSurtido(item)
+                  }
+
+            // Verificar si hay un texto de búsqueda y filtrar automáticamente
+            if (!searchText.isNullOrBlank()) {
+                filtrarProductos(searchText!!)
             }
-            adaptador.setOnClickItemSurtido() { item ->
-                abriDetalleSurtido(item)
-            }
+
+            progressDialog?.dismiss()
+
 
         }
     }
@@ -130,6 +151,7 @@ class HistorialProducto : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        progressDialog?.show()
         viewModel.cargarRegistros(idProducto)
     }
     private fun abriDetalleFactura(item: ModeloFactura) {

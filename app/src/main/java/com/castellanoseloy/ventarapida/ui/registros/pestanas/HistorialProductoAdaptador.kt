@@ -30,7 +30,7 @@ import java.util.*
 
 
 class HistorialProductoAdaptador(
-    var listaFacturas: MutableList<ModeloProductoFacturado>,
+    var listaFacturas: List<ModeloProductoFacturado>,
 ) : RecyclerView.Adapter<HistorialProductoAdaptador.FacturaViewHolder>() {
     private var progressDialog: ProgressDialog? = null
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
