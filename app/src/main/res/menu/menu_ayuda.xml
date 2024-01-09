@@ -8,17 +8,4 @@
         android:orderInCategory="100"
         android:icon="@drawable/baseline_help_outline_24"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_total"
-        android:title=""
-        android:orderInCategory="100"
-        app:showAsAction="always" />
-
-    <item
-        android:visible="false"
-        android:id="@+id/action_premium"
-        android:title="@string/Plan_vencido"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom" />
 </menu>

@@ -2,13 +2,20 @@ package com.castellanoseloy.ventarapida.ui.usuarios
 
 
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.telephony.PhoneNumberUtils
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
@@ -19,6 +26,8 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
+import java.io.File
+import java.net.URLEncoder
 
 class DetalleSesion : Fragment() {
 
@@ -46,6 +55,10 @@ class DetalleSesion : Fragment() {
 
     private fun listeners() {
 
+        binding?.imageButtonWhatsApp?.setOnClickListener{
+            enviarWhatsappSoporte()
+        }
+
             binding?.buttonRegister?.setOnClickListener {
                 verificarDatosPendientesPorCargar()
             }
@@ -55,6 +68,21 @@ class DetalleSesion : Fragment() {
             eliminarCuenta()
         }
             }
+
+    private fun enviarWhatsappSoporte() {
+        val numeroWhatsApp = "+573215866072"
+        val mensaje="Hola, necesito ayuda con CATAPLUS, "
+        val uri = Uri.parse("whatsapp://send?phone=$numeroWhatsApp&text=${URLEncoder.encode(mensaje, "UTF-8")}")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+
+        // Verificar si hay aplicaciones disponibles para manejar la intención
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            requireActivity().startActivity(intent)
+        } else {
+            Toast.makeText(requireActivity(), "WhatsApp no están instalado.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun eliminarCuenta() {
 

@@ -86,6 +86,10 @@ class Compra : Fragment() {
                 abrirFactura()
                 return true
             }
+            R.id.action_ayuda-> {
+                mostrarAyuda()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -111,15 +115,25 @@ class Compra : Fragment() {
     fun inicializar(){
         listeners()
         viewModel.calcularTotal()
-        crearSnackBarr()
+
     }
-    private fun crearSnackBarr() {
-        val rootView = vista
-        val snackbar = Snackbar.make(rootView, "Manten presionado para editar un item", Snackbar.LENGTH_SHORT)
-        val snackbarView = snackbar.view
-        snackbar.setTextColor(Color.BLACK)
-        snackbarView.setBackgroundResource(R.color.amarillo)
-        snackbar.show()
+
+    private fun mostrarAyuda() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Bienvenido al Surtido")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+        builder.setMessage(
+            "Surtir el inventario nunca fue tan fácil.\n\n" +
+                    "Aquí puedes ver y seleccionar los productos que deseas surtir, con sus respectivos precios de compra.\n\n" +
+                    "También tienes la opción de crear nuevos productos. Y si mantienes precionado un producto, podrás editarlo.\n\n" +
+                    "Los productos surtidos serán sumados al inventario y dejarán registro.\n\n" +
+                    "Utiliza el filtro o el micrófono para buscar por producto o proveedor.\n"
+        )
+        builder.setPositiveButton("¡Entendido!") { dialog, which ->
+            // Acciones después de hacer clic en "Entendido"
+        }
+
+        builder.show()
     }
 
     private fun listeners() {

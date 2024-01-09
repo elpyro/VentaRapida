@@ -98,12 +98,36 @@ class Venta : Fragment() {
                 abrirFactura()
                 return true
             }
+            R.id.action_ayuda-> {
+                mostrarAyuda()
+                return true
+            }
             R.id.action_premium ->{
                 Navigation.findNavController(vista).navigate(R.id.suscripcionesDisponibles)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun mostrarAyuda() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Bienvenido al Catálogo")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+        builder.setMessage(
+            "¡Explora tú catálogo!\n\n" +
+                    "Aquí encontrarás los productos con sus respectivos precios de venta al público. Puedes seleccionar productos y agregarlos fácilmente a tu carrito de compra.\n\n" +
+                    "¿Sabías que también puedes:\n" +
+                    "- Mantener presionado un producto para ver más detalles y compartirlo.\n" +
+                    "- Utilizar la función de búsqueda por voz utilizando el micrófono.\n" +
+                    "- Crear un PDF de los productos filtrados y compartirlo con tus clientes?\n\n" +
+                    " ¡Haz tu experiencia más rápida y divertida!"
+        )
+        builder.setPositiveButton("¡Entendido!") { dialog, which ->
+            // Acciones después de hacer clic en "Entendido"
+        }
+
+        builder.show()
     }
 
     private fun abrirFactura() {

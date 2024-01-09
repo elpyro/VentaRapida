@@ -7,6 +7,7 @@ import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
@@ -101,12 +102,36 @@ class VistaPDFReporte : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_ayuda-> {
+                mostrarAyuda()
+                return true
+            }
             R.id.action_compartir -> {
                 compartirPDF()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun mostrarAyuda() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¡Visualiza y Comparte en PDF!")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+
+        val message =
+            "Podrás visualizar y compartir tus documentos en PDF de forma sencilla. \n\n" +
+                    "1. Comparte e imprime con las impresoras conectadas a tu teléfono (Recomendación: Conecta tu impresora al bluetooth).\n\n" +
+                    "2. Comparte con tus socios comerciales o en redes sociales.\n\n" +
+                    "¡Así de fácil! Comparte en PDF en segundos."
+
+        builder.setMessage(message)
+
+        builder.setPositiveButton("¡Genial!") { dialog, which ->
+            // Acciones después de hacer clic en "Entendido"
+        }
+
+        builder.show()
     }
 
     private fun compartirPDF() {

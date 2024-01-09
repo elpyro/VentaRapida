@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_ayuda"
+        android:title="@string/ayuda"
+        android:orderInCategory="100"
+        android:icon="@drawable/baseline_help_outline_24"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_nuevo_usuario"
         android:title="@string/NuevoUsuario"
         android:orderInCategory="100"

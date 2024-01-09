@@ -15,11 +15,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.navigation.Navigation
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentInformacionProductoBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos.Companion.datosUsuario
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
@@ -41,23 +44,56 @@ class InformacionProducto : Fragment() {
         val bundle = arguments
         modeloProducto = bundle?.getSerializable("modelo") as? ModeloProducto
 
-        cargarProducto(modeloProducto)
+
+        cargarProducto(modeloProducto){ producto ->
+           //actualizar el modelo por si hay algun cambio
+            if (producto != null) {
+                modeloProducto=producto
+            }
+        }
+
 
         setHasOptionsMenu(true)
+
+        listeners()
         return binding.root
     }
 
-    private fun cargarProducto(modeloProducto: ModeloProducto?) {
-
-        binding.textViewNombre.text = modeloProducto?.nombre
-        if(modeloProducto?.comentario?.isEmpty() == false){
-            binding.textViewComentario.visibility=View.VISIBLE
-            binding.textViewComentario.text = modeloProducto.comentario
+    private fun listeners() {
+        if(datosUsuario.perfil=="Administrador"){
+            binding?.buttonEditar?.setOnClickListener { irEdicionProducto() }
+        }else{
+            binding?.buttonEditar?.visibility=View.GONE
         }
 
-        binding.textViewPrecio.text = modeloProducto?.p_diamante?.formatoMonenda()
-        modeloProducto?.url?.let { Utilidades.cargarImagen(it,binding.photoView) }
-      }
+    }
+
+    private fun irEdicionProducto() {
+        val bundle = Bundle()
+        bundle.putSerializable("modelo", modeloProducto)
+        Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
+    }
+
+    private fun cargarProducto(modeloProducto: ModeloProducto?, callback: (ModeloProducto?) -> Unit) {
+        FirebaseProductos.buscarProductoPorId(modeloProducto!!.id)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val producto = task.result
+                    binding.textViewNombre.text = producto?.nombre
+                    if (producto?.comentario?.isEmpty() == false) {
+                        binding.textViewComentario.visibility = View.VISIBLE
+                        binding.textViewComentario.text = producto.comentario
+                    }
+
+                    binding.textViewPrecio.text = producto?.p_diamante?.formatoMonenda()
+                    producto?.url?.let { Utilidades.cargarImagen(it, binding.photoView) }
+
+                    // Llamar al callback con el producto
+                    callback(producto)
+                }
+            }
+    }
+
 
     @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

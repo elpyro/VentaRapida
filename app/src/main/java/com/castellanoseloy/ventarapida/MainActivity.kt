@@ -85,12 +85,13 @@ class MainActivity : AppCompatActivity() {
         DatosPersitidos.binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(DatosPersitidos.binding.root)
 
-        //cargar las preferencias primero para evitar errores de carga
-        val preferenciasServicios= Preferencias()
-        preferenciasServicios.preferenciasConfiguracion(this)
+
 
         if (ventaProductosSeleccionados.isNotEmpty()) {
-            Toast.makeText(this,"Lista venta recuperada",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,"Selección recuperada",Toast.LENGTH_LONG).show()
+        }
+        if (compraProductosSeleccionados.isNotEmpty()) {
+            Toast.makeText(this,"Selección de surtido recuperado",Toast.LENGTH_LONG).show()
         }
 
         init(this)

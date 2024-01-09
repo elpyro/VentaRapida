@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/factura"
         android:name="com.castellanoseloy.ventarapida.ui.detalleVenta.DetalleVenta"
-        android:label="@string/detalleFactura"
+        android:label="@string/carritoVentas"
         tools:layout="@layout/fragment_detalle_venta" />
     <fragment
         android:id="@+id/nav_registros"
@@ -54,7 +54,7 @@
     <fragment
         android:id="@+id/detalleCompra"
         android:name="com.castellanoseloy.ventarapida.ui.detalleCompra.DetalleCompra"
-        android:label="@string/detalleCompra"
+        android:label="@string/carritoSurtido"
         tools:layout="@layout/fragment_detalle_compra" />
     <fragment
         android:id="@+id/listaCompras"

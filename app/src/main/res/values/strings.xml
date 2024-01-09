@@ -154,5 +154,12 @@
     <string name="vendedores">Vendedores</string>
     <string name="ReciboIngreso">Recibo de ingreso</string>
     <string name="Historial">Historial</string>
+    <string name="EditarProducto">Editar producto</string>
+    <string name="Editar">Editar</string>
+    <string name="SoperteTecnico">Soporte Técnico</string>
+    <string name="ayuda">Ayuda</string>
+    <string name="carritoVentas">Carrito ventas</string>
+    <string name="carritoSurtido">Carrito Surtido</string>
+    <string name="masAyuda">Para más ayuda preciona los botones</string>
 
 </resources>

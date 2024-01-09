@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -65,8 +66,36 @@ class ListaUsuarios : Fragment() {
                 return true
             }
 
+            R.id.action_ayuda-> {
+                mostrarAyuda()
+                return true
+            }
+
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun mostrarAyuda() {
+
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Lista de Usuarios")
+            builder.setIcon(R.drawable.logo2_compra_rapidita)
+
+            val message =
+                "Aquí podrás visualizar la lista de usuarios asociados a tu cuenta, cada uno con diferentes tipos de accesos. \n\n" +
+                        "- Administrador: Puede crear surtidos, perfiles, realizar ventas, modificar productos y ver todos los tipos de reportes.\n" +
+                        "- Vendedor: Solo puede realizar actividades relacionadas con ventas. No puede surtir ni ver los registros de otros usuarios.\n" +
+                        "- Inactivo: Se desactiva el acceso a la cuenta de la empresa, no se elimina como usuario.\n\n" +
+                        "Observa los distintos permisos asignados a cada usuario para un mejor control de la seguridad de tu cuenta."
+
+            builder.setMessage(message)
+
+            builder.setPositiveButton("¡Entendido!") { dialog, which ->
+            }
+
+            builder.show()
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

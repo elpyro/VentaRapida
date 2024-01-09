@@ -63,12 +63,16 @@ class DetalleProducto : Fragment() {
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
         val modeloProducto = bundle?.getSerializable("modelo") as? ModeloProducto
+
+
         val listaDeProductos =
             bundle?.getSerializable("listaProductos") as? ArrayList<ModeloProducto>
         val posicionProducto = bundle?.getInt("position")
 
-        // Llama al método actualizarListaProductos para indicar la lista de productos
-        viewModel.actualizarListaProductos(listaDeProductos!!)
+        if(!listaDeProductos.isNullOrEmpty()) {
+            // Llama al método actualizarListaProductos para indicar la lista de productos si existe
+            viewModel.actualizarListaProductos(listaDeProductos!!)
+        }
 
         // Inicialización de productosViewModel
         productosViewModel = ViewModelProvider(this).get(DetalleProductoViewModel::class.java)
@@ -122,8 +126,11 @@ class DetalleProducto : Fragment() {
 
 
         // Indica la posición del producto para abrir el producto seleccionado
-        viewModel.actualizarPosiscion(posicionProducto!!)
-        verificarPosiciones()
+        if(!listaDeProductos.isNullOrEmpty()){
+            viewModel.actualizarPosiscion(posicionProducto!!)
+            verificarPosiciones()
+        }
+
 
         // Carga el producto en la UI
         cargarProducto(modeloProducto)

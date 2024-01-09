@@ -74,10 +74,15 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_ayuda-> {
+                mostrarAyuda()
+                return true
+            }
             R.id.action_compartir -> {
                 compartirPDF()
                 return true
             }
+
             R.id.action_whatsapp -> {
                 compartirWhatsapp(telefono)
                 return true
@@ -86,6 +91,25 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
         }
     }
 
+    private fun mostrarAyuda() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¡Visualiza y Comparte en PDF!")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+
+        val message =
+            "Podrás visualizar y compartir tus documentos en PDF de forma sencilla. \n\n" +
+                    "1. Comparte e imprime con las impresoras conectadas a tu teléfono (Recomendación: Conecta tu impresora al bluetooth de tú teléfono).\n\n" +
+                    "2. Comparte con tus socios comerciales o en redes sociales.\n\n" +
+                    "¡Así de fácil! Comparte en PDF en segundos."
+
+        builder.setMessage(message)
+
+        builder.setPositiveButton("¡Genial!") { dialog, which ->
+            // Acciones después de hacer clic en "Entendido"
+        }
+
+        builder.show()
+    }
     private fun compartirPDF() {
         val fileName = "Cataplus.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"
@@ -101,7 +125,7 @@ class VistaPDFFacturaOCompra : AppCompatActivity() {
 
     private fun compartirWhatsapp(numeroTelefono: String) {
         var numeroTelefonoFormateado=numeroTelefono.replace("[\\s+]".toRegex(), "")
-        Log.d("Informacion", "El numero de telefono whastsapp es: $numeroTelefonoFormateado")
+        Log.d("Informacion", "El número de telefono whastsapp es: $numeroTelefonoFormateado")
 
         val fileName = "Cataplus.pdf"
         val filePath = "${this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/$fileName"

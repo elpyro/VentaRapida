@@ -13,6 +13,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp"> <!-- Añadido padding para separación -->
+            <Button
+                android:id="@+id/button_editar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_margin="8dp"
+                android:background="@drawable/bordes_boton"
+                android:text="@string/Editar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

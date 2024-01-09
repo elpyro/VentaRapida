@@ -82,7 +82,7 @@ class DetalleVentaAdaptador(
             cantidadSeleccion?.let { seleccion.text = it.toString() }
 
             try {
-                existencia.text ="X"+ (product.cantidad.toInt() + cantidadSeleccion!!.toInt())
+                existencia.text ="X"+ (product.cantidad.toInt() - cantidadSeleccion!!.toInt())
             } catch (_: Exception) {
             }
 

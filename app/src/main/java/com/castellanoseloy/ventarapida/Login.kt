@@ -21,6 +21,7 @@ import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Utilidades.esperarUnSegundo
 import com.castellanoseloy.ventarapida.ui.usuarios.CrearNuevaEmpresa
 import com.castellanoseloy.ventarapida.databinding.ActivityLoginBinding
+import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.Task
@@ -51,7 +52,9 @@ class Login : AppCompatActivity() {
         //COLOCAR LA BARRA SUPERIOR TRANSAPENTE
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
-
+        //cargar las preferencias primero para evitar errores de carga
+        val preferenciasServicios= Preferencias()
+        preferenciasServicios.preferenciasConfiguracion(this)
 
         // Iniciar el servicio
         val intent = Intent(this, DatosPersitidos::class.java)

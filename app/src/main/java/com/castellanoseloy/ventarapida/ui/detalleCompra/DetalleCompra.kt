@@ -38,12 +38,11 @@ import java.util.*
 class DetalleCompra : Fragment() {
 
 
-
     private lateinit var viewModel: DetalleCompraViewModel
     var binding: FragmentDetalleCompraBinding? = null
-    private lateinit var vista:View
+    private lateinit var vista: View
     private lateinit var adaptador: DetalleCompraAdaptador
-    var idPedido=""
+    var idPedido = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,7 +53,7 @@ class DetalleCompra : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vista= view
+        vista = view
 
         viewModel = ViewModelProvider(this).get(DetalleCompraViewModel::class.java)
 
@@ -90,7 +89,7 @@ class DetalleCompra : Fragment() {
         val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
         val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
         val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
-        val imageView_foto= dialogView.findViewById<ImageView>(R.id.imageView_foto)
+        val imageView_foto = dialogView.findViewById<ImageView>(R.id.imageView_foto)
 
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto.setSelectAllOnFocus(true)
@@ -98,21 +97,26 @@ class DetalleCompra : Fragment() {
         editTextPrecio.setSelectAllOnFocus(true)
 
         Utilidades.cargarImagen(item.url, imageView_foto)
-        editTextProducto.setText( item.nombre)
+        editTextProducto.setText(item.nombre)
         editTextCantidad.setText(cantidad.toString())
         editTextPrecio.setText(item.p_compra)
         val precioAnterior = editTextPrecio.text.toString()
 
         // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
-            val nuevoNombre=editTextProducto.text.toString()
+            val nuevoNombre = editTextProducto.text.toString()
             val nuevaCantidad = editTextCantidad.text.toString()
             val nuevoPrecio = editTextPrecio.text.toString()
 
-            viewModel.actualizarProducto(item, nuevoPrecio.toDouble(),nuevaCantidad.toInt(), nuevoNombre)
+            viewModel.actualizarProducto(
+                item,
+                nuevoPrecio.toDouble(),
+                nuevaCantidad.toInt(),
+                nuevoNombre
+            )
             actualizarRecycerView()
 
-            if(precioAnterior!=nuevoPrecio){
+            if (precioAnterior != nuevoPrecio) {
                 dialogoCambiarPreciosDB(nuevoPrecio, nuevaCantidad, item)
             }
 
@@ -124,7 +128,7 @@ class DetalleCompra : Fragment() {
         }
 
         dialogBuilder.setNeutralButton("Eliminar") { _, _ ->
-            viewModel.eliminarProducto(  item)
+            viewModel.eliminarProducto(item)
             actualizarRecycerView()
         }
 
@@ -134,7 +138,7 @@ class DetalleCompra : Fragment() {
     }
 
     private fun actualizarRecycerView() {
-        adaptador = DetalleCompraAdaptador(DatosPersitidos.compraProductosSeleccionados )
+        adaptador = DetalleCompraAdaptador(DatosPersitidos.compraProductosSeleccionados)
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
         adaptador.setOnClickItem() { item, cantidad, _ ->
             editarItem(item, cantidad)
@@ -149,10 +153,10 @@ class DetalleCompra : Fragment() {
 
         FirebaseProductos.buscarProductoPorId(itemAnterior.id)
             .addOnCompleteListener {
-                if(it.isSuccessful){
+                if (it.isSuccessful) {
                     val itemActualizado = it.result
 
-                    if(!itemActualizado?.p_compra.equals(nuevoPrecio)) {
+                    if (!itemActualizado?.p_compra.equals(nuevoPrecio)) {
 
                         val itemValorActual =
                             itemActualizado?.p_compra!!.toDouble() * itemActualizado.cantidad.toInt()
@@ -169,16 +173,17 @@ class DetalleCompra : Fragment() {
                         builder.setIcon(R.drawable.logo2_compra_rapidita)
                         builder.setMessage("Desea actualizar el precio de compra de ${itemActualizado.p_compra.formatoMonenda()} a el nuevo precio ${nuevoPrecio.formatoMonenda()} para todos los ${itemActualizado.nombre}")
                         builder.setPositiveButton("Sí") { _, _ ->
-                            actualizarPrecio(nuevoPrecio,itemActualizado)
+                            actualizarPrecio(nuevoPrecio, itemActualizado)
                         }
 
                         builder.setNegativeButton("No", null)
 
-                        builder.setNeutralButton("Promediar (${
-                            promedioFormateado.formatoMonenda()
+                        builder.setNeutralButton(
+                            "Promediar (${
+                                promedioFormateado.formatoMonenda()
                             })"
                         ) { _, _ ->
-                            actualizarPrecio(promedioFormateado,itemActualizado)
+                            actualizarPrecio(promedioFormateado, itemActualizado)
                         }
                         builder.show()
                     }
@@ -188,7 +193,7 @@ class DetalleCompra : Fragment() {
 
     }
 
-    private fun actualizarPrecio(nuevoPrecio: String, item:ModeloProducto) {
+    private fun actualizarPrecio(nuevoPrecio: String, item: ModeloProducto) {
         val updates = hashMapOf<String, Any>(
             "id" to item.id,
             "p_compra" to nuevoPrecio,
@@ -204,7 +209,8 @@ class DetalleCompra : Fragment() {
     private fun listeners() {
 
 
-        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
@@ -215,7 +221,8 @@ class DetalleCompra : Fragment() {
         })
 
 
-        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
@@ -229,18 +236,18 @@ class DetalleCompra : Fragment() {
     private fun observadores() {
 
         viewModel.totalFactura.observe(viewLifecycleOwner) {
-            binding?.textViewTotal?.text=it.toString()
+            binding?.textViewTotal?.text = it.toString()
         }
 
         viewModel.referencias.observe(viewLifecycleOwner) {
-            binding?.textViewReferencias?.text="Referencias: "+it
+            binding?.textViewReferencias?.text = "Referencias: " + it
         }
         viewModel.itemsSeleccionados.observe(viewLifecycleOwner) {
-            binding?.textViewItems?.text="Items: "+ it
+            binding?.textViewItems?.text = "Items: " + it
         }
 
-        viewModel.mensajeToast.observe(viewLifecycleOwner){
-            Toast.makeText(context,it, Toast.LENGTH_SHORT).show()
+        viewModel.mensajeToast.observe(viewLifecycleOwner) {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -255,19 +262,20 @@ class DetalleCompra : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
-            R.id.action_confirmar_venta ->{
+            R.id.action_confirmar_venta -> {
                 Utilidades.ocultarTeclado(requireContext(), vista)
 
                 //evalua si la sesion esta activa
-                if( DatosPersitidos.datosUsuario.id.isNullOrEmpty()){
+                if (DatosPersitidos.datosUsuario.id.isNullOrEmpty()) {
                     requireActivity().finish()
                     val intent = Intent(requireContext(), Login::class.java)
                     startActivity(intent)
                     return true
                 }
 
-                if(DatosPersitidos.compraProductosSeleccionados.isEmpty()){
-                    Toast.makeText(context,"No hay productos seleccionados", Toast.LENGTH_LONG).show()
+                if (DatosPersitidos.compraProductosSeleccionados.isEmpty()) {
+                    Toast.makeText(context, "No hay productos seleccionados", Toast.LENGTH_LONG)
+                        .show()
                     return true
                 }
 
@@ -276,11 +284,17 @@ class DetalleCompra : Fragment() {
                 return true
             }
 
-            R.id.action_ver_pdf ->{
+            R.id.action_ayuda -> {
+                mostrarAyuda()
+                return true
+            }
 
-                val datosPedido=obtenerDatosPedido()
-                val listaConvertida=convertirLista(DatosPersitidos.compraProductosSeleccionados,datosPedido)
-                viewModel.abrirPDFConPreferencias(listaConvertida.first,datosPedido)
+            R.id.action_ver_pdf -> {
+
+                val datosPedido = obtenerDatosPedido()
+                val listaConvertida =
+                    convertirLista(DatosPersitidos.compraProductosSeleccionados, datosPedido)
+                viewModel.abrirPDFConPreferencias(listaConvertida.first, datosPedido)
 
 
                 return true
@@ -288,6 +302,26 @@ class DetalleCompra : Fragment() {
 
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun mostrarAyuda() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Carrito de Surtido")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+        builder.setMessage(
+            "Aquí te explicamos cómo aprovechar al máximo tu Carrito de Surtido:\n\n" +
+                    "1. Visualiza detalladamente los productos que estás a punto de agregar a tu inventario.\n\n" +
+                    "2. Crea un reporte de compra fácilmente para compartir con tus distribuidores, sin necesidad de confirmar la operación.\n\n" +
+                    "3. Personaliza los precios de compra de tus productos. ¡Puedes editarlos y actualizar los precios anteriores con facilidad!\n\n" +
+                    "¡Listo! Ahora estás preparado para surtir tu inventario de manera rápida y sencilla. ¿Listo para comenzar?"
+
+
+        )
+        builder.setPositiveButton("¡Entendido!") { dialog, which ->
+            // Acciones después de hacer clic en "Entendido"
+        }
+
+        builder.show()
     }
 
     private fun realizarCompra() {
@@ -298,7 +332,7 @@ class DetalleCompra : Fragment() {
         // Crear el Intent para iniciar el servicio
         val intent = Intent(context, ServicioGuadarFactura::class.java)
         intent.putExtra("datosPedido", datosPedido)
-        intent.putExtra("operacion","Compra")
+        intent.putExtra("operacion", "Compra")
 
         ServicioGuadarFactura.setServicioListener(object : ServicioListener {
             override fun onServicioTerminado() {
@@ -311,7 +345,8 @@ class DetalleCompra : Fragment() {
             requireContext(),
             ServicioGuadarFactura::class.java,
             DatosPersitidos.JOB_IDGUARDARFACTURA,
-            intent)
+            intent
+        )
 
 
     }
@@ -342,8 +377,8 @@ class DetalleCompra : Fragment() {
         val horaActual = obtenerHoraActual()
         val fechaActual = obtenerFechaActual()
 
-        val total=binding?.textViewTotal?.text.toString()
-        val nombre= binding?.editTextTienda?.text.toString().ifBlank { "Desconocida" }
+        val total = binding?.textViewTotal?.text.toString()
+        val nombre = binding?.editTextTienda?.text.toString().ifBlank { "Desconocida" }
         val totalconEtiqueta = total.replace("Total:", "Nuevo ").trim()
         val datosPedido = hashMapOf<String, Any>(
             "id_pedido" to idPedido,
@@ -366,7 +401,7 @@ class DetalleCompra : Fragment() {
     private fun convertirLista(
         compraProductosSeleccionados: MutableMap<ModeloProducto, Int>,
         datosPedido: HashMap<String, Any>
-    ):  Pair<ArrayList<ModeloProductoFacturado>, ArrayList<ModeloTransaccionSumaRestaProducto>> {
+    ): Pair<ArrayList<ModeloProductoFacturado>, ArrayList<ModeloTransaccionSumaRestaProducto>> {
 
         val listaProductosComprados = arrayListOf<ModeloProductoFacturado>()
         val listaDescontarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
@@ -375,14 +410,14 @@ class DetalleCompra : Fragment() {
         val horaActual = datosPedido["hora"].toString()
         val fechaActual = datosPedido["fecha"].toString()
 
-        compraProductosSeleccionados.forEach{ (producto, cantidadSeleccionada)->
+        compraProductosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
             //calculamos el precio descuento para tener la referencia para los reportes
-            if (cantidadSeleccionada!=0){
+            if (cantidadSeleccionada != 0) {
 
                 val id_producto_pedido = UUID.randomUUID().toString()
 
                 val productoFacturado = ModeloProductoFacturado(
-                    id_producto_pedido =id_producto_pedido,
+                    id_producto_pedido = id_producto_pedido,
                     id_producto = producto.id,
                     id_pedido = idPedido,
                     id_vendedor = DatosPersitidos.datosUsuario.id,
@@ -392,8 +427,8 @@ class DetalleCompra : Fragment() {
                     costo = producto.p_compra,
                     venta = producto.p_diamante,
                     fecha = fechaActual,
-                    hora =horaActual,
-                    imagenUrl =producto.url,
+                    hora = horaActual,
+                    imagenUrl = producto.url,
                     fechaBusquedas = obtenerFechaUnix()
                 )
                 listaProductosComprados.add(productoFacturado)
@@ -402,7 +437,7 @@ class DetalleCompra : Fragment() {
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
                     cantidad = (-1 * cantidadSeleccionada).toString(),
-                    subido ="false"
+                    subido = "false"
                 )
 
                 listaDescontarInventario.add(restarProducto)
@@ -415,11 +450,10 @@ class DetalleCompra : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding=null
+        binding = null
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
     }
-
 
 
 }

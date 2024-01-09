@@ -64,13 +64,21 @@ class RegistroUsuario : Fragment() {
 
     @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if(!clienteNuevo) inflater.inflate(R.menu.menu_eliminar, menu)
+        if(!clienteNuevo) inflater.inflate(R.menu.menu_eliminar, menu) else inflater.inflate(R.menu.menu_ayuda, menu)
+
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+
+            R.id.action_ayuda-> {
+                mostrarAyuda()
+                return true
+            }
+
             R.id.action_eliminar ->{
                 eliminarCuenta()
                 return true
@@ -79,6 +87,28 @@ class RegistroUsuario : Fragment() {
         }
     }
 
+    private fun mostrarAyuda() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Usuarios: Crear o Modificar")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+
+        val message =
+            "Aquí puedes añadir nuevos usuarios a tu equipo.\n\n"+
+                    "Solo necesitas registrar sus cuentas de Gmail. \n"+
+                    "Así podrán entrar desde sus propios teléfonos cuando instalen CATAPLUS y dejar registro de sus actividades. \n\n"+
+                    "Además, tienes el poder de ajustar algunos permisos adicionales. \n\n"+
+                    "¡${DatosPersitidos.datosEmpresa.nombre} está a punto de volverse más grande y organizada!"
+
+        builder.setMessage(message)
+
+        builder.setPositiveButton("¡Crezcamos Ya!") { dialog, which ->
+            // Acciones después de hacer clic en "Entendido"
+        }
+
+        builder.show()
+
+
+    }
     private fun eliminarCuenta() {
        val usuarioPrincipal=verificarUsuarioPrincipal()
         if(usuarioPrincipal){

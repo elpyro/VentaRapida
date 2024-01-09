@@ -47,10 +47,10 @@ class DetalleVenta : Fragment(), ServicioListener {
 
     private lateinit var viewModel: DetalleVentaViewModel
     var binding: FragmentDetalleVentaBinding? = null
-    private lateinit var vista:View
-    private lateinit var adaptador:DetalleVentaAdaptador
-    var idPedido=""
-    var limpiar=false
+    private lateinit var vista: View
+    private lateinit var adaptador: DetalleVentaAdaptador
+    var idPedido = ""
+    var limpiar = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,7 +62,7 @@ class DetalleVenta : Fragment(), ServicioListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vista= view
+        vista = view
 
         viewModel = ViewModelProvider(this).get(DetalleVentaViewModel::class.java)
 
@@ -78,7 +78,7 @@ class DetalleVenta : Fragment(), ServicioListener {
         viewModel.totalFactura()
 
         //establece el codigo de area por defecto
-        binding?.editTextTelefono?.setText(DatosPersitidos.edit_text_preference_codigo_area+" ")
+        binding?.editTextTelefono?.setText(DatosPersitidos.edit_text_preference_codigo_area + " ")
 
         observadores()
 
@@ -89,7 +89,7 @@ class DetalleVenta : Fragment(), ServicioListener {
 
     private fun actualizarRecycerView() {
 
-        adaptador = DetalleVentaAdaptador(ventaProductosSeleccionados )
+        adaptador = DetalleVentaAdaptador(ventaProductosSeleccionados)
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
         adaptador.setOnClickItem() { item, cantidad, position ->
             editarItem(item, cantidad)
@@ -101,16 +101,17 @@ class DetalleVenta : Fragment(), ServicioListener {
     private fun listeners() {
 
 
-        binding?.imageButtonBuscarCliente?.setOnClickListener{
+        binding?.imageButtonBuscarCliente?.setOnClickListener {
             Navigation.findNavController(vista).navigate(R.id.listaClientes)
         }
 
-        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    ocultarTeclado(requireContext(),vista)
+                    ocultarTeclado(requireContext(), vista)
                 }
             }
         })
@@ -126,9 +127,11 @@ class DetalleVenta : Fragment(), ServicioListener {
                 viewModel.totalFactura()
 
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // No se necesita implementar este método en este caso
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // No se necesita implementar este método en este caso
             }
@@ -145,9 +148,11 @@ class DetalleVenta : Fragment(), ServicioListener {
                 viewModel.totalFactura()
 
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // No se necesita implementar este método en este caso
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // No se necesita implementar este método en este caso
             }
@@ -155,12 +160,13 @@ class DetalleVenta : Fragment(), ServicioListener {
 
 
 
-        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.recyclerViewProductosSeleccionados?.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     // se está desplazando hacia abajo
-                    ocultarTeclado(requireContext(),vista)
+                    ocultarTeclado(requireContext(), vista)
                 }
             }
         })
@@ -168,26 +174,26 @@ class DetalleVenta : Fragment(), ServicioListener {
 
     private fun observadores() {
         viewModel.subTotal.observe(viewLifecycleOwner) {
-            binding?.textViewSubTotal?.text=it.toString()
+            binding?.textViewSubTotal?.text = it.toString()
         }
 
         viewModel.totalFactura.observe(viewLifecycleOwner) {
-            binding?.textViewTotal?.text=it.toString()
+            binding?.textViewTotal?.text = it.toString()
         }
 
         viewModel.referencias.observe(viewLifecycleOwner) {
-            binding?.textViewReferencias?.text = "Referencias: "+it
+            binding?.textViewReferencias?.text = "Referencias: " + it
         }
         viewModel.itemsSeleccionados.observe(viewLifecycleOwner) {
-            binding?.textViewItems?.text = "Items: "+ it
+            binding?.textViewItems?.text = "Items: " + it
 
         }
 
-        viewModel.mensajeToast.observe(viewLifecycleOwner){
-            Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
+        viewModel.mensajeToast.observe(viewLifecycleOwner) {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
 
-        DetalleVentaViewModel.datosCliente.observe(viewLifecycleOwner){
+        DetalleVentaViewModel.datosCliente.observe(viewLifecycleOwner) {
 
             binding?.editTextNombre?.setText(it.nombre)
             binding?.editTextTelefono?.setText(it.telefono)
@@ -207,19 +213,21 @@ class DetalleVenta : Fragment(), ServicioListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
-            R.id.action_confirmar_venta ->{
-                ocultarTeclado(requireContext(),vista)
+            R.id.action_confirmar_venta -> {
+                ocultarTeclado(requireContext(), vista)
                 //validando
                 //evalua si la sesion esta activa
-                if( DatosPersitidos.datosUsuario.id.isNullOrEmpty()){
+                if (DatosPersitidos.datosUsuario.id.isNullOrEmpty()) {
                     requireActivity().finish()
                     val intent = Intent(requireContext(), Login::class.java)
                     startActivity(intent)
                     return true
                 }
 
-                if(ventaProductosSeleccionados.size<1){
-                    Toast.makeText(context,"No hay productos seleccionados",Toast.LENGTH_LONG).show()
+
+                if (ventaProductosSeleccionados.size < 1) {
+                    Toast.makeText(context, "No hay productos seleccionados", Toast.LENGTH_LONG)
+                        .show()
                     return true
                 }
 
@@ -229,7 +237,13 @@ class DetalleVenta : Fragment(), ServicioListener {
                 return true
             }
 
-            R.id.action_ver_pdf ->{
+
+            R.id.action_ayuda -> {
+                mostrarAyuda()
+                return true
+            }
+
+            R.id.action_ver_pdf -> {
                 abrirPDFConPreferencias()
                 return true
             }
@@ -238,6 +252,25 @@ class DetalleVenta : Fragment(), ServicioListener {
         }
     }
 
+    private fun mostrarAyuda() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Carrito de Ventas")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+
+        val message =
+            "Aquí puedes revisar detalle de la factura y modificar los productos seleccionados antes de confirmar la factura. \n" +
+                    "Las ventas realizadas se descontaran del inventario y generarán un registro, que  servirá para calcular las ganancias y llevar un seguimiento detallado de los productos.\n\n" +
+                    "También puedes: \n" +
+                    "- Agregar datos del cliente o busca uno previamente guardado. \n" +
+                    "- Agregar un costo de envío o aplicar descuentos a todos los productos. \n"
+
+        builder.setMessage(message)
+
+        builder.setPositiveButton("¡Entendido!") { dialog, which ->
+        }
+        builder.show()
+
+    }
 
 
     private fun crearFacturaVenta() {
@@ -248,7 +281,7 @@ class DetalleVenta : Fragment(), ServicioListener {
         // Crear el Intent para iniciar el servicio
         val intent = Intent(context, ServicioGuadarFactura::class.java)
         intent.putExtra("datosPedido", datosPedido)
-        intent.putExtra("operacion","Venta")
+        intent.putExtra("operacion", "Venta")
 
 
         ServicioGuadarFactura.setServicioListener(object : ServicioListener {
@@ -263,15 +296,16 @@ class DetalleVenta : Fragment(), ServicioListener {
             requireContext(),
             ServicioGuadarFactura::class.java,
             DatosPersitidos.JOB_IDGUARDARFACTURA,
-            intent)
+            intent
+        )
 
     }
 
     private fun cerrarYLimpiar() {
         GlobalScope.launch(Dispatchers.Main) {
-        viewModel.limpiar(requireContext())
-        limpiar=true
-        findNavController().popBackStack()
+            viewModel.limpiar(requireContext())
+            limpiar = true
+            findNavController().popBackStack()
         }
     }
 
@@ -290,10 +324,10 @@ class DetalleVenta : Fragment(), ServicioListener {
         val horaActual = obtenerHoraActual()
         val fechaActual = obtenerFechaActual()
 
-        val nombre= binding?.editTextNombre?.text.toString().ifBlank { "Anonimo" }
-        val envio= binding?.editTextEnvio?.text.toString().ifBlank { "0" }
-        val descuento= binding?.editDescuento?.text.toString().ifBlank { "0" }
-        val total=binding?.textViewTotal?.text.toString()
+        val nombre = binding?.editTextNombre?.text.toString().ifBlank { "Anonimo" }
+        val envio = binding?.editTextEnvio?.text.toString().ifBlank { "0" }
+        val descuento = binding?.editDescuento?.text.toString().ifBlank { "0" }
+        val total = binding?.textViewTotal?.text.toString()
         val totalconEtiqueta = total.replace("Total:", "Nuevo ").trim()
 
         val datosPedido = hashMapOf<String, Any>(
@@ -326,8 +360,8 @@ class DetalleVenta : Fragment(), ServicioListener {
         val horaActual = datosPedido["hora"].toString()
         val fechaActual = datosPedido["fecha"].toString()
         val descuento = datosPedido["descuento"].toString()
-        var recaudo="Pendiente"
-        if(DatosPersitidos.datosUsuario.perfil.equals("Administrador")) {
+        var recaudo = "Pendiente"
+        if (DatosPersitidos.datosUsuario.perfil.equals("Administrador")) {
             recaudo = "No aplica"
         }
         ventaProductosSeleccionados.forEach { (producto, cantidadSeleccionada) ->
@@ -364,7 +398,7 @@ class DetalleVenta : Fragment(), ServicioListener {
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
                     cantidad = (cantidadSeleccionada).toString(),
-                    subido ="false"
+                    subido = "false"
                 )
 
                 listaDescontarInventario.add(restarProducto)
@@ -386,14 +420,14 @@ class DetalleVenta : Fragment(), ServicioListener {
     override fun onPause() {
         super.onPause()
 
-        if (limpiar==false){
-            val datosCliente = DetalleVentaViewModel.datosCliente.value?: ModeloClientes()
+        if (limpiar == false) {
+            val datosCliente = DetalleVentaViewModel.datosCliente.value ?: ModeloClientes()
             datosCliente.nombre = binding?.editTextNombre?.text.toString()
             datosCliente.telefono = binding?.editTextTelefono?.text.toString()
             datosCliente.documento = binding?.editTextDocumento?.text.toString()
             datosCliente.direccion = binding?.editTextDireccion?.text.toString()
             DetalleVentaViewModel.datosCliente.postValue(datosCliente)
-        }else{
+        } else {
             DetalleVentaViewModel.datosCliente = MutableLiveData<ModeloClientes>()
         }
 
@@ -409,7 +443,7 @@ class DetalleVenta : Fragment(), ServicioListener {
         val editTextProducto = dialogView.findViewById<EditText>(R.id.promt_producto)
         val editTextCantidad = dialogView.findViewById<EditText>(R.id.promt_cantidad)
         val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
-        val imageView_foto= dialogView.findViewById<ImageView>(R.id.imageView_foto)
+        val imageView_foto = dialogView.findViewById<ImageView>(R.id.imageView_foto)
 
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto.setSelectAllOnFocus(true)
@@ -417,18 +451,23 @@ class DetalleVenta : Fragment(), ServicioListener {
         editTextPrecio.setSelectAllOnFocus(true)
 
         Utilidades.cargarImagen(item.url, imageView_foto)
-        editTextProducto.setText( item.nombre)
+        editTextProducto.setText(item.nombre)
         editTextCantidad.setText(cantidad.toString())
         editTextPrecio.setText(item.p_diamante)
 
 
 // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { dialogInterface, i ->
-            val nuevoNombre=editTextProducto.text.toString()
+            val nuevoNombre = editTextProducto.text.toString()
             val nuevaCantidad = editTextCantidad.text.toString()
             val nuevoPrecio = editTextPrecio.text.toString()
 
-            viewModel.actualizarProducto(item, nuevoPrecio.toDouble(),nuevaCantidad.toInt(), nuevoNombre)
+            viewModel.actualizarProducto(
+                item,
+                nuevoPrecio.toDouble(),
+                nuevaCantidad.toInt(),
+                nuevoNombre
+            )
 
             actualizarRecycerView()
         }
@@ -439,7 +478,7 @@ class DetalleVenta : Fragment(), ServicioListener {
         }
 
         dialogBuilder.setNeutralButton("Eliminar") { dialogInterface, i ->
-            viewModel.eliminarProducto(  item)
+            viewModel.eliminarProducto(item)
             actualizarRecycerView()
         }
 
@@ -449,10 +488,9 @@ class DetalleVenta : Fragment(), ServicioListener {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
-        binding=null
+        binding = null
     }
 
     override fun onServicioTerminado() {
