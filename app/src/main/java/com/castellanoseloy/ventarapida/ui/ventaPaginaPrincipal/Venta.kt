@@ -116,7 +116,7 @@ class Venta : Fragment() {
         builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setMessage(
             "¡Explora tú catálogo!\n\n" +
-                    "Aquí encontrarás los productos con sus respectivos precios de venta al público. Puedes seleccionar productos y agregarlos fácilmente a tu carrito de compra.\n\n" +
+                    "Aquí encontrarás los productos con sus respectivos precios de venta al público. Puedes seleccionar productos y agregarlos fácilmente.\n\n" +
                     "¿Sabías que también puedes:\n" +
                     "- Mantener presionado un producto para ver más detalles y compartirlo.\n" +
                     "- Utilizar la función de búsqueda por voz utilizando el micrófono.\n" +

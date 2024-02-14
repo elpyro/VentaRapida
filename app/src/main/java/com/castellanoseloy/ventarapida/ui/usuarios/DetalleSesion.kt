@@ -26,6 +26,8 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.procesos.FirebaseUsuarios
 import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
+import com.castellanoseloy.ventarapida.ui.promts.PromtEliminarCuenta
+import com.castellanoseloy.ventarapida.ui.promts.PromtFacturaGuardada
 import java.io.File
 import java.net.URLEncoder
 
@@ -86,33 +88,36 @@ class DetalleSesion : Fragment() {
 
     private fun eliminarCuenta() {
 
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
-        alertDialogBuilder.setTitle("Eliminar cuenta permanentemente")
-        alertDialogBuilder.setMessage("¿Estás seguro de que quieres eliminar su cuenta de ${DatosPersitidos.datosEmpresa.nombre}?")
-        alertDialogBuilder.setPositiveButton("Sí") { dialogInterface, _ ->
-            if(DatosPersitidos.datosUsuario.id.isNotEmpty()) FirebaseUsuarios.eliminarUsuarioPorId(DatosPersitidos.datosUsuario.id).addOnCompleteListener{
-                Toast.makeText(requireContext(),"Usuario eliminado",Toast.LENGTH_LONG).show()
-                cerrarSesion()
+        val promtEliminarCuenta= PromtEliminarCuenta()
+        promtEliminarCuenta.eliminar(requireContext(), requireActivity())
+
+    }
+
+    fun cerrarSesion() {
+        DatosPersitidos.ventaProductosSeleccionados.clear()
+        DatosPersitidos.compraProductosSeleccionados.clear()
+
+        val preferencias= Preferencias()
+        preferencias.guardarPreferenciaListaSeleccionada(requireContext(),
+            DatosPersitidos.compraProductosSeleccionados,"compra_seleccionada"
+        )
+
+        preferencias.guardarPreferenciaListaSeleccionada(requireContext(),
+            DatosPersitidos.ventaProductosSeleccionados,"venta_seleccionada"
+        )
+
+
+        AuthUI.getInstance().signOut(requireContext())
+            .addOnCompleteListener {
+
+                Toast.makeText(context, "Sesion Cerrada", Toast.LENGTH_LONG).show()
+                val intent = Intent(requireActivity(), Login::class.java)
+                startActivity(intent)
+                requireActivity().finish()
             }
-
-        }
-        alertDialogBuilder.setNegativeButton("No") { dialogInterface, _ ->
-            // Acciones a realizar cuando se hace clic en "No"
-            dialogInterface.dismiss() // Cerrar el cuadro de diálogo
-        }
-
-        // Mostrar el cuadro de diálogo
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
-    private fun verificarUsuarioPrincipal(): Boolean {
-        if(DatosPersitidos.datosEmpresa.idDuenoCuenta!=null){
-            return idUsuario == DatosPersitidos.datosEmpresa.idDuenoCuenta
-        }
-        return false
-    }
+
     private fun verificarDatosPendientesPorCargar() {
         val transaccionesPendientes=
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
@@ -139,24 +144,6 @@ class DetalleSesion : Fragment() {
 
     }
 
-    private fun cerrarSesion() {
-        DatosPersitidos.ventaProductosSeleccionados.clear()
-        DatosPersitidos.compraProductosSeleccionados.clear()
-
-        val preferencias= Preferencias()
-        preferencias.guardarPreferenciaListaSeleccionada(requireContext(),
-            DatosPersitidos.compraProductosSeleccionados,"compra_seleccionada"
-        )
-
-        AuthUI.getInstance().signOut(requireContext())
-            .addOnCompleteListener {
-
-                Toast.makeText(context, "Sesion Cerrada", Toast.LENGTH_LONG).show()
-                val intent = Intent(requireActivity(), Login::class.java)
-                startActivity(intent)
-                requireActivity().finish()
-            }
-    }
 
     private fun cargarDatosUsario() {
         binding?.TextviewNombreUsuario?.text=DatosPersitidos.datosUsuario.nombre

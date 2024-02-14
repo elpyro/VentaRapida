@@ -123,9 +123,9 @@ class Compra : Fragment() {
         builder.setTitle("Bienvenido al Surtido")
         builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setMessage(
-            "Surtir el inventario nunca fue tan fácil.\n\n" +
+            "¡Surtir el inventario nunca fue tan fácil!\n\n" +
                     "Aquí puedes ver y seleccionar los productos que deseas surtir, con sus respectivos precios de compra.\n\n" +
-                    "También tienes la opción de crear nuevos productos. Y si mantienes precionado un producto, podrás editarlo.\n\n" +
+                    "También tienes la opción de crear nuevos productos. \nManten precionado un producto, para editarlo.\n\n" +
                     "Los productos surtidos serán sumados al inventario y dejarán registro.\n\n" +
                     "Utiliza el filtro o el micrófono para buscar por producto o proveedor.\n"
         )

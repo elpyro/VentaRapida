@@ -156,36 +156,39 @@ class DetalleCompra : Fragment() {
                 if (it.isSuccessful) {
                     val itemActualizado = it.result
 
-                    if (!itemActualizado?.p_compra.equals(nuevoPrecio)) {
+                    if ( itemActualizado?.cantidad?.toInt()!! < 1) {
+                        if (!itemActualizado?.p_compra.equals(nuevoPrecio))  actualizarPrecio(nuevoPrecio, itemActualizado)
+                    } else {
+                        if (!itemActualizado?.p_compra.equals(nuevoPrecio)) {
+                            val itemValorActual =
+                                itemActualizado?.p_compra!!.toDouble() * itemActualizado.cantidad.toInt()
+                            val itemValorCompra = nuevoPrecio.toDouble() * nuevaCantidad.toInt()
+                            val valorInventariado = itemValorActual + itemValorCompra
+                            val totalProductoInventariado =
+                                itemActualizado.cantidad.toInt() + nuevaCantidad.toInt()
 
-                        val itemValorActual =
-                            itemActualizado?.p_compra!!.toDouble() * itemActualizado.cantidad.toInt()
-                        val itemValorCompra = nuevoPrecio.toDouble() * nuevaCantidad.toInt()
-                        val valorInventariado = itemValorActual + itemValorCompra
-                        val totalProductoInventariado =
-                            itemActualizado.cantidad.toInt() + nuevaCantidad.toInt()
+                            val promedio = valorInventariado / totalProductoInventariado
+                            val promedioFormateado = String.format("%.2f", promedio)
 
-                        val promedio = valorInventariado / totalProductoInventariado
-                        val promedioFormateado = String.format("%.2f", promedio)
+                            val builder = AlertDialog.Builder(requireContext())
+                            builder.setTitle("Mantente actualizado")
+                            builder.setIcon(R.drawable.logo2_compra_rapidita)
+                            builder.setMessage("Desea actualizar el precio de compra de ${itemActualizado.p_compra.formatoMonenda()} a el nuevo precio ${nuevoPrecio.formatoMonenda()} para todos los ${itemActualizado.nombre}")
+                            builder.setPositiveButton("Sí") { _, _ ->
+                                actualizarPrecio(nuevoPrecio, itemActualizado)
+                            }
 
-                        val builder = AlertDialog.Builder(requireContext())
-                        builder.setTitle("Mantente actualizado")
-                        builder.setIcon(R.drawable.logo2_compra_rapidita)
-                        builder.setMessage("Desea actualizar el precio de compra de ${itemActualizado.p_compra.formatoMonenda()} a el nuevo precio ${nuevoPrecio.formatoMonenda()} para todos los ${itemActualizado.nombre}")
-                        builder.setPositiveButton("Sí") { _, _ ->
-                            actualizarPrecio(nuevoPrecio, itemActualizado)
+                            builder.setNegativeButton("No", null)
+
+                            builder.setNeutralButton(
+                                "Promediar (${
+                                    promedioFormateado.formatoMonenda()
+                                })"
+                            ) { _, _ ->
+                                actualizarPrecio(promedioFormateado, itemActualizado)
+                            }
+                            builder.show()
                         }
-
-                        builder.setNegativeButton("No", null)
-
-                        builder.setNeutralButton(
-                            "Promediar (${
-                                promedioFormateado.formatoMonenda()
-                            })"
-                        ) { _, _ ->
-                            actualizarPrecio(promedioFormateado, itemActualizado)
-                        }
-                        builder.show()
                     }
                 }
             }
@@ -201,7 +204,7 @@ class DetalleCompra : Fragment() {
         FirebaseProductos.guardarProducto(updates)
         Toast.makeText(
             requireContext(),
-            "${item.nombre} ha sido actualizado",
+            "${item.nombre} ha actualizado el precio de compra",
             Toast.LENGTH_LONG
         ).show()
     }

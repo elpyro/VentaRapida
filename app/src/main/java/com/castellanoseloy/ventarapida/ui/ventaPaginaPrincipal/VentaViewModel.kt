@@ -67,6 +67,7 @@ class VentaViewModel : ViewModel() {
         var total = 0.0
 
         for ((producto, cantidad) in ventaProductosSeleccionados) {
+            Log.i("precios", "precio  ${producto.p_diamante} cantidad: $cantidad")
             total += producto.p_diamante.toDouble() * cantidad.toDouble()
         }
 
