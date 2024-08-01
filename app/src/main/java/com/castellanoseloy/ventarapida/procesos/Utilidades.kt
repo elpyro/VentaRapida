@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.google.android.material.snackbar.Snackbar
 import com.itextpdf.text.Element
 import com.itextpdf.text.Image
 import com.itextpdf.text.pdf.PdfPCell
@@ -34,6 +35,14 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 object Utilidades {
+
+    fun crearSnackBarr(s: String, view: View) {
+
+        val snackbar = Snackbar.make( view,s,Snackbar.LENGTH_SHORT)
+        val snackbarView = snackbar.view
+        snackbarView.setBackgroundResource(R.color.rojo)
+        snackbar.show()
+    }
 
     fun verificarPermisosAdministrador(): Boolean{
         return DatosPersitidos.datosUsuario.perfil.equals("Administrador")

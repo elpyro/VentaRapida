@@ -71,9 +71,11 @@ object FirebaseProductos {
                     if (databaseError != null) {
                         // Error al actualizar la cantidad
                         Toast.makeText(context, "Error al actualizar la cantidad del producto", Toast.LENGTH_SHORT).show()
-                    } else {
-                        eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
 
+                        eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
+                    } else {
+
+                        eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
 
                         //version no comercial de Eloy castellanos lleva la siguiente linea
                         actualizarQuickSell(idProducto)

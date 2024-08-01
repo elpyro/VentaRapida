@@ -27,6 +27,7 @@ import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOCompr
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
 import com.castellanoseloy.ventarapida.procesos.VerificarInternet
@@ -402,7 +403,8 @@ class DetalleProducto : Fragment() {
                 requireContext()
             )
 
-            crearSnackBarr("Se sumaran $nuevaCantidad $producto al inventario")
+            val rootView: View = requireView()
+            Utilidades.crearSnackBarr("Se sumaran $nuevaCantidad $producto al inventario",rootView)
 
         } else if (nuevaCantidad < 0) {
 
@@ -417,8 +419,8 @@ class DetalleProducto : Fragment() {
                 "venta",
                 requireContext()
             )
-
-            crearSnackBarr("Se restaran ${nuevaCantidad.absoluteValue} $producto del inventario")
+            val rootView = requireView()
+            Utilidades.crearSnackBarr("Se restaran $nuevaCantidad $producto al inventario",rootView)
         }
         val transaccionesPendientes=
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(requireContext())
@@ -427,13 +429,7 @@ class DetalleProducto : Fragment() {
 
     }
 
-    private fun crearSnackBarr(s: String) {
-        val rootView = requireView()
-        val snackbar = Snackbar.make(rootView, s, Snackbar.LENGTH_SHORT)
-        val snackbarView = snackbar.view
-        snackbarView.setBackgroundResource(R.color.rojo)
-        snackbar.show()
-    }
+
 
 
     override fun onDestroyView() {
