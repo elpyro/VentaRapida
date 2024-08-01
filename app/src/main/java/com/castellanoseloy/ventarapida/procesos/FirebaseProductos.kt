@@ -11,9 +11,11 @@ import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 
 object FirebaseProductos {
@@ -71,6 +73,12 @@ object FirebaseProductos {
                         Toast.makeText(context, "Error al actualizar la cantidad del producto", Toast.LENGTH_SHORT).show()
                     } else {
                         eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
+
+
+                        //version no comercial de Eloy castellanos lleva la siguiente linea
+                        actualizarQuickSell(idProducto)
+
+
                         GlobalScope.launch(Dispatchers.Main) {
                             val ocultarBoton= MainActivity( )
                             ocultarBoton.mostrarFabBottonTransacciones(context!!)
@@ -83,6 +91,21 @@ object FirebaseProductos {
             transaccionesEjecutadas.add(idTransaccion)
         }
     }
+
+    private fun actualizarQuickSell(idProducto: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val detalleProducto = buscarProductoPorId(idProducto).await()
+                detalleProducto?.let {
+                    val actualizarQuickSell = ActualizarQuickSell(it.nombre, it.cantidad.toInt())
+                    actualizarQuickSell.updateInventory()
+                }
+            } catch (e: Exception) {
+                Log.e("QuickSell", "Error al actualizar QuickSell: ${e.message}", e)
+            }
+        }
+    }
+
     fun buscarProductoPorId(idProducto: String): Task<ModeloProducto?> {
         val database = FirebaseDatabase.getInstance()
         val tablaRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA).child(idProducto)

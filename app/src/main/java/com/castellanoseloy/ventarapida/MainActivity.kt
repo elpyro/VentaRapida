@@ -34,6 +34,7 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.convertirCadenaAFecha
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
 import com.castellanoseloy.ventarapida.databinding.ActivityMainBinding
 import com.castellanoseloy.ventarapida.datos.VersionModel
+import com.castellanoseloy.ventarapida.procesos.ActualizarQuickSell
 import com.castellanoseloy.ventarapida.procesos.Suscripcion
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.VersionControlProvider
