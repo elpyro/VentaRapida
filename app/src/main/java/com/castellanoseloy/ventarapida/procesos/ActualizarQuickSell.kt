@@ -38,7 +38,7 @@ class ActualizarQuickSell(private val sku: String, private val quantity: Int) {
                     .addHeader("content-type", "application/json")
                     .addHeader(
                         "x-api-key",
-                        "qMG8A7csJsSRdBs9400V7aRD91fFG1HmHF0oHGsTdYuAlBtvtgFlgy4EZ5JAL3VW"
+                        "ZzuHkQm32INQ/ZU9G5nbF4nIQGC6AoFq5T952tvp349dM3CgBLEkVj4L5lGvnAZP"
                     )
                     .build()
 

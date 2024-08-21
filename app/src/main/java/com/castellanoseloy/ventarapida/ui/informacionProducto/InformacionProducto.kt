@@ -70,7 +70,7 @@ class InformacionProducto : Fragment() {
 
     private fun irEdicionProducto() {
         val bundle = Bundle()
-        bundle.putSerializable("modelo", modeloProducto)
+        bundle.putString("idProducto", modeloProducto!!.id)
         Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
     }
 

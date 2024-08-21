@@ -31,7 +31,8 @@
                 android:layout_centerInParent="true"
                 android:background="@drawable/searchview_background"
                 android:foregroundGravity="center"
-                android:gravity="center" />
+                android:gravity="center"
+                />
 
         </RelativeLayout>
 

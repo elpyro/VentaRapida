@@ -136,5 +136,10 @@
         android:label="Historial del producto"
         tools:layout="@layout/fragment_factura_ventas" >
     </fragment>
+    <fragment
+        android:id="@+id/fragmentAgregarVariante"
+        android:name="com.castellanoseloy.ventarapida.ui.variantes.FragmentAgregarVariante"
+        android:label="fragment_fragment_agregar_variante"
+        tools:layout="@layout/fragment_fragment_agregar_variante" />
 
 </navigation>

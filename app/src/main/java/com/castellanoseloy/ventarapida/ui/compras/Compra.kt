@@ -261,9 +261,9 @@ class Compra : Fragment() {
 
     private fun abriDetalle(modeloProducto: ModeloProducto, view:View, position:Int) {
         val bundle = Bundle()
-        bundle.putInt("position", position)
-        bundle.putSerializable("modelo", modeloProducto)
-        bundle.putSerializable("listaProductos", lista)
+        //bundle.putInt("position", position)
+        bundle.putString("idProducto", modeloProducto.id)
+        //bundle.putSerializable("listaProductos", lista)
         Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
     }
 
@@ -295,11 +295,16 @@ class Compra : Fragment() {
         binding?.recyclerViewProductosVenta?.adapter =adapter
 
         adapter?.setOnLongClickItem { item, position ->
+//            val bundle = Bundle()
+//            bundle.putSerializable("modelo", item)
+//            bundle.putInt("position", position)
+//            val arrayList: ArrayList<ModeloProducto> = productosOrdenados!!.toCollection(ArrayList())
+//            bundle.putSerializable("listaProductos", arrayList)
+//            Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
             val bundle = Bundle()
-            bundle.putSerializable("modelo", item)
-            bundle.putInt("position", position)
-            val arrayList: ArrayList<ModeloProducto> = productosOrdenados!!.toCollection(ArrayList())
-            bundle.putSerializable("listaProductos", arrayList)
+            //bundle.putInt("position", position)
+            bundle.putString("idProducto", item.id)
+            //bundle.putSerializable("listaProductos", lista)
             Navigation.findNavController(vista).navigate(R.id.detalleProducto,bundle)
         }
     }

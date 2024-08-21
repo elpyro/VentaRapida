@@ -18,13 +18,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:id="@+id/imageView_bannerSuperior"
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
+                android:contentDescription="@string/banner"
                 android:scaleType="fitXY"
-                android:src="@drawable/barra3"
-                android:contentDescription="@string/banner" />
+                android:src="@drawable/barra3" />
 
 
             <LinearLayout
@@ -66,17 +67,17 @@
                 </RelativeLayout>
 
 
-
                 <SearchView
                     android:id="@+id/searchView_productosVenta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="4"
-                    android:queryHint="@string/busquedas"
                     android:background="@drawable/searchview_background"
+                    android:queryHint="@string/busquedas"
                     tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="76dp" />
+                    tools:layout_editor_absoluteY="76dp"
+                    />
 
 
                 <ImageView
@@ -89,14 +90,14 @@
 
                 <Button
                     android:id="@+id/button_nuevo_producto"
-                    android:layout_marginStart="10dp"
-                    android:textSize="14sp"
-                    android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/boton_redondo"
-                    android:text="@string/NuevoProducto" />
+                    android:gravity="center"
+                    android:text="@string/NuevoProducto"
+                    android:textSize="14sp" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -115,30 +116,31 @@
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/LinearLayout_explicacion_surtido"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
+                android:contentDescription="@string/banner"
                 android:scaleType="fitXY"
-                android:src="@drawable/barra3"
-                android:contentDescription="@string/banner" />
+                android:src="@drawable/barra3" />
 
             <Button
                 android:id="@+id/button_nuevo_producto_explicacion"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="21dp"
-                android:layout_alignParentEnd="true"
                 android:background="@drawable/boton_redondo"
                 android:text="@string/NuevoProducto"
                 android:textSize="14sp" />
@@ -148,30 +150,31 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ExplicacionPanelInventario"
-            android:textSize="18sp"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:textColor="@color/white" />
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="animation_surtir.json"
-            app:lottie_imageAssetsFolder="assets"
-            app:lottie_loop="true"
-            tools:ignore="ImageContrastCheck" />
-            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:text="@string/ExplicacionPanelInventario"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="animation_surtir.json"
+                app:lottie_imageAssetsFolder="assets"
+                app:lottie_loop="true"
+                tools:ignore="ImageContrastCheck" />
+        </LinearLayout>
 
     </LinearLayout>
 

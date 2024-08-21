@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
@@ -18,10 +19,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
-import com.castellanoseloy.ventarapida.datos.ModeloUsuario
+import com.castellanoseloy.ventarapida.datos.Variable
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
@@ -31,7 +34,9 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos
 import com.castellanoseloy.ventarapida.procesos.VerificarInternet
-import com.google.android.material.snackbar.Snackbar
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
+import com.castellanoseloy.ventarapida.ui.detalleProducto.DetalleVariantesAdaptador
+import com.castellanoseloy.ventarapida.ui.promts.PromtAgregarVariante
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -63,17 +68,10 @@ class DetalleProducto : Fragment() {
 
         // Recibe los productos de la lista del fragmento anterior
         val bundle = arguments
-        val modeloProducto = bundle?.getSerializable("modelo") as? ModeloProducto
+        id_producto = bundle?.getString("idProducto")!!
 
+        Log.d("ModeloProducto", "Updates: $id_producto")
 
-        val listaDeProductos =
-            bundle?.getSerializable("listaProductos") as? ArrayList<ModeloProducto>
-        val posicionProducto = bundle?.getInt("position")
-
-        if(!listaDeProductos.isNullOrEmpty()) {
-            // Llama al método actualizarListaProductos para indicar la lista de productos si existe
-            viewModel.actualizarListaProductos(listaDeProductos!!)
-        }
 
         // Inicialización de productosViewModel
         productosViewModel = ViewModelProvider(this).get(DetalleProductoViewModel::class.java)
@@ -85,8 +83,8 @@ class DetalleProducto : Fragment() {
             if (detalleProducto.isNotEmpty()) {
                 productoDetalle = detalleProducto[0]
                 actualizarCampos(productoDetalle)
-            } else {
-                cargarSiguienteProducto()
+                cargarVariantes(productoDetalle)
+
             }
         }
         productosViewModel.mensajeToast.observe(viewLifecycleOwner) {
@@ -97,15 +95,6 @@ class DetalleProducto : Fragment() {
             cargarImagen()
         }
 
-        // Define el botón "Siguiente" y configura su OnClickListener
-        binding?.imageViewBotonDerecha?.setOnClickListener {
-            cargarSiguienteProducto()
-        }
-
-        // Define el botón "Anterior" y configura su OnClickListener
-        binding?.imageViewBotonIzquierda?.setOnClickListener {
-            cargarAnteriorProducto()
-        }
 
         binding?.buttonHistorial?.setOnClickListener {
             mostrarHistorial()
@@ -126,81 +115,138 @@ class DetalleProducto : Fragment() {
         })
 
 
-        // Indica la posición del producto para abrir el producto seleccionado
-        if(!listaDeProductos.isNullOrEmpty()){
-            viewModel.actualizarPosiscion(posicionProducto!!)
-            verificarPosiciones()
-        }
-
 
         // Carga el producto en la UI
-        cargarProducto(modeloProducto)
+
+        buscarProducto(id_producto) { producto ->
+            //actualizar el modelo por si hay algun cambio
+            if (producto != null) {
+                cargarProducto(producto)
+
+                cargarVariables(producto)
+            }
+        }
+
 
         return binding!!.root // Retorna la vista inflada
     }
 
+    private fun cargarVariables(producto: ModeloProducto) {
+        binding?.buttonAgregarVariantes?.setOnClickListener {
+            promtVariantes(producto)
+        }
+    }
+
+    private fun promtVariantes(producto: ModeloProducto, variable: Variable? = null) {
+        PromtAgregarVariante().agregar(
+            requireContext(),
+            producto.listaVariables,
+            variable
+        ) { listaActualizada ->
+            producto.listaVariables = listaActualizada
+            if(producto.listaVariables.isNullOrEmpty()) producto.cantidad="0"
+            cargarVariantes(producto)
+            actualizarProductoEnViewModel(producto)
+
+
+        }
+    }
+
+
+
+    private fun actualizarProductoEnViewModel(producto: ModeloProducto) {
+        val listaProductos = viewModel.detalleProducto.value?.toMutableList() ?: mutableListOf()
+        val index = listaProductos.indexOfFirst { it.id == producto.id }
+
+        if (index != -1) {
+            listaProductos[index] = producto
+        } else {
+            listaProductos.add(producto)
+        }
+        viewModel.detalleProducto.postValue(listaProductos)
+        Log.d("ModeloProducto", "variables:" + viewModel.detalleProducto.value!![0].listaVariables)
+    }
+
+
+    private fun buscarProducto(idProducto: String?, callback: (ModeloProducto?) -> Unit) {
+        FirebaseProductos.buscarProductoPorId(idProducto!!)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val producto = task.result
+                    // Llamar al callback con el producto
+                    callback(producto)
+                }
+            }
+    }
+
+
+
+    private fun cargarVariantes(productoDetalle: ModeloProducto) {
+
+        if (!productoDetalle.listaVariables.isNullOrEmpty()) {
+            binding!!.recyclerVariantes.visibility = View.VISIBLE
+            binding!!.editTextCantidad.isEnabled = false
+
+            val gridLayoutManager = GridLayoutManager(requireContext(), 1)
+            binding!!.recyclerVariantes.layoutManager = gridLayoutManager
+            var adaptador = DetalleVariantesAdaptador(productoDetalle.listaVariables!!)
+            binding?.recyclerVariantes?.adapter = adaptador
+            adaptador.setOnClickItem { variable ->
+                Log.d("ModeloProducto", "variable seleccionada: $variable")
+                promtVariantes(productoDetalle, variable)
+            }
+
+            binding?.recyclerVariantes?.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy > 0) {
+                        // se está desplazando hacia abajo
+                        ocultarTeclado(requireContext(), vista!!)
+
+                    }
+                }
+            })
+
+        } else {
+            //si el producto fue comprado y no tiene variantes se desactiva el boton agregar
+            val cantidad = binding!!.editTextCantidad.text.toString().toInt()
+            if (cantidad != 0) binding!!.buttonAgregarVariantes.visibility = View.GONE
+            binding!!.recyclerVariantes.visibility = View.GONE
+        }
+
+    }
+
+
+
     private fun mostrarHistorial() {
         val bundle = Bundle()
         bundle.putString("idProducto", id_producto)
-        Navigation.findNavController(vista!!).navigate(R.id.historialProducto,bundle)
+        Navigation.findNavController(vista!!).navigate(R.id.historialProducto, bundle)
     }
 
-    //Tomamos la foto resultante de la camara o la galeria y la colocamos en el imageview
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Si la acción fue tomar una foto con la cámara
-        if (requestCode == TomarFotoYGaleria.CAMARA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-
-            // Recortar la imagen usando la biblioteca CropImage
-            CropImage.activity(TomarFotoYGaleria.imagenUri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                //.setAspectRatio(1, 1)
-                .start(requireContext(), this)
-        }
-
-        // Si la acción fue elegir una imagen de la galería
-        if (requestCode == TomarFotoYGaleria.GALERIA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Obtener la URI de la imagen seleccionada de la galería
-            val uri = data?.data
-            // Recortar la imagen usando la biblioteca CropImage
-            CropImage.activity(uri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                //.setAspectRatio(1, 1)
-
-                .start(requireContext(), this)
-
-        }
-        // Si la acción fue recortar la imagen usando CropImage
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == Activity.RESULT_OK) {
-                // Obtener el archivo de la imagen recortada
-                val file = File(result.uri.path!!)
-                if (file.exists()) {
-                    // Cargar la imagen recortada en el ImageView
-                    bitmapFoto = BitmapFactory.decodeFile(file.absolutePath)
-                    binding?.imageViewFoto?.setImageBitmap(bitmapFoto)
-                }
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                // Mostrar un mensaje de error si la recortada no fue exitosa
-                val error = result.error
-                Toast.makeText(
-                    requireContext(),
-                    "Error al recortar la imagen: $error",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
 
     private fun actualizarCampos(producto: ModeloProducto) {
+        Log.d("ModeloProducto", "Producto Actualziado: $producto")
         id_producto = producto.id
         binding?.editTextProducto?.setText(producto.nombre)
         binding?.editTextPCompra?.setText(producto.p_compra)
         binding?.editTextPVenta?.setText(producto.p_diamante)
-        binding?.editTextCantidad?.setText(producto.cantidad)
+
+        // Calcular el total de las cantidades en listaVariables
+        var totalCantidad = 0
+        if (!producto.listaVariables.isNullOrEmpty()) {
+            for (variable in producto.listaVariables!!) {
+                totalCantidad += variable.cantidad
+            }
+        } else {
+            totalCantidad = producto.cantidad.toInt()
+        }
+
+
+        // Convertir el total a String y asignarlo al campo editTextCantidad
+        binding?.editTextCantidad?.setText(totalCantidad.toString())
+
         cantidadAntigua = producto.cantidad
         binding?.editTextProveedor?.setText(producto.proveedor)
         binding?.editTextComentario?.setText(producto.comentario)
@@ -229,23 +275,7 @@ class DetalleProducto : Fragment() {
         }
     }
 
-    private fun cargarAnteriorProducto() {
-        // Descremente la posición actual en 1
-        viewModel.posicionActual--
 
-        // Si hemos llegado al final de la lista, volvemos al principio
-        if (viewModel.posicionActual >= viewModel.listaProductos.size) {
-            viewModel.posicionActual = 0
-        }
-
-        // Obtenemos el siguiente modelo de producto de la lista
-        val siguienteModeloProducto = viewModel.listaProductos[viewModel.posicionActual]
-
-        // Actualizamos el fragmento con los detalles del siguiente producto
-        cargarProducto(siguienteModeloProducto)
-        verificarPosiciones()
-        ocultarTeclado(requireContext(), vista!!)
-    }
 
     private fun cargarSiguienteProducto() {
         // Incrementa la posición actual en 1
@@ -351,7 +381,6 @@ class DetalleProducto : Fragment() {
             return
         }
 
-
         //veficicar si hay imagen cargada
         if (bitmapFoto != null) {
             viewModel.subirImagenFirebase(requireContext(), bitmapFoto)
@@ -363,14 +392,26 @@ class DetalleProducto : Fragment() {
             binding!!.editTextCantidad.text.toString().trim()
         if (cantidadAntigua != cantidadDisponible) actualizarCantidadTransaccion(cantidadDisponible)
 
-        val updates = hashMapOf<String, Any>(
-            "id" to id_producto.trim(),
-            "nombre" to this.binding!!.editTextProducto.text.toString().trim(),
-            "p_compra" to this.binding!!.editTextPCompra.text.toString(),
-            "p_diamante" to this.binding!!.editTextPVenta.text.toString(),
-            "comentario" to binding!!.editTextComentario.text.toString().trim(),
-            "proveedor" to binding!!.editTextProveedor.text.toString()
+
+        // Actualizar el producto con los valores del formulario
+        val producto = viewModel.detalleProducto.value!![0].copy(
+            cantidad = cantidadDisponible,
+            nombre = binding!!.editTextProducto.text.toString().trim(),
+            p_compra = binding!!.editTextPCompra.text.toString(),
+            p_diamante = binding!!.editTextPVenta.text.toString(),
+            id = id_producto,
+            comentario = binding!!.editTextComentario.text.toString().trim(),
+            proveedor = binding!!.editTextProveedor.text.toString(),
+            listaVariables = viewModel.detalleProducto.value!![0].listaVariables
         )
+        Log.d(
+            "ModeloProducto",
+            "variables antes de guardar: $viewModel.detalleProducto.value!![0].listaVariables"
+        )
+        Log.d("ModeloProducto", "Producto Actualziado en firebase: $producto")
+
+        val updates = producto.getUpdates()
+        Log.d("ModeloProducto", "Updates: $updates")
 
         guardarProducto(updates)
 
@@ -382,6 +423,34 @@ class DetalleProducto : Fragment() {
                 getString(R.string.disponbleEnlaNuebe),
                 Toast.LENGTH_LONG
             ).show()
+        }
+
+        eliminarDeListas(producto)
+
+        findNavController().popBackStack()
+    }
+
+    private fun eliminarDeListas(producto: ModeloProducto) {
+        if (DatosPersitidos.compraProductosSeleccionados.isNotEmpty()) {
+            val itemAEliminar = DatosPersitidos.compraProductosSeleccionados
+                .filterKeys { it.id == producto.id }
+                .keys
+                .firstOrNull()
+
+            if (itemAEliminar != null) {
+                DatosPersitidos.compraProductosSeleccionados.remove(itemAEliminar)
+            }
+        }
+
+        if (DatosPersitidos.ventaProductosSeleccionados.isNotEmpty()) {
+            val itemAEliminar = DatosPersitidos.ventaProductosSeleccionados
+                .filterKeys { it.id == producto.id }
+                .keys
+                .firstOrNull()
+
+            if (itemAEliminar != null) {
+                DatosPersitidos.ventaProductosSeleccionados.remove(itemAEliminar)
+            }
         }
     }
 
@@ -397,14 +466,14 @@ class DetalleProducto : Fragment() {
                 viewModel.obtenerDatosPedido()
             )
             FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
-                 "ProductosComprados",
-                viewModel.productoEditado(productoDetalle,nuevaCantidad),
+                "ProductosComprados",
+                viewModel.productoEditado(productoDetalle, nuevaCantidad),
                 "compra",
                 requireContext()
             )
 
             val rootView: View = requireView()
-            Utilidades.crearSnackBarr("Se sumaran $nuevaCantidad $producto al inventario",rootView)
+            Utilidades.crearSnackBarr("Se sumaran $nuevaCantidad $producto al inventario", rootView)
 
         } else if (nuevaCantidad < 0) {
 
@@ -415,14 +484,17 @@ class DetalleProducto : Fragment() {
             )
             FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
                 "ProductosFacturados",
-                viewModel.productoEditado(productoDetalle,nuevaCantidad.absoluteValue),
+                viewModel.productoEditado(productoDetalle, nuevaCantidad.absoluteValue),
                 "venta",
                 requireContext()
             )
             val rootView = requireView()
-            Utilidades.crearSnackBarr("Se restaran $nuevaCantidad $producto al inventario",rootView)
+            Utilidades.crearSnackBarr(
+                "Se restaran $nuevaCantidad $producto al inventario",
+                rootView
+            )
         }
-        val transaccionesPendientes=
+        val transaccionesPendientes =
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(requireContext())
         FirebaseProductos.transaccionesCambiarCantidad(requireContext(), transaccionesPendientes)
 
@@ -430,13 +502,60 @@ class DetalleProducto : Fragment() {
     }
 
 
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Si la acción fue tomar una foto con la cámara
+        if (requestCode == TomarFotoYGaleria.CAMARA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+            // Recortar la imagen usando la biblioteca CropImage
+            CropImage.activity(TomarFotoYGaleria.imagenUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                //.setAspectRatio(1, 1)
+                .start(requireContext(), this)
+        }
+
+        // Si la acción fue elegir una imagen de la galería
+        if (requestCode == TomarFotoYGaleria.GALERIA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Obtener la URI de la imagen seleccionada de la galería
+            val uri = data?.data
+            // Recortar la imagen usando la biblioteca CropImage
+            CropImage.activity(uri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                //.setAspectRatio(1, 1)
+
+                .start(requireContext(), this)
+
+        }
+        // Si la acción fue recortar la imagen usando CropImage
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            val result = CropImage.getActivityResult(data)
+            if (resultCode == Activity.RESULT_OK) {
+                // Obtener el archivo de la imagen recortada
+                val file = File(result.uri.path!!)
+                if (file.exists()) {
+                    // Cargar la imagen recortada en el ImageView
+                    bitmapFoto = BitmapFactory.decodeFile(file.absolutePath)
+                    binding?.imageViewFoto?.setImageBitmap(bitmapFoto)
+                }
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                // Mostrar un mensaje de error si la recortada no fue exitosa
+                val error = result.error
+                Toast.makeText(
+                    requireContext(),
+                    "Error al recortar la imagen: $error",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
 }

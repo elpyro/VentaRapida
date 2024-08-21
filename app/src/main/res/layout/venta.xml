@@ -83,7 +83,8 @@
                   android:layout_marginStart="20dp"
                   android:background="@drawable/searchview_background"
                   tools:layout_editor_absoluteX="0dp"
-                  tools:layout_editor_absoluteY="76dp" />
+                  tools:layout_editor_absoluteY="76dp"
+                  />
 
 
               <ImageView

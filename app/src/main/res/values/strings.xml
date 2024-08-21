@@ -161,5 +161,14 @@
     <string name="carritoVentas">Carrito ventas</string>
     <string name="carritoSurtido">Carrito Surtido</string>
     <string name="masAyuda">Para más ayuda preciona los botones</string>
+    <string name="AgregarVariantes">Agregar Variante</string>
+    <string name="tamano">Tamaño</string>
+    <string name="color">Color</string>
+    <string name="tipo_variante">Tipo Variante</string>
+    <string name="agregar">Agregar</string>
+    <string name="variable">Variable</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="variantes">Variantes</string>
+    <string name="detalle">Detalle</string>
 
 </resources>

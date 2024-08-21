@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
@@ -18,6 +20,9 @@ import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.ProductDiffCallback
 
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
+import com.castellanoseloy.ventarapida.ui.nuevoProducto.VariantesAdaptador
+import com.castellanoseloy.ventarapida.ui.promts.PromtAgregarVariante
+import com.castellanoseloy.ventarapida.ui.promts.PromtSeleccionarVariantes
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import java.util.*
@@ -27,7 +32,8 @@ class CompraAdaptador(
     private var products: List<ModeloProducto>,
     private val viewModel: CompraViewModel
 ) : RecyclerView.Adapter<CompraAdaptador.ProductViewHolder>() {
-    private var isUserEditing = false // Indica si el usuario está editando la cantidad de un producto
+    private var isUserEditing =
+        false // Indica si el usuario está editando la cantidad de un producto
 
 
     // Este método se llama cuando RecyclerView necesita crear un nuevo ViewHolder
@@ -77,43 +83,72 @@ class CompraAdaptador(
     }
 
     // ViewHolder para la vista de cada elemento de la lista de productos
-        @Suppress("DEPRECATION")
-        inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    @Suppress("DEPRECATION")
+    inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val producto: TextView = itemView.findViewById(R.id.textView_nombre)
         private val precio: TextView = itemView.findViewById(R.id.textView_precio)
-         val seleccion: EditText = itemView.findViewById(R.id.editText_seleccionProducto)
+        val seleccion: EditText = itemView.findViewById(R.id.editText_seleccionProducto)
         private val existencia: TextView = itemView.findViewById(R.id.textView_cantidad)
-         val cardview: CardView = itemView.findViewById(R.id.cardview_itemProducto)
-         val botonRestar: ImageButton = itemView.findViewById(R.id.imageButton_restarCantidad)
-         val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_producto)
+        val cardview: CardView = itemView.findViewById(R.id.cardview_itemProducto)
+        val botonRestar: ImageButton = itemView.findViewById(R.id.imageButton_restarCantidad)
+        val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_producto)
         private lateinit var existenciaSinCambios: String
+
         @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto) {
 
             cargarProducto(product)
 
-            cardview.setOnClickListener {
-                viewModel.agregarProductoSeleccionado(products[adapterPosition])
-                cargarProducto(product)
-            }
-            // Configurar el evento de click en el botón restar cantidad del producto
-            botonRestar.setOnClickListener {
-                viewModel.restarProductoSeleccionado(products[position])
-               cargarProducto(product)
-            }
+            if (product.listaVariables.isNullOrEmpty()) {
+                seleccion.isEnabled=true
+                botonRestar.visibility=View.VISIBLE
 
-            seleccion.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-                if(seleccion.hasFocus()) {
-                    this.existenciaSinCambios = product.cantidad
-                    seleccion.addTextChangedListener(textWatcher)
+                cardview.setOnClickListener {
+                    viewModel.agregarProductoSeleccionado(products[adapterPosition])
+                    cargarProducto(product)
                 }
-                if (!hasFocus) {
-                    seleccion.removeTextChangedListener(textWatcher)
+                // Configurar el evento de click en el botón restar cantidad del producto
+                botonRestar.setOnClickListener {
+                    viewModel.restarProductoSeleccionado(products[position])
+                    cargarProducto(product)
                 }
-            }
-            // colocamos el editextseleccion aparte para no crear mas de un oyente
+
+                seleccion.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+                    if (seleccion.hasFocus()) {
+                        this.existenciaSinCambios = product.cantidad
+                        seleccion.addTextChangedListener(textWatcher)
+                    }
+                    if (!hasFocus) {
+                        seleccion.removeTextChangedListener(textWatcher)
+                    }
+                }
+                // colocamos el editextseleccion aparte para no crear mas de un oyente
+            }else{
+                seleccion.isEnabled=false
+                botonRestar.visibility=View.GONE
+
+                cardview.setOnClickListener {
+                    mostrarPromptAgregarVariante(product)
+                }
 
             }
+        }
+
+        private fun mostrarPromptAgregarVariante(product: ModeloProducto) {
+            val promptAgregarVariante = PromtSeleccionarVariantes()
+            promptAgregarVariante.agregar(
+                itemView.context,
+                product,
+                "Compra"
+            ) { listaActualizada ->
+//                    producto.listaVariables = listaActualizada
+//
+//                    val gridLayoutManager = GridLayoutManager(requireContext(), 1)
+//                    binding!!.recyclerVariantes.layoutManager = gridLayoutManager
+//                    var adaptador = VariantesAdaptador(listaActualizada)
+//                    binding?.recyclerVariantes?.adapter = adaptador
+            }
+        }
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -125,10 +160,12 @@ class CompraAdaptador(
                     // Obtener la cantidad seleccionada como un número entero, o 0 si no se puede analizar como número
                     val cantidadSeleccionada = s.toString().toIntOrNull() ?: 0
 
-                    existencia.text= "X"+(existenciaSinCambios.toInt() + cantidadSeleccionada).toString()
+                    existencia.text =
+                        "X" + (existenciaSinCambios.toInt() + cantidadSeleccionada).toString()
 
                     if (cantidadSeleccionada > 0 && isUserEditing) {
-                        val color = ContextCompat.getColor(itemView.context, R.color.azul_trasparente)
+                        val color =
+                            ContextCompat.getColor(itemView.context, R.color.azul_trasparente)
                         cardview.setCardBackgroundColor(color)
                         producto.setTextAppearance(R.style.ColorFuenteEnFondoGris)
                         precio.setTextAppearance(R.style.ColorFuenteEnFondoGris)
@@ -152,7 +189,7 @@ class CompraAdaptador(
                     // Si el usuario está editando
                 } else if (isUserEditing) {
                     // Actualizar la cantidad del producto en el ViewModel a cero
-                    existencia.text= "X$existenciaSinCambios"
+                    existencia.text = "X$existenciaSinCambios"
                     viewModel.actualizarCantidadProducto(products[position], 0)
                     botonRestar.visibility = View.GONE
 
@@ -163,8 +200,9 @@ class CompraAdaptador(
                 }
             }
         }
+
         private fun cargarProducto(product: ModeloProducto) {
-            if(product.p_diamante.isEmpty() && product.p_compra.isEmpty()) {
+            if (product.p_diamante.isEmpty() && product.p_compra.isEmpty()) {
                 return
             }
 
@@ -172,7 +210,7 @@ class CompraAdaptador(
 
             precio.text = product.p_compra.formatoMonenda()
 
-            existencia.text ="X${product.cantidad}"
+            existencia.text = "X${product.cantidad}"
 
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
             if (product.url.isNotEmpty() && imagenProducto.tag != product.url) {
@@ -197,8 +235,9 @@ class CompraAdaptador(
                 imagenProducto.setImageResource(R.drawable.ic_menu_camera)
             }
 
-            if (DatosPersitidos.compraProductosSeleccionados.isNotEmpty() &&   DatosPersitidos.compraProductosSeleccionados.any { it.key.id == products[position].id }) {
-                val cantidad = DatosPersitidos.compraProductosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
+            if (DatosPersitidos.compraProductosSeleccionados.isNotEmpty() && DatosPersitidos.compraProductosSeleccionados.any { it.key.id == products[position].id }) {
+                val cantidad =
+                    DatosPersitidos.compraProductosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()
 
                 if (cantidad > 0) {
                     isUserEditing = false
@@ -220,10 +259,10 @@ class CompraAdaptador(
 
 
                     //Sumar las existencias
-                    if(product.cantidad.isNotEmpty()){
+                    if (product.cantidad.isNotEmpty()) {
                         existencia.text = "X${(product.cantidad.toInt() + cantidad)}"
-                    }else{
-                        existencia.text= "X${(0 + cantidad)}"
+                    } else {
+                        existencia.text = "X${(0 + cantidad)}"
                     }
 
 
@@ -239,12 +278,13 @@ class CompraAdaptador(
                 precio.setTextAppearance(R.style.ColorFuentes)
                 existencia.setTextAppearance(R.style.ColorFuentes)
 
-                if(product.cantidad.isNotEmpty()){
-                    if(product.cantidad.toInt()<1){
-                        val color = ContextCompat.getColor(itemView.context, R.color.rojoTransparente)
+                if (product.cantidad.isNotEmpty()) {
+                    if (product.cantidad.toInt() < 1) {
+                        val color =
+                            ContextCompat.getColor(itemView.context, R.color.rojoTransparente)
                         cardview.setCardBackgroundColor(color)
                     }
-                }else{
+                } else {
                     val color = ContextCompat.getColor(itemView.context, R.color.rojoTransparente)
                     cardview.setCardBackgroundColor(color)
                 }
@@ -255,6 +295,6 @@ class CompraAdaptador(
 
     }
 
-    }
+}
 
 

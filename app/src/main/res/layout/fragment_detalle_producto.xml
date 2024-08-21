@@ -84,7 +84,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editText_cantidad"
-                        android:layout_width="94dp"
+                        android:layout_width="91dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_marginTop="10dp"
@@ -115,7 +115,7 @@
                         android:id="@+id/editText_producto"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
+                        android:layout_margin="1dp"
                         android:background="@drawable/edittext_background"
                         android:gravity="center"
                         android:hint="@string/NombreProducto"
@@ -141,7 +141,7 @@
                             android:id="@+id/editText_pCompra"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
+                            android:layout_margin="1dp"
                             android:background="@drawable/edittext_background"
                             android:gravity="center"
                             android:hint="@string/preciodeCompra"
@@ -162,7 +162,7 @@
                             android:id="@+id/editText_pVenta"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="4dp"
+                            android:layout_margin="1dp"
                             android:background="@drawable/edittext_background"
                             android:gravity="center"
                             android:hint="@string/precioventa"
@@ -183,7 +183,7 @@
                         android:id="@+id/editText_proveedor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
+                        android:layout_margin="1dp"
                         android:background="@drawable/edittext_background"
                         android:gravity="center"
                         android:inputType="textCapSentences"
@@ -203,7 +203,7 @@
                         android:id="@+id/editText_comentario"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
+                        android:layout_margin="1dp"
                         android:background="@drawable/edittext_background"
                         android:gravity="center"
                         android:inputType="textCapSentences|textMultiLine"
@@ -214,7 +214,11 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    android:orientation="horizontal">
                 <Button
                     android:id="@+id/button_historial"
                     android:layout_width="wrap_content"
@@ -223,6 +227,22 @@
                     android:layout_margin="8dp"
                     android:background="@drawable/bordes_boton"
                     android:text="@string/Historial" />
+                <Button
+                    android:id="@+id/button_AgregarVariantes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bordes_boton"
+                    android:layout_gravity="center"
+                    android:text="@string/AgregarVariantes" />
+
+</LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_variantes"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_margin="1dp"/>
+
             </LinearLayout>
 
         </LinearLayout>

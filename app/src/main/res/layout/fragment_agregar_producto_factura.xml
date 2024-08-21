@@ -57,7 +57,8 @@
             android:layout_weight="4"
             android:background="@drawable/searchview_background"
             tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="76dp" />
+            tools:layout_editor_absoluteY="76dp"
+            />
 
 
         <ImageView

@@ -8,12 +8,15 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentNuevoProductoBinding
+import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE
@@ -21,6 +24,7 @@ import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria.Companion.GALE
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria.Companion.imagenUri
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
 import com.castellanoseloy.ventarapida.procesos.VerificarInternet
+import com.castellanoseloy.ventarapida.ui.promts.PromtAgregarVariante
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.File
@@ -31,6 +35,7 @@ import java.util.*
 class NuevoProducto : Fragment() {
 
 
+    private lateinit var producto: ModeloProducto
     var binding: FragmentNuevoProductoBinding? = null
     private lateinit var viewModel: NuevoProductoViewModel
     private lateinit var vista:View
@@ -79,6 +84,27 @@ class NuevoProducto : Fragment() {
 
         setHasOptionsMenu(true)
 
+        producto = ModeloProducto()
+
+        binding?.buttonAgregarVariantes?.setOnClickListener {
+            promtVariente()
+        }
+    }
+
+    private fun promtVariente() {
+        val promptAgregarVariante = PromtAgregarVariante()
+        promptAgregarVariante.agregar(
+            requireContext(),
+            producto.listaVariables,
+            null
+        ) { listaActualizada ->
+            producto.listaVariables = listaActualizada
+
+            val gridLayoutManager = GridLayoutManager(requireContext(), 1)
+            binding!!.recyclerVariantes.layoutManager = gridLayoutManager
+            var adaptador = VariantesAdaptador(listaActualizada)
+            binding?.recyclerVariantes?.adapter = adaptador
+        }
     }
 
 
@@ -183,18 +209,26 @@ class NuevoProducto : Fragment() {
                 }
             }
         var cantidadDisponible="0"
+
         if(binding!!.editTextCantidad.text.toString().trim().isNotEmpty()) cantidadDisponible=binding!!.editTextCantidad.text.toString().trim()
         //subir datos
-            val updates = hashMapOf<String, Any>(
-                "id" to idProducto,
-                "nombre" to binding!!.editTextProducto.text.toString().trim(),
-                "cantidad" to cantidadDisponible,
-                "p_compra" to binding!!.editTextPCompra.text.toString(),
-                "p_diamante" to binding!!.editTextPVenta.text.toString(),
-                "comentario" to binding!!.editTextComentario.text.toString().trim(),
-                "proveedor" to binding!!.editTextProveedor.text.toString()
-            )
 
+        // Actualizar el producto con los valores del formulario
+        producto = producto.copy(
+            cantidad = cantidadDisponible,
+            nombre = binding!!.editTextProducto.text.toString().trim(),
+            p_compra = binding!!.editTextPCompra.text.toString(),
+            p_diamante = binding!!.editTextPVenta.text.toString(),
+            id = idProducto,
+            comentario = binding!!.editTextComentario.text.toString().trim(),
+            proveedor = binding!!.editTextProveedor.text.toString()
+        )
+
+        // Obtener el HashMap de actualizaciones usando getUpdates
+        val updates = producto.getUpdates()
+
+        Log.d("ModeloProducto", "Updates: $updates")
+        // Guardar el producto
         guardarProducto(updates)
 
         Toast.makeText(requireContext(),"Producto Guardado",Toast.LENGTH_LONG).show()
@@ -209,6 +243,11 @@ class NuevoProducto : Fragment() {
         binding?.imageViewFoto?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_menu_camera))
 
 
+        producto.listaVariables = emptyList()
+
+        var adaptador = VariantesAdaptador(emptyList())
+        binding?.recyclerVariantes?.adapter = adaptador
+
 
         val verificarConexion= VerificarInternet()
 
@@ -222,5 +261,6 @@ class NuevoProducto : Fragment() {
         requireActivity().invalidateOptionsMenu()
         binding = null
     }
+
 
 }

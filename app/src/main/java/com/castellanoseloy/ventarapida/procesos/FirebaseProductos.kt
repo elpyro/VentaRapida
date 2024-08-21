@@ -23,7 +23,7 @@ object FirebaseProductos {
     private const val TABLA_REFERENCIA = "Productos"
 
 
-    fun guardarProducto(updates: HashMap<String, Any>) {
+    fun guardarProducto(updates: Map<String, Any?>) {
         val database = FirebaseDatabase.getInstance()
         val registroRef = database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA).child(updates["id"] as String)
         registroRef.keepSynced(true)
