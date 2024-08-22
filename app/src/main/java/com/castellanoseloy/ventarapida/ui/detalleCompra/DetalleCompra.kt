@@ -105,23 +105,14 @@ class DetalleCompra : Fragment() {
         editTextPrecio.setText(item.p_compra)
         val precioAnterior = editTextPrecio.text.toString()
 
+        imageView_foto.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable("modelo", item)
+            Navigation.findNavController(vista).navigate(R.id.informacionProducto, bundle)
+        }
+
         if (!item.listaVariables.isNullOrEmpty()){
             editTextCantidad.isEnabled=false
-            editTextCantidad.setOnClickListener{
-
-                val promptAgregarVariante = PromtSeleccionarVariantes()
-                promptAgregarVariante.agregar(
-                    requireContext(),
-                    item,
-                    DatosPersitidos.compraProductosSeleccionados
-                ) { listaActualizada ->
-                    // Calcular la sumatoria de todas las cantidades de las variables seleccionadas
-                    editTextCantidad.setText( listaActualizada.sumBy { it.cantidad }.toString())
-                }
-
-            }
-
-
         }
         // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
