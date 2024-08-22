@@ -44,8 +44,6 @@ class SeleccionarVariantesAdaptador(
             // Actualizar el valor en el EditText
             holder.editText_seleccionVariante.setText(nuevaCantidad.toString())
 
-            // Actualizar la lista de variables seleccionadas si es necesario
-            variableEditada(variable, nuevaCantidad)
         }
 
         holder.editText_seleccionVariante.addTextChangedListener(object : TextWatcher {

@@ -48,6 +48,14 @@ class FacturaGuardadaAdaptador(
         holder.cardView.setOnClickListener {
             onClickItem?.invoke(productoFactura)
         }
+//        holder.imagenProducto.setOnClickListener {
+//            conClickImangen?.invoke(productoFactura)
+//        }
+    }
+
+    private var conClickImangen: ((ModeloProductoFacturado) -> Unit)? = null
+    fun setOnClickImangen(callback: (ModeloProductoFacturado) -> Unit) {
+        this.conClickImangen = callback
     }
 
 

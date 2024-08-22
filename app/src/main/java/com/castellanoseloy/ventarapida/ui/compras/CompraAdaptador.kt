@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.procesos.CrearTono
 import com.castellanoseloy.ventarapida.procesos.ProductDiffCallback
 
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
@@ -100,8 +102,8 @@ class CompraAdaptador(
             cargarProducto(product)
 
             if (product.listaVariables.isNullOrEmpty()) {
-                seleccion.isEnabled=true
-                botonRestar.visibility=View.VISIBLE
+                seleccion.isEnabled = true
+                botonRestar.visibility = View.VISIBLE
 
                 cardview.setOnClickListener {
                     viewModel.agregarProductoSeleccionado(products[adapterPosition])
@@ -123,9 +125,9 @@ class CompraAdaptador(
                     }
                 }
                 // colocamos el editextseleccion aparte para no crear mas de un oyente
-            }else{
-                seleccion.isEnabled=false
-                botonRestar.visibility=View.GONE
+            } else {
+                seleccion.isEnabled = false
+                botonRestar.visibility = View.GONE
 
                 cardview.setOnClickListener {
                     mostrarPromptAgregarVariante(product)
@@ -139,16 +141,35 @@ class CompraAdaptador(
             promptAgregarVariante.agregar(
                 itemView.context,
                 product,
-                "Compra"
+                DatosPersitidos.compraProductosSeleccionados
             ) { listaActualizada ->
-//                    producto.listaVariables = listaActualizada
-//
-//                    val gridLayoutManager = GridLayoutManager(requireContext(), 1)
-//                    binding!!.recyclerVariantes.layoutManager = gridLayoutManager
-//                    var adaptador = VariantesAdaptador(listaActualizada)
-//                    binding?.recyclerVariantes?.adapter = adaptador
+
+                Log.d("Compra", "Variables a agregar: $listaActualizada")
+
+                // Actualizar la lista de variables del producto
+                var nuevoProducto = product
+                nuevoProducto = nuevoProducto.copy(listaVariables = emptyList())
+                Log.d("Compra", "producto sin variables: $nuevoProducto")
+                nuevoProducto = nuevoProducto.copy(listaVariables = listaActualizada)
+                Log.d("Compra", "producto con variables: $nuevoProducto")
+
+                // Calcular la sumatoria de todas las cantidades de las variables seleccionadas
+                val totalCantidad = listaActualizada.sumBy { it.cantidad }
+
+                // Actualizar la UI con la nueva cantidad
+                isUserEditing = true
+                //seleccion.setText(totalCantidad.toString())
+                Log.i("Compra", "El producto sin cambios : $product ")
+
+                // Actualizar la cantidad del producto en el ViewModel
+                viewModel.actualizarCantidadProducto(nuevoProducto, totalCantidad)
+                cargarProducto(product)
+
+
+
             }
         }
+
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

@@ -46,7 +46,16 @@ class DetalleCompraAdaptador(
         holder.cardView.setOnClickListener {
             onClickItem?.invoke(producto, cantidad!!, position)
         }
+        holder.imagenProducto.setOnClickListener {
+            conClickImangen?.invoke(producto)
         }
+    }
+
+    private var conClickImangen: ((ModeloProducto) -> Unit)? = null
+
+    fun setOnClickImangen(callback: (ModeloProducto) -> Unit) {
+        this.conClickImangen = callback
+    }
 
 
     private var onClickItem: ((ModeloProducto, Int, Int) -> Unit)? = null
@@ -71,12 +80,28 @@ class DetalleCompraAdaptador(
         val precio: TextView = itemView.findViewById(R.id.Textview_precio)
         val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_foto_producto)
         val cardView:CardView=itemView.findViewById(R.id.cardview_itemProducto)
+        val textView_variante:TextView=itemView.findViewById(R.id.textView_variante)
 
         @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto, cantidadSeleccion: Int?) {
 
             producto.text = product.nombre
+            textView_variante.visibility=View.GONE
+            if (!product.listaVariables.isNullOrEmpty()) {
+                // Hacer visible el TextView
+                textView_variante.visibility = View.VISIBLE
 
+                // Construir el texto con el formato "nombre X cantidad"
+                val variantesTexto = product.listaVariables!!.joinToString(separator = "\n") { variable ->
+                    "${variable.nombreVariable} X ${variable.cantidad}"
+                }
+
+                // Asignar el texto al TextView
+                textView_variante.text = variantesTexto
+            } else {
+                // Ocultar el TextView si no hay variables
+                textView_variante.visibility = View.GONE
+            }
             // Verificar si la cantidad es nula y si no lo es, establecer el texto de la vista de cantidad
 
             cantidadSeleccion?.let { seleccion.text = it.toString() }

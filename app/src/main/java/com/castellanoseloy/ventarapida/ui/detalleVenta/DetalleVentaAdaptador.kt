@@ -47,7 +47,15 @@ class DetalleVentaAdaptador(
             Log.d("ListaCompra", "invocaste al: $cantidad de $producto")
             onClickItem?.invoke(producto, cantidad!!, position)
         }
+        holder.imagenProducto.setOnClickListener {
+            conClickImangen?.invoke(producto)
         }
+    }
+
+    private var conClickImangen: ((ModeloProducto) -> Unit)? = null
+    fun setOnClickImangen(callback: (ModeloProducto) -> Unit) {
+        this.conClickImangen = callback
+    }
 
     private var onClickItem: ((ModeloProducto, Int, Int) -> Unit)? = null
 

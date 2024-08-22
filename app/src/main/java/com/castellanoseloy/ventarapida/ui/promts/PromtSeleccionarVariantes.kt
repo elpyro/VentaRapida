@@ -9,12 +9,14 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
+
 import java.util.Locale
 
 class PromtSeleccionarVariantes {
@@ -25,31 +27,78 @@ class PromtSeleccionarVariantes {
     private var alertDialog: AlertDialog? = null
     private var recyclerView_productosVariables: RecyclerView? = null
     private var button_agregar: Button? = null
-    private var listaVariablesSeleccionadas = mutableListOf<Variable>() // Mover esto fuera del método
+    private var imageView_eliminarCarrito: ImageView? = null
+    private var listaVariablesSeleccionadas = mutableListOf<Variable>()
+
 
     fun agregar(
         context: Context,
         producto: ModeloProducto,
-        tipo: String,
+        productosSeleccionados : MutableMap<ModeloProducto, Int>,
         onVariableAgregada: (List<Variable>) -> Unit
     ) {
+        listaVariablesSeleccionadas.clear()
+
+        cargarGuardados(producto,productosSeleccionados)
+
+        Log.d("Compra", "Lista actualizada: $listaVariablesSeleccionadas")
+
+        // Crear el diálogo
         val dialogBuilder = AlertDialog.Builder(context)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val dialogView = inflater.inflate(R.layout.promt_seleccionar_variaciones, null)
         dialogBuilder.setView(dialogView)
 
+        // Inicializar vistas
         textView_producto = dialogView.findViewById(R.id.textView_producto)
         recyclerView_productosVariables = dialogView.findViewById(R.id.recyclerView_productosVariables)
         searchViewVariantes = dialogView.findViewById(R.id.searchView_variables)
+        button_agregar = dialogView.findViewById(R.id.button_agregar)
+        imageView_eliminarCarrito = dialogView.findViewById(R.id.imageView_eliminarCarrito)
 
-        textView_producto?.text = producto.nombre
-        val gridLayoutManager = GridLayoutManager(context, 1)
-        recyclerView_productosVariables?.layoutManager = gridLayoutManager
+        // Configurar el botón agregar
+        button_agregar?.setOnClickListener {
 
-        adaptador = SeleccionarVariantesAdaptador(producto.listaVariables!!,listaVariablesSeleccionadas) { variable, nuevaCantidad ->
-            manejarCambioCantidad(variable, nuevaCantidad)
+            // Buscar la clave (ModeloProducto) en el mapa basado en el id
+            val claveAEliminar = productosSeleccionados.keys.find { it.id == producto.id }
+
+            // Si se encuentra una clave que coincide, eliminar la entrada del mapa
+            if (claveAEliminar != null) {
+                productosSeleccionados.remove(claveAEliminar)
+                Log.w("Compra", "Producto con id ${producto.id}  eliminado")
+            } else {
+                Log.w("Compra", "Producto con id ${producto.id} no encontrado")
+            }
+
+            // Verificar el estado del mapa después de la eliminación
+            Log.d("Compra", "Lista actualizada: ${productosSeleccionados.keys.map { it.id }}")
+
+
+            onVariableAgregada(listaVariablesSeleccionadas)
+            alertDialog?.dismiss()
         }
 
+        // Configurar el botón eliminar carrito
+        imageView_eliminarCarrito?.setOnClickListener {
+            listaVariablesSeleccionadas.clear()
+            onVariableAgregada(listaVariablesSeleccionadas)
+            alertDialog?.dismiss()
+        }
+
+        // Mostrar nombre del producto
+        textView_producto?.text = producto.nombre
+
+        // Configurar el RecyclerView
+        recyclerView_productosVariables?.layoutManager = GridLayoutManager(context, 1)
+        adaptador = SeleccionarVariantesAdaptador(
+            producto.listaVariables!!,
+            listaVariablesSeleccionadas
+        ) { variable, nuevaCantidad ->
+            manejarCambioCantidad(variable, nuevaCantidad)
+        }
+        recyclerView_productosVariables?.adapter = adaptador
+
+        // Configurar el SearchView
         searchViewVariantes?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
 
@@ -60,18 +109,60 @@ class PromtSeleccionarVariantes {
                 return true
             }
         })
-        recyclerView_productosVariables?.adapter = adaptador
 
-
+        // Mostrar el diálogo
         alertDialog = dialogBuilder.create()
         alertDialog?.show()
     }
 
+    private fun cargarGuardados(
+        producto: ModeloProducto,
+        productosSeleccionados: MutableMap<ModeloProducto, Int>
+    ) {
+        // Buscar el producto en el mapa basado en el id
+        val productoExistente = productosSeleccionados.keys.find { it.id == producto.id }
+
+        productoExistente?.let { producto ->
+            // Obtener la cantidad total del producto en el mapa
+            val cantidadTotal = productosSeleccionados[producto] ?: 0
+
+            // Obtener las variables del producto existente
+            val variablesExistentes = producto.listaVariables ?: emptyList()
+
+            // Actualizar o agregar las variables en la lista seleccionada
+            variablesExistentes.forEach { variable ->
+                // Buscar la variable en la lista seleccionada
+                val variableEnLista =
+                    listaVariablesSeleccionadas.find { it.idVariable == variable.idVariable }
+
+                if (variableEnLista != null) {
+                    // Actualizar la cantidad de la variable existente con la cantidad específica de la variable
+                    variableEnLista.cantidad = variable.cantidad ?: 0
+                } else {
+                    // Agregar la variable nueva con la cantidad específica
+                    listaVariablesSeleccionadas.add(
+                        variable.copy(
+                            cantidad = variable.cantidad ?: 0
+                        )
+                    )
+                }
+            }
+
+            // Opcional: Eliminar variables de la lista seleccionada que no están en el producto existente
+            listaVariablesSeleccionadas.removeAll { variable ->
+                !variablesExistentes.any { it.idVariable == variable.idVariable }
+            }
+        }
+    }
+
     private fun filtro(textoParaFiltrar: String, producto: ModeloProducto) {
         val filtro = producto.listaVariables?.filter { variable ->
-            variable.nombreVariable.eliminarAcentosTildes().lowercase(Locale.getDefault()).contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) ||
-                    variable.color?.eliminarAcentosTildes()?.lowercase(Locale.getDefault())?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true ||
-                    variable.tamano?.eliminarAcentosTildes()?.lowercase(Locale.getDefault())?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true
+            variable.nombreVariable.eliminarAcentosTildes().lowercase(Locale.getDefault())
+                .contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) ||
+                    variable.color?.eliminarAcentosTildes()?.lowercase(Locale.getDefault())
+                        ?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true ||
+                    variable.tamano?.eliminarAcentosTildes()?.lowercase(Locale.getDefault())
+                        ?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true
         }
 
         val productosOrdenados = filtro?.sortedBy { it.nombreVariable } ?: listOf()
@@ -81,39 +172,22 @@ class PromtSeleccionarVariantes {
         ) { variable, nuevaCantidad ->
             manejarCambioCantidad(variable, nuevaCantidad)
         }
-
         recyclerView_productosVariables?.adapter = adaptador
     }
 
     private fun manejarCambioCantidad(variable: Variable, nuevaCantidad: Int) {
-        // Si la nueva cantidad es mayor que 0
         if (nuevaCantidad > 0) {
-            // Buscar si ya existe una variable con el mismo nombre
             val existente = listaVariablesSeleccionadas.find { it.nombreVariable == variable.nombreVariable }
 
             if (existente != null) {
-                // Si existe, sobrescribe la cantidad
                 existente.cantidad = nuevaCantidad
             } else {
-                // Si no existe, agrega la variable a la lista con la nueva cantidad
-                val nuevaVariable = variable.copy(cantidad = nuevaCantidad)
-                listaVariablesSeleccionadas.add(nuevaVariable)
+                listaVariablesSeleccionadas.add(variable.copy(cantidad = nuevaCantidad))
             }
         } else {
-            // Si la nueva cantidad es 0 o menor, eliminar la variable de la lista si existe
             listaVariablesSeleccionadas.removeAll { it.nombreVariable == variable.nombreVariable }
         }
 
-        Log.d("variables seleccionadas", "Lista actualizada: $listaVariablesSeleccionadas")
+        Log.d("Compra", "Lista actualizada: $listaVariablesSeleccionadas")
     }
-
-    private fun guardar(
-        idVariable: String,
-        producto: List<Variable>?,
-        onVariableAgregada: (List<Variable>) -> Unit
-    ) {
-        // Implementación de guardar, si es necesario
-    }
-
-
 }

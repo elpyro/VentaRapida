@@ -46,6 +46,15 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView_eliminarCarrito"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/carrito"
+                    android:src="@drawable/baseline_delete_24" />
+
             <SearchView
                 android:id="@+id/searchView_variables"
                 android:layout_width="match_parent"

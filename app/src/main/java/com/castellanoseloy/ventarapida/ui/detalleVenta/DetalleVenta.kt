@@ -94,6 +94,11 @@ class DetalleVenta : Fragment(), ServicioListener {
         adaptador.setOnClickItem() { item, cantidad, position ->
             editarItem(item, cantidad)
         }
+        adaptador.setOnClickImangen { item ->
+            val bundle = Bundle()
+            bundle.putSerializable("modelo", item)
+            Navigation.findNavController(vista).navigate(R.id.informacionProducto,bundle)
+        }
 
     }
 

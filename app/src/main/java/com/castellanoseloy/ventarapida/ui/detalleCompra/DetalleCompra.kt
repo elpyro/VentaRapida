@@ -6,12 +6,14 @@ import android.app.AlertDialog
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.JobIntentService
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +32,7 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.castellanoseloy.ventarapida.servicios.ServicioGuadarFactura
 import com.castellanoseloy.ventarapida.servicios.ServicioListener
+import com.castellanoseloy.ventarapida.ui.promts.PromtSeleccionarVariantes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -102,6 +105,24 @@ class DetalleCompra : Fragment() {
         editTextPrecio.setText(item.p_compra)
         val precioAnterior = editTextPrecio.text.toString()
 
+        if (!item.listaVariables.isNullOrEmpty()){
+            editTextCantidad.isEnabled=false
+            editTextCantidad.setOnClickListener{
+
+                val promptAgregarVariante = PromtSeleccionarVariantes()
+                promptAgregarVariante.agregar(
+                    requireContext(),
+                    item,
+                    DatosPersitidos.compraProductosSeleccionados
+                ) { listaActualizada ->
+                    // Calcular la sumatoria de todas las cantidades de las variables seleccionadas
+                    editTextCantidad.setText( listaActualizada.sumBy { it.cantidad }.toString())
+                }
+
+            }
+
+
+        }
         // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
             val nuevoNombre = editTextProducto.text.toString()
@@ -142,6 +163,11 @@ class DetalleCompra : Fragment() {
         binding?.recyclerViewProductosSeleccionados?.adapter = adaptador
         adaptador.setOnClickItem() { item, cantidad, _ ->
             editarItem(item, cantidad)
+        }
+        adaptador.setOnClickImangen { item ->
+            val bundle = Bundle()
+            bundle.putSerializable("modelo", item)
+            Navigation.findNavController(vista).navigate(R.id.informacionProducto,bundle)
         }
     }
 

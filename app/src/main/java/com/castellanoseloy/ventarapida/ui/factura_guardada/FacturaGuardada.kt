@@ -118,8 +118,11 @@ class FacturaGuardada : Fragment() {
                     val promtEditarItem=PromtFacturaGuardada()
                     promtEditarItem.editarProducto("venta",item,requireActivity())
                 }
-
-
+            }
+            adaptador.setOnClickImangen { item ->
+                val bundle = Bundle()
+                bundle.putSerializable("modelo", item)
+                Navigation.findNavController(vista).navigate(R.id.informacionProducto,bundle)
             }
         }
         viewModel.referencias.observe(viewLifecycleOwner){
@@ -192,6 +195,11 @@ class FacturaGuardada : Fragment() {
         adaptador.setOnClickItem() { item ->
             val promtEditarItem=PromtFacturaGuardada()
             promtEditarItem.editarProducto("venta",item,requireActivity())
+        }
+        adaptador.setOnClickImangen { item ->
+            val bundle = Bundle()
+            bundle.putSerializable("modelo", item)
+            Navigation.findNavController(vista).navigate(R.id.informacionProducto,bundle)
         }
 
     }

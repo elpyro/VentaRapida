@@ -86,6 +86,7 @@ class CompraViewModel : ViewModel() {
     fun actualizarCantidadProducto(producto: ModeloProducto, nuevaCantidad: Int) {
         val id_producto=producto.id
         val productoEncontrado = DatosPersitidos.compraProductosSeleccionados.keys.find { it.id == id_producto }
+
         if (productoEncontrado != null) {
             if (nuevaCantidad > 0) {
                 DatosPersitidos.compraProductosSeleccionados[productoEncontrado] = nuevaCantidad
@@ -96,6 +97,8 @@ class CompraViewModel : ViewModel() {
         }else{
             DatosPersitidos.compraProductosSeleccionados[producto] = nuevaCantidad
         }
+
+        Log.d("Compra", "lista compra: ${DatosPersitidos.compraProductosSeleccionados}")
 
         val crearTono= CrearTono()
         crearTono.crearTono(context)

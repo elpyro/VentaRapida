@@ -44,8 +44,15 @@ class PromtFacturaGuardada {
         val dialogBuilder = AlertDialog.Builder(context)
 
         tablaReferencia=""
-        if (tipo == "compra") tablaReferencia="ProductosComprados"
-        if (tipo == "venta")  tablaReferencia="ProductosFacturados"
+
+        if (tipo == "compra"){
+            tablaReferencia="ProductosComprados"
+            var lista= DatosPersitidos.compraProductosSeleccionados
+        }
+        if (tipo == "venta"){
+            tablaReferencia="ProductosFacturados"
+            var lista= DatosPersitidos.ventaProductosSeleccionados
+        }
 
 // Inflar el layout para el diálogo
         // Inflar el layout para el diálogo
@@ -69,11 +76,13 @@ class PromtFacturaGuardada {
         if (tipo == "venta") editTextPrecio!!.setText(item.venta)
         if (tipo == "compra") editTextPrecio!!.setText(item.costo)
 
+
         // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
             val nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
             modificar(nuevaCantidad)
         }
+
 
         dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             // No hacer nada

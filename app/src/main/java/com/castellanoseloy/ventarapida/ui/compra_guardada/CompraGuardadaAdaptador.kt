@@ -1,12 +1,14 @@
 package com.castellanoseloy.ventarapida.ui.compra_guardada
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
@@ -48,6 +50,14 @@ class CompraGuardadaAdaptador(
         holder.cardView.setOnClickListener {
             onClickItem?.invoke(ProductoFactura)
         }
+//        holder.imagenProducto.setOnClickListener {
+//            conClickImangen?.invoke(ProductoFactura)
+//        }
+    }
+
+    private var conClickImangen: ((ModeloProductoFacturado) -> Unit)? = null
+    fun setOnClickImangen(callback: (ModeloProductoFacturado) -> Unit) {
+        this.conClickImangen = callback
     }
 
 
