@@ -395,7 +395,8 @@ class DetalleVenta : Fragment(), ServicioListener {
                     hora = horaActual,
                     imagenUrl = producto.url,
                     fechaBusquedas = obtenerFechaUnix(),
-                    estadoRecaudo = recaudo
+                    estadoRecaudo = recaudo,
+                    listaVariables = producto.listaVariables
                 )
                 listaProductosFacturados.add(productoFacturado)
 
@@ -403,7 +404,8 @@ class DetalleVenta : Fragment(), ServicioListener {
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
                     cantidad = (cantidadSeleccionada).toString(),
-                    subido = "false"
+                    subido = "false",
+                    listaVariables=producto.listaVariables
                 )
 
                 listaDescontarInventario.add(restarProducto)
@@ -450,6 +452,9 @@ class DetalleVenta : Fragment(), ServicioListener {
         val editTextPrecio = dialogView.findViewById<EditText>(R.id.promt_precio)
         val imageView_foto = dialogView.findViewById<ImageView>(R.id.imageView_foto)
 
+        if (!item.listaVariables.isNullOrEmpty()){
+            editTextCantidad.isEnabled=false
+        }
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto.setSelectAllOnFocus(true)
         editTextCantidad.setSelectAllOnFocus(true)

@@ -449,7 +449,8 @@ class DetalleCompra : Fragment() {
                     fecha = fechaActual,
                     hora = horaActual,
                     imagenUrl = producto.url,
-                    fechaBusquedas = obtenerFechaUnix()
+                    fechaBusquedas = obtenerFechaUnix(),
+                    listaVariables = producto.listaVariables
                 )
                 listaProductosComprados.add(productoFacturado)
 
@@ -457,7 +458,8 @@ class DetalleCompra : Fragment() {
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
                     cantidad = (-1 * cantidadSeleccionada).toString(),
-                    subido = "false"
+                    subido = "false",
+                    listaVariables = producto.listaVariables
                 )
 
                 listaDescontarInventario.add(restarProducto)

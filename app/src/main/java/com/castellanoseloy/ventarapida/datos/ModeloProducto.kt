@@ -1,5 +1,9 @@
 package com.castellanoseloy.ventarapida.datos
 
+import android.util.Log
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import java.io.Serializable
 
 data class ModeloProducto(
@@ -20,6 +24,10 @@ data class ModeloProducto(
     var listaVariables: List<Variable>? = null
 ) : Serializable {
 
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
+
     // Constructor sin argumentos (ya proporcionado por defecto)
     constructor() : this(
         "",
@@ -38,6 +46,7 @@ data class ModeloProducto(
         "",
         null
     )
+
 
     fun getUpdates(): Map<String, Any?> {
         // Convertir la lista de Variable a una lista de mapas
@@ -63,7 +72,7 @@ data class Variable(
     var cantidad: Int = 0,
     val color: String? = null,
     val tamano: String? = null
-) {
+) :Serializable {
     // Constructor sin argumentos (ya proporcionado por defecto)
     constructor() : this("", "", 0, null, null)
 
@@ -76,6 +85,28 @@ data class Variable(
             "tamano" to tamano
         )
     }
+    fun convertirListaVariablesToString(listaVariables: List<Variable>): String {
+        val gson = Gson()
+        val jsonListaVariables = gson.toJson(listaVariables) // Convierte la lista en JSON
+        Log.d("ModeloProductoFacturado", "Lista de Variables en JSON: $jsonListaVariables")
+        return jsonListaVariables // Devuelve el JSON como un string
+    }
+
+    fun convertirStringToListaVariables(jsonString: String?): List<Variable>? {
+        if (jsonString.isNullOrEmpty()) return null
+
+        val gson = Gson()
+        val type = object : TypeToken<List<Variable>>() {}.type
+        return try {
+            gson.fromJson<List<Variable>>(jsonString, type)
+        } catch (e: JsonSyntaxException) {
+            Log.e("ConversionError", "Error al convertir JSON a List<Variable>: ${e.message}")
+            null
+        }
+    }
+
+
+
 }
 
 

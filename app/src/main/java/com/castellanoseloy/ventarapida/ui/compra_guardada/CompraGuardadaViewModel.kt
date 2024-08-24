@@ -13,6 +13,7 @@ import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.baseDatos.MyDatabaseHelper
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
+import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
@@ -120,6 +121,8 @@ class CompraGuardadaViewModel : ViewModel() {
                     put("idProducto", producto.id_producto)
                     put("cantidad", (producto.cantidad.toInt()).toString())
                     put("subido", "false")
+                    put("listaVariables", producto.convertirListaVariablesToString(
+                        producto.listaVariables ?: emptyList()))
                 }
 
                 // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
@@ -130,7 +133,8 @@ class CompraGuardadaViewModel : ViewModel() {
                     idTransaccion = idTransaccion,
                     idProducto = producto.id_producto,
                     cantidad = (producto.cantidad.toInt()).toString(),
-                    subido = "false"
+                    subido = "false",
+                    listaVariables = producto.listaVariables
                 )
 
                 listaRestarInventario.add(sumarProducto)

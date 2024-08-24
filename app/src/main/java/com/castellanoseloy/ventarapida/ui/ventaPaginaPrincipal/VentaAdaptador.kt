@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.ProductDiffCallback
 
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
+import com.castellanoseloy.ventarapida.ui.promts.PromtSeleccionarVariantes
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import java.util.*
@@ -94,24 +96,65 @@ class VentaAdaptador(
 
             cargarProducto(product)
 
-            cardview.setOnClickListener { motionEvent ->
-                viewModel.agregarProductoSeleccionado(products[adapterPosition])
-                cargarProducto(product)
-            }
-            // Configurar el evento de click en el botón restar cantidad del producto
-            botonRestar.setOnClickListener { motionEvent ->
-                viewModel.restarProductoSeleccionado(products[position])
-               cargarProducto(product)
-            }
+            if (product.listaVariables.isNullOrEmpty()) {
+                seleccion.isEnabled = true
 
-            seleccion.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
-                if(seleccion.hasFocus()) {
-                    this.existenciaSinCambios = product.cantidad
-                    seleccion.addTextChangedListener(textWatcher)
+                cardview.setOnClickListener { motionEvent ->
+                    viewModel.agregarProductoSeleccionado(products[adapterPosition])
+                    cargarProducto(product)
                 }
-                if (!hasFocus) {
-                    seleccion.removeTextChangedListener(textWatcher)
+                // Configurar el evento de click en el botón restar cantidad del producto
+                botonRestar.setOnClickListener { motionEvent ->
+                    viewModel.restarProductoSeleccionado(products[position])
+                    cargarProducto(product)
                 }
+
+                seleccion.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+                    if (seleccion.hasFocus()) {
+                        this.existenciaSinCambios = product.cantidad
+                        seleccion.addTextChangedListener(textWatcher)
+                    }
+                    if (!hasFocus) {
+                        seleccion.removeTextChangedListener(textWatcher)
+                    }
+                }
+            }else {
+                seleccion.isEnabled = false
+                botonRestar.visibility = View.GONE
+
+                cardview.setOnClickListener {
+                    mostrarPromptAgregarVariante(product)
+                }
+            }
+        }
+
+
+        private fun mostrarPromptAgregarVariante(product: ModeloProducto) {
+            val promptAgregarVariante = PromtSeleccionarVariantes()
+            promptAgregarVariante.agregar(
+                itemView.context,
+                product,
+                DatosPersitidos.ventaProductosSeleccionados
+            ) { listaActualizada ->
+
+
+                // Actualizar la lista de variables del producto
+                var nuevoProducto = product
+                nuevoProducto = nuevoProducto.copy(listaVariables = emptyList())
+
+                nuevoProducto = nuevoProducto.copy(listaVariables = listaActualizada)
+
+
+                // Calcular la sumatoria de todas las cantidades de las variables seleccionadas
+                val totalCantidad = listaActualizada.sumBy { it.cantidad }
+
+                // Actualizar la UI con la nueva cantidad
+                isUserEditing = true
+
+
+                // Actualizar la cantidad del producto en el ViewModel
+                viewModel.actualizarCantidadProducto(nuevoProducto, totalCantidad)
+                cargarProducto(product)
             }
         }
 

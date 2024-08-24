@@ -70,16 +70,16 @@
 
                     <ImageButton
                         android:id="@+id/imageButton_restarCantidad"
-                        android:layout_margin="4dp"
                         android:layout_width="45dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_height="26dp"
                         android:layout_gravity="right"
+                        android:layout_margin="4dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="0"
                         android:background="@drawable/barrainferior"
                         android:contentDescription="@string/restar_cantidad"
                         app:srcCompat="@drawable/baseline_arrow_drop_down_24"
-                        tools:ignore="TouchTargetSizeCheck"
-                        android:layout_weight="0"/>
+                        tools:ignore="TouchTargetSizeCheck" />
 
                 </LinearLayout>
 

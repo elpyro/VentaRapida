@@ -3,9 +3,11 @@ package com.castellanoseloy.ventarapida.procesos
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
 import com.castellanoseloy.ventarapida.baseDatos.MyDatabaseHelper
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.datos.ModeloTransaccionSumaRestaProducto
+import com.castellanoseloy.ventarapida.datos.Variable
 import java.util.*
 
 object UtilidadesBaseDatos {
@@ -57,6 +59,9 @@ object UtilidadesBaseDatos {
                 put("idProducto", modeloProductoFacturado.id_producto)
                 put("cantidad", sumarORestar.toString())
                 put("subido", "false")
+                put("listaVariables", modeloProductoFacturado.convertirListaVariablesToString(
+                    modeloProductoFacturado.listaVariables ?: emptyList()
+                ))
             }
             // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
             db.insert("transaccionesSumaRestaProductos", null, values)
@@ -64,7 +69,7 @@ object UtilidadesBaseDatos {
 
     }
 
-    fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, idProducto:String) {
+    fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, idProducto:String, modeloProductoFacturado: ModeloProductoFacturado) {
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
         var multiplicador = 1
@@ -81,6 +86,8 @@ object UtilidadesBaseDatos {
                 put("idProducto", idProducto)
                 put("cantidad", sumarORestar.toString())
                 put("subido", "false")
+                put("listaVariables", modeloProductoFacturado.convertirListaVariablesToString(
+                    modeloProductoFacturado.listaVariables ?: emptyList()))
             }
 
             // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
@@ -91,7 +98,8 @@ object UtilidadesBaseDatos {
                 idTransaccion = idTransaccion,
                 idProducto =idProducto,
                 cantidad = sumarORestar.toString(),
-                subido ="false"
+                subido ="false",
+                listaVariables = modeloProductoFacturado.listaVariables
             )
 
             listaEditarInventario.add(sumarProducto)
@@ -117,7 +125,13 @@ object UtilidadesBaseDatos {
                 val idProducto = it.getString(it.getColumnIndexOrThrow("idProducto"))
                 val cantidad = it.getString(it.getColumnIndexOrThrow("cantidad"))
                 val subido=it.getString(it.getColumnIndexOrThrow("subido"))
-                val transaccion = ModeloTransaccionSumaRestaProducto(idTransaccion, idProducto, cantidad, subido)
+                val listaVariablesJson = it.getString(it.getColumnIndexOrThrow("listaVariables"))
+                // Convert JSON string to List<Variable>
+                val listaVariables = ModeloProductoFacturado().convertirStringToListaVariables(listaVariablesJson)
+
+                Log.d("ModeloProductoFacturado", "Lista de variables: convertida a modelo $listaVariables")
+
+                val transaccion = ModeloTransaccionSumaRestaProducto(idTransaccion, idProducto, cantidad, subido,listaVariables)
                 transacciones.add(transaccion)
             }
         }

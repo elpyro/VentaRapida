@@ -12,6 +12,7 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
+import com.castellanoseloy.ventarapida.procesos.Utilidades.mostrarVariantesAdaptador
 
 import java.util.*
 
@@ -79,14 +80,15 @@ class DetalleVentaAdaptador(
         val precio: TextView = itemView.findViewById(R.id.Textview_precio)
         val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_foto_producto)
         val cardView:CardView=itemView.findViewById(R.id.cardview_itemProducto)
+        val textView_variante:TextView=itemView.findViewById(R.id.textView_variante)
 
         @SuppressLint("SetTextI18n")
         fun bind(product: ModeloProducto, cantidadSeleccion: Int?) {
             Log.d("ListaCompra", "mostrando $cantidadSeleccion de $product")
             producto.text = product.nombre
 
+            mostrarVariantesAdaptador(product.listaVariables?: emptyList(),textView_variante)
             // Verificar si la cantidad es nula y si no lo es, establecer el texto de la vista de cantidad
-
             cantidadSeleccion?.let { seleccion.text = it.toString() }
 
             try {

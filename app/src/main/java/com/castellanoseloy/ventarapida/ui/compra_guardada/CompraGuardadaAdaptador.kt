@@ -1,19 +1,18 @@
 package com.castellanoseloy.ventarapida.ui.compra_guardada
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
+import com.castellanoseloy.ventarapida.procesos.Utilidades.mostrarVariantesAdaptador
 
 import java.text.SimpleDateFormat
 
@@ -83,11 +82,16 @@ class CompraGuardadaAdaptador(
         val precio: TextView = itemView.findViewById(R.id.Textview_precio)
         val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_foto_producto)
         val cardView: CardView =itemView.findViewById(R.id.cardview_itemProducto)
+        val textView_variante:TextView=itemView.findViewById(R.id.textView_variante)
 
         @SuppressLint("SetTextI18n")
         fun bind(factura: ModeloProductoFacturado) {
 
             producto.text = factura.producto
+
+            mostrarVariantesAdaptador(factura.listaVariables?: emptyList(),textView_variante)
+
+            //mostrarVariantes(factura,textView_variante)
             seleccion.text=factura.cantidad
             precio.text=factura.costo.formatoMonenda()
             existencia.visibility=View.GONE

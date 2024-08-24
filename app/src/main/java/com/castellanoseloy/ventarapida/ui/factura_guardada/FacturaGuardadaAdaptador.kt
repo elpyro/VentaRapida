@@ -12,6 +12,7 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
+import com.castellanoseloy.ventarapida.procesos.Utilidades.mostrarVariantesAdaptador
 
 import java.text.SimpleDateFormat
 
@@ -81,11 +82,12 @@ class FacturaGuardadaAdaptador(
         val precio: TextView = itemView.findViewById(R.id.Textview_precio)
         val imagenProducto: ImageView = itemView.findViewById(R.id.imageView_foto_producto)
         val cardView: CardView =itemView.findViewById(R.id.cardview_itemProducto)
-
+        val textView_variante:TextView=itemView.findViewById(R.id.textView_variante)
         @SuppressLint("SetTextI18n")
         fun bind(factura: ModeloProductoFacturado) {
 
             producto.text = factura.producto
+            mostrarVariantesAdaptador(factura.listaVariables?: emptyList(),textView_variante)
             seleccion.text=factura.cantidad
             precio.text=factura.venta.formatoMonenda()
             existencia.visibility=View.GONE

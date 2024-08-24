@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
@@ -392,9 +393,23 @@ class CrearPdfFacturaOCompra {
             if (tipo=="Compra")  precio= temp.costo
             if (tipo=="Factura")  precio= temp.venta
 
+            Log.d("DatosPdf","producto ${temp}")
+            // Inicializar la cadena con el nombre del producto
 
+
+            // Crear un StringBuilder para construir la lista de variables
+            val stringBuilder = StringBuilder()
+            temp.listaVariables?.let { lista ->
+                if (lista.isNotEmpty()) {
+                    lista.forEach { variable ->
+                        stringBuilder.append("\n -${variable.nombreVariable}: X${variable.cantidad}")
+                    }
+                }
+            }
+
+// Crear una celda y agregar ambos párrafos
             cell = PdfPCell()
-            setCellFormat(cell, cell_color!!, temp.producto)
+            setCellFormat(cell, cell_color!!, temp.producto + stringBuilder.toString())
             cell.horizontalAlignment = Element.ALIGN_LEFT
             table1.addCell(cell)
 

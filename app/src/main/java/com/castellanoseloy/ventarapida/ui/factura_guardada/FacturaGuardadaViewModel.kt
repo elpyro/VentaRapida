@@ -131,6 +131,8 @@ class FacturaGuardadaViewModel : ViewModel() {
                 put("idProducto", producto.id_producto)
                 put("cantidad", (-1 * producto.cantidad.toInt()).toString())
                 put("subido", "false")
+                put("listaVariables", producto.convertirListaVariablesToString(
+                    producto.listaVariables ?: emptyList()))
             }
 
             // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
@@ -141,7 +143,8 @@ class FacturaGuardadaViewModel : ViewModel() {
                 idTransaccion = idTransaccion,
                 idProducto =producto.id_producto,
                 cantidad = (-1 * producto.cantidad.toInt()).toString(),
-                subido ="false"
+                subido ="false",
+                listaVariables = producto.listaVariables
             )
 
             listaSumarInventario.add(sumarProducto)

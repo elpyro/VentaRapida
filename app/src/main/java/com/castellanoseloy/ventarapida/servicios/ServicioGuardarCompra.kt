@@ -90,7 +90,9 @@ class ServicioGuadarCompra : JobIntentService() {
                     hora = horaActual,
                     imagenUrl = producto.url,
                     fechaBusquedas = Utilidades.obtenerFechaUnix(),
-                    estadoRecaudo = recaudo
+                    estadoRecaudo = recaudo,
+                    listaVariables = producto.listaVariables
+
                 )
                 listaProductosFacturados.add(productoFacturado)
 
@@ -98,7 +100,8 @@ class ServicioGuadarCompra : JobIntentService() {
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
                     cantidad = (cantidadSeleccionada).toString(),
-                    subido ="false"
+                    subido ="false",
+                    listaVariables = producto.listaVariables
                 )
 
                 listaDescontarInventario.add(restarProducto)

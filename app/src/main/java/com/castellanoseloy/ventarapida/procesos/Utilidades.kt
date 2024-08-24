@@ -9,15 +9,17 @@ import android.net.Uri
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
-import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.datos.Variable
 import com.google.android.material.snackbar.Snackbar
 import com.itextpdf.text.Element
 import com.itextpdf.text.Image
@@ -51,6 +53,26 @@ object Utilidades {
         val normalized = Normalizer.normalize(this, Normalizer.Form.NFD)
         val pattern = "\\p{InCombiningDiacriticalMarks}+".toRegex()
         return pattern.replace(normalized, "").lowercase(Locale.getDefault())
+    }
+        fun mostrarVariantesAdaptador(listaVariables:List<Variable>? = null, textView_variante: TextView) {
+        textView_variante.visibility = View.GONE
+            Log.d("mostrarVariantesRecibidas",listaVariables.toString())
+        if (!listaVariables.isNullOrEmpty()) {
+            // Hacer visible el TextView
+            textView_variante.visibility = View.VISIBLE
+
+            // Construir el texto con el formato "nombre X cantidad"
+            val variantesTexto =
+                listaVariables!!.joinToString(separator = "\n") { variable ->
+                    "${variable.nombreVariable} X ${variable.cantidad}"
+                }
+
+            // Asignar el texto al TextView
+            textView_variante.text = variantesTexto
+        } else {
+            // Ocultar el TextView si no hay variables
+            textView_variante.visibility = View.GONE
+        }
     }
 
     fun obtenerImageUriParaCompartir(bitmap: Bitmap, context: Context): Uri {

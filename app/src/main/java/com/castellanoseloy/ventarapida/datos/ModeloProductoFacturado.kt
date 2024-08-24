@@ -1,5 +1,9 @@
 package com.castellanoseloy.ventarapida.datos
 
+import android.util.Log
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import java.io.Serializable
 
 data class ModeloProductoFacturado(
@@ -51,35 +55,29 @@ data class ModeloProductoFacturado(
         null
     )
 
-    fun getUpdates(): Map<String, Any?> {
-        // Convertir la lista de Variable a una lista de mapas
-        val listaVariablesMap = listaVariables?.map { it.toMap() } ?: emptyList()
 
-        // Crear el HashMap con los valores actualizables
-        return hashMapOf(
-            "id_producto_pedido" to id_producto_pedido,
-            "id_producto" to id_producto,
-            "id_pedido" to id_pedido,
-            "id_vendedor" to id_vendedor,
-            "vendedor" to vendedor,
-            "producto" to producto,
-            "cantidad" to cantidad,
-            "costo" to costo,
-            "venta" to venta,
-            "precioDescuentos" to precioDescuentos,
-            "porcentajeDescuento" to porcentajeDescuento,
-            "productoEditado" to productoEditado,
-            "fecha" to fecha,
-            "hora" to hora,
-            "imagenUrl" to imagenUrl,
-            "estadoRecaudo" to estadoRecaudo,
-            "recaudador" to recaudador,
-            "recaudadoFecha" to recaudadoFecha,
-            "fechaBusquedas" to fechaBusquedas,
-            "tipoOperacion" to tipoOperacion,
-            "listaVariables" to listaVariablesMap // Incluir la lista de variables como un mapa
-        )
+    fun convertirListaVariablesToString(listaVariables: List<Variable>): String {
+        val gson = Gson()
+        val jsonListaVariables = gson.toJson(listaVariables) // Convierte la lista en JSON
+        Log.d("ModeloProductoFacturado", "Lista de Variables en JSON: $jsonListaVariables")
+        return jsonListaVariables // Devuelve el JSON como un string
     }
+
+    fun convertirStringToListaVariables(jsonString: String?): List<Variable>? {
+        if (jsonString.isNullOrEmpty()) return null
+
+        val gson = Gson()
+        val type = object : TypeToken<List<Variable>>() {}.type
+        return try {
+            gson.fromJson<List<Variable>>(jsonString, type)
+        } catch (e: JsonSyntaxException) {
+            Log.e("ConversionError", "Error al convertir JSON a List<Variable>: ${e.message}")
+            null
+        }
+    }
+
 }
+
+
 
 

@@ -158,7 +158,8 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     hora = modeloFactura.hora,
                     imagenUrl =producto.url,
                     fechaBusquedas =  modeloFactura.fechaBusquedas,
-                    estadoRecaudo = recaudo
+                    estadoRecaudo = recaudo,
+                    listaVariables = producto.listaVariables
                 )
                 listaProductosFacturados.add(productoFacturado)
 
@@ -166,7 +167,8 @@ class AgregarProductoFacturaViewModel : ViewModel() {
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
                     cantidad = (cantidadSeleccionada).toString(),
-                    subido ="false"
+                    subido ="false",
+                    listaVariables = producto.listaVariables
                 )
                 listaDescontarInventario.add(restarProducto)
             }

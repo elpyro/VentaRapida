@@ -73,6 +73,10 @@ class PromtFacturaGuardada {
         Utilidades.cargarImagen(item.imagenUrl, imageView_foto!!)
         editTextProducto!!.setText( item.producto)
         editTextCantidad!!.setText(item.cantidad)
+
+        if(item.listaVariables.isNullOrEmpty()) editTextCantidad!!.isEnabled=false  //Todo arregar el listado de variables
+
+
         if (tipo == "venta") editTextPrecio!!.setText(item.venta)
         if (tipo == "compra") editTextPrecio!!.setText(item.costo)
 
@@ -148,12 +152,13 @@ class PromtFacturaGuardada {
                         cantidad = cantidadSeleccionada.toString(),
                         costo = producto.p_compra,
                         venta = producto.p_diamante,
-                        imagenUrl =producto.url
+                        imagenUrl =producto.url,
+                        listaVariables = itemRecibido.listaVariables
                     )
 
                     listaProductosEditar.add(productoFacturado)
 
-                    editarProductoTransaccion(contextoRecibido,tipoRecibido,diferenciaCantidad,producto.id)
+                    editarProductoTransaccion(contextoRecibido,tipoRecibido,diferenciaCantidad,producto.id,productoFacturado)
 
                 }
 
