@@ -17,6 +17,7 @@ import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.ProductDiffCallback
+import com.castellanoseloy.ventarapida.procesos.Utilidades
 
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.castellanoseloy.ventarapida.ui.promts.PromtSeleccionarVariantes
@@ -137,13 +138,11 @@ class VentaAdaptador(
                 DatosPersitidos.ventaProductosSeleccionados
             ) { listaActualizada ->
 
-
                 // Actualizar la lista de variables del producto
                 var nuevoProducto = product
                 nuevoProducto = nuevoProducto.copy(listaVariables = emptyList())
 
                 nuevoProducto = nuevoProducto.copy(listaVariables = listaActualizada)
-
 
                 // Calcular la sumatoria de todas las cantidades de las variables seleccionadas
                 val totalCantidad = listaActualizada.sumBy { it.cantidad }
@@ -155,6 +154,7 @@ class VentaAdaptador(
                 // Actualizar la cantidad del producto en el ViewModel
                 viewModel.actualizarCantidadProducto(nuevoProducto, totalCantidad)
                 cargarProducto(product)
+                botonRestar.visibility = View.GONE
             }
         }
 
@@ -230,27 +230,8 @@ class VentaAdaptador(
             existencia.text ="X${product.cantidad}"
 
             // Cargar la imagen solo si la URL no está vacía y es diferente a la anterior
-            if (!product.url.isEmpty() && imagenProducto.tag != product.url) {
-                imagenProducto.tag = product.url
-                Picasso.get()
-                    .load(product.url)
-                    .networkPolicy(NetworkPolicy.OFFLINE) // Configurar la política de caché y persistencia
-                    .into(imagenProducto, object : com.squareup.picasso.Callback {
-                        override fun onSuccess() {
-                            // La imagen se cargó exitosamente desde la caché o persistencia
-                        }
+            Utilidades.cargarImagen(product.url, imagenProducto)
 
-                        override fun onError(e: Exception) {
-                            // Ocurrió un error al cargar la imagen desde la caché o persistencia
-                            // Intentar cargar la imagen desde la red
-                            Picasso.get().load(product.url).into(imagenProducto)
-                        }
-                    })
-            } else if (product.url.isEmpty()) {
-                // Si la URL está vacía, mostrar una imagen por defecto o limpiar la vista
-                // dependiendo del diseño que se quiera obtener
-                imagenProducto.setImageResource(R.drawable.ic_menu_camera)
-            }
 
             if (DatosPersitidos.ventaProductosSeleccionados.isNotEmpty() &&   DatosPersitidos.ventaProductosSeleccionados.any { it.key.id == products[position].id }) {
                 val cantidad = DatosPersitidos.ventaProductosSeleccionados.filterKeys { it.id == products[position].id }.values.sum()

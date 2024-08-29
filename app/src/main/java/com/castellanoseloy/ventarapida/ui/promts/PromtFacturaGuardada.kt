@@ -3,6 +3,7 @@ package com.castellanoseloy.ventarapida.ui.promts
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import com.castellanoseloy.ventarapida.R
@@ -11,22 +12,32 @@ import com.castellanoseloy.ventarapida.datos.ModeloProductoFacturado
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.SearchView
+import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
+import com.castellanoseloy.ventarapida.datos.Variable
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra.guardarDetalleFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
+import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
 import com.castellanoseloy.ventarapida.procesos.Utilidades
 import com.castellanoseloy.ventarapida.procesos.UtilidadesBaseDatos.editarProductoTransaccion
+import com.google.android.material.textfield.TextInputLayout
 import java.util.UUID
 
 
 class PromtFacturaGuardada {
 
 
+    private lateinit var textInputLayoutCantidad: TextInputLayout
+    private var button_cambiarCantidad: Button? = null
     private lateinit var tablaReferencia: String
     private lateinit var tipoRecibido: String
     private lateinit var contextoRecibido: Context
@@ -64,23 +75,53 @@ class PromtFacturaGuardada {
         editTextCantidad = dialogView.findViewById(R.id.promt_cantidad)
         editTextPrecio = dialogView.findViewById(R.id.promt_precio)
         imageView_foto= dialogView.findViewById(R.id.imageView_foto)
-
+        button_cambiarCantidad=dialogView.findViewById(R.id.button_cambiarCantidad)
+        textInputLayoutCantidad=dialogView.findViewById(R.id.text_input_layout_cantidad)
+        
+        
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto!!.setSelectAllOnFocus(true)
         editTextCantidad!!.setSelectAllOnFocus(true)
         editTextPrecio!!.setSelectAllOnFocus(true)
-
+        
         Utilidades.cargarImagen(item.imagenUrl, imageView_foto!!)
         editTextProducto!!.setText( item.producto)
         editTextCantidad!!.setText(item.cantidad)
-
-        if(item.listaVariables.isNullOrEmpty()) editTextCantidad!!.isEnabled=false  //Todo arregar el listado de variables
-
-
         if (tipo == "venta") editTextPrecio!!.setText(item.venta)
         if (tipo == "compra") editTextPrecio!!.setText(item.costo)
 
 
+        // Si el producto tiene variantes, mostrar el prompt de edición de variantes cuando se presiona el editTextCantidad
+        if (!item.listaVariables.isNullOrEmpty()) {
+            textInputLayoutCantidad.visibility = View.GONE
+            button_cambiarCantidad?.visibility = View.VISIBLE
+            button_cambiarCantidad?.setText("Cantidad: "+item.cantidad)
+
+
+
+                FirebaseProductos.buscarProductoPorId(item.id_producto!!)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val producto = task.result
+                            if (producto != null){
+                                button_cambiarCantidad?.setOnClickListener {
+                                    val promtEditarVariantesSeleccionadas = PromtEditarVariantesSeleccionadas()
+                                    var productoSeleccionados = mutableMapOf<ModeloProductoFacturado, Int>()
+                                    productoSeleccionados[item] = item.cantidad.toInt()
+                                    promtEditarVariantesSeleccionadas.agregar(context, producto,productoSeleccionados) {
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+
+
+
+            Log.d("edicion", "Producto con variables: ${item.producto}")
+
+        }
         // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
             val nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
@@ -152,13 +193,19 @@ class PromtFacturaGuardada {
                         cantidad = cantidadSeleccionada.toString(),
                         costo = producto.p_compra,
                         venta = producto.p_diamante,
-                        imagenUrl =producto.url,
+                        imagenUrl = producto.url,
                         listaVariables = itemRecibido.listaVariables
                     )
 
                     listaProductosEditar.add(productoFacturado)
 
-                    editarProductoTransaccion(contextoRecibido,tipoRecibido,diferenciaCantidad,producto.id,productoFacturado)
+                    editarProductoTransaccion(
+                        contextoRecibido,
+                        tipoRecibido,
+                        diferenciaCantidad,
+                        producto.id,
+                        productoFacturado
+                    )
 
                 }
 
@@ -168,11 +215,25 @@ class PromtFacturaGuardada {
         listaProductosFacturados.add(itemRecibido)
         if(nuevaCantidad.toInt()!=0){
             //si es edicion no crea aqui la cola de transaccion
-            FirebaseProductoFacturadosOComprados.guardarProductoFacturado(tablaReferencia,listaProductosFacturados,"edicion",contextoRecibido)
+            FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
+                tablaReferencia,
+                listaProductosFacturados,
+                "edicion",
+                contextoRecibido
+            )
 
-        }else{
-            FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(tablaReferencia,listaProductosFacturados,contextoRecibido,tipoRecibido)
-            Toast.makeText(contextoRecibido, cantidadAnterior +"x "+itemRecibido.producto+" Eliminados", Toast.LENGTH_LONG).show()
+        } else {
+            FirebaseProductoFacturadosOComprados.eliminarProductoFacturado(
+                tablaReferencia,
+                listaProductosFacturados,
+                contextoRecibido,
+                tipoRecibido
+            )
+            Toast.makeText(
+                contextoRecibido,
+                cantidadAnterior + "x " + itemRecibido.producto + " Eliminados",
+                Toast.LENGTH_LONG
+            ).show()
         }
 
     }

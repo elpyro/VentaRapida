@@ -163,7 +163,9 @@ class CompraAdaptador(
 
                 // Actualizar la cantidad del producto en el ViewModel
                 viewModel.actualizarCantidadProducto(nuevoProducto, totalCantidad)
+
                 cargarProducto(product)
+                botonRestar.visibility = View.GONE
             }
         }
 
