@@ -15,15 +15,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.SearchView
-import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.datos.ModeloFactura
 import com.castellanoseloy.ventarapida.datos.Variable
+
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra.guardarDetalleFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados.actualizarPrecioDescuento
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
@@ -36,12 +33,14 @@ import java.util.UUID
 class PromtFacturaGuardada {
 
 
+    private lateinit var nuevaCantidad: String
     private lateinit var textInputLayoutCantidad: TextInputLayout
     private var button_cambiarCantidad: Button? = null
     private lateinit var tablaReferencia: String
     private lateinit var tipoRecibido: String
     private lateinit var contextoRecibido: Context
     private lateinit var itemRecibido: ModeloProductoFacturado
+    private lateinit var itemSinCambios: ModeloProductoFacturado
     private var imageView_foto: ImageView? = null
     private var editTextPrecio: EditText? = null
     private var editTextCantidad: EditText? = null
@@ -49,6 +48,7 @@ class PromtFacturaGuardada {
 
     fun editarProducto(tipo:String, item: ModeloProductoFacturado, context: Context){
         itemRecibido=item
+        itemSinCambios=item.copy()
         contextoRecibido=context
         tipoRecibido=tipo
 
@@ -77,13 +77,13 @@ class PromtFacturaGuardada {
         imageView_foto= dialogView.findViewById(R.id.imageView_foto)
         button_cambiarCantidad=dialogView.findViewById(R.id.button_cambiarCantidad)
         textInputLayoutCantidad=dialogView.findViewById(R.id.text_input_layout_cantidad)
-        
-        
+
+
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextProducto!!.setSelectAllOnFocus(true)
         editTextCantidad!!.setSelectAllOnFocus(true)
         editTextPrecio!!.setSelectAllOnFocus(true)
-        
+
         Utilidades.cargarImagen(item.imagenUrl, imageView_foto!!)
         editTextProducto!!.setText( item.producto)
         editTextCantidad!!.setText(item.cantidad)
@@ -91,51 +91,34 @@ class PromtFacturaGuardada {
         if (tipo == "compra") editTextPrecio!!.setText(item.costo)
 
 
-        // Si el producto tiene variantes, mostrar el prompt de edición de variantes cuando se presiona el editTextCantidad
-        if (!item.listaVariables.isNullOrEmpty()) {
-            textInputLayoutCantidad.visibility = View.GONE
-            button_cambiarCantidad?.visibility = View.VISIBLE
-            button_cambiarCantidad?.setText("Cantidad: "+item.cantidad)
+        // Si el producto tiene variantes, mostrar el prompt de edición de variantes cuando se presiona el el button_cambiarCantidad
+        configurarVariantes(item, context)
 
-
-
-                FirebaseProductos.buscarProductoPorId(item.id_producto!!)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val producto = task.result
-                            if (producto != null){
-                                button_cambiarCantidad?.setOnClickListener {
-                                    val promtEditarVariantesSeleccionadas = PromtEditarVariantesSeleccionadas()
-                                    var productoSeleccionados = mutableMapOf<ModeloProductoFacturado, Int>()
-                                    productoSeleccionados[item] = item.cantidad.toInt()
-                                    promtEditarVariantesSeleccionadas.agregar(context, producto,productoSeleccionados) {
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-
-
-
-
-            Log.d("edicion", "Producto con variables: ${item.producto}")
-
-        }
         // Configurar el botón "Aceptar"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
-            val nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
-            modificar(nuevaCantidad)
+            if(itemSinCambios.listaVariables.isNullOrEmpty()) {
+                nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
+                modificar(nuevaCantidad)
+            }else{
+                modificar(nuevaCantidad)
+            }
+
         }
 
 
         dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
-            // No hacer nada
+            // Restaurar la copia original del item si se cancela
+            itemRecibido.listaVariables = itemSinCambios.listaVariables
+            itemRecibido.cantidad = itemSinCambios.cantidad
         }
 
-        dialogBuilder.setNeutralButton("Eliminar"){ _, _ ->
-            modificar("0")
+        if(itemSinCambios.listaVariables.isNullOrEmpty()) {
+            dialogBuilder.setNeutralButton("Eliminar") { _, _ ->
+                modificar("0")
+            }
         }
+
+
 
 
         val alertDialog = dialogBuilder.create()
@@ -145,18 +128,99 @@ class PromtFacturaGuardada {
 
     }
 
+    private fun configurarVariantes(
+        item: ModeloProductoFacturado,
+        context: Context
+    ) {
+        if (!item.listaVariables.isNullOrEmpty()) {
+            textInputLayoutCantidad.visibility = View.GONE
+            button_cambiarCantidad?.visibility = View.VISIBLE
+            button_cambiarCantidad?.setText("Cantidad: " + item.cantidad)
+
+            FirebaseProductos.buscarProductoPorId(item.id_producto!!)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val producto = task.result
+                        if (producto != null) {
+                            button_cambiarCantidad?.setOnClickListener {
+                                val promtEditarVariantesSeleccionadas = PromtSeleccionarVariantes()
+
+
+                                val productoCompleto = convertirToModeloProducto()
+
+
+                                var productoSeleccionados = mutableMapOf<ModeloProducto, Int>()
+
+                                productoSeleccionados[productoCompleto.copy()] =
+                                    itemRecibido.cantidad.toInt()
+
+                                promtEditarVariantesSeleccionadas.agregar(
+                                    context,
+                                    producto.copy(),
+                                    productoSeleccionados
+                                ) {
+                                    Log.d("PromtFacturaGuardada", "Lista actualizada: $it")
+                                    // Actualizar la cantidad en el item recibido
+                                    itemRecibido.listaVariables = it
+                                    Log.d("PromtFacturaGuardada", "itemRecibido.listaVariables: \n ${itemRecibido.listaVariables} \n ${itemSinCambios.listaVariables} ")
+                                    //cuenta las cantidades de las variantes
+                                    val cantidadTotalDeVariables = it.sumOf { it.cantidad ?: 0 }
+                                    itemRecibido.cantidad = cantidadTotalDeVariables.toString()
+                                    button_cambiarCantidad?.setText("Cantidad: " + itemRecibido.cantidad)
+                                    nuevaCantidad=cantidadTotalDeVariables.toString()
+
+                                }
+                            }
+                        }
+
+                    }
+                }
+            Log.d("edicion", "Producto con variables: ${item.producto}")
+
+        }
+    }
+
+    private fun convertirToModeloProducto(): ModeloProducto {
+        val productoCompleto = ModeloProducto(
+            cantidad = itemRecibido.cantidad,
+            codigo = "",
+            descripcion = "",
+            fecha_ultima_modificacion = "",
+            id = itemRecibido.id_producto,
+            nombre = itemRecibido.producto,
+            p_compra = "",
+            p_diamante = "",
+            url = "",
+            descuento = "",
+            precio_descuento = "",
+            comentario = "",
+            proveedor = "",
+            editado = "",
+            listaVariables = itemRecibido.listaVariables
+        )
+        return productoCompleto
+    }
+
     fun modificar(nuevaCantidad:String){
         val nuevoNombre=editTextProducto?.text.toString().takeIf { it.isNotEmpty() } ?: "Item"
         val nuevoPrecio = (editTextPrecio?.text.toString()).takeIf { it.isNotEmpty() } ?: "0"
+        var diferenciaListaVariables= mutableListOf<Variable>()
 
-        val cantidadAnterior = itemRecibido.cantidad
+        val cantidadAnterior = itemSinCambios.cantidad
 
         itemRecibido.producto=nuevoNombre
         itemRecibido.cantidad=nuevaCantidad
         itemRecibido.productoEditado="true"
 
-        if (tipoRecibido == "venta")   itemRecibido.venta=nuevoPrecio
-        if (tipoRecibido == "compra")  itemRecibido.costo=nuevoPrecio
+        var multiplicador=1
+        if (tipoRecibido == "venta")  {
+            itemRecibido.venta=nuevoPrecio
+        }
+        if (tipoRecibido == "compra")  {
+            itemRecibido.costo=nuevoPrecio
+            multiplicador=-1
+
+        }
 
         val diferenciaCantidad = nuevaCantidad.toInt() - cantidadAnterior.toInt()
 
@@ -170,8 +234,21 @@ class PromtFacturaGuardada {
             itemRecibido.precioDescuentos=nuevoPrecio
         }
 
+        var cambiosVariable: Boolean
+        if(itemRecibido.listaVariables!=itemSinCambios.listaVariables){
+            Log.d("PromtFacturaGuardada","Los item cambiaron: "+itemRecibido.listaVariables.toString())
+                cambiosVariable = true
 
-        if(diferenciaCantidad!=0){
+                diferenciaListaVariables = Utilidades.calcularDiferenciasDeVariables(itemSinCambios.listaVariables,itemRecibido.listaVariables,multiplicador)
+            } else {
+                Log.d("PromtFacturaGuardada", "No hubo cambios en las variables")
+                cambiosVariable = false
+            }
+
+
+
+
+        if(diferenciaCantidad!=0 || cambiosVariable){
             //hacer una cola para restar o sumar las cantidades del inventario
             val productosSeleccionados: MutableMap<ModeloProducto, Int> = mutableMapOf()
             val nuevoProducto = ModeloProducto(id = itemRecibido.id_producto)
@@ -194,7 +271,7 @@ class PromtFacturaGuardada {
                         costo = producto.p_compra,
                         venta = producto.p_diamante,
                         imagenUrl = producto.url,
-                        listaVariables = itemRecibido.listaVariables
+                        listaVariables =   diferenciaListaVariables
                     )
 
                     listaProductosEditar.add(productoFacturado)
@@ -204,7 +281,8 @@ class PromtFacturaGuardada {
                         tipoRecibido,
                         diferenciaCantidad,
                         producto.id,
-                        productoFacturado
+                        productoFacturado,
+                        cambiosVariable
                     )
 
                 }
@@ -213,7 +291,7 @@ class PromtFacturaGuardada {
         }
         val listaProductosFacturados = arrayListOf<ModeloProductoFacturado>()
         listaProductosFacturados.add(itemRecibido)
-        if(nuevaCantidad.toInt()!=0){
+        if(nuevaCantidad.toInt()!=0 ){
             //si es edicion no crea aqui la cola de transaccion
             FirebaseProductoFacturadosOComprados.guardarProductoFacturado(
                 tablaReferencia,
@@ -239,6 +317,8 @@ class PromtFacturaGuardada {
     }
 
 
+
+
     fun promtEditarDatosCliente(datosFactura: ModeloFactura, context: FragmentActivity,vista : View) {
         val dialogBuilder = AlertDialog.Builder(context)
 
@@ -254,15 +334,11 @@ class PromtFacturaGuardada {
         val editTextDireccion = dialogView.findViewById<EditText>(R.id.editText_direccion)
         val botonBuscar=dialogView.findViewById<ImageButton>(R.id.imageButton_buscarCliente)
 
-
-
-
         // Seleccionar tode el contenido del EditText al recibir foco
         editTextCliente.setSelectAllOnFocus(true)
         editTextTelefono.setSelectAllOnFocus(true)
         editTextDocumento.setSelectAllOnFocus(true)
         editTextDireccion.setSelectAllOnFocus(true)
-
 
             editTextCliente.setText( datosFactura.nombre)
             editTextTelefono.setText(datosFactura.telefono)

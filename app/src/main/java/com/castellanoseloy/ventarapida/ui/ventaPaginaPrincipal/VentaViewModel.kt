@@ -84,23 +84,29 @@ class VentaViewModel : ViewModel() {
 
 
     fun actualizarCantidadProducto(producto: ModeloProducto, nuevaCantidad: Int) {
-        val id_producto=producto.id
-        val productoEncontrado = ventaProductosSeleccionados.keys.find { it.id == id_producto }
+        val idProducto = producto.id
+        val productoEncontrado = ventaProductosSeleccionados.keys.find { it.id == idProducto }
+
         if (productoEncontrado != null) {
             if (nuevaCantidad > 0) {
                 ventaProductosSeleccionados[productoEncontrado] = nuevaCantidad
             } else {
-                ventaProductosSeleccionados.remove(productoEncontrado)
+                // Elimina el producto utilizando su ID
+                ventaProductosSeleccionados.keys.find { it.id == idProducto }?.let {
+                    ventaProductosSeleccionados.remove(it)
+                }
             }
-
-        }else{
-            ventaProductosSeleccionados[producto] = nuevaCantidad
+        } else {
+            if (nuevaCantidad > 0) {
+                ventaProductosSeleccionados[producto] = nuevaCantidad
+            }
         }
 
-        val crearTono= CrearTono()
+        val crearTono = CrearTono()
         crearTono.crearTono(context)
         calcularTotal()
     }
+
 
         fun eliminarCarrito(){
             ventaProductosSeleccionados.clear()

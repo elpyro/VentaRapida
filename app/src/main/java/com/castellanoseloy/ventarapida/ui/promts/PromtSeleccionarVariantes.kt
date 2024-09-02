@@ -162,8 +162,6 @@ class PromtSeleccionarVariantes {
         val productoExistente = productosSeleccionados.keys.find { it.id == producto.id }
 
         productoExistente?.let { producto ->
-            // Obtener la cantidad total del producto en el mapa
-            val cantidadTotal = productosSeleccionados[producto] ?: 0
 
             // Obtener las variables del producto existente
             val variablesExistentes = producto.listaVariables ?: emptyList()
@@ -207,9 +205,11 @@ class PromtSeleccionarVariantes {
                         ?.contains(textoParaFiltrar.eliminarAcentosTildes().lowercase(Locale.getDefault())) == true
         }
 
-        val productosOrdenados = filtro?.sortedBy { it.nombreVariable } ?: listOf()
 
-        configurarReciclerView(context, productosOrdenados as MutableList<Variable>)
+        val productosOrdenados = filtro?.sortedBy { it.nombreVariable } ?: emptyList()
+
+        configurarReciclerView(context, productosOrdenados.toMutableList())
+
 
     }
 

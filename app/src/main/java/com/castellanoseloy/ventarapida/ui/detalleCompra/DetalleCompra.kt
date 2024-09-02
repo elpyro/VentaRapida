@@ -32,7 +32,6 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerFechaUnix
 import com.castellanoseloy.ventarapida.procesos.Utilidades.obtenerHoraActual
 import com.castellanoseloy.ventarapida.servicios.ServicioGuadarFactura
 import com.castellanoseloy.ventarapida.servicios.ServicioListener
-import com.castellanoseloy.ventarapida.ui.promts.PromtSeleccionarVariantes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

@@ -25,6 +25,7 @@ import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentDetalleProductoBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.datos.Variable
+import com.castellanoseloy.ventarapida.procesos.ActualizarQuickSell
 import com.castellanoseloy.ventarapida.procesos.FirebaseFacturaOCompra
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductoFacturadosOComprados
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos
@@ -413,7 +414,20 @@ class DetalleProducto : Fragment() {
         val updates = producto.getUpdates()
         Log.d("ModeloProducto", "Updates: $updates")
 
-        guardarProducto(updates)
+        guardarProducto(updates).addOnSuccessListener {
+            // Código que se ejecutará si la actualización se realiza con éxito
+            if(!producto.listaVariables.isNullOrEmpty()){
+                for (variable in producto.listaVariables!!) {
+                    Log.d("Firebase", "Producto actualizado con éxito.")
+                    val quickSell= ActualizarQuickSell(variable.nombreVariable,variable.cantidad)
+                    quickSell.updateInventory()
+                }
+
+            }
+        }.addOnFailureListener { exception ->
+            // Código que se ejecutará si la actualización falla
+            Log.e("Firebase", "Error al actualizar el producto: ${exception.message}")
+        }
 
         Toast.makeText(requireContext(), "Producto Actualizado", Toast.LENGTH_LONG).show()
 

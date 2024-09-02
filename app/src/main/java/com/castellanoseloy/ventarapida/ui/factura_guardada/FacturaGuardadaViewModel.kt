@@ -125,6 +125,11 @@ class FacturaGuardadaViewModel : ViewModel() {
 
         arrayListProductosFacturados.forEach{producto->
 
+            // Cambiar el signo de la cantidad en cada variable
+            val listaVariablesActualizadas = producto.listaVariables?.map { variable ->
+                variable.copy(cantidad = -variable.cantidad)
+            }
+
             val idTransaccion = UUID.randomUUID().toString()
             val values = ContentValues().apply {
                 put("idTransaccion", idTransaccion)
@@ -132,7 +137,7 @@ class FacturaGuardadaViewModel : ViewModel() {
                 put("cantidad", (-1 * producto.cantidad.toInt()).toString())
                 put("subido", "false")
                 put("listaVariables", producto.convertirListaVariablesToString(
-                    producto.listaVariables ?: emptyList()))
+                    listaVariablesActualizadas ?: emptyList()))
             }
 
             // Guardamos la referencia en la base de datos para cambiar la cantidad del producto
@@ -144,7 +149,7 @@ class FacturaGuardadaViewModel : ViewModel() {
                 idProducto =producto.id_producto,
                 cantidad = (-1 * producto.cantidad.toInt()).toString(),
                 subido ="false",
-                listaVariables = producto.listaVariables
+                listaVariables = listaVariablesActualizadas
             )
 
             listaSumarInventario.add(sumarProducto)

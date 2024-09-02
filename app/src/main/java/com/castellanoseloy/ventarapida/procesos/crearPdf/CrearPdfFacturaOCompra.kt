@@ -401,6 +401,7 @@ class CrearPdfFacturaOCompra {
             val stringBuilder = StringBuilder()
             temp.listaVariables?.let { lista ->
                 if (lista.isNotEmpty()) {
+                    stringBuilder.append("\n" + " -")
                     lista.forEach { variable ->
                         stringBuilder.append("${variable.nombreVariable}: ${variable.cantidad}, ")
                     }
@@ -409,7 +410,7 @@ class CrearPdfFacturaOCompra {
 
 // Crear una celda y agregar ambos párrafos
             cell = PdfPCell()
-            setCellFormat(cell, cell_color!!, temp.producto +"\n -"+ stringBuilder.toString())
+            setCellFormat(cell, cell_color!!, temp.producto + stringBuilder.toString())
             cell.horizontalAlignment = Element.ALIGN_LEFT
             table1.addCell(cell)
 

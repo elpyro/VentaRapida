@@ -46,6 +46,51 @@ object Utilidades {
         snackbar.show()
     }
 
+    fun calcularDiferenciasDeVariables(
+        listaOriginal: List<Variable>?,
+        listaModificada: List<Variable>?,
+        multiplicador: Int
+    ): MutableList<Variable> {
+        val diferencias = mutableListOf<Variable>()
+
+        // Mapear la lista original por idVariable
+        val mapaOriginal = listaOriginal?.associateBy { it.idVariable } ?: emptyMap()
+        // Mapear la lista modificada por idVariable
+        val mapaModificada = listaModificada?.associateBy { it.idVariable } ?: emptyMap()
+
+        // Iterar sobre la lista modificada
+        listaModificada?.forEach { variableModificada ->
+            val variableOriginal = mapaOriginal[variableModificada.idVariable]
+
+            if (variableOriginal != null) {
+                // Calcular la diferencia de cantidades
+                var diferenciaCantidad = variableModificada.cantidad - variableOriginal.cantidad
+                diferenciaCantidad=diferenciaCantidad*multiplicador
+                if (diferenciaCantidad != 0) {
+                    // Crear una nueva variable con la diferencia
+                    val variableConDiferencia = variableModificada.copy(cantidad = diferenciaCantidad)
+                    diferencias.add(variableConDiferencia)
+                }
+            } else {
+                // Si la variable no estaba en la lista original, agregarla con su cantidad actual
+                diferencias.add(variableModificada)
+            }
+        }
+
+        // Iterar sobre la lista original para encontrar variables que ya no están en la lista modificada
+        listaOriginal?.forEach { variableOriginal ->
+            if (!mapaModificada.containsKey(variableOriginal.idVariable)) {
+                // Si la variable no está en la lista modificada, agregarla con la cantidad negativa correspondiente
+                var cantidadConDiferencia = -variableOriginal.cantidad * multiplicador
+                val variableConDiferencia = variableOriginal.copy(cantidad = cantidadConDiferencia)
+                diferencias.add(variableConDiferencia)
+            }
+        }
+        Log.d("PromtFacturaGuardada", "Hubo cambios en las variables: $diferencias")
+        return diferencias
+    }
+
+
     fun verificarPermisosAdministrador(): Boolean{
         return DatosPersitidos.datosUsuario.perfil.equals("Administrador")
     }

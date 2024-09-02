@@ -42,14 +42,15 @@ class ActualizarQuickSell(private val sku: String, private val quantity: Int) {
                     )
                     .build()
 
-                val response = client.newCall(request).execute()
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        // Manejar éxito (e.g., mostrar un mensaje de éxito)
-                        Log.i("QuickSell","Inventario actualizado con éxito")
-                    } else {
-                        // Manejar error (e.g., mostrar un mensaje de error)
-                        Log.i("QuickSell","Error en la actualización del inventario: ${response.code}")
+                client.newCall(request).execute().use { response ->  // Aquí se asegura el cierre del ResponseBody
+                    withContext(Dispatchers.Main) {
+                        if (response.isSuccessful) {
+                            // Manejar éxito (e.g., mostrar un mensaje de éxito)
+                            Log.i("QuickSell","Inventario quicksell actualizado con éxito de: $sku , cantidad: $quantity")
+                        } else {
+                            // Manejar error (e.g., mostrar un mensaje de error)
+                            Log.i("QuickSell","Error en la actualización del inventario:  de: $sku con el código de respuesta: ${response.code}")
+                        }
                     }
                 }
             } catch (e: IOException) {

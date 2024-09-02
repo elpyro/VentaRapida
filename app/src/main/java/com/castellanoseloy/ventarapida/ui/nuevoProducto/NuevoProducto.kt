@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentNuevoProductoBinding
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
+import com.castellanoseloy.ventarapida.procesos.ActualizarQuickSell
 import com.castellanoseloy.ventarapida.procesos.FirebaseProductos.guardarProducto
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria.Companion.CAMARA_REQUEST_CODE

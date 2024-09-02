@@ -69,7 +69,7 @@ object UtilidadesBaseDatos {
 
     }
 
-    fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, idProducto:String, modeloProductoFacturado: ModeloProductoFacturado) {
+    fun editarProductoTransaccion(context:Context, tipo: String, diferenciaCantidad:Int, idProducto:String, modeloProductoFacturado: ModeloProductoFacturado, cambiosVariable: Boolean = false) {
         val dbHelper = MyDatabaseHelper(context)
         val db = dbHelper.readableDatabase
         var multiplicador = 1
@@ -77,7 +77,7 @@ object UtilidadesBaseDatos {
 
         val listaEditarInventario = arrayListOf<ModeloTransaccionSumaRestaProducto>()
 
-        if (diferenciaCantidad != 0) {
+        if (diferenciaCantidad != 0 || cambiosVariable) {
             val sumarORestar = diferenciaCantidad * multiplicador
 
             val idTransaccion = UUID.randomUUID().toString()

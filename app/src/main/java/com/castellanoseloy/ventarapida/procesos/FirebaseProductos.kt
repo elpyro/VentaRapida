@@ -23,14 +23,15 @@ object FirebaseProductos {
     private const val TABLA_REFERENCIA = "Productos"
 
 
-    fun guardarProducto(updates: Map<String, Any?>) {
+    fun guardarProducto(updates: Map<String, Any?>): Task<Void> {
         val database = FirebaseDatabase.getInstance()
         val registroRef =
             database.getReference(DatosPersitidos.datosEmpresa.id).child(TABLA_REFERENCIA)
                 .child(updates["id"] as String)
         registroRef.keepSynced(true)
-        registroRef.updateChildren(updates)
+        return registroRef.updateChildren(updates)
     }
+
 
     private val transaccionesEjecutadas = HashSet<String>()
 
@@ -68,7 +69,7 @@ object FirebaseProductos {
                         ?: return Transaction.success(mutableData)
 
 
-                    Log.d("Firebase", "el producto guardado en  firebase: ${productoRef}")
+                    Log.d("Firebase", "el producto guardado en  firebase: ${cantidad} del ${productoRef}")
 
                     // Restar la cantidad del producto principal
                     mutableData.value = (cantidadActual - cantidad.toInt()).toString()
@@ -96,16 +97,10 @@ object FirebaseProductos {
                         // Actualizar las variables solo si la actualización principal fue exitosa
 
 
-
-
-
                         if(solicitud.listaVariables.isNullOrEmpty()) {
                             actualizarQuickSell(idProducto)
                         }else{
-                            //si la operacion principal es resta se resta a las variables, por eso se evalua si es mayor a 0
-                            var compraOVenta = 1
-                            if (cantidad.toInt() < 0) compraOVenta = -1
-                            actualizarVariables(solicitud, productoRef, compraOVenta)
+                            actualizarVariables(solicitud, productoRef)
                         }
 
                         eliminarColaSubida(context!!, idTransaccion) // eliminar registro con id
@@ -125,9 +120,10 @@ object FirebaseProductos {
 
     private fun actualizarVariables(
         solicitud: ModeloTransaccionSumaRestaProducto,
-        productoRef: DatabaseReference,
-        compraOVenta: Int
+        productoRef: DatabaseReference
     ) {
+
+
         solicitud.listaVariables?.forEach { variable ->
             val listaVariablesRef = productoRef.child("listaVariables")
 
@@ -138,12 +134,17 @@ object FirebaseProductos {
                         val variableCantidadRef = childSnapshot.ref.child("cantidad")
 
                         variableCantidadRef.runTransaction(object : Transaction.Handler {
+                            private var cantidadVariableNueva: Int = 0
+
                             override fun doTransaction(mutableData: MutableData): Transaction.Result {
                                 val cantidadVariableActual = mutableData.getValue(Int::class.java)
                                     ?: return Transaction.success(mutableData)
 
-                                val cantidadVariableNueva =(cantidadVariableActual - (variable.cantidad * compraOVenta))
+                                cantidadVariableNueva =(cantidadVariableActual - variable.cantidad )
                                 // Restar la cantidad de la variable
+                                Log.d("Firebase", "se recivio la cantidad en la variable: ${variable.nombreVariable}= ${variable.cantidad}")
+                                Log.d("Firebase", "se fija la nueva cantidad en la variable:  $cantidadVariableNueva")
+
                                 mutableData.value =cantidadVariableNueva
 
 
@@ -161,11 +162,16 @@ object FirebaseProductos {
                                         "Error al actualizar la cantidad de la variable ${variable.idVariable}: ${databaseError.message}"
                                     )
                                 } else {
-                                    actualizarQuickSell(solicitud.idProducto)
                                     Log.d(
                                         "Firebase",
                                         "Cantidad de la variable ${variable.idVariable} actualizada correctamente."
                                     )
+                                    if(cantidadVariableNueva<-1) cantidadVariableNueva=0
+
+                                        val actualizarQuickSellVariable = ActualizarQuickSell(variable.nombreVariable,cantidadVariableNueva)
+                                        actualizarQuickSellVariable.updateInventory()
+
+
                                 }
                             }
                         })
@@ -186,19 +192,15 @@ object FirebaseProductos {
             try {
                 val detalleProducto = buscarProductoPorId(idProducto).await()
                 detalleProducto?.let {
+
                     // Actualizar la cantidad principal del producto
+                    if(it.cantidad.toInt()<-1) it.cantidad="0"
                     val actualizarQuickSellProducto = ActualizarQuickSell(it.nombre, it.cantidad.toInt())
                     actualizarQuickSellProducto.updateInventory()
 
-                    // Verificar si la lista de variables no está vacía
-                    it.listaVariables?.let { variables ->
-                        variables.forEach { variable ->
-                            // Actualizar QuickSell para cada variable en la lista
-                            val actualizarQuickSellVariable = ActualizarQuickSell(variable.nombreVariable, variable.cantidad)
-                            actualizarQuickSellVariable.updateInventory()
-                        }
-                    }
+
                 }
+                Log.d("QuickSell", "Quick sell fue actualizado correctamente")
             } catch (e: Exception) {
                 Log.e("QuickSell", "Error al actualizar QuickSell: ${e.message}", e)
             }

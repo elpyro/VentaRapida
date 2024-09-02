@@ -103,12 +103,17 @@ class ServicioGuadarFactura : JobIntentService() {
 
                 val multiplicador =if(tipoOperacion.equals("Compra")) -1 else 1
 
+                val listaVariablesActualizadas = producto.listaVariables?.map { variable ->
+                    variable.copy(cantidad = multiplicador * variable.cantidad)
+                }
+
+
                 val restarProducto = ModeloTransaccionSumaRestaProducto(
                     idTransaccion = id_producto_pedido,  //la transaccion tiene el mismo id
                     idProducto = producto.id,
                     cantidad = (multiplicador * cantidadSeleccionada).toString(),
                     subido ="false",
-                    listaVariables = producto.listaVariables
+                    listaVariables = listaVariablesActualizadas
                 )
 
                 listaDescontarInventario.add(restarProducto)
