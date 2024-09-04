@@ -125,7 +125,7 @@ class Compra : Fragment() {
         builder.setMessage(
             "¡Surtir el inventario nunca fue tan fácil!\n\n" +
                     "Aquí puedes ver y seleccionar los productos que deseas surtir, con sus respectivos precios de compra.\n\n" +
-                    "También tienes la opción de crear nuevos productos. \nManten precionado un producto, para editarlo.\n\n" +
+                    "Manten precionado un producto, para editarlo.\n\n" +
                     "Los productos surtidos serán sumados al inventario y dejarán registro.\n\n" +
                     "Utiliza el filtro o el micrófono para buscar por producto o proveedor.\n"
         )
@@ -261,9 +261,7 @@ class Compra : Fragment() {
 
     private fun abriDetalle(modeloProducto: ModeloProducto, view:View, position:Int) {
         val bundle = Bundle()
-        //bundle.putInt("position", position)
         bundle.putString("idProducto", modeloProducto.id)
-        //bundle.putSerializable("listaProductos", lista)
         Navigation.findNavController(view).navigate(R.id.detalleProducto,bundle)
     }
 

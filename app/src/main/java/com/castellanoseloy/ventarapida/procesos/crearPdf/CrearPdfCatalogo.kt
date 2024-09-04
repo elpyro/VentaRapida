@@ -45,6 +45,7 @@ class CrearPdfCatalogo {
     private val DATOSEMPRESAFUENTE = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.ITALIC)
     private val FONT_CELL = Font(Font.FontFamily.TIMES_ROMAN, 12f, Font.NORMAL)
     private val FONT_COLUMN = Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.NORMAL)
+    private val FONT_VARIANTES =Font(Font.FontFamily.HELVETICA, 6f, Font.ITALIC)
 
     suspend fun catalogo(
         context: Context,
@@ -234,10 +235,44 @@ class CrearPdfCatalogo {
             setCellFormat(cell, cell_color!!, (i+1).toString())
             table1.addCell(cell)
 
+// Crear un StringBuilder para construir la lista de variables
+            val stringBuilder = StringBuilder()
+
+            temp.listaVariables?.let { lista ->
+                if (lista.isNotEmpty()) {
+                    // Filtrar las variables con cantidad mayor o igual a 1
+                    val variablesFiltradas = lista.filter { it.cantidad >= 1 }
+
+                    if (variablesFiltradas.isNotEmpty()) {
+                        stringBuilder.append("-Variantes: \n")  // Puedes personalizar este prefijo si lo prefieres
+                        // Usar barra vertical '|' como separador entre las variables
+                        val variablesString = variablesFiltradas.joinToString(" | ") { variable ->
+                            "${variable.nombreVariable}: ${variable.cantidad}"
+                        }
+                        stringBuilder.append(variablesString)
+                    }
+                }
+            }
+
+// Crear un Paragraph para el nombre del producto con la fuente original
+            val nombreParagraph = Paragraph(temp.nombre, FONT_CELL)
+
+// Crear un Paragraph para las variantes con la fuente FONT_VARIANTES
+            val variantesParagraph = Paragraph(stringBuilder.toString(), FONT_VARIANTES)
+
+// Crear un contenedor Paragraph que combine ambos elementos
+            val combinedParagraph = Paragraph()
+            combinedParagraph.add(nombreParagraph)
+            combinedParagraph.add(variantesParagraph)
+
+// Crear la celda y agregar el párrafo combinado
             cell = PdfPCell()
-            setCellFormat(cell, cell_color!!, temp.nombre)
+            cell.addElement(combinedParagraph)
             cell.horizontalAlignment = Element.ALIGN_LEFT
+            cell.verticalAlignment = Element.ALIGN_MIDDLE
             table1.addCell(cell)
+
+
 
             //si la cantidad es menor que 1 mostrar vacia la cantidad
 

@@ -1,17 +1,23 @@
 package com.castellanoseloy.ventarapida.ui.promts
 
 
+import android.Manifest
+import android.app.Activity
 import com.castellanoseloy.ventarapida.R
 
 import com.castellanoseloy.ventarapida.datos.Variable
 import android.app.AlertDialog
+import android.app.Fragment
 import android.content.Context
+import android.content.Intent
+import android.speech.RecognizerIntent
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,7 +27,7 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 
 import java.util.Locale
 
-class PromtSeleccionarVariantes {
+class PromtSeleccionarVariantes : Fragment() {
 
     private lateinit var adaptador: SeleccionarVariantesAdaptador
     private var searchViewVariantes: SearchView? = null
@@ -32,6 +38,7 @@ class PromtSeleccionarVariantes {
     private var imageView_eliminarCarrito: ImageView? = null
     private var listaVariablesSeleccionadas = mutableListOf<Variable>()
     private var textView_listaSeleccion: TextView? = null
+    val REQUEST_CODE_VOICE_SEARCH = 1100
 
     fun agregar(
         context: Context,
@@ -39,6 +46,7 @@ class PromtSeleccionarVariantes {
         productosSeleccionados : MutableMap<ModeloProducto, Int>,
         onVariableAgregada: (List<Variable>) -> Unit
     ) {
+
 
 
         // Crear el diálogo
@@ -61,6 +69,18 @@ class PromtSeleccionarVariantes {
 
         Log.d("PromtSeleccionarVariables", "Lista actualizada: $listaVariablesSeleccionadas")
 
+
+        // Obtener referencia al botón de micrófono
+        val imageViewMicrofono = dialogView.findViewById<ImageView>(R.id.imageView_microfono)
+
+        // Configurar el listener del botón de micrófono
+        imageViewMicrofono.setOnClickListener {
+
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                (context as Activity).startActivityForResult(intent, REQUEST_CODE_VOICE_SEARCH)
+
+        }
 
         // Configurar el botón agregar
         button_agregar?.setOnClickListener {
@@ -235,4 +255,27 @@ class PromtSeleccionarVariantes {
         Log.d("PromtSeleccionarVariables", "Lista actualizada candidad cambiada: $listaVariablesSeleccionadas")
         textView_listaSeleccion?.text=cantidadTotalDeVariables.toString()
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_VOICE_SEARCH && resultCode == Activity.RESULT_OK) {
+            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val query = results?.get(0)
+            if (query != null) {
+                Log.d("PromtSeleccionarVariables", "Resultado de búsqueda por voz: $query")
+                Log.d("PromtSeleccionarVariables", "searchViewVariantes: $searchViewVariantes")
+
+                // Actualizar el campo de búsqueda con el resultado de la búsqueda por voz
+                searchViewVariantes?.isIconified = false
+                searchViewVariantes?.setQuery(query, true)
+            } else {
+                Log.d("PromtSeleccionarVariables", "No se obtuvo ningún resultado de búsqueda por voz")
+            }
+        } else {
+            Log.d("PromtSeleccionarVariables", "requestCode o resultCode no coinciden")
+        }
+    }
+
 }

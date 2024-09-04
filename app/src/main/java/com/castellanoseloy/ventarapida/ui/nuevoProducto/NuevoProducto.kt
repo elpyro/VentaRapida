@@ -1,6 +1,7 @@
 package com.castellanoseloy.ventarapida.ui.nuevoProducto
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -13,6 +14,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.databinding.FragmentNuevoProductoBinding
@@ -36,6 +38,7 @@ import java.util.*
 class NuevoProducto : Fragment() {
 
 
+    private var informacion: Boolean? = false
     private lateinit var producto: ModeloProducto
     var binding: FragmentNuevoProductoBinding? = null
     private lateinit var viewModel: NuevoProductoViewModel
@@ -46,6 +49,12 @@ class NuevoProducto : Fragment() {
     ): View {
 
         binding = FragmentNuevoProductoBinding.inflate(inflater, container, false)
+
+        val bundle = arguments
+        informacion = bundle?.getBoolean("primerProducto")
+        if(informacion==true){
+            crearAlertDialogo()
+        }
 
         binding?.imageViewFoto?.setOnClickListener{
             cargarImagen()
@@ -67,6 +76,24 @@ class NuevoProducto : Fragment() {
 
         marcarCamposObligatorios()
         return binding!!.root // Retorna la vista inflada
+    }
+
+    private fun crearAlertDialogo() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("¡Crea tus productos!")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+        builder.setMessage(
+            "¡Ya estás dentro!\n\n" +
+                    "Primero crea tu un producto.\n\n" +
+                    "Ingresa el [Nombre del producto], el [Precio Compra] y el [Precio Venta]. Lo ultilizaremos para calcular la rentabilidad de tu negocio.\n\n" +
+                    "Solo si el producto tiene  variantes distintas como: modelo, tamaño o color, puedes agregarlas aquí."
+        )
+        builder.setPositiveButton("¡Entendido!") { dialog, which ->
+            // Acciones después de hacer clic en "Entendido"
+        }
+
+        builder.show()
+
     }
 
     private fun marcarCamposObligatorios() {
@@ -255,7 +282,36 @@ class NuevoProducto : Fragment() {
         if (!verificarConexion.verificarConexion(requireContext())){
             Toast.makeText(requireContext(),getString(R.string.disponbleEnlaNuebe),Toast.LENGTH_LONG).show()
         }
+        if (informacion == true){
+            crearAlertDialogoSurtir()
         }
+
+        }
+
+    private fun crearAlertDialogoSurtir() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("¡Ya creaste un producto!")
+        builder.setIcon(R.drawable.logo2_compra_rapidita)
+        builder.setMessage(
+            "¡Necesitamos surtirlo al inventario!\n\n" +
+                    "Para agregar cantidades de un producto debes surtirlo.\n" +
+                    "Cada vez que surtes un producto, se sumará a las existencias y cuando lo vendas, se restará de las existencias.\n\n"+
+                    "Los productos surtidos  sumarán su [Precio Compra] a tu inventario.\n"
+
+
+
+        )
+        builder.setPositiveButton("¡Ir a surtir inventario!") { dialog, which ->
+            // Acciones después de hacer clic en "¡Ir al panel de surtir inventario!"
+            Navigation.findNavController(vista!!).popBackStack()
+
+            Navigation.findNavController(vista!!).navigate(R.id.compra)
+
+        }
+        builder.show()
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca

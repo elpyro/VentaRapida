@@ -116,7 +116,7 @@ class Venta : Fragment() {
         builder.setIcon(R.drawable.logo2_compra_rapidita)
         builder.setMessage(
             "¡Explora tú catálogo!\n\n" +
-                    "Aquí encontrarás los productos con sus respectivos precios de venta al público. Puedes seleccionar productos y agregarlos fácilmente.\n\n" +
+                    "Aquí encontrarás los productos con sus respectivos precios de venta al público. Puedes seleccionar productos y agregarlos al carrito.\n\n" +
                     "¿Sabías que también puedes:\n" +
                     "- Mantener presionado un producto para ver más detalles y compartirlo.\n" +
                     "- Utilizar la función de búsqueda por voz utilizando el micrófono.\n" +
@@ -283,6 +283,10 @@ class Venta : Fragment() {
                 } else {
                     binding?.LinearLayoutPantallaBienvenida?.visibility=View.VISIBLE
                     binding?.LinearLayoutPantallaPrincipal?.visibility=View.GONE
+
+                    val bundle = Bundle()
+                    bundle.putBoolean("primerProducto", true)
+                    Navigation.findNavController(vista).navigate(R.id.nav_nuevoProdcuto,bundle)
                 }
             }
 
@@ -319,11 +323,13 @@ class Venta : Fragment() {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val query = results?.get(0)
             if (query != null) {
+                Log.d("PromtSeleccionarVariables", "Resultado de búsqueda por voz: $query")
                 binding?.searchViewProductosVenta?.isIconified=false
                 binding?.searchViewProductosVenta?.setQuery(query, true)
             }
 
         }
+
     }
 
 

@@ -132,10 +132,28 @@ class InformacionProducto : Fragment() {
 
         // Obtener el nombre del producto
         val productName = modeloProducto?.nombre
-        val precio=modeloProducto?.p_diamante?.formatoMonenda()
-        val descripcion=modeloProducto?.comentario
-        // Crear el mensaje que contiene el nombre del producto
-        val message = "$productName \n*Precio: $precio* \n$descripcion"
+        val precio = modeloProducto?.p_diamante?.formatoMonenda()
+        val descripcion = modeloProducto?.comentario
+
+// Crear el mensaje que contiene el nombre del producto
+        val stringBuilder = StringBuilder()
+        stringBuilder.append("$productName \n*Precio: $precio* \n$descripcion")
+
+// Agregar las variantes si existen y si la cantidad es mayor o igual a 1
+        modeloProducto?.listaVariables?.let { lista ->
+            val variablesFiltradas = lista.filter { it.cantidad >= 1 } // Filtrar las variables con cantidad mayor o igual a 1
+            if (variablesFiltradas.isNotEmpty()) {
+                stringBuilder.append("\n -Variantes: \n")
+                val variablesString = variablesFiltradas.joinToString("\n") { variable ->
+                    "${variable.nombreVariable}: ${variable.cantidad}"
+                }
+                stringBuilder.append(variablesString)
+            }
+        }
+
+        val message = stringBuilder.toString()
+
+
 
         // Llamar a la función para compartir
         compatirInformacionPrincipal(listOf(imageUrl) as List<Uri>, message, requireContext())
