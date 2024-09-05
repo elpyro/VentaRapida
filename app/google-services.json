@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:309307936110:android:376b2eb8cf5031738d057f",
+        "android_client_info": {
+          "package_name": "com.castellanoseloy.cataplus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309307936110-mfi2pjar88dsgjl2ds705npc4sffl7ev.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.castellanoseloy.cataplus",
+            "certificate_hash": "105abdc04625ac65bab58159fb803fda62645894"
+          }
+        },
+        {
+          "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCus2aOyfw0Hr5W2uUoqtxOWonkxAUAgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309307936110-2q4td3m40ttrngqt7n7juv7kvnd05vdg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:309307936110:android:4d9bca29e3f2bdd78d057f",
         "android_client_info": {
           "package_name": "com.castellanoseloy.ventarapida"
@@ -20,6 +57,14 @@
           "android_info": {
             "package_name": "com.castellanoseloy.ventarapida",
             "certificate_hash": "ddd0c57231f547482d0e3fdafa406108a13cbcf2"
+          }
+        },
+        {
+          "client_id": "309307936110-4msqpcai0qjudt4gh268pf5fji5sr4od.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.castellanoseloy.ventarapida",
+            "certificate_hash": "105abdc04625ac65bab58159fb803fda62645894"
           }
         },
         {

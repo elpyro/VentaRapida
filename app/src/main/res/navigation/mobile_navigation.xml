@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.castellanoseloy.ventarapida.ui.ventaPaginaPrincipal.Venta"
+        android:name="com.castellanoseloy.cataplus.ui.ventaPaginaPrincipal.Venta"
         android:label="@string/venta"
         tools:layout="@layout/venta" />
     <fragment
@@ -16,12 +16,12 @@
         android:label="" />
     <fragment
         android:id="@+id/nav_nuevoProdcuto"
-        android:name="com.castellanoseloy.ventarapida.ui.nuevoProducto.NuevoProducto"
+        android:name="com.castellanoseloy.cataplus.ui.nuevoProducto.NuevoProducto"
         android:label="Nuevo Producto"
         tools:layout="@layout/fragment_nuevo_producto" />
     <fragment
         android:id="@+id/factura"
-        android:name="com.castellanoseloy.ventarapida.ui.detalleVenta.DetalleVenta"
+        android:name="com.castellanoseloy.cataplus.ui.detalleVenta.DetalleVenta"
         android:label="@string/carritoVentas"
         tools:layout="@layout/fragment_detalle_venta" />
     <fragment
@@ -30,12 +30,12 @@
         tools:layout="@layout/fragment_registros" />
     <fragment
         android:id="@+id/ventas"
-        android:name="com.castellanoseloy.ventarapida.ui.registros.pestanas.FacturaVentas"
+        android:name="com.castellanoseloy.cataplus.ui.registros.pestanas.FacturaVentas"
         android:label="@string/RegistroVentas"
         tools:layout="@layout/fragment_factura_ventas" />
     <fragment
         android:id="@+id/facturaGuardada"
-        android:name="com.castellanoseloy.ventarapida.ui.factura_guardada.FacturaGuardada"
+        android:name="com.castellanoseloy.cataplus.ui.factura_guardada.FacturaGuardada"
         android:label="@string/detalleFactura"
         tools:layout="@layout/fragment_factura_guardada" >
         <action
@@ -44,25 +44,25 @@
     </fragment>
     <fragment
         android:id="@+id/agregarProductoFactura"
-        android:name="com.castellanoseloy.ventarapida.ui.agregarProductoFactura.AgregarProductoFactura"
+        android:name="com.castellanoseloy.cataplus.ui.agregarProductoFactura.AgregarProductoFactura"
         android:label="@string/Agregar_producto" />
 
     <fragment
         android:id="@+id/compra"
-        android:name="com.castellanoseloy.ventarapida.ui.compras.Compra"
+        android:name="com.castellanoseloy.cataplus.ui.compras.Compra"
         android:label="@string/Agregar_inventario" />
     <fragment
         android:id="@+id/detalleCompra"
-        android:name="com.castellanoseloy.ventarapida.ui.detalleCompra.DetalleCompra"
+        android:name="com.castellanoseloy.cataplus.ui.detalleCompra.DetalleCompra"
         android:label="@string/carritoSurtido"
         tools:layout="@layout/fragment_detalle_compra" />
     <fragment
         android:id="@+id/listaCompras"
-        android:name="com.castellanoseloy.ventarapida.ui.registros.pestanas.ListaCompras"
+        android:name="com.castellanoseloy.cataplus.ui.registros.pestanas.ListaCompras"
         android:label="@string/RegistroCompras" />
     <fragment
         android:id="@+id/compraGuardada"
-        android:name="com.castellanoseloy.ventarapida.ui.compra_guardada.CompraGuardada"
+        android:name="com.castellanoseloy.cataplus.ui.compra_guardada.CompraGuardada"
         android:label="Surtidos" >
         <action
             android:id="@+id/action_compraGuardada_to_historialProducto"
@@ -70,16 +70,16 @@
     </fragment>
     <fragment
         android:id="@+id/configuracion"
-        android:name="com.castellanoseloy.ventarapida.ui.configuracion.Configuracion"
+        android:name="com.castellanoseloy.cataplus.ui.configuracion.Configuracion"
         android:label="Configuración" />
     <fragment
         android:id="@+id/datosEmpresa"
-        android:name="com.castellanoseloy.ventarapida.ui.configuracion.datosEmpresa.DatosEmpresa"
+        android:name="com.castellanoseloy.cataplus.ui.configuracion.datosEmpresa.DatosEmpresa"
         android:label="@string/datosempresa"
         tools:layout="@layout/fragment_datos_empresa" />
     <fragment
         android:id="@+id/listaClientes"
-        android:name="com.castellanoseloy.ventarapida.ui.clientes.ListaClientes"
+        android:name="com.castellanoseloy.cataplus.ui.clientes.ListaClientes"
         android:label="@string/clientes"
         tools:layout="@layout/fragment_lista_clientes" />
     <fragment
@@ -88,17 +88,17 @@
         android:label="@string/cliente" />
     <fragment
         android:id="@+id/reportes"
-        android:name="com.castellanoseloy.ventarapida.ui.reportes.Reportes"
+        android:name="com.castellanoseloy.cataplus.ui.reportes.Reportes"
         android:label="@string/Reportes"
         tools:layout="@layout/fragment_reportes" />
     <fragment
         android:id="@+id/registroUsuarios"
-        android:name="com.castellanoseloy.ventarapida.ui.usuarios.RegistroUsuario"
+        android:name="com.castellanoseloy.cataplus.ui.usuarios.RegistroUsuario"
         android:label="@string/Usuario"
         tools:layout="@layout/fragment_registro_usuario" />
     <fragment
         android:id="@+id/detalleUsuario"
-        android:name="com.castellanoseloy.ventarapida.ui.usuarios.DetalleSesion"
+        android:name="com.castellanoseloy.cataplus.ui.usuarios.DetalleSesion"
         android:label="@string/detalleSesion"
         tools:layout="@layout/fragment_detalle_usuario" />
     <fragment
@@ -107,38 +107,38 @@
         tools:layout="@layout/fragment_usuario_no_registrado" />
     <fragment
         android:id="@+id/listaUsuarios"
-        android:name="com.castellanoseloy.ventarapida.ui.usuarios.ListaUsuarios"
+        android:name="com.castellanoseloy.cataplus.ui.usuarios.ListaUsuarios"
         android:label="@string/Usuarios"
         tools:layout="@layout/fragment_lista_usuarios" />
     <fragment
         android:id="@+id/suscripcionesDisponibles"
-        android:name="com.castellanoseloy.ventarapida.ui.supscripciones.SuscripcionesDisponibles"
+        android:name="com.castellanoseloy.cataplus.ui.supscripciones.SuscripcionesDisponibles"
         android:label="@string/Supcripciones"
         tools:layout="@layout/fragment_suscripciones_disponibles" />
     <fragment
         android:id="@+id/reporteVendedor"
-        android:name="com.castellanoseloy.ventarapida.ui.reportes.ReporteVendedor"
+        android:name="com.castellanoseloy.cataplus.ui.reportes.ReporteVendedor"
         android:label="@string/Reportes"
         tools:layout="@layout/fragment_reporte_vendedor" />
     <fragment
         android:id="@+id/informacionProducto"
-        android:name="com.castellanoseloy.ventarapida.ui.informacionProducto.InformacionProducto"
+        android:name="com.castellanoseloy.cataplus.ui.informacionProducto.InformacionProducto"
         android:label="@string/informacion_producto"
         tools:layout="@layout/fragment_informacion_producto" />
     <fragment
         android:id="@+id/recaudos"
-        android:name="com.castellanoseloy.ventarapida.ui.recaudos.Recaudos"
+        android:name="com.castellanoseloy.cataplus.ui.recaudos.Recaudos"
         android:label="@string/Recaudos"
         tools:layout="@layout/fragment_recaudos" />
     <fragment
         android:id="@+id/historialProducto"
-        android:name="com.castellanoseloy.ventarapida.ui.registros.pestanas.HistorialProducto"
+        android:name="com.castellanoseloy.cataplus.ui.registros.pestanas.HistorialProducto"
         android:label="Historial del producto"
         tools:layout="@layout/fragment_factura_ventas" >
     </fragment>
     <fragment
         android:id="@+id/fragmentAgregarVariante"
-        android:name="com.castellanoseloy.ventarapida.ui.variantes.FragmentAgregarVariante"
+        android:name="com.castellanoseloy.cataplus.ui.variantes.FragmentAgregarVariante"
         android:label="fragment_fragment_agregar_variante"
         tools:layout="@layout/fragment_fragment_agregar_variante" />
 

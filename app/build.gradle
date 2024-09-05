@@ -10,11 +10,11 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.castellanoseloy.ventarapida"
+        applicationId "com.castellanoseloy.cataplus"
         minSdk 28
         targetSdk 34
-        versionCode 236
-        versionName "2.36"
+        versionCode 238
+        versionName "2.38"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,7 +35,7 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'com.castellanoseloy.ventarapida'
+    namespace 'com.castellanoseloy.cataplus'
 }
 
 dependencies {
