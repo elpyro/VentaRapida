@@ -431,6 +431,7 @@ class CrearPdfFacturaOCompra {
 // Crear la celda y agregar el párrafo combinado
             cell = PdfPCell()
             cell.addElement(combinedParagraph)
+            cell.backgroundColor = cell_color
             cell.horizontalAlignment = Element.ALIGN_LEFT
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             table1.addCell(cell)
