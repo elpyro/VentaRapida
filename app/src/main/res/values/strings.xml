@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Cataplus</string>
-    <string name="misclaves">key alias elpyro keystore Sofia5.. keypasword Sofia5.. </string>
+    <string name="misclaves">key alias elpyro01 keystore elpyro01 keypasword elpyro01 </string>
     <string name="interstitial_ad_unit_id">ca-app-pub-5390342068041092/6706005035</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -171,5 +171,7 @@
     <string name="aceptar">Aceptar</string>
     <string name="variantes">Variantes</string>
     <string name="detalle">Detalle</string>
+    <string name="Surtidos">Surtidos:</string>
+    <string name="Vendidos">Vendidos:</string>
 
 </resources>

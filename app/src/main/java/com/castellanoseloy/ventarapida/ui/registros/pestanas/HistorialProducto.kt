@@ -1,8 +1,10 @@
 package com.castellanoseloy.ventarapida.ui.registros.pestanas
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +23,7 @@ import com.castellanoseloy.ventarapida.procesos.Utilidades.eliminarAcentosTildes
 class HistorialProducto : Fragment() {
     private var listaProductosCompleta: List<ModeloProductoFacturado>? = null
     private var idProducto: String? = null
-    private var primeraCarga: Boolean = true
+    private var primeraCarga = true
     private var progressDialog: ProgressDialog? = null
     private var searchText: String? = null
     private var binding: FragmentFacturaVentasBinding? = null
@@ -45,7 +47,10 @@ class HistorialProducto : Fragment() {
         val bundle = arguments
         idProducto = bundle?.getString("idProducto")
 
+        binding?.cardViewTotales?.visibility=View.VISIBLE
+
         viewModel.cargarRegistros(idProducto)
+
 
         progressDialogo()
 
@@ -73,28 +78,53 @@ class HistorialProducto : Fragment() {
     private fun observadores() {
         viewModel.historialProductos.observe(viewLifecycleOwner) { listaProductos ->
 
-                  listaProductosCompleta = listaProductos
-                  adaptador =
-                      HistorialProductoAdaptador(listaProductos)
-                  binding?.recyclerViewFacturaVentas?.adapter = adaptador
+            listaProductosCompleta = listaProductos
+            adaptador = HistorialProductoAdaptador(listaProductos)
+            binding?.recyclerViewFacturaVentas?.adapter = adaptador
 
-                  adaptador.setOnClickItem() { item ->
-                      abriDetalleFactura(item)
-                  }
-                  adaptador.setOnClickItemSurtido() { item ->
-                      abriDetalleSurtido(item)
-                  }
+            listenersRecyclerView()
 
             // Verificar si hay un texto de búsqueda y filtrar automáticamente
             if (!searchText.isNullOrBlank()) {
                 filtrarProductos(searchText!!)
             }
 
+            totales(listaProductos)
+
             progressDialog?.dismiss()
+        }
 
+    }
 
+    @SuppressLint("SetTextI18n")
+    private fun totales(listaProductos: List<ModeloProductoFacturado>) {
+        // Calcular las cantidades de productos comprados y vendidos
+        var totalComprados = 0
+        var totalVendidos = 0
+
+        listaProductos.forEach { productoFacturado ->
+            val cantidad = productoFacturado.cantidad.toIntOrNull() ?: 0
+
+            // Verificar si el producto es comprado o vendido
+            if (productoFacturado.tipoOperacion == "Surtido") {
+                totalComprados += cantidad
+            } else {
+                totalVendidos += cantidad
+            }
+        }
+
+        // Mostrar los resultados en el log
+        Log.d("HistorialProductoViewModel", "Total productos comprados: $totalComprados")
+        Log.d("HistorialProductoViewModel", "Total productos vendidos: $totalVendidos")
+        val totalProductos = totalComprados - totalVendidos
+        binding?.textViewSutidos?.text = "Surtidos: $totalComprados"
+        binding?.textViewVendidos?.text = "Vendidos: $totalVendidos"
+        if(primeraCarga){
+            binding?.textViewInventario?.text = "Inventario: $totalProductos"
+            primeraCarga=false
         }
     }
+
 
     private fun listeners() {
         binding?.swipeRefreshLayout?.setOnRefreshListener {
@@ -140,13 +170,18 @@ class HistorialProducto : Fragment() {
         }
         adaptador.updateData(productosFiltrados as MutableList<ModeloProductoFacturado>)
 
+        listenersRecyclerView()
+        totales(productosFiltrados)
+
+    }
+
+    private fun listenersRecyclerView() {
         adaptador.setOnClickItem() { item ->
             abriDetalleFactura(item)
         }
         adaptador.setOnClickItemSurtido() { item ->
             abriDetalleSurtido(item)
         }
-
     }
 
     override fun onResume() {

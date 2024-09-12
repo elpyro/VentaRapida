@@ -38,7 +38,63 @@
 
 
     </RelativeLayout>
+        <androidx.cardview.widget.CardView
+            android:visibility="gone"
+            android:id="@+id/cardView_totales"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center"
+            android:backgroundTint="@color/azul_trasparente"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="8dp"
+            android:elevation="10dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView_sutidos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_margin="4dp"
+                    android:text="@string/Surtidos"
+                    android:textColor="@color/amarillo"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/ColorFuenteEnFondoGris"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/textView_vendidos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_margin="4dp"
+                    android:text="@string/Vendidos"
+                    android:textColor="@color/verde"
+                    android:textAppearance="@style/ColorFuenteEnFondoGris"
+                    android:layout_weight="1"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/textView_inventario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_margin="4dp"
+                    android:text="@string/Inventario"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/ColorFuenteEnFondoGris"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
