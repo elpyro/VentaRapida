@@ -58,11 +58,9 @@ class PromtFacturaGuardada {
 
         if (tipo == "compra"){
             tablaReferencia="ProductosComprados"
-            var lista= DatosPersitidos.compraProductosSeleccionados
         }
         if (tipo == "venta"){
             tablaReferencia="ProductosFacturados"
-            var lista= DatosPersitidos.ventaProductosSeleccionados
         }
 
 // Inflar el layout para el diálogo
@@ -95,14 +93,9 @@ class PromtFacturaGuardada {
         configurarVariantes(item, context)
 
         // Configurar el botón "Aceptar"
+        nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
         dialogBuilder.setPositiveButton("Cambiar") { _, _ ->
-            if(itemSinCambios.listaVariables.isNullOrEmpty()) {
-                nuevaCantidad = editTextCantidad?.text.toString().takeIf { it.isNotEmpty() } ?: "0"
                 modificar(nuevaCantidad)
-            }else{
-                modificar(nuevaCantidad)
-            }
-
         }
 
 
