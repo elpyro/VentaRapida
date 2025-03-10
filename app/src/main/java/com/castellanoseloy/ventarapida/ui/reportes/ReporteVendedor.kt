@@ -40,6 +40,11 @@ class ReporteVendedor : Fragment() {
         listener()
         escuchadores()
 
+        if(DatosPersitidos.datosUsuario.configuracion.mostrarPreciosCompra){
+            binding?.checkBoxPersonalizado?.visibility=View.VISIBLE
+        }else{
+            binding?.checkBoxPersonalizado?.visibility=View.GONE
+        }
 
         return binding!!.root
     }
@@ -47,6 +52,15 @@ class ReporteVendedor : Fragment() {
     private fun escuchadores() {
         viewModel.reporteCompletado.observe(viewLifecycleOwner) {
             progressDialog.dismiss()
+        }
+
+        binding?.checkBoxPersonalizado?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked){
+                binding?.editTextAumento?.visibility=View.VISIBLE
+            }else{
+                binding?.editTextAumento?.visibility=View.GONE
+            }
+
         }
     }
 
@@ -62,12 +76,21 @@ class ReporteVendedor : Fragment() {
             // Ejecutar la creación del PDF en un hilo secundario usando coroutines
             lifecycleScope.launch(Dispatchers.IO) {
                 var mayorCero = true
+                var aumento: Double? =null
+                if(binding?.checkBoxPersonalizado?.isChecked == true)  {
+                    if (binding?.editTextAumento?.text.toString().isEmpty()) {
+                        binding?.editTextAumento?.setText("0.0")
+                    }
+
+                    aumento= binding?.editTextAumento?.text.toString().toDouble()
+                }
+
                 if (binding?.radioButtonCatalogoTodos!!.isChecked) mayorCero = false
+                viewModel.crearCatalogo(requireContext(), mayorCero, aumento)
 
-                viewModel.crearCatalogo(requireContext(), mayorCero)
             }
-        }
 
+        }
 
         binding?.textViewDesde?.setOnClickListener{
             val c = Calendar.getInstance()

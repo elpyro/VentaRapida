@@ -39,8 +39,12 @@ import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.ui.detalleProducto.DetalleVariantesAdaptador
 import com.castellanoseloy.ventarapida.ui.promts.PromtAgregarVariante
 import com.squareup.picasso.Picasso
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
+import com.canhub.cropper.CropImageView;
+import com.canhub.cropper.CropImage;
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria.Companion.imagenUri
 import java.io.File
 import kotlin.math.absoluteValue
 
@@ -337,10 +341,7 @@ class DetalleProducto : Fragment() {
         }
     }
 
-    private fun cargarImagen() {
-        val imageHandler = TomarFotoYGaleria(this)
-        imageHandler.cargarImagen()
-    }
+
 
 
     private fun eliminar() {
@@ -522,54 +523,38 @@ class DetalleProducto : Fragment() {
         // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
     }
+    private val cropImageLauncher = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            val uriContent = result.uriContent
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Si la acción fue tomar una foto con la cámara
-        if (requestCode == TomarFotoYGaleria.CAMARA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-
-            // Recortar la imagen usando la biblioteca CropImage
-            CropImage.activity(TomarFotoYGaleria.imagenUri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                //.setAspectRatio(1, 1)
-                .start(requireContext(), this)
-        }
-
-        // Si la acción fue elegir una imagen de la galería
-        if (requestCode == TomarFotoYGaleria.GALERIA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Obtener la URI de la imagen seleccionada de la galería
-            val uri = data?.data
-            // Recortar la imagen usando la biblioteca CropImage
-            CropImage.activity(uri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                //.setAspectRatio(1, 1)
-
-                .start(requireContext(), this)
-
-        }
-        // Si la acción fue recortar la imagen usando CropImage
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == Activity.RESULT_OK) {
-                // Obtener el archivo de la imagen recortada
-                val file = File(result.uri.path!!)
-                if (file.exists()) {
-                    // Cargar la imagen recortada en el ImageView
-                    bitmapFoto = BitmapFactory.decodeFile(file.absolutePath)
-                    binding?.imageViewFoto?.setImageBitmap(bitmapFoto)
+            try {
+                // Guardar el nuevo URI de la imagen recortada
+                if (uriContent != null) {
+                    imagenUri = uriContent
                 }
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                // Mostrar un mensaje de error si la recortada no fue exitosa
-                val error = result.error
-                Toast.makeText(
-                    requireContext(),
-                    "Error al recortar la imagen: $error",
-                    Toast.LENGTH_SHORT
-                ).show()
+
+                // Convertir la URI a Bitmap
+                val inputStream = requireContext().contentResolver.openInputStream(uriContent!!)
+                bitmapFoto = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+
+                // Mostrar la imagen recortada en el ImageView
+                binding?.imageViewFoto?.setImageBitmap(bitmapFoto)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "Error al cargar la imagen", Toast.LENGTH_LONG).show()
             }
+        } else {
+            Toast.makeText(requireContext(), "Error al recortar la imagen", Toast.LENGTH_LONG).show()
         }
     }
+
+    private fun cargarImagen() {
+        cropImageLauncher.launch(
+            CropImageContractOptions(null, CropImageOptions())
+        )
+    }
+
 
 }

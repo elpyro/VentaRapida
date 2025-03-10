@@ -13,8 +13,8 @@ android {
         applicationId "com.castellanoseloy.ventarapida"
         minSdk 28
         targetSdk 34
-        versionCode 238
-        versionName "2.38"
+        versionCode 239
+        versionName "2.39"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -59,7 +59,7 @@ dependencies {
     implementation "com.squareup.picasso:picasso:2.71828"
 
     //recorta imagen tomada
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+    implementation("com.vanniktech:android-image-cropper:4.6.0")
 
     //preferencias
     implementation "androidx.work:work-runtime-ktx:2.8.1"
@@ -68,7 +68,7 @@ dependencies {
     //crear pdf
     implementation 'com.itextpdf:itextpdf:5.5.13.2'
     //visor pdf
-    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+    implementation 'com.github.mhiew:android-pdf-viewer:3.2.0-beta.3'
 
     implementation 'com.google.firebase:firebase-database:20.2.2'
     implementation 'com.google.firebase:firebase-common-ktx:20.4.0'

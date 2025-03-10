@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -59,6 +60,14 @@ class Reportes : Fragment() {
     private fun escuchadores() {
         viewModel.reporteCompletado.observe(viewLifecycleOwner) {
             progressDialog.dismiss()
+        }
+        binding?.checkBoxPersonalizado?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked){
+                binding?.editTextAumento?.visibility=View.VISIBLE
+            }else{
+                binding?.editTextAumento?.visibility=View.GONE
+            }
+
         }
     }
 
@@ -124,10 +133,20 @@ class Reportes : Fragment() {
             // Ejecutar la creación del PDF en un hilo secundario usando coroutines
             lifecycleScope.launch(Dispatchers.IO) {
                 var mayorCero = true
-                if (binding?.radioButtonCatalogoTodos!!.isChecked) mayorCero = false
+                var aumento: Double? =null
+                if(binding?.checkBoxPersonalizado?.isChecked == true)  {
+                    if (binding?.editTextAumento?.text.toString().isEmpty()) {
+                        binding?.editTextAumento?.setText("0.0")
+                    }
 
-                viewModel.crearCatalogo(requireContext(), mayorCero)
-            }
+                    aumento= binding?.editTextAumento?.text.toString().toDouble()
+                }
+
+                    if (binding?.radioButtonCatalogoTodos!!.isChecked) mayorCero = false
+                    viewModel.crearCatalogo(requireContext(), mayorCero, aumento)
+
+                }
+
         }
 
 

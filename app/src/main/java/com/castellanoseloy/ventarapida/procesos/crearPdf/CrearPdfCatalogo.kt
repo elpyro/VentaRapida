@@ -1,13 +1,8 @@
 package com.castellanoseloy.ventarapida.procesos.crearPdf
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
-import androidx.core.content.ContextCompat
 import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
-import com.castellanoseloy.ventarapida.R
 import com.castellanoseloy.ventarapida.datos.ModeloProducto
 import com.castellanoseloy.ventarapida.procesos.PageNumeration
 import com.castellanoseloy.ventarapida.procesos.Utilidades
@@ -24,7 +19,6 @@ import com.itextpdf.text.Phrase
 import com.itextpdf.text.pdf.PdfPCell
 import com.itextpdf.text.pdf.PdfPTable
 import com.itextpdf.text.pdf.PdfWriter
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +43,8 @@ class CrearPdfCatalogo {
 
     suspend fun catalogo(
         context: Context,
-        listaProductos: ArrayList<ModeloProducto>
+        listaProductos: ArrayList<ModeloProducto>,
+        aumento: Double? =null
     ) {
 
         //ordenar alfabetico
@@ -67,8 +62,8 @@ class CrearPdfCatalogo {
         metadata(document)
         cabezera(document, context)
 
-        val latch = CountDownLatch(listaProductos.size) // Crear el CountDownLatch con el tamaño de la lista de productos
-        val tablaInventario = crearTabla(listaProductos, context, latch) // Pasar el CountDownLatch a la función crearTabla
+
+        val tablaInventario = crearTabla(listaProductos,aumento ) // Pasar el CountDownLatch a la función crearTabla
 
         document.add(Paragraph("\n"))
         document.add(tablaInventario.tabla)
@@ -181,40 +176,21 @@ class CrearPdfCatalogo {
 
     data class TablaInventario(val tabla: PdfPTable)
 
-    private suspend fun crearTabla(dataTable: List<ModeloProducto>, context: Context, latch: CountDownLatch): TablaInventario {
+    private suspend fun crearTabla(
+        dataTable: List<ModeloProducto>,
+        porcentajeAjuste: Double? = null // Nuevo parámetro opcional para ajustar precio
+    ): TablaInventario {
         val table1 = PdfPTable(5)
         table1.widthPercentage = 100f
         table1.setWidths(floatArrayOf(1f, 8f, 1.5f, 3f, 2.5f))
         table1.headerRows = 1
         table1.defaultCell.verticalAlignment = Element.ALIGN_CENTER
         table1.defaultCell.horizontalAlignment = Element.ALIGN_CENTER
+
         var cell: PdfPCell
-        run {
-            cell = PdfPCell(Phrase("Id", FONT_COLUMN))
-            cell.horizontalAlignment = Element.ALIGN_CENTER
-            cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
-            table1.addCell(cell)
-
-            cell = PdfPCell(Phrase("Producto", FONT_COLUMN))
-            cell.horizontalAlignment = Element.ALIGN_CENTER
-            cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
-            table1.addCell(cell)
-
-            cell = PdfPCell(Phrase("Cant.", FONT_COLUMN))
-            cell.horizontalAlignment = Element.ALIGN_CENTER
-            cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
-            table1.addCell(cell)
-
-            cell = PdfPCell(Phrase("Precio", FONT_COLUMN))
-            cell.horizontalAlignment = Element.ALIGN_CENTER
-            cell.verticalAlignment = Element.ALIGN_MIDDLE
-            cell.setPadding(4f)
-            table1.addCell(cell)
-
-            cell = PdfPCell(Phrase("Imagen", FONT_COLUMN))
+        val headers = listOf("Id", "Producto", "Cant.", "Precio", "Imagen")
+        headers.forEach { header ->
+            cell = PdfPCell(Phrase(header, FONT_COLUMN))
             cell.horizontalAlignment = Element.ALIGN_CENTER
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             cell.setPadding(4f)
@@ -222,89 +198,75 @@ class CrearPdfCatalogo {
         }
 
         var alternate = false
-        val lt_gray = BaseColor(221, 221, 221) //#DDDDDD
-        var cell_color: BaseColor?
-        val size = dataTable.size
+        val ltGray = BaseColor(221, 221, 221) // #DDDDDD
         val images: List<Image?> = loadImagesAsync(dataTable)
-        for (i in 0 until size) {
 
-            cell_color = if (alternate) lt_gray else BaseColor.WHITE
-            val temp = dataTable[i]
+        for ((index, temp) in dataTable.withIndex()) {
+            val cellColor = if (alternate) ltGray else BaseColor.WHITE
 
+            // **Calcular precio final**
+            var precioFinal :Double = temp.p_diamante.toDouble()
+            if (porcentajeAjuste != null) {
+                precioFinal = temp.p_compra.toDouble()
+            }
+
+            // **Aplicar porcentaje de ajuste si es necesario**
+            if (porcentajeAjuste != null) {
+                precioFinal += precioFinal * (porcentajeAjuste / 100)
+            }
+
+            // **Celda ID**
             cell = PdfPCell()
-            setCellFormat(cell, cell_color!!, (i+1).toString())
+            setCellFormat(cell, cellColor, (index + 1).toString())
             table1.addCell(cell)
 
-// Crear un StringBuilder para construir la lista de variables
+            // **Celda Producto con Variantes**
             val stringBuilder = StringBuilder()
-
-            temp.listaVariables?.let { lista ->
-                if (lista.isNotEmpty()) {
-                    // Filtrar las variables con cantidad mayor o igual a 1
-                    val variablesFiltradas = lista.filter { it.cantidad >= 1 }
-
-                    if (variablesFiltradas.isNotEmpty()) {
-                        stringBuilder.append("-Variantes: \n")  // Puedes personalizar este prefijo si lo prefieres
-                        // Usar barra vertical '|' como separador entre las variables
-                        val variablesString = variablesFiltradas.joinToString(" | ") { variable ->
-                            "${variable.nombreVariable}: ${variable.cantidad}"
-                        }
-                        stringBuilder.append(variablesString)
-                    }
+            temp.listaVariables?.filter { it.cantidad >= 1 }?.let { variablesFiltradas ->
+                if (variablesFiltradas.isNotEmpty()) {
+                    stringBuilder.append("-Variantes: \n")
+                    stringBuilder.append(
+                        variablesFiltradas.joinToString(" | ") { "${it.nombreVariable}: ${it.cantidad}" }
+                    )
                 }
             }
 
-// Crear un Paragraph para el nombre del producto con la fuente original
             val nombreParagraph = Paragraph(temp.nombre, FONT_CELL)
-
-// Crear un Paragraph para las variantes con la fuente FONT_VARIANTES
             val variantesParagraph = Paragraph(stringBuilder.toString(), FONT_VARIANTES)
+            val combinedParagraph = Paragraph().apply {
+                add(nombreParagraph)
+                add(variantesParagraph)
+            }
 
-// Crear un contenedor Paragraph que combine ambos elementos
-            val combinedParagraph = Paragraph()
-            combinedParagraph.add(nombreParagraph)
-            combinedParagraph.add(variantesParagraph)
-
-// Crear la celda y agregar el párrafo combinado
             cell = PdfPCell()
             cell.addElement(combinedParagraph)
-            cell.backgroundColor = cell_color
+            cell.backgroundColor = cellColor
             cell.horizontalAlignment = Element.ALIGN_LEFT
             cell.verticalAlignment = Element.ALIGN_MIDDLE
             table1.addCell(cell)
 
-
-
-            //si la cantidad es menor que 1 mostrar vacia la cantidad
-
-            if(temp.cantidad.isNotEmpty()){
-                if(temp.cantidad.toInt()<1) temp.cantidad=""
-            }else{
-                temp.cantidad=""
-            }
-
-
+            // **Celda Cantidad**
+            val cantidadFinal = if (temp.cantidad.isNotEmpty() && temp.cantidad.toInt() >= 1) temp.cantidad else ""
             cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.cantidad)
+            setCellFormat(cell, cellColor, cantidadFinal)
             table1.addCell(cell)
 
+            // **Celda Precio**
             cell = PdfPCell()
-            setCellFormat(cell, cell_color, temp.p_diamante.formatoMonenda()!!)
+            setCellFormat(cell, cellColor, precioFinal.toString().formatoMonenda()!!)
             table1.addCell(cell)
 
-            cell = PdfPCell()
-            cell.backgroundColor = cell_color
-
-            if (images[i] != null) {
-                val logoCell = PdfPCell(images[i])
+            // **Celda Imagen**
+            if (images[index] != null) {
+                val logoCell = PdfPCell(images[index])
                 logoCell.horizontalAlignment = Element.ALIGN_CENTER
                 logoCell.verticalAlignment = Element.ALIGN_MIDDLE
-                logoCell.backgroundColor=cell_color
+                logoCell.backgroundColor = cellColor
                 logoCell.setPadding(2F)
                 table1.addCell(logoCell)
-            }else{
+            } else {
                 cell = PdfPCell()
-                setCellFormat(cell, cell_color, "No disponible")
+                setCellFormat(cell, cellColor, "No disponible")
                 cell.setPadding(4F)
                 cell.verticalAlignment = Element.ALIGN_MIDDLE
                 table1.addCell(cell)
@@ -313,10 +275,9 @@ class CrearPdfCatalogo {
             alternate = !alternate
         }
 
-
-
         return TablaInventario(table1)
     }
+
 
     private suspend fun loadImage(imageUrl: String): Image? {
         return withContext(Dispatchers.IO) {

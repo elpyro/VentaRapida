@@ -173,5 +173,6 @@
     <string name="detalle">Detalle</string>
     <string name="Surtidos">Surtidos:</string>
     <string name="Vendidos">Vendidos:</string>
+    <string name="personalizado">Aumento Personalizado</string>
 
 </resources>

@@ -23,7 +23,7 @@ class ReporteVendedorViewModel : ViewModel() {
     val reporteCompletado: LiveData<Unit> = _reporteCompletado
 
 
-    fun crearCatalogo(context: Context, mayorCero: Boolean) {
+    fun crearCatalogo(context: Context, mayorCero: Boolean, aumento: Double?=null) {
 
         val tareaBuscarProductos = FirebaseProductos.buscarProductos(mayorCero)
         tareaBuscarProductos
@@ -31,7 +31,11 @@ class ReporteVendedorViewModel : ViewModel() {
                 if(listaProductos.isNotEmpty()){
                     runBlocking {
                         val crearPdf = CrearPdfCatalogo()
-                        crearPdf.catalogo(context, listaProductos as ArrayList<ModeloProducto>)
+                        crearPdf.catalogo(
+                            context,
+                            listaProductos as ArrayList<ModeloProducto>,
+                            aumento
+                        )
 
                         _reporteCompletado.value = Unit
                         val intent = Intent(context, VistaPDFReporte::class.java)

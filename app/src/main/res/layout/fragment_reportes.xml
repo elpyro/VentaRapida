@@ -196,7 +196,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <RadioButton
                             android:id="@+id/radioButton_catalogo_positivos"
@@ -212,6 +212,35 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
                             android:text="Todo" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="center">
+
+                            <CheckBox
+                                android:id="@+id/checkBox_personalizado"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+
+                                android:textColor="@color/white"
+                                android:checked="false"
+                                android:text="@string/personalizado" />
+                            <EditText
+                                android:visibility="gone"
+                                android:id="@+id/editText_aumento"
+                                android:inputType="numberSigned|numberDecimal"
+                                android:layout_width="70dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_margin="8dp"
+                                android:gravity="center"
+                                android:background="@drawable/edittext_background"
+                                android:textSize="18sp"
+                                android:hint="0.0"/>
+                        </LinearLayout>
                     </RadioGroup>
 
                     <Button

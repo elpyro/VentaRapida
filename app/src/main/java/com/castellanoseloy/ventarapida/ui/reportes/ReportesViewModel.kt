@@ -46,7 +46,7 @@ class ReportesViewModel : ViewModel() {
             }
     }
 
-    fun crearCatalogo(context: Context, mayorCero: Boolean) {
+    fun crearCatalogo(context: Context, mayorCero: Boolean,aumento:Double?=null ) {
 
         val tareaBuscarProductos = buscarProductos(mayorCero)
         tareaBuscarProductos
@@ -54,7 +54,7 @@ class ReportesViewModel : ViewModel() {
                 if(listaProductos.isNotEmpty()){
                 runBlocking {
                     val crearPdf = CrearPdfCatalogo()
-                    crearPdf.catalogo(context, listaProductos as ArrayList<ModeloProducto>)
+                    crearPdf.catalogo(context, listaProductos as ArrayList<ModeloProducto>, aumento)
 
                     _reporteCompletado.value = Unit
                     val intent = Intent(context, VistaPDFReporte::class.java)

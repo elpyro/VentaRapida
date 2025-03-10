@@ -2,13 +2,12 @@
 
 package com.castellanoseloy.ventarapida.ui.configuracion.datosEmpresa
 
+
 import android.app.Activity
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import androidx.lifecycle.ViewModelProvider
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,47 +16,60 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.JobIntentService
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.castellanoseloy.ventarapida.R
-
 import com.castellanoseloy.ventarapida.databinding.FragmentDatosEmpresaBinding
 import com.castellanoseloy.ventarapida.datos.ModeloDatosEmpresa
 import com.castellanoseloy.ventarapida.procesos.FirebaseDatosEmpresa.guardarDatosEmpresa
 import com.castellanoseloy.ventarapida.procesos.GuardarImagenEnDispositivo
 import com.castellanoseloy.ventarapida.procesos.TomarFotoYGaleria
 import com.castellanoseloy.ventarapida.procesos.Utilidades.ocultarTeclado
+import com.castellanoseloy.ventarapida.servicios.DatosPersitidos
 import com.castellanoseloy.ventarapida.servicios.ServiciosSubirFoto
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.launch
-import java.io.File
 
 class DatosEmpresa : Fragment() {
 
     private var binding: FragmentDatosEmpresaBinding? = null
     private lateinit var vista: View
+    private var imageUri: Uri? = null
+
+    // Registro del recorte de imagen
+    private val cropImageLauncher =
+        registerForActivityResult(CropImageContract()) { result ->
+            if (result.isSuccessful) {
+                val uriCropped = result.uriContent
+                if (uriCropped != null) {
+                    binding?.imageViewFotoEmpresa?.setImageURI(uriCropped)
+                }
+            } else {
+                Toast.makeText(requireContext(), "Error al recortar la imagen", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDatosEmpresaBinding.inflate(inflater, container, false)
-
         return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vista=view
-
+        vista = view
         setHasOptionsMenu(true)
-        if(DatosPersitidos.datosEmpresa.id!="")cargarDatos()
 
+        if (DatosPersitidos.datosEmpresa.id.isNotEmpty()) cargarDatos()
     }
 
     private fun cargarDatos() {
@@ -69,7 +81,8 @@ class DatosEmpresa : Fragment() {
         binding?.editTextTelefono2?.setText(DatosPersitidos.datosEmpresa.telefono2)
         binding?.editTextDireccion?.setText(DatosPersitidos.datosEmpresa.direccion)
         binding?.editTextGarantia?.setText(DatosPersitidos.datosEmpresa.garantia)
-        if (DatosPersitidos.datosEmpresa.url.isNotEmpty()){
+
+        if (DatosPersitidos.datosEmpresa.url.isNotEmpty()) {
             Picasso.get().load(DatosPersitidos.datosEmpresa.url).into(binding?.imageViewFotoEmpresa)
         }
     }
@@ -82,28 +95,23 @@ class DatosEmpresa : Fragment() {
 
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-
-
-            R.id.action_guardar ->{
-
+        return when (item.itemId) {
+            R.id.action_guardar -> {
                 guardarDatos()
-
-                return true
+                true
             }
-            R.id.action_camara->{
+            R.id.action_camara -> {
                 val imageHandler = TomarFotoYGaleria(this)
-
                 imageHandler.cargarImagen()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun guardarDatos() {
-        ocultarTeclado(requireContext(),vista)
-        val empresaID =DatosPersitidos.datosEmpresa.id
+        ocultarTeclado(requireContext(), vista)
+        val empresaID = DatosPersitidos.datosEmpresa.id
 
         val updates = hashMapOf(
             "id" to empresaID,
@@ -122,9 +130,8 @@ class DatosEmpresa : Fragment() {
         }
 
         guardarDatosEmpresa(updates)
-            //actualizamos los datos actuales
             .addOnSuccessListener {
-                val empresa = ModeloDatosEmpresa(
+                DatosPersitidos.datosEmpresa = ModeloDatosEmpresa(
                     id = empresaID,
                     nombre = binding?.editTextEmpresa?.text.toString(),
                     documento = binding?.editTextId?.text.toString(),
@@ -135,110 +142,73 @@ class DatosEmpresa : Fragment() {
                     direccion = binding?.editTextDireccion?.text.toString(),
                     garantia = binding?.editTextGarantia?.text.toString()
                 )
-                DatosPersitidos.datosEmpresa=empresa
 
                 DatosPersitidos.editText_nombreEmpresa.text = DatosPersitidos.datosEmpresa.nombre
 
-                if (DatosPersitidos.datosEmpresa.url.isNotEmpty()){
-                    Picasso.get().load(DatosPersitidos.datosEmpresa.url).into(DatosPersitidos.logotipo)
+                if (DatosPersitidos.datosEmpresa.url.isNotEmpty()) {
+                    Picasso.get().load(DatosPersitidos.datosEmpresa.url)
+                        .into(DatosPersitidos.logotipo)
                     DatosPersitidos.logotipo.setImageDrawable(DatosPersitidos.logotipo.drawable)
                 }
 
-                Toast.makeText(requireContext(),"Datos Actualizados",Toast.LENGTH_LONG).show()
-
-
+                Toast.makeText(requireContext(), "Datos Actualizados", Toast.LENGTH_LONG).show()
                 findNavController().popBackStack()
             }
-
-
-
-
     }
 
-    private fun guardarImagen(empresaID:String) {
-        // Obtener la imagen del ImageView como Bitmap
-
-        if (binding?.imageViewFotoEmpresa!!.drawable is BitmapDrawable) {
-
+    private fun guardarImagen(empresaID: String) {
+        if (binding?.imageViewFotoEmpresa?.drawable is BitmapDrawable) {
             val bitmap = (binding?.imageViewFotoEmpresa?.drawable as BitmapDrawable).bitmap
-
-            // Crear una referencia a la ubicación donde se subirá la imagen en Firebase Storage
             val storageRef = Firebase.storage.reference.child("$empresaID.jpg")
 
+            val guardarImagenEnDispositivo = GuardarImagenEnDispositivo()
+            val fileUri = guardarImagenEnDispositivo.guardarImagenEnDispositivo(requireContext(), bitmap)
 
-            val guardarImagenEnDispositivo= GuardarImagenEnDispositivo()
-            val fileUri = guardarImagenEnDispositivo.guardarImagenEnDispositivo(requireContext() ,bitmap)
+            val intent = Intent(context, ServiciosSubirFoto::class.java).apply {
+                putExtra("fileUri", fileUri)
+                putExtra("storageRef", storageRef.toString())
+                putExtra("idProducto", empresaID)
+                putExtra("tablaReferencia", "DatosEmpresa")
+            }
 
-            // Crear el Intent para iniciar el servicio
-            val intent = Intent(context, ServiciosSubirFoto::class.java)
-            intent.putExtra("fileUri", fileUri)
-            intent.putExtra("storageRef", storageRef.toString())
-            intent.putExtra("idProducto", empresaID)
-            intent.putExtra("tablaReferencia", "DatosEmpresa")
-
-
-            // Iniciar el servicio en segundo plano utilizando JobIntentService
             JobIntentService.enqueueWork(
                 requireContext(),
                 ServiciosSubirFoto::class.java,
                 DatosPersitidos.JOB_ID,
-                intent)
+                intent
+            )
         }
-
-
     }
 
-    //Tomamos la foto resultante de la camara y la colocamos en el imageview
+    // Nuevo manejo de imágenes
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Si la acción fue tomar una foto con la cámara
         if (requestCode == TomarFotoYGaleria.CAMARA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-
-            // Recortar la imagen usando la biblioteca CropImage
-            CropImage.activity(TomarFotoYGaleria.imagenUri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                //.setAspectRatio(1, 1)
-                .start(requireContext(), this)
-
+            imageUri = TomarFotoYGaleria.imagenUri
+            iniciarRecorte(imageUri)
         }
 
-        // Si la acción fue elegir una imagen de la galería
         if (requestCode == TomarFotoYGaleria.GALERIA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Obtener la URI de la imagen seleccionada de la galería
-            val uri=  data?.data
-            // Recortar la imagen usando la biblioteca CropImage
-            CropImage.activity(uri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                //.setAspectRatio(1, 1)
-                .start(requireContext(), this)
-
+            imageUri = data?.data
+            iniciarRecorte(imageUri)
         }
-        // Si la acción fue recortar la imagen usando CropImage
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == Activity.RESULT_OK) {
-                // Obtener el archivo de la imagen recortada
-                val file = File(result.uri.path!!)
-                if (file.exists()) {
-                    // Cargar la imagen recortada en el ImageView
-                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                    binding?.imageViewFotoEmpresa?.setImageBitmap(bitmap)
-                }
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                // Mostrar un mensaje de error si la recortada no fue exitosa
-                val error = result.error
-                Toast.makeText(requireContext(), "Error al recortar la imagen: $error", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun iniciarRecorte(uri: Uri?) {
+        uri?.let {
+            val options = CropImageOptions().apply {
+                guidelines = CropImageView.Guidelines.ON
+                // setAspectRatio(1, 1) // Si deseas un recorte cuadrado
             }
+            cropImageLauncher.launch(CropImageContractOptions(it, options))
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Invalidar el menú al salir del fragmento para que la barra de menú desaparezca
         requireActivity().invalidateOptionsMenu()
         binding = null
     }
-
 }
