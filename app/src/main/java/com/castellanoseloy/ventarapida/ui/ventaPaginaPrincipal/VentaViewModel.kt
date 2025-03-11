@@ -14,6 +14,7 @@ import com.castellanoseloy.ventarapida.procesos.Preferencias
 import com.castellanoseloy.ventarapida.procesos.Utilidades.formatoMonenda
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
@@ -119,56 +120,65 @@ class VentaViewModel : ViewModel() {
             val productReference =
                 firebaseDatabase.getReference(DatosPersitidos.datosEmpresa.id).child("Productos")
 
-        if(DatosPersitidos.verPublicidad){
-            productReference.keepSynced(true)
-            productReference.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val productos = mutableListOf<ModeloProducto>()
-
-                    for (productoSnapshot in snapshot.children) {
-                        val producto = productoSnapshot.getValue(ModeloProducto::class.java)
-
-                        if (!DatosPersitidos.mostrarAgotadosCatalogo) {
-                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
-                        }
-
-                        if (DatosPersitidos.mostrarAgotadosCatalogo) productos.add(producto!!)
-                    }
-
-                    productosLiveData.value = productos
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("ProductViewModel", "Error al cargar productos", error.toException())
-                }
-            })
-        }else{
-            productReference.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val productos = mutableListOf<ModeloProducto>()
-
-                    for (productoSnapshot in snapshot.children) {
-                        val producto = productoSnapshot.getValue(ModeloProducto::class.java)
-
-                        if (!DatosPersitidos.mostrarAgotadosCatalogo) {
-                            if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
-                        }
-
-                        if (DatosPersitidos.mostrarAgotadosCatalogo) productos.add(producto!!)
-                    }
-
-                    productosLiveData.value = productos
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("ProductViewModel", "Error al cargar productos", error.toException())
-                }
-            })
-        }
+        //ANDRES RAMIREZ LISTA ACTAULIZADA 1 VEZ PARA TODOS LOS PLANES
+//        if(DatosPersitidos.verPublicidad){
+            listaActualizadaUnaVez(productReference)
+//        }else{
+//            listaActualizadaEnVivo(productReference)
+//        }
 
 
 
         return productosLiveData
+    }
+
+    private fun listaActualizadaUnaVez(productReference: DatabaseReference) {
+        productReference.keepSynced(true)
+        productReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val productos = mutableListOf<ModeloProducto>()
+
+                for (productoSnapshot in snapshot.children) {
+                    val producto = productoSnapshot.getValue(ModeloProducto::class.java)
+
+                    if (!DatosPersitidos.mostrarAgotadosCatalogo) {
+                        if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
+                    }
+
+                    if (DatosPersitidos.mostrarAgotadosCatalogo) productos.add(producto!!)
+                }
+
+                productosLiveData.value = productos
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("ProductViewModel", "Error al cargar productos", error.toException())
+            }
+        })
+    }
+
+    private fun listaActualizadaEnVivo(productReference: DatabaseReference) {
+        productReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val productos = mutableListOf<ModeloProducto>()
+
+                for (productoSnapshot in snapshot.children) {
+                    val producto = productoSnapshot.getValue(ModeloProducto::class.java)
+
+                    if (!DatosPersitidos.mostrarAgotadosCatalogo) {
+                        if (producto?.cantidad?.toInt()!! > 0) productos.add(producto)
+                    }
+
+                    if (DatosPersitidos.mostrarAgotadosCatalogo) productos.add(producto!!)
+                }
+
+                productosLiveData.value = productos
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("ProductViewModel", "Error al cargar productos", error.toException())
+            }
+        })
     }
 
 

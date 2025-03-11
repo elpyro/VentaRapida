@@ -66,11 +66,11 @@ import com.google.firebase.database.ValueEventListener
 class MainActivity : AppCompatActivity() {
 
 
-    lateinit var  navController: NavController
-    lateinit var  drawerLayout: DrawerLayout
+    lateinit var navController: NavController
+    lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var appBarConfiguration: AppBarConfiguration
-    private var suscripcion= Suscripcion()
+    private var suscripcion = Suscripcion()
     private var doubleBackToExitPressedOnce = false
 
     fun init(context: Context) {
@@ -89,10 +89,10 @@ class MainActivity : AppCompatActivity() {
 
 
         if (ventaProductosSeleccionados.isNotEmpty()) {
-            Toast.makeText(this,"Selección recuperada",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Selección recuperada", Toast.LENGTH_LONG).show()
         }
         if (compraProductosSeleccionados.isNotEmpty()) {
-            Toast.makeText(this,"Selección de surtido recuperado",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Selección de surtido recuperado", Toast.LENGTH_LONG).show()
         }
 
         init(this)
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
         val navHeader = navView.getHeaderView(0)
         logotipo = navHeader.findViewById<ImageView>(R.id.imageView)
-        editText_nombreEmpresa=navHeader.findViewById<TextView>(R.id.textView_nombreEmpresa)
+        editText_nombreEmpresa = navHeader.findViewById<TextView>(R.id.textView_nombreEmpresa)
 
         editText_nombreEmpresa.text = datosEmpresa.nombre
 
@@ -121,19 +121,19 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        if(datosUsuario.perfil=="Administrador"){
+        if (datosUsuario.perfil == "Administrador") {
             navView.menu
                 .setGroupVisible(R.id.panel_administrador, true)
             navView.menu
                 .setGroupVisible(R.id.panel_reporte_administrador, true)
         }
 
-        if(datosUsuario.perfil=="Vendedor"){
+        if (datosUsuario.perfil == "Vendedor") {
             navView.menu
                 .setGroupVisible(R.id.panel_reporte_vendedor, true)
         }
 
-        if(datosUsuario.perfil=="Inactivo"){
+        if (datosUsuario.perfil == "Inactivo") {
             navView.menu
                 .setGroupVisible(R.id.panel_administrador, false)
             navView.menu
@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        if(verPublicidad) NotificacionPlanVencido()
+        if (verPublicidad) NotificacionPlanVencido()
 
 
 
@@ -153,14 +153,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun verificarPlan() {
-        if(!datosEmpresa.plan.equals("Ilimitado")){
-            val proximoPago=convertirCadenaAFecha(datosEmpresa.proximo_pago)
+        if (!datosEmpresa.plan.equals("Ilimitado")) {
+            val proximoPago = convertirCadenaAFecha(datosEmpresa.proximo_pago)
 
             Log.d("pagos", "su proximo pago es: ${proximoPago} y su plan es ${datosEmpresa.plan}")
-            if (proximoPago!=null ) planVencido = suscripcion.verificarFinSuscripcion(proximoPago)
+            if (proximoPago != null) planVencido = suscripcion.verificarFinSuscripcion(proximoPago)
 
-            if (planVencido!!){
-                verPublicidad=true
+            if (planVencido!!) {
+                verPublicidad = true
                 cargarAnuncio()
             }
         }
@@ -170,9 +170,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun cargarAnuncio() {
 
-            var adRequest = AdRequest.Builder().build()
+        var adRequest = AdRequest.Builder().build()
 
-            InterstitialAd.load(this, "ca-app-pub-5390342068041092/6706005035", adRequest, object : InterstitialAdLoadCallback(){
+        InterstitialAd.load(
+            this,
+            "ca-app-pub-5390342068041092/6706005035",
+            adRequest,
+            object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
                     Log.d("Anuncios", "El anuncio esta listo para mostrarse")
                     interstitial = interstitialAd
@@ -199,11 +203,15 @@ class MainActivity : AppCompatActivity() {
                 if (!isOnHomeScreen) {
                     // No estás en la pantalla principal, permite el comportamiento predeterminado
                     navController.navigateUp()
-                }else{
+                } else {
                     if (doubleBackToExitPressedOnce) {
                         finish()
-                    }else{
-                        Toast.makeText(this@MainActivity, "Presione de nuevo para salir", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Presione de nuevo para salir",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     doubleBackToExitPressedOnce = true
@@ -222,24 +230,30 @@ class MainActivity : AppCompatActivity() {
 
         Log.w("Usuarios", "Usuarios activos en la cuenta: $usuariosActivos")
 
-        if(datosEmpresa.plan == "Empresarial" && usuariosActivos>30){
+
+        //ANDRES RAMIREZ ACTIVAR PLAN ILIMITADO
+//        if(datosEmpresa.plan == "Empresarial" && usuariosActivos>30){
+//            NotificacionPlanExedido()
+//        }
+        if (datosEmpresa.plan != "Empresarial" && usuariosActivos > 30) {
             NotificacionPlanExedido()
         }
-        if(datosEmpresa.plan == "Premium"&& usuariosActivos>6){
+
+        if (datosEmpresa.plan == "Premium" && usuariosActivos > 10) {
             NotificacionPlanExedido()
         }
-        if(datosEmpresa.plan == "Basico"&& usuariosActivos>3){
+        if (datosEmpresa.plan == "Basico" && usuariosActivos > 3) {
             NotificacionPlanExedido()
         }
     }
 
     private fun usuariosConectados() {
         val tareaUsuarios = FirebaseUsuarios.buscarTodosUsuariosPorEmpresa()
-        var usuariosActivos=0
+        var usuariosActivos = 0
         tareaUsuarios.addOnSuccessListener { usuarios ->
-            if(usuarios.isNotEmpty()){
-                for (usuario in usuarios){
-                    if(usuario.perfil != "Inactivo"){
+            if (usuarios.isNotEmpty()) {
+                for (usuario in usuarios) {
+                    if (usuario.perfil != "Inactivo") {
                         usuariosActivos++
                     }
                 }
@@ -249,20 +263,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun NotificacionPlanExedido (){
+    fun NotificacionPlanExedido() {
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
         alertDialogBuilder.setTitle("Limite de Usuarios Exedidos")
         alertDialogBuilder.setCancelable(false)
         alertDialogBuilder.setMessage("La cuenta ha exedido la cantidad de usuarios permitios, por favor contate al admistrador de la cuenta")
 
-        if(datosUsuario.id.equals(datosEmpresa.idDuenoCuenta)){
+        if (datosUsuario.id.equals(datosEmpresa.idDuenoCuenta)) {
             alertDialogBuilder.setMessage("Ha cuenta ha exedido la cantidad de usuarios permitios, inactive usuarios que no esten usando la app o aplique un nuevo plan")
             alertDialogBuilder.setCancelable(true)
             alertDialogBuilder.setPositiveButton("Verificar") { _, _ ->
                 AuthUI.getInstance().signOut(this)
                     .addOnCompleteListener { task: Task<Void?>? ->
-                        val navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
+                        val navController =
+                            Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
                         navController.navigate(R.id.listaUsuarios)
                     }
             }
@@ -272,8 +287,8 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    fun NotificacionPlanVencido (){
-        if(datosUsuario.id != datosEmpresa.idDuenoCuenta){
+    fun NotificacionPlanVencido() {
+        if (datosUsuario.id != datosEmpresa.idDuenoCuenta) {
 
             navView.menu
                 .setGroupVisible(R.id.panel_administrador, false)
@@ -292,13 +307,14 @@ class MainActivity : AppCompatActivity() {
             alertDialogBuilder.setMessage("El plan se ha vencido por favor renueve el plan para ultilizarlo con mas de 1 usuario")
 
             alertDialogBuilder.setPositiveButton("Ver Suscripciones") { _, _ ->
-                        val navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
-                        navController.navigate(R.id.suscripcionesDisponibles)
+                val navController =
+                    Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.suscripcionesDisponibles)
             }
 
             val alertDialog = alertDialogBuilder.create()
             alertDialog.show()
-        }else{
+        } else {
             val rootView = findViewById<View>(android.R.id.content)
             val snackbar = Snackbar.make(rootView, "Plan vencido", Snackbar.LENGTH_SHORT)
             val snackbarView = snackbar.view
@@ -310,26 +326,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun mostrarFabBottonTransacciones(context: Context) {
-        val transaccionesPendientes=
+        val transaccionesPendientes =
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(context)
 
-        if(transaccionesPendientes.size<1){
-            DatosPersitidos.binding.appBarMain.fabSincronizar.visibility= View.GONE
+        if (transaccionesPendientes.size < 1) {
+            DatosPersitidos.binding.appBarMain.fabSincronizar.visibility = View.GONE
 
-        }else{
-            DatosPersitidos.binding.appBarMain.fabSincronizar.visibility=View.VISIBLE
+        } else {
+            DatosPersitidos.binding.appBarMain.fabSincronizar.visibility = View.VISIBLE
 
             DatosPersitidos.binding.appBarMain.fabSincronizar.setOnClickListener { view ->
-                Toast.makeText(context,"Sincronizando "+transaccionesPendientes.size.toString()+" productos",Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "Sincronizando " + transaccionesPendientes.size.toString() + " productos",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
 
     private fun cargarDatos() {
-        val preferenciasServicios= Preferencias()
+        val preferenciasServicios = Preferencias()
         preferenciasServicios.obtenerServicioPendienteSubirFoto(this)
 
-        val transaccionesPendientes=
+        val transaccionesPendientes =
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
         FirebaseProductos.transaccionesCambiarCantidad(this, transaccionesPendientes)
 
@@ -338,7 +358,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun verificarVersionActualizada() {
-        val version=obtenerInformacionDeVersion(this)
+        val version = obtenerInformacionDeVersion(this)
 
         val versionControlProvider = VersionControlProvider()
 
@@ -352,7 +372,9 @@ class MainActivity : AppCompatActivity() {
                 if (dataSnapshot != null && dataSnapshot.exists()) {
                     // Acceder a los datos específicos según la estructura de tu base de datos en tiempo real
                     val versionActual = dataSnapshot.getValue(VersionModel::class.java)
-                    if(version?.second!! < versionActual?.versionCode!!) solicitarActualizacion(versionActual)
+                    if (version?.second!! < versionActual?.versionCode!!) solicitarActualizacion(
+                        versionActual
+                    )
                 }
             } else {
                 // Manejar el error si la tarea no fue exitosa
@@ -384,7 +406,10 @@ class MainActivity : AppCompatActivity() {
             val pInfo: PackageInfo = contexto.packageManager.getPackageInfo(contexto.packageName, 0)
             val versionName = pInfo.versionName
             val versionCode = pInfo.versionCode
-            Log.d("vesion","El nombre de la version es: $versionName y el vesion code: $versionCode")
+            Log.d(
+                "vesion",
+                "El nombre de la version es: $versionName y el vesion code: $versionCode"
+            )
             Pair(versionName, versionCode)
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
@@ -409,8 +434,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     fun cargarDialogoProceso() {
         progressDialog = ProgressDialog(this)
         progressDialog?.setIcon(R.drawable.logo2_compra_rapidita)
@@ -427,17 +450,17 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         //obtener version actual si no hay actualizaciones pendientes
-        val transaccionesPendientes=
+        val transaccionesPendientes =
             UtilidadesBaseDatos.obtenerTransaccionesSumaRestaProductos(this)
-        if(transaccionesPendientes.isEmpty()) verificarVersionActualizada()
+        if (transaccionesPendientes.isEmpty()) verificarVersionActualizada()
 
-        if(datosUsuario.perfil.isNullOrEmpty()){
+        if (datosUsuario.perfil.isNullOrEmpty()) {
             finish()
             val intent = Intent(this, Login::class.java)
             startActivity(intent)
         }
 
-        if(datosUsuario.perfil=="Inactivo"){
+        if (datosUsuario.perfil == "Inactivo") {
 
             val alertDialogBuilder = AlertDialog.Builder(this)
             alertDialogBuilder.setIcon(R.drawable.logo2_compra_rapidita)
@@ -449,8 +472,8 @@ class MainActivity : AppCompatActivity() {
                 AuthUI.getInstance().signOut(this)
                     .addOnCompleteListener { task: Task<Void?>? ->
 
-                     ventaProductosSeleccionados.clear()
-                     compraProductosSeleccionados.clear()
+                        ventaProductosSeleccionados.clear()
+                        compraProductosSeleccionados.clear()
 
                         Toast.makeText(this, "Sesion Cerrada", Toast.LENGTH_LONG).show()
                         val intent = Intent(this, Login::class.java)
